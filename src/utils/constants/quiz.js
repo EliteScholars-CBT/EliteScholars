@@ -3,7 +3,7 @@
 // ============================================================================
 
 export const ROUND_SIZE       = 20;
-export const SHARE_GATE_EVERY = 5;
+export const SHARE_GATE_EVERY = 50;
 
 // Seconds per question by subject type
 // Calculation-heavy subjects get 25 s; others get 16 s
