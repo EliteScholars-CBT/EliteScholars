@@ -27,7 +27,7 @@ export const AFFILIATE_ADS = [
 
 ];
 
-export const CUSTOM_AD_ENABLED = true;
+export const CUSTOM_AD_ENABLED = false;
 export const CUSTOM_ADS = [
   {
     image:       '/images/ads/doxiee-affiliate-masterclass.jpg',
