@@ -14,7 +14,7 @@ export const PUBLISHER_AD_SCRIPT  = 'https://pl29020764.effectivecpmnetwork.com/
 export const AD_EVERY_NTH_SUBHEADING = 2;
 export const MAX_ADS_PER_PAGE        = 5;
 
-export const AFFILIATE_ADS_ENABLED = true;
+export const AFFILIATE_ADS_ENABLED = false;
 export const AFFILIATE_ADS = [
   {
   image:       '/images/ads/palmpay-students.jpg',
