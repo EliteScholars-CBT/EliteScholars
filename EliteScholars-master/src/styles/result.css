@@ -1,0 +1,504 @@
+/* ============================================================================
+   RESULT SCREEN STYLES
+   ============================================================================ */
+
+
+.result-hero {
+  padding: 40px 20px 62px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.result-score-circle {
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 3px solid #FFC53D;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  box-shadow: 0 0 32px rgba(255, 197, 61, 0.3);
+  position: relative;
+}
+.result-score-number {
+  font-size: 26px;
+  font-weight: 900;
+  color: #FFC53D;
+}
+.result-score-label {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 1px;
+}
+.result-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+.result-message {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+.result-stats {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.result-stat-card {
+  flex: 1;
+  background: #FFFFFF;
+  border-radius: 13px;
+  padding: 12px 9px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+.result-stat-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #7C3AED;
+}
+.result-stat-label {
+  font-size: 9px;
+  color: #6B7280;
+  margin-top: 1px;
+  font-weight: 600;
+}
+.result-scorecard-btn {
+  width: 100%;
+  padding: 13px 16px;
+  border: none;
+  border-radius: 13px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.gate-container {
+  background: linear-gradient(135deg, #2E1065, #3d0070);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+}
+.gate-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #FFC53D;
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+.gate-quote {
+  font-size: 12px;
+  color: #FFFFFF;
+  line-height: 1.65;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+.gate-text {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+.gate-share-btn {
+  width: 100%;
+  padding: 14px;
+  background: #25D366;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+.gate-locked-btn {
+  width: 100%;
+  padding: 13px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: not-allowed;
+}
+.gate-unlock-note {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  margin-top: 6px;
+}
+.gate-verifying {
+  background: rgba(37, 211, 102, 0.1);
+  border: 1px solid rgba(37, 211, 102, 0.3);
+  border-radius: 11px;
+  padding: 13px 14px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.gate-verifying-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4ade80;
+  margin-bottom: 4px;
+}
+.gate-countdown {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.5;
+}
+.gate-countdown-number { color: #FFC53D; font-weight: 700; }
+.gate-progress-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.gate-progress-fill {
+  height: 100%;
+  background: #16A34A;
+  border-radius: 2px;
+  transition: width 1s linear;
+}
+.gate-success {
+  background: rgba(22, 163, 74, 0.18);
+  border: 1px solid #16A34A;
+  border-radius: 11px;
+  padding: 11px 14px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.gate-success-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4ade80;
+}
+
+.join-card {
+  background: var(--grad-hero);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.join-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 4px;
+}
+.join-subtitle {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 12px;
+}
+.join-button {
+  width: 100%;
+  padding: 12px;
+  background: #25D366;
+  border: none;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 8px;
+}
+.join-play-again {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.profile-view-btn {
+  width: 100%;
+  padding: 13px;
+  background: #FFFFFF;
+  border: 2px solid #7C3AED;
+  border-radius: 13px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #7C3AED;
+  margin-bottom: 8px;
+}
+.back-menu-btn {
+  width: 100%;
+  padding: 12px;
+  background: #F6F2FF;
+  border: 1px solid #E5E7EB;
+  border-radius: 13px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6B7280;
+}
+
+/* ============================================================================
+   AD GATE SCREEN STYLES
+   ============================================================================ */
+
+
+.adgate-container {
+  background: var(--grad-deep);
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+.adgate-card { width: 100%; max-width: 380px; }
+.adgate-icon {
+  font-size: 52px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.adgate-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #FFFFFF;
+  text-align: center;
+  line-height: 1.2;
+}
+.adgate-subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 8px;
+  text-align: center;
+  line-height: 1.5;
+}
+.adgate-vibe {
+  background: rgba(255, 197, 61, 0.1);
+  border: 1px solid rgba(255, 197, 61, 0.25);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 22px;
+  text-align: center;
+}
+.adgate-vibe-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #FFC53D;
+  margin-bottom: 8px;
+}
+.adgate-vibe-text {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+}
+.adgate-countdown { text-align: center; margin-bottom: 16px; }
+.adgate-countdown-label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 8px;
+}
+.adgate-countdown-number {
+  font-size: 48px;
+  font-weight: 800;
+  color: #FFC53D;
+}
+.adgate-countdown-hint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 8px;
+}
+.adgate-progress {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.adgate-progress-fill {
+  height: 100%;
+  background: #FFC53D;
+  transition: width 1s linear;
+}
+.adgate-retry-btn {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 197, 61, 0.2);
+  border: 1px solid #FFC53D;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #FFC53D;
+  margin-bottom: 10px;
+}
+.adgate-waiting-btn {
+  width: 100%;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 13px;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: not-allowed;
+}
+.adgate-success {
+  background: rgba(22, 163, 74, 0.18);
+  border: 1px solid #16A34A;
+  border-radius: 13px;
+  padding: 13px 16px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+.adgate-success-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4ade80;
+  margin-bottom: 3px;
+}
+.adgate-success-text {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.adgate-continue-btn {
+  width: 100%;
+  padding: 15px;
+  background: #FFC53D;
+  border: none;
+  border-radius: 13px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2E1065;
+  box-shadow: 0 8px 22px rgba(255, 197, 61, 0.4);
+}
+
+/* ============================================================================
+   SHARE GATE SCREEN STYLES
+   ============================================================================ */
+
+
+.sharegate-container {
+  background: var(--grad-deep);
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+.sharegate-card { width: 100%; max-width: 380px; }
+.sharegate-icon {
+  font-size: 52px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.sharegate-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #FFFFFF;
+  text-align: center;
+  line-height: 1.2;
+}
+.sharegate-subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 8px;
+  text-align: center;
+}
+.sharegate-vibe {
+  background: rgba(255, 197, 61, 0.1);
+  border: 1px solid rgba(255, 197, 61, 0.25);
+  border-radius: 14px;
+  padding: 13px 16px;
+  margin-bottom: 22px;
+  text-align: center;
+}
+.sharegate-vibe-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #FFC53D;
+  margin-bottom: 6px;
+}
+.sharegate-vibe-text {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  font-style: italic;
+}
+.sharegate-share-btn {
+  width: 100%;
+  padding: 15px;
+  background: #25D366;
+  border: none;
+  border-radius: 13px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+.sharegate-share-btn-disabled {
+  background: rgba(37, 211, 102, 0.5);
+  cursor: default;
+}
+.sharegate-progress {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.sharegate-progress-fill {
+  height: 100%;
+  background: #16A34A;
+  transition: width 1s linear;
+}
+.sharegate-locked-btn {
+  width: 100%;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 13px;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.25);
+  cursor: not-allowed;
+}
+.sharegate-unlocked { text-align: center; }
+.sharegate-success {
+  background: rgba(22, 163, 74, 0.18);
+  border: 1px solid #16A34A;
+  border-radius: 13px;
+  padding: 13px 16px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+.sharegate-success-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4ade80;
+}
+.sharegate-start-btn {
+  width: 100%;
+  padding: 15px;
+  background: #FFC53D;
+  border: none;
+  border-radius: 13px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2E1065;
+  box-shadow: 0 8px 22px rgba(255, 197, 61, 0.4);
+}
+
