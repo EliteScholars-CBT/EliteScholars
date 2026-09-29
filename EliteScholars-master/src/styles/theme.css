@@ -1,0 +1,640 @@
+/* ============================================================================
+   DARK MODE VARIABLES
+   ============================================================================ */
+
+
+body.dark-mode {
+  --bg-primary: #0a0015;
+  --bg-secondary: #1B0A47;
+  --card-bg: #1B0A47;
+  --text-primary: #F3F4F6;
+  --text-secondary: #9CA3AF;
+  --border-color: #3d2a5e;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --bg-header: linear-gradient(135deg, #0a0015, #1B0A47);
+  --green: #22C55E;
+  --red: #EF4444;
+}
+
+/* ============================================================================
+   DARK MODE - Component Overrides
+   ============================================================================ */
+
+
+body.dark-mode .phone,
+body.dark-mode .scr { background: var(--bg-primary); }
+body.dark-mode .subjects-header-curve { background: var(--bg-primary); }
+body.dark-mode .subject-card-unselected {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+}
+body.dark-mode .subject-card-selected {
+  background: #2d1b4e !important;
+  border-color: var(--gold) !important;
+}
+body.dark-mode .subject-name,
+body.dark-mode .lekki-title,
+body.dark-mode .subject-status { color: var(--text-primary); }
+body.dark-mode .subject-question-count,
+body.dark-mode .lekki-author,
+body.dark-mode .lekki-question-count div:last-child { color: var(--text-secondary); }
+body.dark-mode .lekki-card-unselected {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+}
+body.dark-mode .lekki-card-selected {
+  background: #2d1b4e !important;
+  border-color: var(--gold) !important;
+}
+body.dark-mode .lekki-card-selected .lekki-icon { background: #8B5CF6 !important; }
+body.dark-mode .start-button-container {
+  background: var(--bg-primary);
+  border-top-color: var(--border-color);
+}
+body.dark-mode .start-button-inactive {
+  background: #2d1b4e;
+  color: var(--text-secondary);
+}
+body.dark-mode .scroll { background: var(--bg-primary); }
+body.dark-mode .subjects-card-container { background: transparent; }
+body.dark-mode .subject-card-unselected:hover,
+body.dark-mode .lekki-card-unselected:hover {
+  background: #2d1b4e;
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+body.dark-mode .subject-card-selected .subject-icon,
+body.dark-mode .lekki-card-selected .lekki-icon {
+  background: var(--subject-color, #8B5CF6) !important;
+}
+body.dark-mode .subject-card-selected .subject-name,
+body.dark-mode .subject-card-selected .subject-status,
+body.dark-mode .lekki-card-selected .lekki-title,
+body.dark-mode .lekki-card-selected .lekki-badge {
+  color: var(--text-primary) !important;
+}
+
+/* Quiz dark mode */
+body.dark-mode .quiz-header { background: var(--bg-header); }
+body.dark-mode .quiz-action-bar {
+  background: var(--bg-primary);
+  border-top-color: var(--border-color);
+}
+body.dark-mode .question-card {
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+}
+body.dark-mode .question-text { color: var(--text-primary); }
+body.dark-mode .quiz-option {
+  background: #1B0A47 !important;
+  border: 1px solid #3d2a5e !important;
+  color: #F3F4F6 !important;
+}
+body.dark-mode .quiz-option:hover:not(.disabled) {
+  background: #2d1b4e !important;
+  border-color: var(--gold) !important;
+  transform: translateX(4px);
+}
+body.dark-mode .quiz-option.selected {
+  background: var(--purple) !important;
+  border-color: var(--gold) !important;
+  color: white !important;
+}
+body.dark-mode .quiz-option.correct {
+  background: rgba(22, 163, 74, 0.2) !important;
+  border-color: #16A34A !important;
+}
+body.dark-mode .quiz-option.wrong {
+  background: rgba(220, 38, 38, 0.2) !important;
+  border-color: #DC2626 !important;
+}
+body.dark-mode .quiz-option-letter {
+  background: #3d2a5e !important;
+  color: #F3F4F6 !important;
+}
+body.dark-mode .quiz-option.selected .quiz-option-letter {
+  background: var(--gold) !important;
+  color: #1B0A47 !important;
+}
+body.dark-mode .quiz-option.correct .quiz-option-letter {
+  background: #16A34A !important;
+  color: white !important;
+}
+body.dark-mode .quiz-option.wrong .quiz-option-letter {
+  background: #DC2626 !important;
+  color: white !important;
+}
+body.dark-mode .quiz-option.disabled { opacity: 0.6; cursor: not-allowed; }
+body.dark-mode .quiz-option.hidden { display: none; }
+body.dark-mode .quiz-clear-btn {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+body.dark-mode .lifeline-fifty {
+  background: var(--card-bg);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+body.dark-mode .lifeline-fifty-used {
+  background: #2d1b4e;
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+body.dark-mode .lifeline-hint {
+  background: var(--card-bg);
+  border-color: #8B5CF6;
+  color: #8B5CF6;
+}
+body.dark-mode .lifeline-hint-used {
+  background: #2d1b4e;
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+body.dark-mode .lifeline-voice {
+  background: #1a3a2a;
+  border-color: #16A34A;
+  color: #16A34A;
+}
+body.dark-mode .lifeline-voice-off {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+body.dark-mode .hint-box {
+  background: #2a1a2e;
+  border-color: var(--gold);
+}
+body.dark-mode .hint-title { color: var(--gold); }
+body.dark-mode .hint-text { color: #FFD6A5; }
+body.dark-mode .quick-take {
+  background: linear-gradient(135deg, #1B0A47, #2a1a4e);
+}
+body.dark-mode .quick-take-text { color: rgba(255, 255, 255, 0.88); }
+body.dark-mode .quick-take-link { color: var(--gold); }
+
+/* Modal dark mode */
+body.dark-mode .modal-content { background: var(--bg-secondary); }
+body.dark-mode .modal-title { color: var(--gold); }
+body.dark-mode .modal-question {
+  color: var(--text-secondary);
+  border-bottom-color: var(--border-color);
+}
+body.dark-mode .modal-explanation { color: var(--text-primary); }
+body.dark-mode .modal-answer-box {
+  background: #2d1b4e;
+  border-color: var(--gold);
+}
+body.dark-mode .modal-answer-title { color: var(--gold); }
+body.dark-mode .modal-answer-text { color: var(--text-primary); }
+body.dark-mode .modal-close-btn { background: var(--purple); }
+
+/* Result dark mode */
+body.dark-mode .result-stat-card { background: var(--card-bg); }
+body.dark-mode .result-stat-value { color: var(--text-primary); }
+body.dark-mode .result-stat-label { color: var(--text-secondary); }
+body.dark-mode .gate-container,
+body.dark-mode .join-card { background: var(--bg-header); }
+
+/* Profile dark mode */
+body.dark-mode .profile-tabs {
+  background: var(--bg-primary);
+  border-bottom-color: var(--border-color);
+}
+body.dark-mode .profile-tab {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+body.dark-mode .profile-tab.active {
+  background: var(--purple);
+  color: white;
+}
+body.dark-mode .profile-stat-card,
+body.dark-mode .achievement-card,
+body.dark-mode .settings-card { background: var(--card-bg); }
+body.dark-mode .profile-stat-value,
+body.dark-mode .achievement-card-name,
+body.dark-mode .settings-name { color: var(--text-primary); }
+body.dark-mode .profile-stat-label,
+body.dark-mode .achievement-card-desc,
+body.dark-mode .settings-desc { color: var(--text-secondary); }
+body.dark-mode .profile-streak-card { background: var(--bg-header); }
+body.dark-mode .profile-chart-section,
+body.dark-mode .profile-empty-state { background: var(--card-bg); }
+body.dark-mode .profile-empty-text { color: var(--text-secondary); }
+body.dark-mode .scorecard-container { background: var(--bg-secondary); }
+body.dark-mode .scorecard-stats,
+body.dark-mode .scorecard-quote,
+body.dark-mode .scorecard-footer { background: #0a0015; }
+
+/* Splash, Onboard, Ready, ShareGate, AdGate dark mode */
+body.dark-mode .splash-container,
+body.dark-mode .onboard-container,
+body.dark-mode .ready-container,
+body.dark-mode .sharegate-container,
+body.dark-mode .adgate-container {
+  background: var(--grad-deep, linear-gradient(160deg, #0a0015, #1B0A47, #0a0015));
+}
+body.dark-mode .adgate-vibe {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: rgba(139, 92, 246, 0.25);
+}
+body.dark-mode .adgate-waiting-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Scrollbar dark mode */
+body.dark-mode .profile-tabs-scroll::-webkit-scrollbar-track,
+body.dark-mode .profile-content-area::-webkit-scrollbar-track {
+  background: var(--border-color);
+}
+body.dark-mode .profile-tabs-scroll::-webkit-scrollbar-thumb,
+body.dark-mode .profile-content-area::-webkit-scrollbar-thumb {
+  background: var(--gold);
+}
+
+/* ============================================================================
+   FLASHCARDS DARK MODE
+   ============================================================================ */
+
+
+body.dark-mode .flashcards-card-sub-label {
+  color: var(--gold) !important;
+}
+
+body.dark-mode .flashcards-card-example,
+body.dark-mode .flashcards-card-tip-text {
+  color: var(--text-secondary);
+}
+
+body.dark-mode .flashcards-card-definition {
+  color: var(--text-primary);
+}
+
+body.dark-mode .flashcards-card-term {
+  color: var(--text-primary);
+}
+
+body.dark-mode .flashcards-card-label {
+  color: var(--gold);
+}
+
+/* ============================================================================
+   DARK MODE — Bottom Nav (5-tab)
+   ============================================================================ */
+
+body.dark-mode .bottom-nav {
+  background: #0f0020;
+  border-top-color: #2d1b4e;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.4);
+}
+body.dark-mode .bottom-nav-label { color: #6B7280; }
+body.dark-mode .bottom-nav-item.active { background: rgba(108,63,201,0.12); }
+body.dark-mode .bottom-nav-item.active .bottom-nav-label,
+body.dark-mode .active-label { color: #C4B5FD !important; }
+
+/* ============================================================================
+   DARK MODE — Exam Type Select
+   ============================================================================ */
+
+body.dark-mode .exam-type-page {
+  background: var(--grad-deep, linear-gradient(160deg, #050010, #1B0A47 60%, #050010));
+}
+body.dark-mode .exam-type-compact-card {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.1);
+}
+body.dark-mode .exam-type-compact-label { color: #F3F4F6; }
+body.dark-mode .exam-type-compact-desc  { color: rgba(255,255,255,0.45); }
+
+/* ============================================================================
+   DARK MODE — Learn Mode
+   ============================================================================ */
+
+body.dark-mode .learn-page { background: #0a0015; }
+body.dark-mode .learn-accordion-item {
+  background: #1B0A47;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+body.dark-mode .learn-accordion-header { background: transparent; }
+body.dark-mode .learn-accordion-title { color: #F3F4F6; }
+body.dark-mode .learn-accordion-num   { background: #2d1b4e; color: #C4B5FD; }
+body.dark-mode .learn-accordion-body  { border-top-color: #2d1b4e; }
+body.dark-mode .learn-content-html .learn-intro {
+  background: rgba(108,63,201,0.15);
+  border-left-color: #7C3AED;
+  color: #D1D5DB;
+}
+body.dark-mode .learn-content-html .learn-p,
+body.dark-mode .learn-content-html .learn-list li { color: #D1D5DB; }
+body.dark-mode .learn-content-html .learn-subheading,
+body.dark-mode .learn-content-html h3.learn-subheading {
+  color: #F3F4F6;
+  border-bottom-color: #2d1b4e;
+}
+body.dark-mode .learn-content-html .learn-table thead tr { background: #7C3AED; }
+body.dark-mode .learn-content-html .learn-table td { color: #D1D5DB; border-bottom-color: #2d1b4e; }
+body.dark-mode .learn-content-html .learn-table tbody tr:nth-child(even) { background: #1f0035; }
+body.dark-mode .learn-content-html .learn-tip-box {
+  background: rgba(255, 197, 61,0.1);
+  border-color: rgba(255, 197, 61,0.3);
+  color: #FDE68A;
+}
+body.dark-mode .learn-content-html .learn-tip-warn {
+  background: rgba(239,68,68,0.1);
+  border-color: rgba(239,68,68,0.3);
+  color: #FCA5A5;
+}
+body.dark-mode .learn-content-html .learn-formula {
+  background: rgba(108,63,201,0.2);
+  border-color: #7C3AED;
+  color: #E9D5FF;
+}
+body.dark-mode .learn-content-html .learn-worked-example {
+  background: rgba(22,163,74,0.1);
+  border-color: rgba(22,163,74,0.3);
+}
+body.dark-mode .learn-content-html .learn-worked-title { color: #4ADE80; }
+body.dark-mode .learn-nav-btn { background: #2d1b4e; color: #C4B5FD; }
+body.dark-mode .learn-progress-bar { background: rgba(108,63,201,0.2); }
+body.dark-mode .learn-keyboard-hint { color: #4B5563; }
+body.dark-mode .learn-voice-select {
+  background: #1B0A47;
+  border-color: #3d2a5e;
+  color: #D1D5DB;
+}
+body.dark-mode .learn-tts-btn { background: #7C3AED; }
+body.dark-mode .learn-quiz-card { background: #1B0A47; box-shadow: 0 3px 12px rgba(0,0,0,0.3); }
+body.dark-mode .learn-quiz-q { color: #F3F4F6; }
+body.dark-mode .learn-quiz-opt {
+  background: #2d1b4e;
+  border-color: #3d2a5e;
+  color: #D1D5DB;
+}
+body.dark-mode .learn-quiz-exp-text { background: #0f0020; color: #D1D5DB; }
+body.dark-mode .learn-quiz-overlay { background: #0a0015; }
+body.dark-mode .learn-empty { color: #4B5563; }
+
+/* ============================================================================
+   DARK MODE — Mode Select
+   ============================================================================ */
+
+body.dark-mode .mode-select-page { background: linear-gradient(160deg, #0a0015, #1B0A47 60%, #0a0015); }
+body.dark-mode .mode-select-card {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.1);
+}
+body.dark-mode .mode-select-card-title { color: #F3F4F6; }
+body.dark-mode .mode-select-card-description { color: #9CA3AF; }
+
+/* ============================================================================
+   DARK MODE — Shop
+   ============================================================================ */
+
+body.dark-mode .shop-page,
+body.dark-mode .shop-body { background: #0a0015; }
+
+body.dark-mode .shop-plans-title { color: #F3F4F6; }
+body.dark-mode .shop-plans-note  { color: #4B5563; }
+
+/* New pricing card dark mode */
+body.dark-mode .shop-pricing-card {
+  background: #1B0A47;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .shop-pricing-card-header {
+  background: linear-gradient(135deg, #2d1b4e, #1B0A47);
+  border-bottom-color: rgba(255, 197, 61, 0.15);
+}
+
+body.dark-mode .shop-pricing-card-title {
+  color: #F3F4F6;
+}
+
+body.dark-mode .save-badge {
+  background: #22C55E;
+  color: #0a0015;
+}
+
+body.dark-mode .shop-plans-comparison {
+  background: #1B0A47;
+}
+
+body.dark-mode .shop-compare-plan {
+  border-right-color: #3d2a5e;
+}
+
+body.dark-mode .shop-compare-plan:last-child {
+  border-right-color: transparent;
+}
+
+body.dark-mode .shop-compare-plan.highlighted {
+  background: linear-gradient(160deg, #2d1b4e, #1B0A47);
+  box-shadow: 0 4px 16px rgba(255, 197, 61, 0.12);
+}
+
+body.dark-mode .shop-compare-plan.annual-disabled {
+  background: #0a0015;
+  opacity: 0.5;
+}
+
+/* Plan text dark mode */
+body.dark-mode .shop-plan-name {
+  color: #F3F4F6;
+}
+
+body.dark-mode .shop-plan-currency,
+body.dark-mode .shop-plan-amount {
+  color: #FFC53D;
+}
+
+body.dark-mode .shop-plan-period {
+  color: #9CA3AF;
+}
+
+body.dark-mode .shop-plan-no-annual {
+  color: #6B7280;
+}
+
+/* Features dark mode */
+body.dark-mode .shop-plan-feature {
+  color: #E5E7EB;
+}
+
+body.dark-mode .shop-plan-check {
+  color: #4ADE80;
+}
+
+/* CTA buttons dark mode */
+body.dark-mode .shop-plan-cta.cta-primary {
+  background: linear-gradient(135deg, #7C3AED, #8B5CF6);
+  color: #fff;
+}
+
+body.dark-mode .shop-plan-cta.cta-secondary {
+  background: transparent;
+  color: #FFC53D;
+  border: 1.5px solid #FFC53D;
+}
+
+body.dark-mode .shop-plan-cta.cta-secondary:hover:not(:disabled) {
+  background: #FFC53D;
+  color: #1B0A47;
+}
+
+body.dark-mode .shop-plan-cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+body.dark-mode .shop-plan-disabled-note {
+  color: #6B7280;
+}
+
+/* Plan tag dark mode */
+body.dark-mode .shop-plan-tag {
+  background: linear-gradient(135deg, #FFC53D, #FFE8A3);
+  color: #1B0A47;
+}
+
+/* Billing toggle inside card dark mode */
+body.dark-mode .shop-pricing-card .shop-billing-toggle {
+  background: #3d2a5e;
+}
+
+body.dark-mode .shop-pricing-card .shop-billing-btn {
+  color: #9CA3AF;
+}
+
+body.dark-mode .shop-pricing-card .shop-billing-btn.active {
+  background: #8B5CF6;
+  color: #fff;
+}
+
+/* Mobile horizontal scroll dark mode */
+@media (max-width: 640px) {
+  body.dark-mode .shop-plans-comparison {
+    background: #1B0A47;
+  }
+  
+  body.dark-mode .shop-compare-plan {
+    background: #1B0A47;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  body.dark-mode .shop-compare-plan.highlighted {
+    background: linear-gradient(160deg, #2d1b4e, #1B0A47);
+  }
+  
+  body.dark-mode .shop-compare-plan.annual-disabled {
+    background: #0a0015;
+  }
+}
+
+/* Old plan cards (fallback) */
+body.dark-mode .shop-plan-card {
+  background: #1B0A47;
+  border-color: #3d2a5e;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+body.dark-mode .shop-plan-card.highlighted {
+  background: linear-gradient(160deg, #2d1b4e, #1B0A47);
+  border-color: #FFC53D;
+  box-shadow: 0 6px 24px rgba(255, 197, 61, 0.12);
+}
+
+/* Shop item cards dark mode */
+body.dark-mode .shop-item-card {
+  background: #1B0A47;
+  border-color: #2d1b4e;
+}
+
+body.dark-mode .shop-item-title { color: #F3F4F6; }
+body.dark-mode .shop-item-desc { color: #9CA3AF; }
+body.dark-mode .shop-item-footer { border-top-color: #2d1b4e; }
+body.dark-mode .shop-category-label { color: #C4B5FD; }
+body.dark-mode .shop-footer-note { color: #4B5563; }
+
+/* Premium active box dark mode */
+body.dark-mode .premium-active-box {
+  background: linear-gradient(135deg, #0a0015, #1B0A47);
+  border-color: rgba(255, 197, 61, 0.3);
+}
+
+
+
+
+/* ============================================================================
+   DARK MODE — Ads
+   ============================================================================ */
+
+body.dark-mode .ad-section-wrapper {
+  background: #0f0020;
+  border-color: rgba(108,63,201,0.2);
+}
+body.dark-mode .ad-affiliate-card {
+  background: #1B0A47;
+  border-color: #2d1b4e;
+}
+body.dark-mode .ad-affiliate-title { color: #F3F4F6; }
+body.dark-mode .ad-affiliate-desc  { color: #9CA3AF; }
+
+/* ============================================================================
+   DARK MODE — Review modal
+   ============================================================================ */
+
+body.dark-mode .review-modal { background: #1B0A47; }
+body.dark-mode .review-modal-header { border-bottom-color: #2d1b4e; }
+body.dark-mode .review-modal-title  { color: #F3F4F6; }
+body.dark-mode .review-modal-close  { background: #2d1b4e; color: #C4B5FD; }
+body.dark-mode .review-item-correct { background: rgba(22,163,74,0.1); border-color: rgba(22,163,74,0.3); }
+body.dark-mode .review-item-wrong   { background: rgba(239,68,68,0.1);  border-color: rgba(239,68,68,0.3); }
+body.dark-mode .review-item-q       { color: #D1D5DB; }
+body.dark-mode .review-detail-q     { color: #F3F4F6; }
+body.dark-mode .review-detail-opt   { background: #2d1b4e; border-color: #3d2a5e; color: #D1D5DB; }
+body.dark-mode .review-explanation  { background: rgba(255, 197, 61,0.08); border-color: rgba(255, 197, 61,0.3); }
+body.dark-mode .review-explanation p { color: #FDE68A; }
+
+/* ============================================================================
+   DARK MODE — Loading screen (branded colors)
+   ============================================================================ */
+
+body.dark-mode .loading-screen { background: #0a0015; }
+body.dark-mode .loading-spinner {
+  border-color: #2d1b4e;
+  border-top-color: #8B5CF6 !important;
+}
+body.dark-mode .loading-text { color: #6B7280; }
+
+/* ============================================================================
+   DARK MODE — Challenge flow
+   ============================================================================ */
+
+body.dark-mode .challenge-flow-notice {
+  background: rgba(108,63,201,0.12);
+  border-color: rgba(108,63,201,0.25);
+  color: #C4B5FD;
+}
+body.dark-mode .create-challenge-modal {
+  background: #1B0A47;
+  border-color: #2d1b4e;
+}
+body.dark-mode .challenge-score-circle {
+  background: linear-gradient(135deg, #1B0A47, #2d1b4e);
+  border-color: #8B5CF6;
+}
+
+/* ============================================================================
+   DARK MODE — Result page vibe box
+   ============================================================================ */
+
+body.dark-mode .result-vibe-box { background: linear-gradient(135deg, #0f0020, #1B0A47); }
+body.dark-mode .result-review-btn {
+  background: #1B0A47;
+  color: #C4B5FD;
+  border-color: #2d1b4e;
+}
