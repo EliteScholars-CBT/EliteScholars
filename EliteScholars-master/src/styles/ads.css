@@ -1,0 +1,260 @@
+/* ============================================================================
+   ADS — Light + Dark Mode
+   ============================================================================ */
+
+/* ── Wrapper ─────────────────────────────────────────────────────────────── */
+.ad-section-wrapper {
+  margin: 12px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px dashed rgba(108,63,201,0.18);
+  background: #FAFAFE;
+  padding: 6px 8px 10px;
+  position: relative;
+}
+
+.ad-section-label {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  text-align: right;
+  padding-bottom: 4px;
+}
+
+/* ── Publisher ad box ────────────────────────────────────────────────────── */
+.ad-publisher-box {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+  border-radius: 8px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ad-publisher-box > * {
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+/* ── Affiliate card ──────────────────────────────────────────────────────── */
+.ad-affiliate-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  background: #ffffff;
+  border: 1px solid #E9E4FF;
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  margin-top: 6px;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+
+.ad-affiliate-card:active {
+  box-shadow: 0 3px 10px rgba(108,63,201,0.18);
+  transform: scale(0.99);
+}
+
+.ad-affiliate-img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.ad-affiliate-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ad-affiliate-img-placeholder {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  background: rgba(108,63,201,0.06);
+}
+
+.ad-affiliate-body {
+  padding: 8px 12px 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ad-affiliate-badge {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--aff-color, #8B5CF6);
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}
+
+.ad-affiliate-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1B0A47;
+  line-height: 1.3;
+  margin-bottom: 3px;
+}
+
+.ad-affiliate-desc {
+  font-size: 11px;
+  color: #6B7280;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.ad-affiliate-cta {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--aff-color, #8B5CF6);
+}
+
+/* ── Custom ad card ──────────────────────────────────────────────────────── */
+.ad-custom-card {
+  display: block;
+  background: #ffffff;
+  border: 1px solid #E9E4FF;
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  margin-top: 6px;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+
+.ad-custom-card:active {
+  box-shadow: 0 3px 10px rgba(124,58,237,0.18);
+  transform: scale(0.99);
+}
+
+.ad-custom-img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.ad-custom-img-placeholder {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: rgba(124,58,237,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+}
+
+.ad-custom-body {
+  padding: 8px 12px 10px;
+}
+
+.ad-custom-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1B0A47;
+  margin-bottom: 3px;
+  line-height: 1.3;
+}
+
+.ad-custom-desc {
+  font-size: 11px;
+  color: #6B7280;
+  margin-bottom: 5px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ad-custom-cta {
+  font-size: 11px;
+  font-weight: 700;
+  color: #7C3AED;
+}
+
+/* ── Dark mode ───────────────────────────────────────────────────────────── */
+body.dark-mode .ad-section-wrapper {
+  background: #0f0020;
+  border-color: rgba(108,63,201,0.2);
+}
+
+body.dark-mode .ad-section-label {
+  color: #4B5563;
+}
+
+body.dark-mode .ad-affiliate-card {
+  background: #1B0A47;
+  border-color: #2d1b4e;
+}
+
+body.dark-mode .ad-affiliate-img-placeholder {
+  background: rgba(108,63,201,0.12);
+}
+
+body.dark-mode .ad-affiliate-title {
+  color: #F3F4F6;
+}
+
+body.dark-mode .ad-affiliate-desc {
+  color: #9CA3AF;
+}
+
+body.dark-mode .ad-affiliate-card:active {
+  box-shadow: 0 3px 10px rgba(108,63,201,0.3);
+}
+
+body.dark-mode .ad-custom-card {
+  background: #1B0A47;
+  border-color: #2d1b4e;
+}
+
+body.dark-mode .ad-custom-img-placeholder {
+  background: rgba(124,58,237,0.12);
+}
+
+body.dark-mode .ad-custom-title {
+  color: #F3F4F6;
+}
+
+body.dark-mode .ad-custom-desc {
+  color: #9CA3AF;
+}
+
+body.dark-mode .ad-custom-cta {
+  color: #C4B5FD;
+}
+
+body.dark-mode .ad-custom-card:active {
+  box-shadow: 0 3px 10px rgba(124,58,237,0.3);
+}
+
+.ad-custom-badge {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #7C3AED;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}
+
+body.dark-mode .ad-custom-badge {
+  color: #C4B5FD;
+}
