@@ -1,0 +1,673 @@
+/* ============================================================================
+   POLISH LAYER
+   Loaded last on purpose — this file refines color, motion and the desktop/
+   laptop layout on top of the existing screens without rewriting them.
+   Nothing here removes an existing rule; it sharpens what's already there.
+   ============================================================================ */
+
+/* ── Design tokens ──────────────────────────────────────────────────────── */
+:root {
+  --royal-900: #1B0A47;
+  --royal-800: #2E1065;
+  --royal-700: #38086e;
+  --royal-600: #7C3AED;
+  --royal-500: #8B5CF6;
+  --royal-400: #9169e0;
+  --gold-700: #D9911A;
+  --gold-500: #FFC53D;
+  --gold-300: #FFE8A3;
+  --emerald-500: #0F9D74;
+  --ruby-500: #DC2626;
+  --app-bg: #F6F2FF;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-pop: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  --dur-fast: 0.15s;
+  --dur-med: 0.28s;
+  --dur-slow: 0.5s;
+
+  --shadow-sm: 0 2px 8px rgba(46, 16, 101, 0.08);
+  --shadow-md: 0 6px 20px rgba(46, 16, 101, 0.12);
+  --shadow-lg: 0 16px 40px rgba(46, 16, 101, 0.18);
+  --shadow-gold: 0 6px 18px rgba(255, 197, 61, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================================
+   LAPTOP / DESKTOP LAYOUT
+   The old rule just stretched the mobile layout to 1200px, which is why it
+   looked broken on a laptop — single-column cards blown up to billboard
+   width. Instead we present the product the way most polished mobile-first
+   apps do on a bigger screen: a true app frame, centered, on a calm branded
+   backdrop, so every screen inside keeps its intended proportions.
+   ============================================================================ */
+@media (min-width: 640px) {
+  html, body { background: var(--royal-900); }
+
+  body {
+    padding: 40px 20px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Ambient backdrop so desktop doesn't feel like empty void around a card */
+  body::before,
+  body::after {
+    content: '';
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(90px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before {
+    width: 520px;
+    height: 520px;
+    top: -160px;
+    left: -160px;
+    background: radial-gradient(circle, rgba(108, 63, 201, 0.55), transparent 70%);
+  }
+  body::after {
+    width: 480px;
+    height: 480px;
+    bottom: -160px;
+    right: -160px;
+    background: radial-gradient(circle, rgba(255, 197, 61, 0.28), transparent 70%);
+  }
+
+  .phone {
+    max-width: 430px !important;
+    min-height: min(920px, 100dvh) !important;
+    height: min(920px, 100dvh);
+    border-radius: 32px;
+    box-shadow:
+      0 40px 90px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 0 0 8px rgba(255, 255, 255, 0.02);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    animation: frameIn 0.5s var(--ease-out) both;
+  }
+
+  .scr { max-height: min(920px, 100dvh); }
+}
+
+/* Roomier frame once there's real space to spare — still an app, not a
+   stretched mobile page, just a slightly larger reading area. */
+@media (min-width: 1024px) {
+  .phone { max-width: 460px !important; }
+}
+
+@keyframes frameIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ============================================================================
+   GLOBAL MICRO-INTERACTIONS
+   ============================================================================ */
+button, .bottom-nav-item, .subjects-grid-card, .challenge-card,
+.create-challenge-btn, .accept-btn, .decline-btn, .tab-btn,
+a, .settings-group-btn {
+  transition:
+    transform var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) ease,
+    border-color var(--dur-fast) ease,
+    filter var(--dur-fast) ease,
+    opacity var(--dur-fast) ease;
+}
+
+/* Punchier tap: snap down hard, spring back past 1 on release (the
+   cubic-bezier overshoots), instead of a flat, muted press. */
+button:active:not(:disabled) { transform: scale(0.92); }
+.subjects-grid-card:active,
+.challenge-card:active { transform: scale(0.96) !important; }
+
+@media (hover: hover) {
+  .subjects-grid-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px) scale(1.015); }
+  .challenge-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+  .create-challenge-btn:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: var(--shadow-gold);
+  }
+  .accept-btn:hover:not(:disabled) { transform: translateY(-2px) scale(1.03); }
+  .bottom-nav-item:not(.active):hover .bottom-nav-icon { transform: scale(1.18) rotate(-6deg); }
+}
+
+/* ── Punchier screen entrances — replaces the flat fade the base app used ── */
+@keyframes fdPop {
+  0%   { opacity: 0; transform: translateY(18px) scale(0.97); }
+  55%  { opacity: 1; transform: translateY(-3px) scale(1.008); }
+  100% { transform: translateY(0) scale(1); }
+}
+@keyframes suPop {
+  0%   { opacity: 0; transform: translateY(28px) scale(0.95); }
+  60%  { opacity: 1; transform: translateY(-4px) scale(1.01); }
+  100% { transform: translateY(0) scale(1); }
+}
+@keyframes piPop {
+  0%   { opacity: 0; transform: scale(0.6) rotate(-4deg); }
+  65%  { opacity: 1; transform: scale(1.08) rotate(1deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+.fd { animation: fdPop 0.42s var(--ease-spring) both; }
+.su { animation: suPop 0.4s var(--ease-spring) both; }
+.pi { animation: piPop 0.4s var(--ease-spring) both; }
+
+/* Correct/wrong feedback — bigger pop, wider shake, plus a color-ring flash */
+@keyframes correctPopBig {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.05); box-shadow: 0 0 0 6px rgba(22, 163, 74, 0.18); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
+@keyframes wrongShakeBig {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-7px) rotate(-1deg); }
+  30% { transform: translateX(7px) rotate(1deg); }
+  45% { transform: translateX(-6px); }
+  60% { transform: translateX(6px); }
+  75% { transform: translateX(-3px); }
+  90% { transform: translateX(3px); }
+}
+.correct-pop { animation: correctPopBig 0.45s var(--ease-out) both; }
+.wrong-shake { animation: wrongShakeBig 0.5s ease both; }
+
+/* Nav — icon lifts and tab underline glides in on selection */
+.bottom-nav-item { position: relative; }
+.bottom-nav-icon {
+  transition: transform var(--dur-med) var(--ease-spring);
+}
+.bottom-nav-item.active .bottom-nav-icon {
+  animation: navPop 0.45s var(--ease-pop) both;
+}
+@keyframes navPop {
+  0%   { transform: scale(0.5) translateY(4px) rotate(-10deg); }
+  50%  { transform: scale(1.35) translateY(-6px) rotate(8deg); }
+  75%  { transform: scale(0.92) translateY(0) rotate(-3deg); }
+  100% { transform: scale(1) translateY(0) rotate(0); }
+}
+.bottom-nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--gold-500);
+  transform: translateX(-50%);
+  animation: dotIn var(--dur-med) var(--ease-spring) both;
+}
+@keyframes dotIn {
+  from { opacity: 0; transform: translateX(-50%) scale(0); }
+  to   { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+
+/* Notification bell — badge announces itself instead of just appearing */
+.notification-badge { animation: badgeIn 0.4s var(--ease-pop) both, badgePulse 1.3s ease-in-out 0.4s infinite; }
+@keyframes badgeIn {
+  0%   { opacity: 0; transform: scale(0) rotate(-20deg); }
+  60%  { opacity: 1; transform: scale(1.3) rotate(8deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); transform: scale(1); }
+  50%      { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); transform: scale(1.08); }
+}
+.notification-bell:has(.notification-badge) {
+  animation: bellRing 3.2s ease-in-out infinite;
+  transform-origin: top center;
+}
+@keyframes bellRing {
+  0%, 92%, 100% { transform: rotate(0); }
+  93% { transform: rotate(-14deg); }
+  94% { transform: rotate(11deg); }
+  95% { transform: rotate(-8deg); }
+  96% { transform: rotate(5deg); }
+  97% { transform: rotate(-2deg); }
+  98% { transform: rotate(0); }
+}
+.notification-popup { animation: challengeSlideIn 0.32s var(--ease-spring) both; }
+.notification-popup.hiding { animation: challengeSlideOut 0.3s ease-in both; }
+@keyframes challengeSlideIn {
+  from { opacity: 0; transform: translateY(-10px) scale(0.94); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes challengeSlideOut {
+  to { opacity: 0; transform: translateY(-10px) scale(0.94); }
+}
+
+/* Toasts — a confident bounce in, not a flat pop */
+.toast { animation: toastIn 0.5s var(--ease-pop) both; box-shadow: var(--shadow-lg); }
+@keyframes toastIn {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(26px) scale(0.85); }
+  60%  { opacity: 1; transform: translateX(-50%) translateY(-4px) scale(1.04); }
+  100% { transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+/* Tabs — sliding active state with a little overshoot */
+.challenges-tabs { position: relative; }
+.tab-btn { position: relative; }
+.tab-btn.active { animation: tabSettle 0.32s var(--ease-spring) both; }
+@keyframes tabSettle {
+  0%   { transform: translateY(4px) scale(0.94); opacity: 0.6; }
+  70%  { transform: translateY(-1px) scale(1.03); opacity: 1; }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* Status badges — a livelier nudge every couple seconds instead of a slow
+   fade, so "something's waiting on you" actually reads as active. */
+.badge-pending, .badge-accepted {
+  animation: badgeNudge 1.8s ease-in-out infinite;
+  transform-origin: center;
+}
+@keyframes badgeNudge {
+  0%, 78%, 100% { transform: scale(1) rotate(0); }
+  84%  { transform: scale(1.08) rotate(-3deg); }
+  90%  { transform: scale(1.08) rotate(3deg); }
+  96%  { transform: scale(1) rotate(0); }
+}
+
+/* Cards entering a list — quick staggered rise instead of popping in flat */
+.challenge-card, .challenge-history-card, .subjects-grid-card {
+  animation: cardRise var(--dur-med) var(--ease-out) both;
+}
+.challenges-list > *:nth-child(1) { animation-delay: 0.02s; }
+.challenges-list > *:nth-child(2) { animation-delay: 0.06s; }
+.challenges-list > *:nth-child(3) { animation-delay: 0.10s; }
+.challenges-list > *:nth-child(4) { animation-delay: 0.14s; }
+.challenges-list > *:nth-child(5) { animation-delay: 0.18s; }
+@keyframes cardRise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================================
+   CHALLENGE WINNER MOMENT
+   The scoreboard result is the emotional payoff of the whole feature —
+   give it one deliberate, orchestrated flourish instead of a plain row.
+   ============================================================================ */
+.challenge-history-card.won {
+  border-color: var(--gold-500) !important;
+  box-shadow: var(--shadow-gold);
+  animation: cardRise var(--dur-med) var(--ease-out) both, wonGlow 2.4s ease-in-out 0.4s 1;
+}
+@keyframes wonGlow {
+  0%   { box-shadow: var(--shadow-gold); }
+  35%  { box-shadow: 0 0 0 6px rgba(255, 197, 61, 0.18), var(--shadow-gold); }
+  100% { box-shadow: var(--shadow-gold); }
+}
+.history-status-badge.won {
+  animation: trophyBounce 0.6s var(--ease-spring) 0.3s both;
+}
+@keyframes trophyBounce {
+  0%   { transform: scale(0.4) rotate(-8deg); opacity: 0; }
+  55%  { transform: scale(1.15) rotate(4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); }
+}
+
+
+/* ============================================================================
+   CONFETTI — fires on challenge wins, strong quiz scores, achievements
+   ============================================================================ */
+.confetti-burst {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 10050;
+}
+.confetti-piece {
+  position: absolute;
+  top: -14px;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-name: confettiFall;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  animation-fill-mode: forwards;
+}
+@keyframes confettiFall {
+  0%   { opacity: 1; transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  20%  { transform: translate3d(calc(var(--drift) * 0.3), 22vh, 0) rotate(calc(var(--rot) * 0.3)) scale(1.1); }
+  60%  { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(var(--drift), 105vh, 0) rotate(var(--rot)) scale(0.9); }
+}
+
+/* ============================================================================
+   MORE ENERGY
+   ============================================================================ */
+
+/* Cards rise with a bounce and a quicker stagger */
+.challenge-card, .challenge-history-card, .subjects-grid-card {
+  animation: cardBounceIn 0.45s var(--ease-spring) both;
+}
+@keyframes cardBounceIn {
+  0%   { opacity: 0; transform: translateY(22px) scale(0.94); }
+  60%  { opacity: 1; transform: translateY(-3px) scale(1.01); }
+  100% { transform: translateY(0) scale(1); }
+}
+.subjects-grid > *:nth-child(1) { animation-delay: 0.02s; }
+.subjects-grid > *:nth-child(2) { animation-delay: 0.07s; }
+.subjects-grid > *:nth-child(3) { animation-delay: 0.12s; }
+.subjects-grid > *:nth-child(4) { animation-delay: 0.17s; }
+.subjects-grid > *:nth-child(5) { animation-delay: 0.22s; }
+.subjects-grid > *:nth-child(6) { animation-delay: 0.27s; }
+.subjects-grid > *:nth-child(n+7) { animation-delay: 0.32s; }
+
+/* Winner card: bigger entrance + a repeating gold shine sweep */
+.challenge-history-card.won {
+  position: relative;
+  overflow: hidden;
+  animation: cardBounceIn 0.55s var(--ease-pop) both, wonGlow 1.6s ease-in-out 0.4s 2;
+}
+.challenge-history-card.won::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -60%;
+  width: 40%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 235, 130, 0.55), transparent);
+  transform: skewX(-20deg);
+  animation: shineSweep 2.8s ease-in-out 0.8s infinite;
+  pointer-events: none;
+}
+@keyframes shineSweep {
+  0%   { left: -60%; }
+  45%, 100% { left: 130%; }
+}
+.history-status-badge.won { animation: trophyBounce 0.7s var(--ease-pop) 0.3s both; }
+.challenge-history-card.lost { animation: cardBounceIn 0.45s var(--ease-spring) both; }
+
+/* XP bars: fill springs in and a highlight streaks across */
+.xp-bar-fill, .xp-bar-compact-fill {
+  position: relative;
+  overflow: hidden;
+  transition: width 0.7s var(--ease-spring);
+}
+.xp-bar-fill::after, .xp-bar-compact-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: translateX(-100%);
+  animation: barShine 2s ease-in-out infinite;
+}
+@keyframes barShine {
+  0%   { transform: translateX(-100%); }
+  60%, 100% { transform: translateX(100%); }
+}
+
+/* Quiz: options slide in one after another, next/final button bounces */
+.quiz-option { animation: optionIn 0.4s var(--ease-spring) both; }
+.quiz-option:nth-child(1) { animation-delay: 0.02s; }
+.quiz-option:nth-child(2) { animation-delay: 0.08s; }
+.quiz-option:nth-child(3) { animation-delay: 0.14s; }
+.quiz-option:nth-child(4) { animation-delay: 0.20s; }
+.quiz-option:nth-child(5) { animation-delay: 0.26s; }
+@keyframes optionIn {
+  0%   { opacity: 0; transform: translateX(-24px) scale(0.96); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+.quiz-next-btn { animation: nextBounce 0.5s var(--ease-pop) both; }
+@keyframes nextBounce {
+  0%   { opacity: 0; transform: translateY(20px) scale(0.85); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Result screen: score circle punches in, stat cards pop one by one */
+.result-score-circle { animation: scorePunch 0.8s var(--ease-pop) 0.15s both; }
+@keyframes scorePunch {
+  0%   { opacity: 0; transform: scale(0.3) rotate(-20deg); }
+  70%  { opacity: 1; transform: scale(1.12) rotate(4deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+.result-stat-card { animation: cardBounceIn 0.5s var(--ease-spring) both; }
+.result-stats > *:nth-child(1) { animation-delay: 0.45s; }
+.result-stats > *:nth-child(2) { animation-delay: 0.55s; }
+.result-stats > *:nth-child(3) { animation-delay: 0.65s; }
+
+/* Achievement popup: drops in with a bounce and a gold pulse */
+.achievement-popup { animation: achieveDrop 0.65s var(--ease-pop) both, achievePulse 1.6s ease-in-out 0.7s 2; }
+@keyframes achieveDrop {
+  0%   { opacity: 0; transform: translateY(-60px) scale(0.7); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes achievePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 197, 61, 0.5); }
+  50%      { box-shadow: 0 0 0 12px rgba(255, 197, 61, 0); }
+}
+.achievement-popup-icon { animation: iconSpin 0.9s var(--ease-pop) 0.2s both; }
+@keyframes iconSpin {
+  0%   { transform: scale(0) rotate(-180deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+/* ============================================================================
+   PALETTE v2 — bright violet + bright gold, soft and luminous
+   ============================================================================ */
+:root {
+  --grad-hero:
+    radial-gradient(110% 90% at 100% 0%, rgba(255, 197, 61, 0.30), transparent 55%),
+    radial-gradient(100% 100% at 0% 100%, rgba(167, 139, 250, 0.55), transparent 60%),
+    linear-gradient(140deg, #3B1A8F 0%, #6D28D9 48%, #8B5CF6 100%);
+  --grad-deep:
+    radial-gradient(90% 60% at 50% 0%, rgba(139, 92, 246, 0.55), transparent 70%),
+    radial-gradient(80% 60% at 50% 100%, rgba(255, 197, 61, 0.16), transparent 70%),
+    linear-gradient(170deg, #1B0A47 0%, #2E1065 55%, #1B0A47 100%);
+  --grad-gold: linear-gradient(135deg, #FFE8A3 0%, #FFC53D 50%, #F5A524 100%);
+  --grad-violet: linear-gradient(135deg, #6D28D9, #8B5CF6 55%, #A78BFA);
+  --soft-violet: #EDE9FE;
+  --soft-gold: #FFF3C4;
+  --shadow-violet: 0 12px 28px rgba(124, 58, 237, 0.32);
+}
+body.dark-mode { --grad-hero: linear-gradient(140deg, #14082F, #2E1065 60%, #3B1A8F); --grad-deep: linear-gradient(170deg, #0a0015, #1B0A47 60%, #0a0015); }
+
+.ic { display: inline-block; vertical-align: -0.16em; flex-shrink: 0; }
+
+/* ── Buttons: a light sweep glides across primary actions ────────────────── */
+.auth-btn, .create-challenge-btn, .accept-btn, .quiz-next-btn, .onboard-button, .game-start-btn,
+.premium-cta-btn, .limit-gate-premium-btn, .shop-premium-cta, .subjects-empty-btn, .result-scorecard-btn,
+.learn-quiz-finish-btn, .learn-nav-btn, .join-button, .sharegate-start-btn, .adgate-continue-btn,
+.game-result-btn, .flashcards-restart-btn, .scorecard-share-btn, .gate-share-btn, .shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.auth-btn::after, .create-challenge-btn::after, .accept-btn::after, .quiz-next-btn::after, .onboard-button::after,
+.game-start-btn::after, .premium-cta-btn::after, .limit-gate-premium-btn::after, .shop-premium-cta::after,
+.subjects-empty-btn::after, .result-scorecard-btn::after, .learn-quiz-finish-btn::after, .learn-nav-btn::after,
+.join-button::after, .sharegate-start-btn::after, .adgate-continue-btn::after, .game-result-btn::after,
+.flashcards-restart-btn::after, .scorecard-share-btn::after, .gate-share-btn::after {
+  content: '';
+  position: absolute;
+  top: -10%; left: -90%;
+  width: 50%; height: 120%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: skewX(-22deg);
+  animation: btnSweep 3.4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+@keyframes btnSweep { 0% { left: -90%; } 38%, 100% { left: 160%; } }
+
+/* Primary button colour language */
+.auth-btn, .accept-btn, .quiz-next-btn, .onboard-button, .learn-nav-btn, .join-button {
+  background: var(--grad-violet) !important;
+  box-shadow: var(--shadow-violet);
+}
+.create-challenge-btn, .game-start-btn, .subjects-empty-btn, .premium-cta-btn {
+  background: var(--grad-gold) !important;
+  color: #2E1065 !important;
+  box-shadow: 0 10px 24px rgba(255, 197, 61, 0.42);
+}
+
+/* ── Cards: soft violet-tinted elevation and a hovering colour halo ──────── */
+.subjects-grid-card, .challenge-card, .challenge-history-card, .profile-card, .shop-card, .result-stat-card {
+  box-shadow: 0 8px 22px rgba(124, 58, 237, 0.10), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+  border-color: rgba(139, 92, 246, 0.14);
+}
+.subjects-grid-card { position: relative; overflow: hidden; }
+.subjects-grid-card::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(120% 90% at 100% 0%, var(--subject-bg, rgba(139, 92, 246, .16)), transparent 60%);
+  opacity: .8;
+}
+.subjects-grid-icon { transition: transform .35s var(--ease-pop); }
+.subjects-grid-card:hover .subjects-grid-icon,
+.subjects-grid-card:active .subjects-grid-icon { transform: scale(1.14) rotate(-6deg); }
+.subjects-grid-icon svg, .subject-icon svg { animation: icFloat 4.2s ease-in-out infinite; }
+@keyframes icFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px) rotate(-3deg); } }
+
+/* Header / hero surfaces */
+.subjects-header, .onboard-container, .exam-type-header-section, .challenges-header, .result-hero, .profile-header, .leaderboard-header {
+  background: var(--grad-hero);
+}
+.exam-type-page { background: var(--grad-deep) !important; }
+.exam-type-header-section { background: transparent; }
+.exam-type-icon {
+  width: 84px; height: 84px; margin: 0 auto 14px; border-radius: 28px;
+  display: flex; align-items: center; justify-content: center; color: #2E1065;
+  background: var(--grad-gold); box-shadow: 0 16px 36px rgba(255, 197, 61, 0.45), 0 0 0 8px rgba(255, 255, 255, 0.07);
+  font-size: inherit; animation: heroIcon 3.4s ease-in-out infinite;
+}
+@keyframes heroIcon { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-8px) rotate(4deg); } }
+.exam-type-compact-card {
+  background: linear-gradient(160deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .05));
+  border-color: rgba(255, 255, 255, .22);
+  animation: examIn .6s var(--ease-spring) both;
+  position: relative; overflow: hidden;
+}
+.exam-type-compact-card:nth-child(1) { animation-delay: .05s; } .exam-type-compact-card:nth-child(2) { animation-delay: .12s; }
+.exam-type-compact-card:nth-child(3) { animation-delay: .19s; } .exam-type-compact-card:nth-child(4) { animation-delay: .26s; }
+.exam-type-compact-card::after {
+  content: ''; position: absolute; top: 0; left: -80%; width: 45%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .22), transparent); transform: skewX(-20deg);
+  animation: btnSweep 4.6s ease-in-out infinite; pointer-events: none;
+}
+.exam-type-compact-card:nth-child(2)::after { animation-delay: .6s; } .exam-type-compact-card:nth-child(3)::after { animation-delay: 1.2s; } .exam-type-compact-card:nth-child(4)::after { animation-delay: 1.8s; }
+@keyframes examIn { 0% { opacity: 0; transform: translateY(26px) scale(.9) rotate(-2deg); } 100% { opacity: 1; transform: none; } }
+.exam-type-compact-icon { width: 44px; height: 44px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: #fff; background: rgba(255, 255, 255, .16); transition: transform .3s var(--ease-pop), background .2s, color .2s; }
+.exam-type-compact-card:hover .exam-type-compact-icon, .exam-type-compact-card:active .exam-type-compact-icon { transform: scale(1.18) rotate(-8deg); background: var(--grad-gold); color: #2E1065; }
+
+/* ── More movement: fast, distinct, not just breathing ───────────────────── */
+.settings-group-btn { position: relative; overflow: hidden; }
+.settings-group-btn:hover .settings-group-icon { animation: icWiggle .5s ease; }
+@keyframes icWiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-16deg) scale(1.15); } 60% { transform: rotate(12deg) scale(1.1); } }
+.bottom-nav-item.active .bottom-nav-icon svg { filter: drop-shadow(0 4px 8px rgba(124, 58, 237, .45)); color: #7C3AED; }
+.bottom-nav-item.active .bottom-nav-label { color: #7C3AED; }
+.bottom-nav { backdrop-filter: blur(14px) saturate(1.4); background: rgba(255, 255, 255, .86); }
+body.dark-mode .bottom-nav { background: rgba(27, 10, 71, .86); }
+.notification-bell svg { display: block; }
+.popup-icon { display: flex; align-items: center; justify-content: center; color: #FFC53D; }
+
+.quiz-option:active, .subjects-mode-btn:active { transform: scale(.95); }
+.subjects-mode-btn.active { background: var(--grad-violet) !important; color: #fff !important; animation: fsPillOn .4s var(--ease-pop); }
+.result-hero { position: relative; overflow: hidden; }
+.result-hero::before, .subjects-header::before {
+  content: ''; position: absolute; width: 220px; height: 220px; top: -90px; right: -60px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 232, 163, .45), transparent 65%); animation: glowDrift 7s ease-in-out infinite; pointer-events: none;
+}
+@keyframes glowDrift { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-30px, 24px) scale(1.15); } }
+.subjects-header { position: relative; overflow: hidden; }
+
+/* twinkle sparkle utility for gold accents */
+.xp-bar-fill, .xp-bar-compact-fill { background: var(--grad-gold) !important; }
+.subjects-grid-badge { animation: badgePop .5s var(--ease-pop) .3s both; }
+@keyframes badgePop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+/* ============================================================================
+   SPLASH v2
+   ============================================================================ */
+.splash-v2 { background: var(--grad-deep); justify-content: center; align-items: center; gap: 14px; overflow: hidden; position: relative; }
+.splash-v2 > * { position: relative; z-index: 2; }
+
+.sp-aurora { position: absolute !important; inset: 0; z-index: 0 !important; overflow: hidden; }
+.sp-aurora i { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .75; mix-blend-mode: screen; }
+.sp-aurora i:nth-child(1) { width: 340px; height: 340px; left: -110px; top: -70px; background: #8B5CF6; animation: auroraA 9s ease-in-out infinite; }
+.sp-aurora i:nth-child(2) { width: 300px; height: 300px; right: -100px; top: 22%; background: #FFC53D; opacity: .38; animation: auroraB 11s ease-in-out infinite; }
+.sp-aurora i:nth-child(3) { width: 320px; height: 320px; left: 8%; bottom: -120px; background: #6D28D9; animation: auroraB 10s ease-in-out infinite reverse; }
+.sp-aurora i:nth-child(4) { width: 200px; height: 200px; right: 10%; bottom: 6%; background: #F472B6; opacity: .25; animation: auroraA 8s ease-in-out infinite reverse; }
+@keyframes auroraA { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(60px, 50px) scale(1.25); } }
+@keyframes auroraB { 0%, 100% { transform: translate(0, 0) scale(1.1); } 50% { transform: translate(-70px, -40px) scale(.9); } }
+.sp-grid {
+  position: absolute !important; inset: 0; z-index: 1 !important; opacity: .5; pointer-events: none;
+  background-image: linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+  background-size: 34px 34px;
+  -webkit-mask-image: radial-gradient(70% 55% at 50% 45%, #000, transparent 75%); mask-image: radial-gradient(70% 55% at 50% 45%, #000, transparent 75%);
+  animation: gridDrift 12s linear infinite;
+}
+@keyframes gridDrift { to { background-position: 34px 34px; } }
+
+.sp-spark { position: absolute !important; z-index: 1 !important; background: #fff; opacity: 0; clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); animation: sparkle ease-in-out infinite; filter: drop-shadow(0 0 6px rgba(255, 255, 255, .9)); }
+.sp-spark.gold { background: #FFD766; filter: drop-shadow(0 0 7px rgba(255, 197, 61, .95)); }
+@keyframes sparkle { 0%, 100% { opacity: 0; transform: scale(.2) rotate(0); } 45% { opacity: 1; transform: scale(1) rotate(90deg); } 70% { opacity: .6; transform: scale(.7) rotate(150deg); } }
+.sp-dust { position: absolute !important; bottom: -10px; z-index: 1 !important; border-radius: 50%; background: #FFE8A3; box-shadow: 0 0 8px rgba(255, 197, 61, .9); opacity: 0; animation: dustUp linear infinite; }
+@keyframes dustUp { 0% { transform: translate(0, 0); opacity: 0; } 15% { opacity: .9; } 100% { transform: translate(var(--drift), -105vh); opacity: 0; } }
+
+.sp-stage { position: relative; width: 210px; height: 210px; display: flex; align-items: center; justify-content: center; animation: spStage .9s var(--ease-pop) both; }
+@keyframes spStage { 0% { transform: scale(.2) rotate(-40deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.sp-rings { position: absolute; inset: 0; }
+.sp-rings span { position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, .22); }
+.sp-rings .r1 { inset: 12px; border-style: dashed; border-color: rgba(255, 197, 61, .6); animation: ringSpin 14s linear infinite; }
+.sp-rings .r2 { inset: -8px; border-color: rgba(167, 139, 250, .55); animation: ringSpin 22s linear infinite reverse; }
+.sp-rings .r3 { inset: -30px; border-color: rgba(255, 255, 255, .1); animation: ringPulse 2.6s ease-out infinite; }
+@keyframes ringSpin { to { transform: rotate(360deg); } }
+@keyframes ringPulse { 0% { transform: scale(.85); opacity: .9; } 100% { transform: scale(1.25); opacity: 0; } }
+.sp-rings .orb { position: absolute; left: 50%; top: 50%; width: 12px; height: 12px; margin: -6px; border-radius: 50%; background: #FFC53D; box-shadow: 0 0 14px 3px rgba(255, 197, 61, .9); }
+.sp-rings .o1 { animation: orbit1 4.2s linear infinite; }
+.sp-rings .o2 { width: 9px; height: 9px; margin: -4.5px; background: #C4B5FD; box-shadow: 0 0 12px 3px rgba(196, 181, 253, .9); animation: orbit2 6s linear infinite; }
+.sp-rings .o3 { width: 7px; height: 7px; margin: -3.5px; background: #fff; box-shadow: 0 0 10px 3px rgba(255, 255, 255, .9); animation: orbit1 8s linear infinite reverse; }
+@keyframes orbit1 { from { transform: rotate(0) translateX(98px); } to { transform: rotate(360deg) translateX(98px); } }
+@keyframes orbit2 { from { transform: rotate(120deg) translateX(114px); } to { transform: rotate(480deg) translateX(114px); } }
+
+.sp-logo-wrap { position: relative; width: 132px; height: 132px; display: flex; align-items: center; justify-content: center; }
+.sp-logo { width: 132px !important; height: 132px !important; border-radius: 50%; object-fit: cover; animation: logoDrop 1s var(--ease-pop) .15s both, logoGlow 2.4s ease-in-out 1.2s infinite !important; box-shadow: 0 0 0 5px rgba(255, 255, 255, .14), 0 0 60px rgba(255, 197, 61, .6); }
+@keyframes logoDrop { 0% { transform: scale(0) rotate(-200deg); opacity: 0; } 70% { transform: scale(1.14) rotate(8deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+@keyframes logoGlow { 0%, 100% { box-shadow: 0 0 0 5px rgba(255, 255, 255, .14), 0 0 50px rgba(255, 197, 61, .5); } 50% { box-shadow: 0 0 0 9px rgba(255, 255, 255, .06), 0 0 90px rgba(255, 197, 61, .85); } }
+.sp-burst { position: absolute; inset: -36px; border-radius: 50%; background: conic-gradient(from 0deg, transparent, rgba(255, 232, 163, .8), transparent 25%, rgba(167, 139, 250, .7), transparent 55%, rgba(255, 197, 61, .8), transparent 80%); -webkit-mask-image: radial-gradient(circle, transparent 46%, #000 48%, transparent 72%); mask-image: radial-gradient(circle, transparent 46%, #000 48%, transparent 72%); animation: ringSpin 5s linear infinite; opacity: .9; }
+.sp-gloss { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; pointer-events: none; }
+.sp-gloss::after { content: ''; position: absolute; top: -20%; left: -80%; width: 40%; height: 140%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .7), transparent); transform: skewX(-20deg); animation: btnSweep 2.6s ease-in-out 1.1s infinite; }
+
+.sp-title { display: flex; justify-content: center; margin: 4px 0 0; font-size: 38px; font-weight: 900; letter-spacing: -.5px; line-height: 1; color: #fff; text-shadow: 0 6px 24px rgba(0, 0, 0, .35); }
+.sp-title span { display: inline-block; opacity: 0; animation: letterIn .6s var(--ease-pop) both; }
+.sp-title span.gold { background: linear-gradient(180deg, #FFF3C4, #FFC53D 60%, #F5A524); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; filter: drop-shadow(0 4px 14px rgba(255, 197, 61, .55)); }
+@keyframes letterIn { 0% { opacity: 0; transform: translateY(34px) scale(.5) rotate(12deg); } 70% { opacity: 1; transform: translateY(-5px) scale(1.12) rotate(-2deg); } 100% { opacity: 1; transform: none; } }
+
+.sp-exams { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 2px; }
+.sp-chip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 99px; font-size: 11px; font-weight: 800; letter-spacing: .8px; color: #fff; background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .24); backdrop-filter: blur(8px); opacity: 0; animation: chipIn .55s var(--ease-pop) both; }
+.sp-chip svg { color: #FFC53D; }
+@keyframes chipIn { 0% { opacity: 0; transform: translateY(20px) scale(.7); } 100% { opacity: 1; transform: none; } }
+
+.sp-loader { width: 220px; margin-top: 10px; animation: chipIn .6s var(--ease-out) 1.9s both; }
+.sp-loader-bar { height: 7px; border-radius: 99px; background: rgba(255, 255, 255, .16); overflow: hidden; box-shadow: inset 0 1px 3px rgba(0, 0, 0, .3); }
+.sp-loader-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #A78BFA, #FFC53D, #FFE8A3); position: relative; overflow: hidden; transition: width .1s linear; box-shadow: 0 0 14px rgba(255, 197, 61, .8); }
+.sp-loader-bar i::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .8), transparent); animation: fsBar 1.1s linear infinite; }
+.sp-loader-row { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; font-weight: 600; color: rgba(255, 255, 255, .6); }
+.sp-loader-row b { color: #FFE8A3; font-variant-numeric: tabular-nums; }
+.splash-v2 .splash-footer { position: absolute; bottom: 18px; margin: 0; opacity: .8; }
+.exam-type-page { overflow-y: auto !important; -webkit-overflow-scrolling: touch; padding-bottom: 20px; }
+
+/* Icon-only close buttons: center the SVG now that these hold real icons
+   instead of a text glyph */
+.modal-close, .toast-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+}
+.modal-close:active, .toast-close:active { background: rgba(255, 255, 255, 0.15); }
+
+/* PWA theme-color meta stays in sync with the new violet identity — see index.html */
