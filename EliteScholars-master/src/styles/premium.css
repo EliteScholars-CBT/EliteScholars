@@ -1,0 +1,1637 @@
+/* ============================================================================
+   PREMIUM — Modal, pricing, limit gate, profile subscription section
+   ============================================================================ */
+
+/* ── Premium overlay ────────────────────────────────────────────────────────── */
+.premium-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 0, 30, 0.75);
+  z-index: 10000;
+  display: flex;
+  align-items: flex-end;
+  backdrop-filter: blur(4px);
+}
+
+.premium-modal {
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-height: 92dvh;
+  overflow-y: auto;
+  padding: 28px 20px 36px;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+.premium-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #F3F0FF;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  color: #8B5CF6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────────── */
+.premium-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.premium-star {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.premium-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: #1B0A47;
+  background: linear-gradient(135deg, #8B5CF6, #FFC53D);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.premium-tagline {
+  font-size: 13px;
+  color: #6B7280;
+  margin-top: 4px;
+}
+
+/* ── Comparison grid ────────────────────────────────────────────────────────── */
+.premium-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.premium-compare-col {
+  border-radius: 14px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.free-col {
+  background: #F9FAFB;
+  border: 1.5px solid #E5E7EB;
+}
+
+.premium-col {
+  background: linear-gradient(160deg, #F3F0FF, #EDE9FE);
+  border: 1.5px solid #C4B5FD;
+}
+
+.premium-col-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #6B7280;
+  margin-bottom: 4px;
+}
+
+.premium-col-header {
+  color: #8B5CF6 !important;
+}
+
+.premium-compare-row {
+  font-size: 12px;
+  color: #374151;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.premium-x     { color: #EF4444; font-weight: 700; flex-shrink: 0; }
+.premium-check { color: #16A34A; font-weight: 700; flex-shrink: 0; }
+
+/* ── Plan toggle — updated to match shop.css pill style ─────────────────────── */
+.premium-plan-toggle {
+  display: flex;
+  background: #E5E7EB;
+  border-radius: 30px;
+  padding: 3px;
+  gap: 2px;
+  margin-bottom: 16px;
+}
+
+.premium-plan-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 28px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  color: #6B7280;
+  background: transparent;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.premium-plan-btn.active {
+  background: #7C3AED;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+}
+
+.premium-save-badge {
+  background: #16A34A;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* ── Price display ──────────────────────────────────────────────────────────── */
+.premium-price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 3px;
+  margin-bottom: 4px;
+}
+
+.premium-currency {
+  font-size: 20px;
+  font-weight: 700;
+  color: #8B5CF6;
+}
+
+.premium-amount {
+  font-size: 40px;
+  font-weight: 900;
+  color: #1B0A47;
+  line-height: 1;
+}
+
+.premium-period {
+  font-size: 14px;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.premium-savings-note {
+  text-align: center;
+  font-size: 12px;
+  color: #16A34A;
+  font-weight: 600;
+  margin-bottom: 16px;
+  background: #DCFCE7;
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+/* ── CTA button ─────────────────────────────────────────────────────────────── */
+.premium-cta-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  margin-top: 8px;
+  box-shadow: 0 4px 16px rgba(108, 63, 201, 0.35);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.premium-cta-btn:active {
+  transform: scale(0.98);
+}
+
+.premium-cta-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.premium-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.premium-sim-note {
+  text-align: center;
+  font-size: 10px;
+  color: #9CA3AF;
+  margin-top: 8px;
+}
+
+.premium-cancel-note {
+  text-align: center;
+  font-size: 11px;
+  color: #9CA3AF;
+  margin-top: 6px;
+}
+
+.premium-plan-note {
+  font-size: 12px;
+  color: #374151;
+  background: #F3F0FF;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+/* ── Success screen ─────────────────────────────────────────────────────────── */
+.premium-success-icon {
+  text-align: center;
+  font-size: 56px;
+  margin-bottom: 12px;
+}
+
+.premium-success-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 900;
+  color: #1B0A47;
+  margin-bottom: 8px;
+}
+
+.premium-success-sub {
+  text-align: center;
+  font-size: 13px;
+  color: #6B7280;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+
+/* ── Free limit gate ────────────────────────────────────────────────────────── */
+.limit-gate-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 0, 30, 0.8);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(6px);
+}
+
+.limit-gate-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 28px 22px 24px;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.limit-gate-icon {
+  font-size: 44px;
+  margin-bottom: 12px;
+}
+
+.limit-gate-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: #1B0A47;
+  margin-bottom: 10px;
+}
+
+.limit-gate-msg {
+  font-size: 13px;
+  color: #6B7280;
+  line-height: 1.65;
+  margin-bottom: 18px;
+}
+
+/* Timer display */
+.limit-gate-timer-wrap {
+  background: #F3F0FF;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.limit-gate-timer-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+
+.limit-gate-timer {
+  font-size: 36px;
+  font-weight: 900;
+  color: #8B5CF6;
+  letter-spacing: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.limit-gate-timer-sub {
+  font-size: 11px;
+  color: #9CA3AF;
+  margin-top: 6px;
+}
+
+.limit-gate-ready {
+  font-size: 15px;
+  font-weight: 700;
+  color: #16A34A;
+  margin-bottom: 16px;
+}
+
+.limit-gate-premium-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--grad-gold);
+  color: #1B0A47;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 14px rgba(255, 197, 61, 0.35);
+}
+
+.limit-gate-continue-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.limit-gate-close-btn {
+  width: 100%;
+  padding: 12px;
+  background: #F3F0FF;
+  color: #8B5CF6;
+  border: none;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ── Premium badge in profile / shop ────────────────────────────────────────── */
+.premium-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--grad-gold);
+  color: #1B0A47;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.premium-active-box {
+  background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+  border: 1.5px solid #FFC53D;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.premium-active-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #1B0A47;
+  margin-bottom: 4px;
+}
+
+.premium-active-expiry {
+  font-size: 11px;
+  color: #78350F;
+}
+
+.premium-manage-btn {
+  margin-top: 10px;
+  padding: 8px 18px;
+  background: rgba(255, 197, 61, 0.15);
+  color: #B8961F;
+  border: 1px solid #FFC53D;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ── Shop premium card ──────────────────────────────────────────────────────── */
+.shop-premium-card {
+  background: var(--grad-hero);
+  border-radius: 16px;
+  padding: 20px 18px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.shop-premium-card::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(255, 197, 61,0.2), transparent 70%);
+  pointer-events: none;
+}
+
+.shop-premium-star {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.shop-premium-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.shop-premium-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 12px;
+  line-height: 1.55;
+}
+
+.shop-premium-features {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 16px;
+}
+
+.shop-premium-feature {
+  font-size: 12px;
+  color: rgba(255,255,255,0.85);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.shop-premium-cta {
+  padding: 12px 20px;
+  background: var(--grad-gold);
+  color: #1B0A47;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  width: 100%;
+  box-shadow: 0 4px 14px rgba(255, 197, 61,0.3);
+}
+
+.shop-already-premium {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 197, 61,0.1);
+  border: 1px solid rgba(255, 197, 61,0.3);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #FFC53D;
+}
+
+/* ============================================================================
+   DARK MODE — Premium modal & limit gate (separate section)
+   ============================================================================ */
+
+body.dark-mode .premium-overlay {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+body.dark-mode .premium-modal {
+  background: #1B0A47;
+  border-top: 1px solid #2d1b4e;
+}
+
+body.dark-mode .premium-close {
+  background: #2d1b4e;
+  color: #C4B5FD;
+}
+
+body.dark-mode .premium-title {
+  color: #F3F4F6;
+  -webkit-text-fill-color: unset;
+  background: linear-gradient(135deg, #C4B5FD, #FFC53D);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+body.dark-mode .premium-tagline {
+  color: #9CA3AF;
+}
+
+/* Comparison grid dark mode */
+body.dark-mode .free-col {
+  background: #0f0020;
+  border-color: #2d1b4e;
+}
+
+body.dark-mode .premium-col {
+  background: linear-gradient(160deg, #2d1b4e, #1e0f3a);
+  border-color: #8B5CF6;
+}
+
+body.dark-mode .premium-col-label {
+  color: #9CA3AF;
+}
+
+body.dark-mode .premium-col-header {
+  color: #C4B5FD !important;
+}
+
+body.dark-mode .premium-compare-row {
+  color: #E5E7EB;
+}
+
+body.dark-mode .premium-x {
+  color: #F87171;
+}
+
+body.dark-mode .premium-check {
+  color: #34D399;
+}
+
+/* Toggle dark mode */
+body.dark-mode .premium-plan-toggle {
+  background: #3d2a5e;
+}
+
+body.dark-mode .premium-plan-btn {
+  color: #9CA3AF;
+}
+
+body.dark-mode .premium-plan-btn.active {
+  background: #8B5CF6;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(108, 63, 201, 0.25);
+}
+
+body.dark-mode .premium-save-badge {
+  background: #22C55E;
+  color: #0a0015;
+}
+
+/* Price display dark mode */
+body.dark-mode .premium-currency {
+  color: #C4B5FD;
+}
+
+body.dark-mode .premium-amount {
+  color: #F3F4F6;
+}
+
+body.dark-mode .premium-period {
+  color: #9CA3AF;
+}
+
+body.dark-mode .premium-savings-note {
+  color: #86EFAC;
+  background: rgba(34, 197, 94, 0.15);
+}
+
+/* CTA button dark mode */
+body.dark-mode .premium-cta-btn {
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+}
+
+/* Notes dark mode */
+body.dark-mode .premium-sim-note,
+body.dark-mode .premium-cancel-note {
+  color: #4B5563;
+}
+
+body.dark-mode .premium-plan-note {
+  color: #D1D5DB;
+  background: rgba(108, 63, 201, 0.15);
+}
+
+/* Success screen dark mode */
+body.dark-mode .premium-success-title {
+  color: #F3F4F6;
+}
+
+body.dark-mode .premium-success-sub {
+  color: #9CA3AF;
+}
+
+/* Limit gate dark mode */
+body.dark-mode .limit-gate-overlay {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+body.dark-mode .limit-gate-card {
+  background: #1B0A47;
+}
+
+body.dark-mode .limit-gate-title {
+  color: #F3F4F6;
+}
+
+body.dark-mode .limit-gate-msg {
+  color: #9CA3AF;
+}
+
+body.dark-mode .limit-gate-timer-wrap {
+  background: #0f0020;
+}
+
+body.dark-mode .limit-gate-timer {
+  color: #C4B5FD;
+}
+
+body.dark-mode .limit-gate-timer-label,
+body.dark-mode .limit-gate-timer-sub {
+  color: #6B7280;
+}
+
+body.dark-mode .limit-gate-ready {
+  color: #4ADE80;
+}
+
+body.dark-mode .limit-gate-close-btn {
+  background: #2d1b4e;
+  color: #C4B5FD;
+}
+
+body.dark-mode .limit-gate-premium-btn {
+  background: var(--grad-gold);
+  color: #1B0A47;
+}
+
+body.dark-mode .limit-gate-continue-btn {
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+}
+
+/* Premium active box dark mode */
+body.dark-mode .premium-active-box {
+  background: rgba(255, 197, 61, 0.08);
+  border-color: rgba(255, 197, 61, 0.25);
+}
+
+body.dark-mode .premium-active-title {
+  color: #F3F4F6;
+}
+
+body.dark-mode .premium-active-expiry {
+  color: #FFC53D;
+}
+
+body.dark-mode .premium-manage-btn {
+  background: rgba(255, 197, 61, 0.1);
+  color: #FFC53D;
+  border-color: rgba(255, 197, 61, 0.3);
+}
+
+/* Shop premium card dark mode */
+body.dark-mode .shop-premium-card {
+  background: linear-gradient(135deg, #0a0015, #1B0A47);
+}
+
+body.dark-mode .shop-already-premium {
+  background: rgba(255, 197, 61, 0.05);
+  color: #FFC53D;
+}
+
+/* Premium badge dark mode */
+body.dark-mode .premium-badge {
+  background: var(--grad-gold);
+  color: #1B0A47;
+}/* ============================================================================
+   PREMIUM — Modal, pricing, limit gate, profile subscription section
+   ============================================================================ */
+
+/* ── Premium overlay ────────────────────────────────────────────────────────── */
+.premium-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 0, 30, 0.75);
+  z-index: 10000;
+  display: flex;
+  align-items: flex-end;
+  backdrop-filter: blur(4px);
+}
+
+.premium-modal {
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-height: 92dvh;
+  overflow-y: auto;
+  padding: 28px 20px 36px;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+.premium-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #F3F0FF;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  color: #8B5CF6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────────── */
+.premium-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.premium-star {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.premium-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: #1B0A47;
+  background: linear-gradient(135deg, #8B5CF6, #FFC53D);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.premium-tagline {
+  font-size: 13px;
+  color: #6B7280;
+  margin-top: 4px;
+}
+
+/* ── Comparison grid ────────────────────────────────────────────────────────── */
+.premium-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.premium-compare-col {
+  border-radius: 14px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.free-col {
+  background: #F9FAFB;
+  border: 1.5px solid #E5E7EB;
+}
+
+.premium-col {
+  background: linear-gradient(160deg, #F3F0FF, #EDE9FE);
+  border: 1.5px solid #C4B5FD;
+}
+
+.premium-col-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #6B7280;
+  margin-bottom: 4px;
+}
+
+.premium-col-header {
+  color: #8B5CF6 !important;
+}
+
+.premium-compare-row {
+  font-size: 12px;
+  color: #374151;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.premium-x     { color: #EF4444; font-weight: 700; flex-shrink: 0; }
+.premium-check { color: #16A34A; font-weight: 700; flex-shrink: 0; }
+
+/* ── Plan toggle — updated to match shop.css pill style ─────────────────────── */
+.premium-plan-toggle {
+  display: flex;
+  background: #E5E7EB;
+  border-radius: 30px;
+  padding: 3px;
+  gap: 2px;
+  margin-bottom: 16px;
+}
+
+.premium-plan-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 28px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  color: #6B7280;
+  background: transparent;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.premium-plan-btn.active {
+  background: #7C3AED;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+}
+
+.premium-save-badge {
+  background: #16A34A;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* ── Price display ──────────────────────────────────────────────────────────── */
+.premium-price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 3px;
+  margin-bottom: 4px;
+}
+
+.premium-currency {
+  font-size: 20px;
+  font-weight: 700;
+  color: #8B5CF6;
+}
+
+.premium-amount {
+  font-size: 40px;
+  font-weight: 900;
+  color: #1B0A47;
+  line-height: 1;
+}
+
+.premium-period {
+  font-size: 14px;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.premium-savings-note {
+  text-align: center;
+  font-size: 12px;
+  color: #16A34A;
+  font-weight: 600;
+  margin-bottom: 16px;
+  background: #DCFCE7;
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+/* ── CTA button ─────────────────────────────────────────────────────────────── */
+.premium-cta-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  margin-top: 8px;
+  box-shadow: 0 4px 16px rgba(108, 63, 201, 0.35);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.premium-cta-btn:active {
+  transform: scale(0.98);
+}
+
+.premium-cta-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.premium-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.premium-sim-note {
+  text-align: center;
+  font-size: 10px;
+  color: #9CA3AF;
+  margin-top: 8px;
+}
+
+.premium-cancel-note {
+  text-align: center;
+  font-size: 11px;
+  color: #9CA3AF;
+  margin-top: 6px;
+}
+
+.premium-plan-note {
+  font-size: 12px;
+  color: #374151;
+  background: #F3F0FF;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+/* ── Success screen ─────────────────────────────────────────────────────────── */
+.premium-success-icon {
+  text-align: center;
+  font-size: 56px;
+  margin-bottom: 12px;
+}
+
+.premium-success-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 900;
+  color: #1B0A47;
+  margin-bottom: 8px;
+}
+
+.premium-success-sub {
+  text-align: center;
+  font-size: 13px;
+  color: #6B7280;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+
+/* ── Free limit gate ────────────────────────────────────────────────────────── */
+.limit-gate-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 0, 30, 0.8);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(6px);
+}
+
+.limit-gate-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 28px 22px 24px;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.limit-gate-icon {
+  font-size: 44px;
+  margin-bottom: 12px;
+}
+
+.limit-gate-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: #1B0A47;
+  margin-bottom: 10px;
+}
+
+.limit-gate-msg {
+  font-size: 13px;
+  color: #6B7280;
+  line-height: 1.65;
+  margin-bottom: 18px;
+}
+
+/* Timer display */
+.limit-gate-timer-wrap {
+  background: #F3F0FF;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.limit-gate-timer-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+
+.limit-gate-timer {
+  font-size: 36px;
+  font-weight: 900;
+  color: #8B5CF6;
+  letter-spacing: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.limit-gate-timer-sub {
+  font-size: 11px;
+  color: #9CA3AF;
+  margin-top: 6px;
+}
+
+.limit-gate-ready {
+  font-size: 15px;
+  font-weight: 700;
+  color: #16A34A;
+  margin-bottom: 16px;
+}
+
+.limit-gate-premium-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--grad-gold);
+  color: #1B0A47;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 14px rgba(255, 197, 61, 0.35);
+}
+
+.limit-gate-continue-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.limit-gate-close-btn {
+  width: 100%;
+  padding: 12px;
+  background: #F3F0FF;
+  color: #8B5CF6;
+  border: none;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ── Premium badge in profile / shop ────────────────────────────────────────── */
+.premium-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--grad-gold);
+  color: #1B0A47;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.premium-active-box {
+  background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+  border: 1.5px solid #FFC53D;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.premium-active-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #1B0A47;
+  margin-bottom: 4px;
+}
+
+.premium-active-expiry {
+  font-size: 11px;
+  color: #78350F;
+}
+
+.premium-manage-btn {
+  margin-top: 10px;
+  padding: 8px 18px;
+  background: rgba(255, 197, 61, 0.15);
+  color: #B8961F;
+  border: 1px solid #FFC53D;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ── Shop premium card ──────────────────────────────────────────────────────── */
+.shop-premium-card {
+  background: var(--grad-hero);
+  border-radius: 16px;
+  padding: 20px 18px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.shop-premium-card::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(255, 197, 61,0.2), transparent 70%);
+  pointer-events: none;
+}
+
+.shop-premium-star {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.shop-premium-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.shop-premium-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 12px;
+  line-height: 1.55;
+}
+
+.shop-premium-features {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 16px;
+}
+
+.shop-premium-feature {
+  font-size: 12px;
+  color: rgba(255,255,255,0.85);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.shop-premium-cta {
+  padding: 12px 20px;
+  background: var(--grad-gold);
+  color: #1B0A47;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  width: 100%;
+  box-shadow: 0 4px 14px rgba(255, 197, 61,0.3);
+}
+
+.shop-already-premium {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 197, 61,0.1);
+  border: 1px solid rgba(255, 197, 61,0.3);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #FFC53D;
+}
+
+
+
+
+
+
+
+
+
+
+/* ============================================================================
+   PREMIUM MODAL — pm-* namespace
+   ============================================================================ */
+
+.pm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 99999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.pm-sheet {
+  position: relative;
+  background: var(--card-bg, #fff);
+  border-radius: 28px 28px 0 0;
+  padding: 32px 20px 44px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 92vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  animation: pm-slide-up 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes pm-slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* ── Ambient glow ── */
+.pm-glow {
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+  transition: background 0.4s ease;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+/* Everything sits above glow */
+.pm-sheet > *:not(.pm-glow) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Close ── */
+.pm-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--border-color, #E5E7EB);
+  color: var(--text-secondary, #6B7280);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: background 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+.pm-close:hover {
+  background: var(--text-secondary, #6B7280);
+  color: #fff;
+}
+
+/* ── Header ── */
+.pm-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.pm-crown {
+  display: block;
+  font-size: 40px;
+  margin-bottom: 10px;
+  animation: pm-float 2s ease-in-out infinite alternate;
+}
+
+@keyframes pm-float {
+  from { transform: translateY(0px);  }
+  to   { transform: translateY(-6px); }
+}
+
+.pm-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text-primary, #1B0A47);
+  letter-spacing: -0.3px;
+  margin-bottom: 5px;
+}
+
+.pm-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary, #6B7280);
+  line-height: 1.5;
+}
+
+/* ── Plan pills ── */
+.pm-pills {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.pm-pills::-webkit-scrollbar { display: none; }
+
+.pm-pill {
+  position: relative;
+  flex-shrink: 0;
+  padding: 9px 16px;
+  border-radius: 30px;
+  border: 1.5px solid var(--border-color, #E5E7EB);
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary, #6B7280);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.pm-pill--active {
+  font-weight: 800;
+}
+
+.pm-pill-tag {
+  position: absolute;
+  top: -9px;
+  right: -2px;
+  font-size: 9px;
+  font-weight: 800;
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 10px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ── Plan card ── */
+.pm-card {
+  border: 1.5px solid var(--border-color, #E5E7EB);
+  border-radius: 20px;
+  padding: 20px 18px;
+  margin-bottom: 14px;
+  background: var(--bg-primary, #F6F2FF);
+  transition: border-color 0.3s;
+}
+
+/* ── Price ── */
+.pm-price-block {
+  margin-bottom: 14px;
+}
+
+.pm-price-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  margin-bottom: 5px;
+}
+
+.pm-currency {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-secondary, #6B7280);
+  padding-bottom: 6px;
+  line-height: 1;
+}
+
+.pm-amount {
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -2px;
+  transition: color 0.3s;
+}
+
+.pm-period {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary, #6B7280);
+  padding-bottom: 7px;
+  line-height: 1;
+}
+
+.pm-pitch {
+  font-size: 12px;
+  color: var(--text-secondary, #6B7280);
+  font-style: italic;
+}
+
+/* ── Divider ── */
+.pm-divider {
+  height: 1px;
+  border-radius: 2px;
+  margin: 14px 0;
+  transition: background 0.3s;
+}
+
+/* ── Features ── */
+.pm-features {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.pm-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pm-feature-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+  width: 22px;
+  text-align: center;
+}
+
+.pm-feature-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary, #1B0A47);
+  line-height: 1.4;
+}
+
+/* ── Annual savings pill ── */
+.pm-savings-pill {
+  background: rgba(34, 197, 94, 0.10);
+  border: 1px solid rgba(34, 197, 94, 0.28);
+  color: #16A34A;
+  border-radius: 30px;
+  padding: 9px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+/* ── Pro note ── */
+.pm-pro-note {
+  background: rgba(108, 63, 201, 0.07);
+  border: 1px solid rgba(108, 63, 201, 0.18);
+  color: var(--text-secondary, #6B7280);
+  border-radius: 14px;
+  padding: 11px 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+/* ── Error ── */
+.pm-error {
+  background: #FEE2E2;
+  color: #DC2626;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ── CTA ── */
+.pm-cta {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+  margin-bottom: 14px;
+  letter-spacing: 0.2px;
+  transition: opacity 0.2s, transform 0.1s;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  line-height: 1.4;
+}
+.pm-cta:active   { transform: scale(0.98); }
+.pm-cta:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ── Trust line ── */
+.pm-trust {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-secondary, #9CA3AF);
+  line-height: 1.5;
+}
+
+/* ============================================================================
+   DARK MODE
+   ============================================================================ */
+
+body.dark-mode .pm-sheet {
+  background: #120025;
+}
+
+body.dark-mode .pm-card {
+  background: #1B0A47;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark-mode .pm-close {
+  background: #2a0050;
+  color: #9CA3AF;
+}
+
+body.dark-mode .pm-title {
+  color: #F3F4F6;
+}
+
+body.dark-mode .pm-feature-text {
+  color: #E5E7EB;
+}
+
+body.dark-mode .pm-pill {
+  border-color: #3d2a5e;
+  color: #9CA3AF;
+}
+
+body.dark-mode .pm-savings-pill {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22C55E;
+  border-color: rgba(34, 197, 94, 0.22);
+}
+
+body.dark-mode .pm-pro-note {
+  background: rgba(108, 63, 201, 0.12);
+  border-color: rgba(108, 63, 201, 0.25);
+  color: #9CA3AF;
+}
+
+body.dark-mode .pm-error {
+  background: rgba(220, 38, 38, 0.15);
+  color: #FCA5A5;
+}
+
+body.dark-mode .pm-glow {
+  opacity: 0.4;
+}
