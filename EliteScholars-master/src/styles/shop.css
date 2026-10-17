@@ -226,132 +226,136 @@
   font-weight: 700;
 }
 
-/* ── Plans grid ──────────────────────────────────────────────────────────────── */
+/* ── Plans ────────────────────────────────────────────────────────────────────
+   Stacked full-width cards instead of a cramped 3-column table. A side-by-
+   side comparison table never has enough room for Premium's full feature
+   list inside the app's ~400px frame — on any screen, mobile or the
+   desktop app-frame alike. Stacking is container-width-safe and scales to
+   any width with zero viewport-media-query guesswork. ───────────────────── */
 .shop-plans-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .shop-plan-col {
   position: relative;
-  padding: 24px 14px 20px;
+  padding: 20px 18px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 10px;
-  border-right: 1px solid var(--border-color, #E5E7EB);
-  transition: background 0.2s;
+  gap: 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border-color, #E5E7EB);
+  background: var(--card-bg, #fff);
+  box-shadow: 0 4px 16px rgba(46, 16, 101, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: shopPlanIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
-
-.shop-plan-col:last-child { border-right: none; }
+.shop-plans-grid .shop-plan-col:nth-child(1) { animation-delay: 0s; }
+.shop-plans-grid .shop-plan-col:nth-child(2) { animation-delay: 0.07s; }
+.shop-plans-grid .shop-plan-col:nth-child(3) { animation-delay: 0.14s; order: -1; } /* lead with Premium */
+@keyframes shopPlanIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
 .shop-plan-col--highlight {
-  background: linear-gradient(160deg, #F3EEFF, var(--card-bg, #fff));
-  box-shadow: inset 0 0 0 1.5px rgba(108,63,201,0.15);
-  z-index: 1;
+  order: -1;
+  border-color: transparent;
+  background:
+    linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)) padding-box,
+    linear-gradient(135deg, #FFC53D, #7C3AED) border-box;
+  box-shadow: 0 14px 34px rgba(124, 58, 237, 0.18);
 }
 
-.shop-plan-col--disabled {
-  opacity: 0.55;
-  background: var(--bg-primary, #F9FAFB);
+.shop-plan-col-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .shop-plan-badge {
   position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: -11px;
+  right: 18px;
   background: linear-gradient(135deg, #FFC53D, #FFE8A3);
   color: #1B0A47;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 800;
-  padding: 3px 12px;
+  padding: 4px 12px;
   border-radius: 30px;
   white-space: nowrap;
   letter-spacing: 0.3px;
-  box-shadow: 0 2px 8px rgba(255, 197, 61,0.35);
+  box-shadow: 0 4px 12px rgba(255, 197, 61, 0.4);
+  animation: pmBadgePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
 }
 
-.shop-plan-icon { font-size: 26px; }
+.shop-plan-icon { font-size: 28px; flex-shrink: 0; }
 
-.shop-plan-name {
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--text-primary, #1B0A47);
-}
+.shop-plan-name { font-size: 16px; font-weight: 800; color: var(--text-primary, #1B0A47); }
 
 /* Price */
-.shop-plan-price {
-  display: flex;
-  align-items: baseline;
-  gap: 1px;
-  justify-content: center;
-  min-height: 34px;
-  flex-wrap: wrap;
+.shop-plan-price { display: flex; flex-direction: column; gap: 1px; }
+
+.shop-plan-was {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary, #9CA3AF);
+  text-decoration: line-through;
+  text-decoration-color: #DC2626;
+  text-decoration-thickness: 2px;
+  opacity: 0.8;
 }
 
 .shop-plan-free {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 900;
   color: var(--text-secondary, #6B7280);
 }
 
 .shop-plan-currency {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--purple, #7C3AED);
-  align-self: flex-start;
-  margin-top: 4px;
 }
 
 .shop-plan-amount {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 900;
   color: var(--purple, #7C3AED);
   line-height: 1;
   letter-spacing: -0.5px;
 }
 
+.shop-plan-col--highlight .shop-plan-amount,
+.shop-plan-col--highlight .shop-plan-currency { color: #D9911A; }
+
 .shop-plan-period {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--text-secondary, #6B7280);
   font-weight: 600;
-  align-self: flex-end;
-  margin-bottom: 2px;
 }
 
-.shop-plan-na {
-  font-size: 10px;
-  color: var(--text-secondary, #9CA3AF);
-  font-style: italic;
-  align-self: center;
-}
-
-/* Features */
+/* Features — 2-col on anything wide enough, auto-adapts to the container
+   (not the viewport), so it's never cramped and never wastes space. */
 .shop-plan-features {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 6px 14px;
   text-align: left;
-  flex: 1;
 }
 
 .shop-plan-feature {
   display: flex;
   align-items: flex-start;
-  gap: 5px;
-  font-size: 11px;
+  gap: 6px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text-primary, #374151);
-  line-height: 1.35;
+  line-height: 1.4;
 }
 
 .shop-plan-check {
   color: #16A34A;
   font-weight: 800;
-  font-size: 10px;
+  font-size: 11px;
   flex-shrink: 0;
   margin-top: 1px;
 }
@@ -359,27 +363,30 @@
 /* CTA */
 .shop-plan-cta {
   width: 100%;
-  padding: 9px 8px;
+  padding: 12px;
   border: none;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 700;
+  border-radius: 13px;
+  font-size: 13px;
+  font-weight: 800;
   font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s;
-  margin-top: auto;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s;
+  margin-top: 4px;
 }
 
 .shop-plan-cta--primary {
   background: linear-gradient(135deg, #7C3AED, #8B5CF6);
   color: #fff;
-  box-shadow: 0 3px 12px rgba(124, 58, 237,0.30);
+  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.3);
 }
 
-.shop-plan-cta--primary:hover {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
+.shop-plan-col--highlight .shop-plan-cta--primary {
+  background: linear-gradient(135deg, #FFC53D, #F5A524);
+  color: #1B0A47;
+  box-shadow: 0 6px 16px rgba(255, 197, 61, 0.4);
 }
+
+.shop-plan-cta--primary:active { transform: scale(0.97); filter: brightness(1.05); }
 
 .shop-plan-cta--secondary {
   background: transparent;
@@ -387,22 +394,14 @@
   border: 1.5px solid var(--purple, #7C3AED);
 }
 
-.shop-plan-cta--secondary:hover {
-  background: var(--purple, #7C3AED);
-  color: #fff;
-}
+.shop-plan-cta--secondary:active { background: var(--purple, #7C3AED); color: #fff; }
 
-.shop-plan-cta:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-  transform: none;
-}
+.shop-plan-cta:disabled { cursor: not-allowed; opacity: 0.45; transform: none; }
 
-.shop-plan-disabled-note {
-  font-size: 9px;
+.shop-plans-card-sub {
+  font-size: 11.5px;
   color: var(--text-secondary, #9CA3AF);
-  font-style: italic;
-  margin-top: -4px;
+  margin-top: 2px;
 }
 
 .shop-plans-trust {
@@ -450,10 +449,15 @@
   padding-left: 2px;
 }
 
-/* ── Shop grid ───────────────────────────────────────────────────────────────── */
+/* ── Shop grid ───────────────────────────────────────────────────────────────
+   auto-fill + minmax reflows to however many columns actually fit the real
+   container width — the phone viewport on mobile, or the ~430-460px capped
+   app-frame on desktop (see polish.css) — instead of guessing from the
+   browser's viewport width, which doesn't match the frame's actual size on
+   desktop and was the root cause of the cramped/broken grid there. ────────── */
 .shop-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
   gap: 12px;
 }
 
@@ -483,7 +487,7 @@
 .shop-item-img {
   position: relative;
   width: 100%;
-  height: 110px;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   flex-shrink: 0;
   background: var(--bg-primary, #F6F2FF);
@@ -602,73 +606,21 @@
    RESPONSIVE
    ============================================================================ */
 
-/* Tablet: 2-col items grid */
-@media (min-width: 600px) {
-  .shop-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .shop-item-img { height: 130px; }
+/* Both .shop-grid (auto-fill/minmax) and .shop-plans-grid (stacked cards)
+   already reflow to whatever width their actual container has — the real
+   fix for this page. What's left here is just fine-tuning once there's
+   genuinely more breathing room, scoped to the .phone frame itself rather
+   than the browser viewport so it's correct whether that frame is a full
+   mobile screen or the capped desktop app-frame from polish.css. */
+@media (min-width: 380px) {
+  .shop-plan-features { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
 }
 
-/* Desktop: wider layout */
-@media (min-width: 900px) {
-  .shop-body { padding: 28px 24px 100px; }
-
-  .shop-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .shop-item-img { height: 140px; }
-
-  .shop-header { padding: 52px 28px 32px; }
-  .shop-title  { font-size: 28px; }
-}
-
-/* Mobile: collapse plans to horizontal scroll */
-@media (max-width: 500px) {
-  .shop-plans-grid {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    gap: 0;
-    padding-bottom: 4px;
-  }
-
-  .shop-plan-col {
-    flex: 0 0 72vw;
-    max-width: 260px;
-    min-width: 200px;
-    scroll-snap-align: start;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color, #E5E7EB);
-    padding: 22px 14px 18px;
-    border-radius: 0;
-  }
-
-  .shop-plan-col--highlight {
-    box-shadow: none;
-  }
-
-  .shop-plan-amount { font-size: 20px; }
-
-  .shop-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-
-  .shop-item-img { height: 95px; }
-}
-
-/* Very small */
-@media (max-width: 360px) {
+@media (max-width: 340px) {
   .shop-body { padding: 16px 12px 100px; }
-
-  .shop-plan-col { flex: 0 0 80vw; }
-
   .shop-item-title { font-size: 11px; }
   .shop-item-price { font-size: 12px; }
+  .shop-grid { grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); }
 }
 
 /* ============================================================================
@@ -694,15 +646,9 @@ body.dark-mode .shop-plan-name {
 }
 
 body.dark-mode .shop-plan-col--highlight {
-  background: linear-gradient(160deg, rgba(108,63,201,0.15), var(--card-bg));
-}
-
-body.dark-mode .shop-plan-col--disabled {
-  background: rgba(255,255,255,0.02);
-}
-
-body.dark-mode .shop-plan-col {
-  border-right-color: var(--border-color);
+  background:
+    linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+    linear-gradient(135deg, #FFC53D, #7C3AED) border-box;
 }
 
 body.dark-mode .shop-plan-currency,

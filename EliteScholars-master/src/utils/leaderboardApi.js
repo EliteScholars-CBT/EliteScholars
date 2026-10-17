@@ -6,13 +6,11 @@
 //   - alltime: fields are rank, rank_display, email, name, total_xp, level, avg_score, total_quizzes
 // The API already returns named objects so we just pass them through; the UI
 // must use the correct field names (see Leaderboard.js getXP helper).
-import { SHEETS_URL } from './constants';
 
 // Fetch leaderboard data
 export const getLeaderboard = async (type = 'alltime', examType = 'all', university = null, subject = null, limit = 50) => {
   try {
     const params = new URLSearchParams({
-      action: 'getLeaderboard',
       type: type,
       exam_type: examType,
       university: university || '',
@@ -20,7 +18,7 @@ export const getLeaderboard = async (type = 'alltime', examType = 'all', univers
       limit: limit,
     });
 
-    const response = await fetch(`${SHEETS_URL}?${params}`);
+    const response = await fetch(`/api/leaderboard/get?${params}`);
     const data = await response.json();
     return Array.isArray(data) ? data : [];
   } catch (error) {
@@ -33,12 +31,11 @@ export const getLeaderboard = async (type = 'alltime', examType = 'all', univers
 export const getUserRank = async (email, type = 'alltime') => {
   try {
     const params = new URLSearchParams({
-      action: 'getUserRank',
       email: email,
       type: type,
     });
 
-    const response = await fetch(`${SHEETS_URL}?${params}`);
+    const response = await fetch(`/api/leaderboard/rank?${params}`);
     const data = await response.json();
     if (data && data.rank_display) {
       return { rank: data.rank, rank_display: data.rank_display };
@@ -54,11 +51,10 @@ export const getUserRank = async (email, type = 'alltime') => {
 export const getAvailableUsers = async (currentUserEmail) => {
   try {
     const params = new URLSearchParams({
-      action: 'getAvailableUsers',
       current_email: currentUserEmail,
     });
 
-    const response = await fetch(`${SHEETS_URL}?${params}`);
+    const response = await fetch(`/api/leaderboard/users?${params}`);
     const data = await response.json();
     return Array.isArray(data) ? data : [];
   } catch (error) {

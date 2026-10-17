@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Icon from './Icon';
 import Confetti from './Confetti';
 import { SFX } from '../utils/sounds';
+import { buildScramble, buildScrambleDeck, buildMatchDeck, normalizeAnswer } from '../utils/gameEngine';
 import {
   extractTextFromFile,
   buildStudyPack,
@@ -628,124 +629,191 @@ function QuizView({ pack, onNext, onScore }) {
   );
 }
 
-/* ── Game: lives, streak multiplier, countdown ──────────────────────────── */
-const GAME_SECONDS = 12;
+/* ── Game: pick a mini-game, deliberately NOT multiple-choice — CBT already
+   covers that. Word Scramble tests recall; Match Rush tests pairing. ───── */
 function GameView({ pack, onNext, onScore }) {
-  const [phase, setPhase] = useState('intro');
-  const [order, setOrder] = useState([]);
-  const [i, setI] = useState(0);
+  const [kind, setKind] = useState(null);
+  const clueSource = useMemo(
+    () => pack.cards.map((c) => (c.kind === 'cloze' ? { term: c.back, clue: c.front } : { term: c.front, clue: c.back })),
+    [pack]
+  );
+  const scrambleDeck = useMemo(() => buildScrambleDeck(clueSource, 14, Math.random), [clueSource]);
+  const matchPairs = useMemo(() => clueSource.map((c) => ({ a: c.clue, b: c.term })), [clueSource]);
+
+  if (kind === 'scramble') return <FsScrambleGame deck={scrambleDeck} onExit={() => setKind(null)} onNext={onNext} onScore={onScore} />;
+  if (kind === 'match')    return <FsMatchGame pairs={matchPairs} onExit={() => setKind(null)} onNext={onNext} onScore={onScore} />;
+
+  const scrambleOff = scrambleDeck.length < 5;
+  const matchOff = matchPairs.filter((p) => p.a && p.b).length < 4;
+  return (
+    <div className="fs-center">
+      <div className="fs-medal soft"><Icon name="gamepad" size={34} /></div>
+      <h3>Pick a game</h3>
+      <p>Two ways to drill this file that aren't just another quiz.</p>
+      <div className="fs-game-picks">
+        <button className="fs-game-pick" disabled={scrambleOff} onClick={() => { SFX.submit?.(); setKind('scramble'); }}>
+          <span className="fs-game-pick-icon"><Icon name="wand" size={22} /></span>
+          <span className="fs-game-pick-name">Word Scramble</span>
+          <span className="fs-game-pick-desc">Unscramble the term from its clue</span>
+        </button>
+        <button className="fs-game-pick" disabled={matchOff} onClick={() => { SFX.submit?.(); setKind('match'); }}>
+          <span className="fs-game-pick-icon"><Icon name="layers" size={22} /></span>
+          <span className="fs-game-pick-name">Match Rush</span>
+          <span className="fs-game-pick-desc">Flip cards to pair clue with term</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* Word Scramble — read the clue, tap scrambled letters in order to spell it */
+function FsScrambleGame({ deck, onExit, onNext, onScore }) {
+  const [idx, setIdx] = useState(0);
   const [lives, setLives] = useState(3);
   const [score, setScore] = useState(0);
-  const [streak, setStreak] = useState(0);
-  const [bestStreak, setBestStreak] = useState(0);
-  const [right, setRight] = useState(0);
-  const [picked, setPicked] = useState(null);
-  const [gain, setGain] = useState(null);
-  const startedAt = useRef(0);
-  const timer = useRef(null);
+  const [combo, setCombo] = useState(1);
+  const [flash, setFlash] = useState(null);
+  const [picked, setPicked] = useState([]);
+  const [pool, setPool] = useState(() => buildScramble(deck[0].term, Math.random).tiles);
+  const [over, setOver] = useState(false);
+  const item = deck[idx];
   const best = useRef(0);
 
-  const mult = Math.min(5, 1 + Math.floor(streak / 3));
+  useEffect(() => { setPool(buildScramble(item.term, Math.random).tiles); setPicked([]); }, [idx]); // eslint-disable-line
 
-  const start = () => {
-    setOrder(shuffled(pack.questions).slice(0, 25));
-    setI(0); setLives(3); setScore(0); setStreak(0); setBestStreak(0); setRight(0); setPicked(null); setGain(null);
-    setPhase('play');
+  const advance = (correct) => {
+    if (correct) {
+      const pts = 15 * combo;
+      setScore((s) => { const n = s + pts; best.current = n; return n; });
+      setCombo((c) => Math.min(c + 1, 5));
+      setFlash('correct');
+      SFX.correct?.();
+    } else {
+      setLives((l) => { const nl = l - 1; if (nl <= 0) setTimeout(() => setOver(true), 500); return nl; });
+      setCombo(1);
+      setFlash('wrong');
+      SFX.wrong?.();
+    }
+    setTimeout(() => {
+      setFlash(null);
+      if (idx + 1 >= deck.length) { setOver(true); return; }
+      setIdx((i) => i + 1);
+    }, correct ? 550 : 750);
   };
 
-  useEffect(() => () => clearTimeout(timer.current), []);
+  const tapTile = (tile) => {
+    if (flash) return;
+    const next = [...picked, tile.id];
+    setPicked(next);
+    const guess = next.map((id) => pool.find((t) => t.id === id).ch).join('');
+    if (guess.length === pool.length) advance(normalizeAnswer(guess) === normalizeAnswer(item.term));
+  };
 
-  const finishOrNext = useCallback((nextI, livesLeft) => {
-    if (livesLeft <= 0 || nextI >= order.length) {
-      setPhase('over');
-      SFX.roundComplete?.();
-    } else { setI(nextI); setPicked(null); setGain(null); }
-  }, [order.length]);
+  useEffect(() => { if (over) onScore?.(best.current); }, [over]); // eslint-disable-line
 
-  const resolve = useCallback((choice, q) => {
-    clearTimeout(timer.current);
-    setPicked(choice === null ? -1 : choice);
-    const ok = choice === q.a;
-    if (ok) {
-      const nextStreak = streak + 1;
-      const m = Math.min(5, 1 + Math.floor(nextStreak / 3));
-      const left = Math.max(0, GAME_SECONDS - (Date.now() - startedAt.current) / 1000);
-      const pts = 100 * m + Math.round(left * 5);
-      setScore((s) => { const n = s + pts; best.current = n; return n; });
-      setStreak(nextStreak);
-      setBestStreak((b) => Math.max(b, nextStreak));
-      setRight((r) => r + 1);
-      setGain(`+${pts}`);
-      SFX.correct?.();
-      timer.current = setTimeout(() => finishOrNext(i + 1, lives), 950);
-    } else {
-      const left = lives - 1;
-      setLives(left);
-      setStreak(0);
-      setGain(null);
-      SFX.wrong?.();
-      timer.current = setTimeout(() => finishOrNext(i + 1, left), 1300);
-    }
-  }, [streak, lives, i, finishOrNext]);
-
-  // Per-question countdown
-  useEffect(() => {
-    if (phase !== 'play' || picked !== null || !order[i]) return undefined;
-    startedAt.current = Date.now();
-    const q = order[i];
-    timer.current = setTimeout(() => resolve(null, q), GAME_SECONDS * 1000);
-    return () => clearTimeout(timer.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, i, order]);
-
-  useEffect(() => { if (phase === 'over') onScore?.(best.current); }, [phase]); // eslint-disable-line
-
-  if (phase === 'intro') {
+  if (over) {
     return (
       <div className="fs-center">
-        <div className="fs-medal soft"><Icon name="gamepad" size={36} /></div>
-        <h3>Rapid fire</h3>
-        <p>3 lives. {GAME_SECONDS} seconds a question. Chain correct answers to multiply your score up to ×5.</p>
-        <button className="fs-primary shine" onClick={() => { SFX.submit?.(); start(); }}>Play <Icon name="play" size={16} /></button>
-      </div>
-    );
-  }
-
-  if (phase === 'over') {
-    const acc = order.length ? Math.round((right / Math.min(order.length, i + 1)) * 100) : 0;
-    return (
-      <div className="fs-center">
-        {score >= 1500 && <Confetti count={80} />}
+        {score >= 300 && <Confetti count={70} />}
         <div className="fs-scorebig">{score.toLocaleString()}</div>
         <div className="fs-scorelabel">POINTS</div>
-        <div className="fs-chips center">
-          <span><Icon name="flame" size={13} /> Best streak {bestStreak}</span>
-          <span><Icon name="target" size={13} /> {acc}% accuracy</span>
-        </div>
-        <button className="fs-primary shine" onClick={() => { SFX.submit?.(); start(); }}><Icon name="refresh" size={17} /> Play again</button>
+        <button className="fs-primary shine" onClick={onExit}><Icon name="refresh" size={17} /> Play again</button>
         <NextBtn onNext={onNext} />
       </div>
     );
   }
 
-  const q = order[i];
-  if (!q) return null;
+  let li = 0;
   return (
-    <div className="fs-scroll fs-game">
+    <div className={`fs-scroll fs-game-arena ${flash || ''}`}>
       <div className="fs-hud">
         <div className="fs-lives">{[0, 1, 2].map((k) => <Icon key={k} name="heart" size={20} className={k < lives ? 'on' : 'off'} />)}</div>
         <div className="fs-score">{score.toLocaleString()}</div>
-        <div className={`fs-mult m${mult}`}><Icon name="zap" size={13} /> ×{mult}</div>
+        {combo > 1 ? <div className="fs-mult m3"><Icon name="zap" size={13} /> ×{combo}</div> : <div />}
       </div>
-      <div className="fs-timer"><i key={i} style={{ animationDuration: `${GAME_SECONDS}s`, animationPlayState: picked === null ? 'running' : 'paused' }} /></div>
-      <div className="fs-q game" key={`q${i}`}>{q.q}</div>
-      {gain && <div className="fs-gain" key={`g${i}`}>{gain}</div>}
-      <div className="fs-opts">
-        {q.o.map((o, k) => {
-          const state = picked === null ? '' : k === q.a ? 'right' : k === picked ? 'wrong shake' : 'dim';
+      <div className="fs-q game" key={idx}>{item.clue}</div>
+      <div className="fs-scramble-slots">
+        {item.term.trim().split(/\s+/).map((w, wi) => (
+          <div className="fs-scramble-word" key={wi}>
+            {w.split('').map((_, k) => {
+              const pos = li++;
+              const id = picked[pos];
+              const t = id && pool.find((x) => x.id === id);
+              return <span key={k} className={`fs-scramble-slot ${t ? 'filled' : ''}`}>{t ? t.ch : ''}</span>;
+            })}
+          </div>
+        ))}
+      </div>
+      <div className="fs-scramble-tiles">
+        {pool.map((t) => (
+          <button key={t.id} className={`fs-scramble-tile ${picked.includes(t.id) ? 'used' : ''}`} disabled={picked.includes(t.id) || !!flash} onClick={() => tapTile(t)}>{t.ch}</button>
+        ))}
+      </div>
+      <button className="fs-ghost" disabled={!picked.length || !!flash} onClick={() => setPicked((p) => p.slice(0, -1))}><Icon name="arrowLeft" size={15} /> Undo letter</button>
+    </div>
+  );
+}
+
+/* Match Rush — flip cards, pair each clue with its term, fewest moves wins */
+function FsMatchGame({ pairs, onExit, onNext, onScore }) {
+  const [cards] = useState(() => buildMatchDeck(pairs, Math.min(6, Math.floor(pairs.length)), Math.random));
+  const PAIRS = cards.length / 2;
+  const [flipped, setFlipped] = useState([]);
+  const [matched, setMatched] = useState([]);
+  const [moves, setMoves] = useState(0);
+  const [over, setOver] = useState(false);
+  const lock = useRef(false);
+
+  const flip = (card) => {
+    if (lock.current || matched.includes(card.pairId) || (flipped.length === 1 && flipped[0].id === card.id)) return;
+    const next = [...flipped, card];
+    setFlipped(next);
+    if (next.length === 2) {
+      setMoves((m) => m + 1);
+      lock.current = true;
+      const [a, b] = next;
+      if (a.pairId === b.pairId && a.side !== b.side) {
+        SFX.correct?.();
+        setMatched((m) => { const nm = [...m, a.pairId]; if (nm.length === PAIRS) setTimeout(() => setOver(true), 500); return nm; });
+        setTimeout(() => { setFlipped([]); lock.current = false; }, 650);
+      } else {
+        SFX.wrong?.();
+        setTimeout(() => { setFlipped([]); lock.current = false; }, 850);
+      }
+    }
+  };
+
+  const score = Math.max(20, PAIRS * 30 - moves * 4);
+  useEffect(() => { if (over) onScore?.(score); }, [over]); // eslint-disable-line
+
+  if (over) {
+    return (
+      <div className="fs-center">
+        <Confetti count={60} />
+        <div className="fs-medal"><Icon name="trophy" size={40} /></div>
+        <h3>Cleared in {moves} moves</h3>
+        <p>All {PAIRS} pairs matched.</p>
+        <button className="fs-primary shine" onClick={onExit}><Icon name="refresh" size={17} /> Play again</button>
+        <NextBtn onNext={onNext} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="fs-scroll">
+      <div className="fs-progress">
+        <div className="fs-progress-txt">Pairs {matched.length}/{PAIRS} · Moves {moves}</div>
+        <div className="fs-bar"><i style={{ width: `${(matched.length / PAIRS) * 100}%` }} /></div>
+      </div>
+      <div className="fs-match-grid">
+        {cards.map((card) => {
+          const isFlipped = flipped.find((f) => f.id === card.id) || matched.includes(card.pairId);
           return (
-            <button key={`${i}-${k}`} className={`fs-opt ${state}`} style={{ animationDelay: `${k * 50}ms` }} disabled={picked !== null} onClick={() => resolve(k, q)}>
-              <b>{LETTERS[k]}</b><span>{o}</span>
+            <button key={card.id} className={`fs-match-card ${isFlipped ? 'flipped' : ''} ${matched.includes(card.pairId) ? 'matched' : ''}`} onClick={() => flip(card)}>
+              <div className="fs-match-inner">
+                <div className="fs-match-back">?</div>
+                <div className={`fs-match-front ${card.side}`}>{card.text}</div>
+              </div>
             </button>
           );
         })}

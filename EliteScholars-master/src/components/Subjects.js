@@ -12,9 +12,10 @@ import { useTheme } from '../context/ThemeContext';
 import Icon, { EmojiIcon } from './Icon';
 
 const MODES = [
-  { id: 'learn',    label: 'Learn' },
-  { id: 'cbt',      label: 'CBT' },
-  // { id: 'flashcard',label: 'Flash' },
+  { id: 'learn',     label: 'Learn', icon: 'bookOpen' },
+  { id: 'cbt',       label: 'CBT', icon: 'clipboard' },
+  { id: 'flashcard', label: 'Flash', icon: 'cards' },
+  { id: 'game',      label: 'Game', icon: 'gamepad' },
 ];
 
 const MODE_DESC = {
@@ -210,7 +211,7 @@ export default function Subjects({
               className={`subjects-mode-btn ${mode === m.id ? 'active' : ''}`}
               onClick={() => handleModeSwitch(m.id)}
             >
-              {m.label}
+              <Icon name={m.icon} size={13} /> {m.label}
             </button>
           ))}
         </div>

@@ -21,6 +21,7 @@ import {
   trackTopicComplete,
 } from '../analytics/studyAnalytics';
 import Icon, { EmojiIcon } from './Icon';
+import { splitIntoSentences, normalizeForSpeech } from '../utils/ttsNormalize';
 
 const FONT_SIZES = [13, 15, 17, 19, 21];
 const STORAGE_KEY = (examType, subjectId) => `es_learn_${examType}_${subjectId}`;
@@ -191,6 +192,11 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
   const [selectedCharId, setSelectedCharId] = useState('sophia');
   const [speaking, setSpeaking] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [speakingWords, setSpeakingWords] = useState([]);
+  const [speakingWordIdx, setSpeakingWordIdx] = useState(-1);
+  const sentenceQueueRef = useRef([]);
+  const stoppedRef = useRef(true);
+  const pauseTimerRef = useRef(null);
   const [adSequence, setAdSequence] = useState(() => Math.floor(Math.random() * 100));
   const [adRefresh] = useState(0);
 
@@ -239,22 +245,58 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
     }
   };
 
+  const fullStopSpeech = useCallback(() => {
+    stoppedRef.current = true;
+    sentenceQueueRef.current = [];
+    clearTimeout(pauseTimerRef.current);
+    stopSpeech();
+    setSpeaking(false);
+    setPaused(false);
+    setSpeakingWords([]);
+    setSpeakingWordIdx(-1);
+  }, []);
+
+  const speakNextSentence = () => {
+    if (stoppedRef.current) return;
+    const next = sentenceQueueRef.current.shift();
+    if (next === undefined) {
+      fullStopSpeech();
+      return;
+    }
+    const words = next.split(' ').filter(Boolean);
+    setSpeakingWords(words);
+    setSpeakingWordIdx(0);
+    const utter = new SpeechSynthesisUtterance(next);
+    const voice = getVoiceForCharacter(selectedCharId, characterVoices);
+    if (voice) utter.voice = voice;
+    utter.rate = 0.8;
+    utter.pitch = 1.0;
+    let counter = 0;
+    utter.onboundary = (e) => {
+      if (e.name === 'sentence') return;
+      setSpeakingWordIdx(Math.min(counter, words.length - 1));
+      counter += 1;
+    };
+    const advance = () => {
+      if (stoppedRef.current) return;
+      pauseTimerRef.current = setTimeout(speakNextSentence, 260);
+    };
+    utter.onend = advance;
+    utter.onerror = advance;
+    window.speechSynthesis.speak(utter);
+  };
+
   const speakContent = () => {
     if (activeIdx === null) return;
     const text = stripHtml(topics[activeIdx]?.contentHTML || topics[activeIdx]?.content || '');
-    stopSpeech();
-    const utter = new SpeechSynthesisUtterance(text);
-    const voice = getVoiceForCharacter(selectedCharId, characterVoices);
-    if (voice) utter.voice = voice;
-    utter.rate = 0.75;
-    utter.pitch = 1.0;
-    utter.onend = () => {
-      setSpeaking(false);
-      setPaused(false);
-    };
-    window.speechSynthesis.speak(utter);
+    fullStopSpeech();
+    const sentences = splitIntoSentences(text).map(normalizeForSpeech).filter(Boolean);
+    if (!sentences.length) return;
+    sentenceQueueRef.current = sentences;
+    stoppedRef.current = false;
     setSpeaking(true);
     setPaused(false);
+    speakNextSentence();
   };
 
   const handlePause = () => {
@@ -267,14 +309,11 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
     }
   };
   const handleStop = () => {
-    stopSpeech();
-    setSpeaking(false);
-    setPaused(false);
+    fullStopSpeech();
   };
 
   const openTopic = (idx) => {
-    stopSpeech();
-    setSpeaking(false);
+    fullStopSpeech();
     if (idx !== activeIdx) endStudySession(email);
     startStudySession({
       email,
@@ -301,8 +340,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
 
   const closeTopic = () => {
     endStudySession(email);
-    stopSpeech();
-    setSpeaking(false);
+    fullStopSpeech();
     setActiveIdx(null);
     setHeaderCollapsed(false);
     setQuizMode(false);
@@ -446,7 +484,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
             <BackButton
               onClick={() => {
                 endStudySession(email);
-                stopSpeech();
+                fullStopSpeech();
                 onBack();
               }}
               light
@@ -602,6 +640,21 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
                 </>
               )}
             </div>
+            {speaking && speakingWords.length > 0 && (
+              <div className="learn-now-reading" aria-live="off">
+                {speakingWords.map((w, i) => (
+                  <span
+                    key={i}
+                    className={
+                      'learn-now-reading-word' +
+                      (i === speakingWordIdx ? ' active' : i < speakingWordIdx ? ' done' : '')
+                    }
+                  >
+                    {w}{' '}
+                  </span>
+                ))}
+              </div>
+            )}
           </>
         )}
       </div>
@@ -733,7 +786,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
                     className="learn-quiz-retry-btn"
                     onClick={() => {
                       endStudySession(email);
-                      stopSpeech();
+                      fullStopSpeech();
                       onBack();
                     }}
                   >
@@ -809,7 +862,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
                     className="learn-quiz-retry-btn"
                     onClick={() => {
                       endStudySession(email);
-                      stopSpeech();
+                      fullStopSpeech();
                       onBack();
                     }}
                   >

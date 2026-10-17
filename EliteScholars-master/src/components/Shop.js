@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { ACHIEVEMENTS, PREMIUM_ANNUAL_DISCOUNT_PCT } from '../utils/constants';
+import { ACHIEVEMENTS } from '../utils/constants';
 import { loadAchievements, saveAchievements } from '../utils/storage';
 import { isPremium, getPremiumData, cancelPremium } from '../utils/premium';
 import { fetchShopData, fetchPremiumStatus } from '../utils/profileApi';
 import PremiumModal from './PremiumModal';
-import { EmojiIcon } from './Icon';
+import Icon, { EmojiIcon } from './Icon';
+
+const CATEGORY_ICON = {
+  Notes: 'pen',
+  'Cheat Sheet': 'ruler',
+  Bundle: 'cap',
+  Guide: 'bulb',
+  Comics: 'bookOpen',
+};
 
 // ── Fallback SVG when image is missing ───────────────────────────────────────
 function ShopItemPlaceholder({ category, color = '#8B5CF6' }) {
-  const emoji =
-    category === 'Notes'       ? '📝' :
-    category === 'Cheat Sheet' ? '📐' :
-    category === 'Bundle'      ? '🎓' :
-    category === 'Guide'       ? '💡' : '🛍️';
   return (
-    <div className="shop-item-placeholder" style={{ background: `${color}12` }}>
-      <span className="shop-item-placeholder-emoji">{emoji}</span>
+    <div className="shop-item-placeholder" style={{ background: `${color}12`, color }}>
+      <Icon name={CATEGORY_ICON[category] || 'shop'} size={26} />
       <span className="shop-item-placeholder-label">{category}</span>
     </div>
   );
@@ -32,10 +35,9 @@ function getImageUrl(filename) {
 
 export default function Shop({ userEmail, name, premiumUser, onPremiumActivated }) {
   const [showPremium, setShowPremium]             = useState(false);
-  const [selectedPlan, setSelectedPlan]           = useState('monthly');
+  const [selectedPlan, setSelectedPlan]           = useState('annual');
   const [localPremium, setLocalPremium]           = useState(premiumUser);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-  const [billing, setBilling]                     = useState('monthly');
   const [shopItems, setShopItems]                 = useState([]);
   const [pricing, setPricing]                     = useState({});
   const [premData, setPremData]                   = useState(getPremiumData(userEmail));
@@ -43,12 +45,12 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
 
   const FMT = (n) => n?.toLocaleString('en-NG') ?? '0';
 
-  // ── Derived pricing ────────────────────────────────────────────────────────
-  const proPrice          = pricing.pro            ?? 3000;
-  const monthlyPrice      = pricing.premiumMonthly ?? 9000;
-  const annualPrice       = pricing.premiumAnnual  ?? 89000;
-  const annualSavings     = (monthlyPrice * 12) - annualPrice;
-  const annualDiscountPct = Math.round((annualSavings / (monthlyPrice * 12)) * 100);
+  // ── Derived pricing — Premium is annual-only, no monthly tier ─────────────
+  const proPrice          = pricing.pro                    ?? 3000;
+  const annualPrice       = pricing.premiumAnnual           ?? 3000;
+  const originalPrice     = pricing.premiumAnnualOriginal   ?? 15000;
+  const annualSavings     = originalPrice - annualPrice;
+  const annualDiscountPct = Math.round((annualSavings / originalPrice) * 100);
 
   // ── Fetch shop data ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -94,9 +96,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
 
   const openPlan = (planId) => {
     if (planId === 'free') return;
-    const subscriptionPlan = planId === 'premium'
-      ? (billing === 'annual' ? 'annual' : 'monthly')
-      : planId;
+    const subscriptionPlan = planId === 'premium' ? 'annual' : planId;
     setSelectedPlan(subscriptionPlan);
     setShowPremium(true);
   };
@@ -124,27 +124,26 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
     },
     {
       id: 'pro', label: 'Pro', icon: '🚀', tag: null,
-      monthlyPrice: proPrice, annualDisabled: true,
+      price: proPrice, period: '/mo',
       features: ['Unlimited topics', 'Unlimited sessions', 'No cooldown', 'Ads reduced', 'All 5 exam types'],
       highlight: false,
     },
     {
-      id: 'premium', label: 'Premium', icon: '⭐', tag: 'Best Value',
-      monthlyPrice: monthlyPrice, annualPrice: annualPrice, annualDisabled: false,
-      features: ['Unlimited topics', 'Unlimited sessions', 'No cooldown ever', 'Zero ads', 'All 5 exam types', 'Priority support'],
+      id: 'premium', label: 'Premium', icon: '👑', tag: `${annualDiscountPct}% OFF`,
+      price: annualPrice, originalPrice, period: '/yr',
+      features: [
+        'Unlimited topics, every exam', 'Unlimited sessions, no time limit', 'Zero cooldown, ever',
+        'Zero ads, completely', 'WAEC, NECO, JAMB, GST & POST-UTME', 'All 6 arcade games unlocked',
+        'Unlimited file uploads & study packs', 'Unlimited challenges & squads', 'Full offline access',
+        'Priority support',
+      ],
       highlight: true,
     },
   ];
 
   const getPlanPricing = (plan) => {
     if (plan.id === 'free') return { price: 0, period: '', isDisabled: false };
-    if (plan.id === 'pro')  return billing === 'annual'
-      ? { price: null, period: '', isDisabled: true }
-      : { price: plan.monthlyPrice, period: '/mo', isDisabled: false };
-    if (plan.id === 'premium') return billing === 'annual' && plan.annualPrice
-      ? { price: plan.annualPrice, period: '/yr', isDisabled: false }
-      : { price: plan.monthlyPrice, period: '/mo', isDisabled: false };
-    return { price: null, period: '', isDisabled: false };
+    return { price: plan.price, period: plan.period, isDisabled: false };
   };
 
   return (
@@ -165,8 +164,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
             <div className="shop-premium-active-glow" />
             <div className="shop-premium-active-badge"><EmojiIcon emoji="⭐" size="1.15em" /> Premium Active</div>
             <div className="shop-premium-active-plan">
-              {premData?.plan === 'annual' ? 'Annual Plan' :
-               premData?.plan === 'pro'    ? 'Pro Plan'    : 'Monthly Plan'}
+              {premData?.plan === 'pro' ? 'Pro Plan' : 'Premium Annual Plan'}
             </div>
             {premData?.expiresDateStr && (
               <div className="shop-premium-active-expiry">
@@ -206,51 +204,42 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
               {/* Header row */}
               <div className="shop-plans-card-header">
                 <div className="shop-plans-card-title">Compare Plans</div>
-                <div className="shop-billing-toggle">
-                  <button
-                    className={`shop-billing-btn ${billing === 'monthly' ? 'active' : ''}`}
-                    onClick={() => setBilling('monthly')}
-                  >
-                    Monthly
-                  </button>
-                  <button
-                    className={`shop-billing-btn ${billing === 'annual' ? 'active' : ''}`}
-                    onClick={() => setBilling('annual')}
-                  >
-                    Annual
-                    <span className="shop-save-badge">-{annualDiscountPct}%</span>
-                  </button>
-                </div>
+                <div className="shop-plans-card-sub">Pro is billed monthly. Premium is one price, once a year.</div>
               </div>
 
               {/* Plans grid */}
               <div className="shop-plans-grid">
                 {COMPARE_PLANS.map(plan => {
-                  const { price, period, isDisabled } = getPlanPricing(plan);
-                  const annualDisabled = plan.id === 'pro' && billing === 'annual';
+                  const { price, period } = getPlanPricing(plan);
                   return (
                     <div
                       key={plan.id}
-                      className={`shop-plan-col ${plan.highlight ? 'shop-plan-col--highlight' : ''} ${annualDisabled ? 'shop-plan-col--disabled' : ''}`}
+                      className={`shop-plan-col ${plan.highlight ? 'shop-plan-col--highlight' : ''}`}
                     >
                       {plan.tag && (
                         <div className="shop-plan-badge">{plan.tag}</div>
                       )}
-                      <div className="shop-plan-icon">{plan.icon}</div>
-                      <div className="shop-plan-name">{plan.label}</div>
-
-                      <div className="shop-plan-price">
-                        {annualDisabled ? (
-                          <span className="shop-plan-na">Monthly only</span>
-                        ) : plan.id === 'free' ? (
-                          <span className="shop-plan-free">Free</span>
-                        ) : (
-                          <>
-                            <span className="shop-plan-currency">₦</span>
-                            <span className="shop-plan-amount">{FMT(price)}</span>
-                            <span className="shop-plan-period">{period}</span>
-                          </>
-                        )}
+                      <div className="shop-plan-col-top">
+                        <div className="shop-plan-icon">{plan.icon}</div>
+                        <div>
+                          <div className="shop-plan-name">{plan.label}</div>
+                          <div className="shop-plan-price">
+                            {plan.id === 'free' ? (
+                              <span className="shop-plan-free">Free</span>
+                            ) : (
+                              <>
+                                {plan.originalPrice && (
+                                  <span className="shop-plan-was">₦{FMT(plan.originalPrice)}</span>
+                                )}
+                                <span>
+                                  <span className="shop-plan-currency">₦</span>
+                                  <span className="shop-plan-amount">{FMT(price)}</span>
+                                  <span className="shop-plan-period">{period}</span>
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        </div>
                       </div>
 
                       <div className="shop-plan-features">
@@ -264,17 +253,11 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
 
                       <button
                         className={`shop-plan-cta ${plan.highlight ? 'shop-plan-cta--primary' : 'shop-plan-cta--secondary'}`}
-                        disabled={plan.id === 'free' || annualDisabled}
+                        disabled={plan.id === 'free'}
                         onClick={() => openPlan(plan.id)}
                       >
-                        {plan.id === 'free' ? 'Current' :
-                         annualDisabled     ? 'N/A'     :
-                         `Get ${plan.label}`}
+                        {plan.id === 'free' ? 'Current' : `Get ${plan.label}`}
                       </button>
-
-                      {annualDisabled && (
-                        <div className="shop-plan-disabled-note">No annual billing</div>
-                      )}
                     </div>
                   );
                 })}
@@ -296,7 +279,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
         ) : (
           categories.map((cat) => (
             <div key={cat} className="shop-category-section">
-              <div className="shop-category-label">{cat}</div>
+              <div className="shop-category-label"><Icon name={CATEGORY_ICON[cat] || 'shop'} size={15} /> {cat}</div>
               <div className="shop-grid">
                 {regularItems.filter((i) => i.category === cat).map((item) => {
                   const imgUrl = getImageUrl(item.image);

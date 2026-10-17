@@ -10,11 +10,13 @@ import { ROUND_SIZE, ACHIEVEMENTS } from '../utils/constants';
 import { loadAchievements, loadSubjectPerformance } from '../utils/storage';
 import { useTheme } from '../context/ThemeContext';
 import { updateGuardianEmail, fetchGuardianEmail } from '../utils/profileApi';
-import { EmojiIcon } from './Icon';
+import Icon, { EmojiIcon } from './Icon';
+import { buildReferralCode, referralLink, referralShareText } from '../utils/referral';
 
 export default function Profile({
   name,
   email,
+  username,
   sessions,
   streak,
   allScores,
@@ -29,6 +31,10 @@ export default function Profile({
   const [allAchievements, setAllAchievements]       = useState([]);
   const [subjectPerformance, setSubjectPerformance] = useState({});
   const [performanceData, setPerformanceData]       = useState([]);
+  const [refCopied, setRefCopied]                   = useState(false);
+  const refCode = buildReferralCode(username || name, email);
+  const refLink = referralLink(refCode);
+  const refShareText = referralShareText(name, refCode);
   const [subjectChartData, setSubjectChartData]     = useState([]);
   const [showPremiumModal, setShowPremiumModal]     = useState(false);
   const [localPremium, setLocalPremium]             = useState(premiumUser);
@@ -312,6 +318,36 @@ export default function Profile({
           {/* ── SETTINGS TAB ── */}
           {activeTab === 'settings' && (
             <div className="profile-stats-section">
+
+              <div className="profile-stats-title"><Icon name="gem" size={16} /> Invite Friends</div>
+              <div className="referral-card">
+                <div className="referral-card-top">
+                  <div className="referral-card-icon"><Icon name="gift" size={22} /></div>
+                  <div>
+                    <div className="referral-card-title">Share your referral code</div>
+                    <div className="referral-card-desc">Every 10 friends who join and start using EliteScholars earns you a data reward 🎁</div>
+                  </div>
+                </div>
+                <div className="referral-code-row">
+                  <span className="referral-code">{refCode}</span>
+                  <button
+                    className="referral-copy-btn"
+                    onClick={() => {
+                      navigator.clipboard?.writeText(refLink).catch(() => {});
+                      setRefCopied(true);
+                      setTimeout(() => setRefCopied(false), 1800);
+                    }}
+                  >
+                    <Icon name={refCopied ? 'check' : 'share'} size={14} /> {refCopied ? 'Copied' : 'Copy link'}
+                  </button>
+                </div>
+                <button
+                  className="referral-whatsapp-btn"
+                  onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(refShareText)}`, '_blank')}
+                >
+                  <Icon name="share" size={15} /> Share on WhatsApp
+                </button>
+              </div>
 
               <div className="profile-stats-title"><EmojiIcon emoji="⚙️" size="1.15em" /> Appearance</div>
               <div className="settings-card" onClick={toggleTheme} style={{ cursor: 'pointer' }}>

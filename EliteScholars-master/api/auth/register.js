@@ -1,182 +1,84 @@
 import { checkRateLimit } from '../_helpers/rateLimit.js';
-import {
-  sendOk,
-  sendErr,
-  sendRateLimited,
-  sendMethodNotAllowed,
-  setCors,
-} from '../_helpers/response.js';
-import { hashPassword } from '../_helpers/hash.js';
-import { sheetsGet, sheetsPost } from '../_helpers/sheets.js';
+import { sendOk, sendErr, sendRateLimited, sendMethodNotAllowed, setCors } from '../_helpers/response.js';
+import { hashPasswordStrong } from '../_helpers/hash.js';
 import { logSecurityEvent } from '../_helpers/security.js';
+import { selectOne, insertRow, supabaseEnabled } from '../_helpers/supabase.js';
+import { findPartnerByCode } from '../_helpers/partners.js';
+import { legacyProfileExists } from '../_helpers/legacy.js';
+import { profileOut } from '../_helpers/profileOut.js';
+import { clientIp } from '../_helpers/guard.js';
 
 const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/;
+const NAME_MAX = 60;
+const str = (v) => typeof v === 'string';
 
 export default async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return sendMethodNotAllowed(res);
+  if (!supabaseEnabled()) return res.status(503).json({ success: false, error: 'Service unavailable.' });
 
-  const DEBUG = true;
-  const ip =
-    req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
-  const key = `register:${ip}`;
-
-  console.log('📝 [register] Request received from IP:', ip);
-
-  const { allowed, retryAfter } = await checkRateLimit(key, 5, 3600);
+  const ip = clientIp(req);
+  const { allowed, retryAfter } = await checkRateLimit(`register:${ip}`, 5, 3600);
   if (!allowed) {
-    console.log('🚫 [register] Rate limited:', ip);
     await logSecurityEvent({ type: 'register_rate_limited', email: '', ip, detail: 'IP blocked' });
     return sendRateLimited(res, retryAfter);
   }
 
-  const { firstName, lastName, email, password, studentType, selectedExams, username } =
-    req.body || {};
+  const { firstName, lastName, email, password, studentType, selectedExams, username, referredBy } = req.body || {};
 
-  console.log('📋 [register] Body fields received:', {
-    firstName: firstName || '(missing)',
-    lastName: lastName || '(missing)',
-    email: email || '(missing)',
-    password: password ? '[present]' : '(missing)',
-    studentType: studentType || '(missing)',
-    selectedExams: selectedExams || '(missing)',
-    username: username || '(missing)',
-  });
-
-  if (
-    !firstName ||
-    !lastName ||
-    !email ||
-    !password ||
-    !studentType ||
-    !selectedExams ||
-    !username
-  ) {
-    console.log('❌ [register] Missing required fields');
+  if (![firstName, lastName, email, password, studentType, username].every((v) => str(v) && v) || !Array.isArray(selectedExams)) {
     return sendErr(res, 'All fields are required.');
   }
-
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    console.log('❌ [register] Invalid email:', email);
-    return sendErr(res, 'Invalid email address.');
+  if (firstName.length > NAME_MAX || lastName.length > NAME_MAX || studentType.length > 40 || selectedExams.length > 20 || selectedExams.some((x) => !str(x) || x.length > 40)) {
+    return sendErr(res, 'Some details are too long.');
   }
-
-  if (password.length < 8) {
-    console.log('❌ [register] Password too short');
-    return sendErr(res, 'Password must be at least 8 characters.');
-  }
+  if (email.length > 254 || !/^[^\s@,()"']+@[^\s@,()"']+\.[^\s@,()"']+$/.test(email)) return sendErr(res, 'Invalid email address.');
+  if (password.length < 8 || password.length > 200) return sendErr(res, 'Password must be at least 8 characters.');
 
   const usernameTrimmed = username.trim();
   if (!USERNAME_REGEX.test(usernameTrimmed)) {
-    console.log('❌ [register] Invalid username:', usernameTrimmed);
-    return sendErr(
-      res,
-      'Username must be 3-20 characters, start with a letter, and contain only letters, numbers, or underscores.'
-    );
+    return sendErr(res, 'Username must be 3-20 characters, start with a letter, and contain only letters, numbers, or underscores.');
   }
 
   const emailLower = email.toLowerCase().trim();
-  const passwordHash = hashPassword(password);
 
-  console.log('🔑 [register] Password hashed. Checking if email exists...');
+  const [byEmail, byName] = await Promise.all([
+    selectOne('profiles', { email: emailLower }),
+    selectOne('profiles', { username: usernameTrimmed }),
+  ]);
+  if (!byEmail.ok || !byName.ok) return sendErr(res, 'Could not complete registration. Please try again.');
+  if (byEmail.row || (await legacyProfileExists(emailLower))) return sendErr(res, 'An account with this email already exists.');
+  if (byName.row) return sendErr(res, 'Username is already taken. Please choose another.');
 
-  // CHECK IF USER EXISTS
-  let existing;
-  try {
-    existing = await sheetsGet({
-      action: 'loginProfile',
-      email: emailLower,
-      passwordHash: '__check_exists__',
-    });
-    console.log('📥 [register] Email check response:', existing);
-  } catch (e) {
-    console.error('❌ [register] Email check threw:', e.message);
-    existing = { success: false };
+  // Referred by an affiliate partner? (their own email never counts)
+  let partner = null;
+  const refCode = str(referredBy) && /^[A-Za-z0-9_-]{3,32}$/.test(referredBy) ? referredBy.toUpperCase() : null;
+  if (refCode) {
+    partner = await findPartnerByCode(refCode);
+    if (partner && partner.email === emailLower) partner = null;
   }
 
-  if (existing.success && existing.exists === true) {
-    console.log('❌ [register] Email already exists:', emailLower);
-    return sendErr(res, 'An account with this email already exists.');
-  }
-
-  // CHECK USERNAME AVAILABILITY
-  let usernameCheck;
-  try {
-    usernameCheck = await sheetsGet({
-      action: 'checkUsername',
-      username: usernameTrimmed,
-    });
-    console.log('📥 [register] Username check response:', usernameCheck);
-  } catch (e) {
-    console.error('❌ [register] Username check threw:', e.message);
-    usernameCheck = { available: true }; // assume available if check fails
-  }
-
-  if (usernameCheck.error && usernameCheck.error !== 'INVALID_JSON_RESPONSE') {
-    console.log('❌ [register] Username check error:', usernameCheck.error);
-    return sendErr(res, usernameCheck.error);
-  }
-
-  if (usernameCheck.available === false) {
-    console.log('❌ [register] Username taken:', usernameTrimmed);
-    return sendErr(res, 'Username is already taken. Please choose another.');
-  }
-
-  // REGISTER USER
-  console.log('📤 [register] Sending registerProfile to Sheets:', {
+  const saved = await insertRow('profiles', {
     email: emailLower,
     username: usernameTrimmed,
+    first_name: firstName.trim(),
+    last_name: lastName.trim(),
+    password_hash: hashPasswordStrong(password),
+    student_type: studentType,
+    selected_exams: selectedExams,
+    referred_by_code: refCode,
+    referrer_partner_id: partner ? partner.id : null,
   });
-
-  let result;
-  try {
-    result = await sheetsGet({
-      action: 'registerProfile',
-      email: emailLower,
-      firstName,
-      lastName,
-      passwordHash,
-      studentType,
-      selectedExams: JSON.stringify(selectedExams),
-      username: usernameTrimmed,
-    });
-    console.log('📥 [register] registerProfile response:', result);
-  } catch (e) {
-    console.error('❌ [register] registerProfile threw:', e.message);
-    result = { success: false, error: e.message };
+  if (!saved.ok) {
+    console.error('[register] save failed:', saved.error?.message || saved.error);
+    return sendErr(res, 'Registration failed. The email or username may already be in use.');
   }
 
-  if (!result.success) {
-    console.error('❌ [register] Registration failed:', result.error);
-    // Still return a partial success so the frontend bypass can take over
-    // if the account was actually created but the response was malformed
-    return sendErr(res, result.error || 'Registration failed.');
-  }
+  if (refCode) await insertRow('referrals', { code: refCode, referred_email: emailLower, partner_id: partner ? partner.id : null });
+  await insertRow('events', { type: 'register', email: emailLower, payload: { username: usernameTrimmed } });
 
-  // Log the registration event (fire and forget)
-  sheetsPost({
-    event: 'register',
-    name: `${firstName} ${lastName}`,
-    email: emailLower,
-    username: usernameTrimmed,
-  }).catch((e) => console.warn('[register] sheetsPost analytics failed:', e.message));
-
-  console.log('✅ [register] Registration complete for:', emailLower);
-
-  return sendOk(res, {
-    profile: {
-      email: emailLower,
-      firstName,
-      lastName,
-      studentType,
-      selectedExams,
-      passwordHash,
-      username: usernameTrimmed,
-      stats: {},
-      achievements: [],
-      subjectPerformance: {},
-    },
-    ...(DEBUG && { debug: { generatedHash: passwordHash, ip } }),
-  });
+  const row = (await selectOne('profiles', { email: emailLower })).row;
+  if (!row) return sendErr(res, 'Registration failed. Please try again.');
+  return sendOk(res, { profile: profileOut(row) });
 }

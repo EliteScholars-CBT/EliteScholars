@@ -27,8 +27,7 @@ export function applySecurityMeasures() {
     document.head.appendChild(noSelectStyle);
   }
 
-  // ── 2. Disable right-click context menu ─────────────────────────────────────
-  document.addEventListener('contextmenu', preventDefault, { passive: false });
+  // ── 2. Right-click is allowed (context menu left enabled on purpose) ────────
 
   // ── 3. Disable copy / cut keyboard shortcuts ─────────────────────────────────
   document.addEventListener('copy',  preventDefault, { passive: false });
@@ -84,7 +83,6 @@ function preventDefault(e) {
 }
 
 export function removeSecurityMeasures() {
-  document.removeEventListener('contextmenu', preventDefault);
   document.removeEventListener('copy',        preventDefault);
   document.removeEventListener('cut',         preventDefault);
   document.removeEventListener('dragstart',   preventDefault);

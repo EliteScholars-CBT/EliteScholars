@@ -1,21 +1,14 @@
-// ============================================================================
-// api/_helpers/security.js — Log security events to Apps Script sheet
-// ============================================================================
-
-import { sheetsPost } from './sheets.js';
+// api/_helpers/security.js — log security events to Supabase
+import { insertRow, supabaseEnabled } from './supabase.js';
 
 export async function logSecurityEvent({ type, email, ip, detail = '' }) {
   try {
-    await sheetsPost({
-      action: 'securityEvents',
-      events: [{
-        type,
-        target:    email || '',
-        detail,
-        url:       'api/' + type,
-        ua:        '',
-        timestamp: new Date().toISOString(),
-      }],
-    });
+    if (supabaseEnabled()) {
+      await insertRow('events', {
+        type: `security_${type}`,
+        email: email ? String(email).toLowerCase() : null,
+        payload: { ip, detail },
+      });
+    }
   } catch {}
 }

@@ -5,8 +5,6 @@
 export const WA_GROUP   = 'https://chat.whatsapp.com/DSeaqKuKRhw1bIFVpAJreB?mode=gi_t';
 export const WA_CHANNEL = 'https://whatsapp.com/channel/0029Vb6wPv72kNFnjr4FMr24';
 export const APP_URL    = 'https://elitescholars.site';
-export const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxmY2qZ-5zexeOLdZba1U6k3Sl7czKLzC0PjW4jP1FSO4P_mMkSWN4fUmmCBPjt09YU/exec';
-// export const SHEETS_URL = process.env.SHEETS_URL;
 
 // ── Group chat links per exam type ───────────────────────────────────────────
 export const GC_LINKS = {

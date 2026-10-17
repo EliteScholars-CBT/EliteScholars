@@ -3,7 +3,11 @@
 // All XP values are defined in constants.js → XP_REWARDS
 // ============================================================================
 
-import { XP_REWARDS, SHEETS_URL } from './constants';
+import { XP_REWARDS } from './constants';
+
+const XP_ADD_URL = '/api/xp/add';
+import { bumpSquadXP } from './squadApi';
+import { enqueueSync } from './syncQueue';
 
 const XP_KEY = (email) => `ep_xp_${email}`;
 const DAILY_XP_KEY = (email) => `ep_daily_xp_${email}_${new Date().toDateString()}`;
@@ -27,6 +31,7 @@ export async function addXP(email, name, amount, reason = '') {
   const current = loadXP(email);
   const newTotal = current + amount;
   saveXPValue(email, newTotal);
+  bumpSquadXP(email, amount);
 
   // Track daily XP
   try {
@@ -35,23 +40,18 @@ export async function addXP(email, name, amount, reason = '') {
     localStorage.setItem(DAILY_XP_KEY(email), String(dailyXP));
   } catch {}
 
-  // Always push XP to server leaderboard (fire-and-forget)
-  // This fires for ALL XP sources: quiz, daily login, topic complete, share, etc.
-  try {
-    fetch(SHEETS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'addXP',
-        email, name,
-        xp: newTotal,
-        amount,
-        reason,
-        timestamp: new Date().toISOString(),
-      }),
-    });
-  } catch {}
+  // Always push XP to server leaderboard (fire-and-forget). If this fails
+  // because the device is offline, queue it instead of losing it — it'll
+  // retry automatically the moment connectivity returns.
+  const xpPayload = { email, name, xp: newTotal, amount, reason, timestamp: new Date().toISOString() };
+  // Not awaited on purpose: XP should feel instant. On failure (offline) it
+  // is queued and retried when the connection returns.
+  fetch(XP_ADD_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(xpPayload),
+  }).then((r) => { if (!r.ok && r.status >= 500) throw new Error('xp'); })
+    .catch(() => enqueueSync({ url: XP_ADD_URL, payload: xpPayload, contentType: 'application/json' }));
 
   return newTotal;
 }

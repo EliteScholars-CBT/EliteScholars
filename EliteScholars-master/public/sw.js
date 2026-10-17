@@ -1,5 +1,5 @@
-const CACHE_NAME  = 'elitescholars-v3';
-const STATIC_ASSETS = ['/', '/index.html', '/manifest.json'];
+const CACHE_NAME  = 'elitescholars-v4';
+const STATIC_ASSETS = ['/', '/app', '/index.html', '/manifest.json'];
 
 let _reminderTids = [];
 let _reminderName = 'Scholar';
@@ -23,6 +23,31 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   if (!event.request.url.startsWith(self.location.origin)) return;
+  // Never cache the owner dashboard's data.
+  if (new URL(event.request.url).pathname.startsWith('/api/admin')) return;
+
+  // Page navigations (typing a URL, hard refresh, following a link) — this
+  // is a client-routed SPA, so ANY /app/* path should resolve to the same
+  // cached shell when offline, not just the exact URL that happened to be
+  // fetched before (otherwise reloading offline on e.g. /app?src=hero would
+  // 404 even though /app itself is cached).
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((res) => {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then((c) => c.put(event.request, clone));
+          return res;
+        })
+        .catch(async () => {
+          const url = new URL(event.request.url);
+          const shellPath = url.pathname.startsWith('/app') ? '/app' : '/';
+          return (await caches.match(shellPath, { ignoreSearch: true })) || caches.match('/index.html');
+        })
+    );
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then((res) => {
@@ -46,7 +71,7 @@ self.addEventListener('push', (event) => {
     tag:     data.tag     || 'elitescholars',
     renotify: true,
     requireInteraction: data.requireInteraction || false,
-    data: { url: data.url || '/', type: data.type || 'general', challengerName: data.challengerName || '' },
+    data: { url: data.url || '/app', type: data.type || 'general', challengerName: data.challengerName || '' },
     actions: data.actions || [],
     vibrate: [200, 100, 200],
   };
@@ -57,7 +82,7 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const targetUrl = event.notification.data?.url || '/';
+  const targetUrl = event.notification.data?.url || '/app';
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
       for (const client of list) {
@@ -79,7 +104,7 @@ function showReminder(name) {
     tag:     'study-reminder',
     renotify: true,
     vibrate: [200, 100, 200],
-    data: { url: '/', type: 'reminder' },
+    data: { url: '/app', type: 'reminder' },
   });
 }
 
@@ -127,7 +152,7 @@ self.addEventListener('message', (event) => {
       tag:     'study-reminder',
       renotify: true,
       vibrate: [200, 100, 200],
-      data: { url: '/', type: 'reminder' },
+      data: { url: '/app', type: 'reminder' },
     });
     return;
   }
@@ -142,7 +167,7 @@ self.addEventListener('message', (event) => {
       renotify: true,
       requireInteraction: true,
       vibrate: [300, 100, 300, 100, 300],
-      data: { url: '/', type: 'challenge', challengerName },
+      data: { url: '/app', type: 'challenge', challengerName },
       actions: [
         { action: 'accept',  title: '⚔️ Accept Challenge' },
         { action: 'dismiss', title: 'Later' },

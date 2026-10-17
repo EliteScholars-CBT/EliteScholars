@@ -671,3 +671,176 @@ body.dark-mode .bottom-nav { background: rgba(27, 10, 71, .86); }
 .modal-close:active, .toast-close:active { background: rgba(255, 255, 255, 0.15); }
 
 /* PWA theme-color meta stays in sync with the new violet identity — see index.html */
+
+/* Mode pills (Learn/CBT/Flash/Game) now carry a small icon alongside the label */
+.subjects-mode-btn { display: flex; align-items: center; justify-content: center; gap: 4px; }
+
+/* ── Referral card (Profile → Settings) ──────────────────────────────────── */
+.referral-card {
+  position: relative; overflow: hidden; padding: 16px; border-radius: 20px; margin-bottom: 22px;
+  background: var(--grad-gold); color: #2E1065;
+  box-shadow: var(--shadow-gold);
+  animation: cardRise 0.4s var(--ease-spring) both;
+}
+.referral-card::after {
+  content: ''; position: absolute; top: 0; left: -80%; width: 45%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .45), transparent);
+  transform: skewX(-20deg); animation: btnSweep 4s ease-in-out infinite; pointer-events: none;
+}
+.referral-card-top { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+.referral-card-icon {
+  flex-shrink: 0; width: 42px; height: 42px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+  color: #fff; background: rgba(46, 16, 101, .2);
+}
+.referral-card-title { font-size: 14.5px; font-weight: 800; }
+.referral-card-desc { font-size: 12px; line-height: 1.5; opacity: .85; margin-top: 3px; }
+.referral-code-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 11px 14px; border-radius: 13px; background: rgba(46, 16, 101, .14); margin-bottom: 10px;
+}
+.referral-code { font-size: 17px; font-weight: 900; letter-spacing: 1.5px; }
+.referral-copy-btn {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0; padding: 8px 13px; border-radius: 10px; border: none;
+  font-family: inherit; font-size: 11.5px; font-weight: 800; color: #fff; background: #2E1065;
+}
+.referral-copy-btn:active { transform: scale(.94); }
+.referral-whatsapp-btn {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px; border-radius: 13px; border: none; font-family: inherit; font-size: 13px; font-weight: 800;
+  color: #fff; background: #25D366; box-shadow: 0 8px 18px rgba(37, 211, 102, .4);
+}
+.referral-whatsapp-btn:active { transform: scale(.96); }
+
+/* ============================================================================
+   PWA INSTALL BANNER — slim top bar, modeled on the Jumia/Temu smart-app-
+   banner pattern: X · icon · two-line text · pill CTA, flush to the top.
+   ============================================================================ */
+.pwa-banner {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9400;
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 12px; padding-top: calc(10px + env(safe-area-inset-top, 0px));
+  background: linear-gradient(100deg, #2E1065, #3B1A8F 60%, #2E1065);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .35);
+  animation: pwaSlideDown .4s var(--ease-spring) both;
+}
+@keyframes pwaSlideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+.pwa-banner-close {
+  flex-shrink: 0; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  border: none; background: none; color: rgba(255, 255, 255, .55); padding: 0;
+}
+.pwa-banner-icon {
+  flex-shrink: 0; width: 38px; height: 38px; border-radius: 11px; object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .15);
+}
+.pwa-banner-text { flex: 1; min-width: 0; }
+.pwa-banner-title { font-size: 13px; font-weight: 800; color: #fff; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pwa-banner-sub { font-size: 11px; color: rgba(255, 255, 255, .62); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.pwa-banner-install {
+  flex-shrink: 0; border: none; border-radius: 99px; padding: 9px 18px;
+  font-family: inherit; font-size: 12.5px; font-weight: 800; color: #2E1065;
+  background: var(--grad-gold); box-shadow: 0 4px 12px rgba(255, 197, 61, .4);
+}
+.pwa-banner-install:active { transform: scale(.94); }
+
+/* "Have you installed it?" ask modal + the iOS follow-up tip */
+.pwa-ask-backdrop {
+  position: fixed; inset: 0; z-index: 9400; display: flex; align-items: center; justify-content: center;
+  padding: 24px; background: rgba(27, 10, 71, .6); backdrop-filter: blur(6px);
+  animation: fsFade .25s both;
+}
+.pwa-ask-card {
+  width: 100%; max-width: 320px; padding: 26px 22px; border-radius: 24px; text-align: center;
+  background: var(--card-bg, #fff); box-shadow: 0 30px 60px rgba(46, 16, 101, .4);
+  animation: cardBounceIn .45s var(--ease-pop) both;
+}
+.pwa-ask-icon {
+  width: 56px; height: 56px; margin: 0 auto 14px; border-radius: 18px; display: flex; align-items: center; justify-content: center;
+  color: #2E1065; background: var(--grad-gold); box-shadow: var(--shadow-gold);
+}
+.pwa-ask-title { font-size: 16.5px; font-weight: 800; color: var(--text-primary, #1F2937); margin-bottom: 7px; }
+.pwa-ask-sub { font-size: 12.5px; line-height: 1.55; color: var(--text-secondary, #6B7280); margin-bottom: 18px; }
+.pwa-ask-actions { display: flex; gap: 10px; }
+.pwa-ask-no {
+  flex: 1; padding: 12px; border-radius: 13px; border: 1.5px solid var(--border-color, #E5E7EB);
+  background: none; font-family: inherit; font-size: 13px; font-weight: 700; color: var(--text-secondary, #6B7280);
+}
+.pwa-ask-yes {
+  flex: 1.3; display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 12px; border-radius: 13px; border: none; font-family: inherit; font-size: 13px; font-weight: 800;
+  color: #fff; background: var(--grad-violet); box-shadow: var(--shadow-violet);
+}
+.pwa-ask-no:active, .pwa-ask-yes:active { transform: scale(.95); }
+
+/* ── Leaderboard: Global / My Squad toggle ───────────────────────────────── */
+.leaderboard-view-toggle { display: flex; gap: 8px; padding: 0 16px 14px; }
+.lb-view-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px; border-radius: 12px; border: 1.5px solid var(--border-color);
+  background: var(--card-bg); color: var(--text-secondary); font-family: inherit; font-size: 12.5px; font-weight: 700;
+  transition: transform .15s var(--ease-spring), background .2s, color .2s, border-color .2s;
+}
+.lb-view-btn:active { transform: scale(.95); }
+.lb-view-btn.active { color: #fff; border-color: transparent; background: var(--grad-violet); box-shadow: var(--shadow-violet); }
+
+/* ── Offline banner — slim bottom strip, doesn't collide with the PWA
+   install banner which lives at the top ───────────────────────────────── */
+.offline-banner {
+  position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 9300;
+  display: flex; align-items: center; gap: 8px; max-width: 92%;
+  padding: 10px 16px; border-radius: 99px; font-size: 12px; font-weight: 700; color: #fff;
+  background: #3A2E5C; box-shadow: 0 10px 24px rgba(0, 0, 0, .3);
+  animation: offlineIn .35s var(--ease-pop) both;
+}
+.offline-banner.back { background: linear-gradient(135deg, #16A34A, #22C55E); }
+@keyframes offlineIn { from { opacity: 0; transform: translateX(-50%) translateY(16px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+/* ── Referral prompt modal (the popup ask) ───────────────────────────────── */
+.ref-modal-backdrop {
+  position: fixed; inset: 0; z-index: 9500; display: flex; align-items: center; justify-content: center;
+  padding: 24px; background: rgba(27, 10, 71, .62); backdrop-filter: blur(6px);
+  animation: fsFade .25s both;
+}
+.ref-modal-card {
+  position: relative; overflow: hidden; width: 100%; max-width: 320px; padding: 28px 22px 22px; border-radius: 26px;
+  text-align: center; background: var(--card-bg, #fff);
+  box-shadow: 0 34px 70px rgba(46, 16, 101, .42);
+  animation: cardBounceIn .5s var(--ease-pop) both;
+}
+.ref-modal-close {
+  position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 9px; border: none;
+  display: flex; align-items: center; justify-content: center; background: rgba(124, 58, 237, .08); color: var(--text-secondary);
+}
+.ref-modal-icon {
+  width: 60px; height: 60px; margin: 0 auto 14px; border-radius: 20px; display: flex; align-items: center; justify-content: center;
+  color: #2E1065; background: var(--grad-gold); box-shadow: var(--shadow-gold);
+  animation: fsMedal .7s var(--ease-pop) .1s both;
+}
+.ref-modal-title { font-size: 19px; font-weight: 800; color: var(--text-primary, #1F2937); margin-bottom: 7px; }
+.ref-modal-sub { font-size: 12.5px; line-height: 1.55; color: var(--text-secondary, #6B7280); margin-bottom: 18px; }
+.ref-modal-code-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 11px 14px; border-radius: 13px; background: rgba(124, 58, 237, .08); margin-bottom: 12px;
+}
+.ref-modal-code { font-size: 16px; font-weight: 900; letter-spacing: 2px; color: var(--purple, #7C3AED); }
+.ref-modal-copy {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0; padding: 7px 12px; border-radius: 10px; border: none;
+  font-family: inherit; font-size: 11px; font-weight: 800; color: #fff; background: var(--grad-violet);
+}
+.ref-modal-whatsapp {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px;
+  border: none; border-radius: 14px; font-family: inherit; font-size: 13.5px; font-weight: 800;
+  color: #fff; background: #25D366; box-shadow: 0 10px 22px rgba(37, 211, 102, .4); margin-bottom: 8px;
+}
+.ref-modal-whatsapp:active, .ref-modal-copy:active { transform: scale(.95); }
+.ref-modal-later { background: none; border: none; font-family: inherit; font-size: 12px; font-weight: 700; color: var(--text-secondary); padding: 6px; }
+
+/* Bottom nav now has 5 items (Shop restored) — keep labels from wrapping/overflowing */
+.bottom-nav-item { min-width: 0; }
+.bottom-nav-label { font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; padding: 0 2px; }
+
+/* Learn: follow-along reading strip */
+.learn-now-reading{margin:10px 0 0;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(245,180,0,.12));border:1px solid rgba(124,58,237,.25);font-size:1.05rem;line-height:1.7;max-height:140px;overflow-y:auto}
+.learn-now-reading-word{display:inline;transition:color .15s,background .15s,transform .15s;opacity:.55}
+.learn-now-reading-word.done{opacity:.85}
+.learn-now-reading-word.active{opacity:1;font-weight:700;background:linear-gradient(135deg,#7c3aed,#f5b400);color:#fff;border-radius:6px;padding:1px 5px;animation:nowReadingPop .25s ease}
+@keyframes nowReadingPop{0%{transform:scale(.9)}60%{transform:scale(1.1)}100%{transform:scale(1)}}

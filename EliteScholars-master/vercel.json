@@ -6,25 +6,186 @@
   },
   "rewrites": [
     {
+      "source": "/api/partner/signup",
+      "destination": "/api/data?route=partner/signup"
+    },
+    {
+      "source": "/api/partner/login",
+      "destination": "/api/data?route=partner/login"
+    },
+    {
+      "source": "/api/partner/me",
+      "destination": "/api/data?route=partner/me"
+    },
+    {
+      "source": "/api/partner/bank",
+      "destination": "/api/data?route=partner/bank"
+    },
+    {
+      "source": "/api/partner/payout",
+      "destination": "/api/data?route=partner/payout"
+    },
+    {
+      "source": "/api/partner/password",
+      "destination": "/api/data?route=partner/password"
+    },
+    {
+      "source": "/api/admin/partners",
+      "destination": "/api/data?route=admin/partners"
+    },
+    {
+      "source": "/api/admin/partner",
+      "destination": "/api/data?route=admin/partner"
+    },
+    {
+      "source": "/api/admin/partner-action",
+      "destination": "/api/data?route=admin/partner-action"
+    },
+    {
+      "source": "/api/admin/commission-action",
+      "destination": "/api/data?route=admin/commission-action"
+    },
+    {
+      "source": "/api/admin/payouts",
+      "destination": "/api/data?route=admin/payouts"
+    },
+    {
+      "source": "/api/admin/payout-action",
+      "destination": "/api/data?route=admin/payout-action"
+    },
+    {
+      "source": "/api/admin/settings",
+      "destination": "/api/data?route=admin/settings"
+    },
+    {
+      "source": "/api/admin/login",
+      "destination": "/api/data?route=admin/login"
+    },
+    {
+      "source": "/api/admin/stats",
+      "destination": "/api/data?route=admin/stats"
+    },
+    {
+      "source": "/api/events/batch",
+      "destination": "/api/data?route=events/batch"
+    },
+    {
+      "source": "/api/leaderboard/get",
+      "destination": "/api/data?route=leaderboard/get"
+    },
+    {
+      "source": "/api/leaderboard/rank",
+      "destination": "/api/data?route=leaderboard/rank"
+    },
+    {
+      "source": "/api/leaderboard/users",
+      "destination": "/api/data?route=leaderboard/users"
+    },
+    {
+      "source": "/api/profile/sync",
+      "destination": "/api/data?route=profile/sync"
+    },
+    {
+      "source": "/api/profile/check-username",
+      "destination": "/api/data?route=profile/check-username"
+    },
+    {
+      "source": "/api/profile/guardian",
+      "destination": "/api/data?route=profile/guardian"
+    },
+    {
+      "source": "/api/xp/add",
+      "destination": "/api/data?route=xp/add"
+    },
+    {
+      "source": "/api/events/track",
+      "destination": "/api/data?route=events/track"
+    },
+    {
+      "source": "/api/squads/create",
+      "destination": "/api/data?route=squads/create"
+    },
+    {
+      "source": "/api/squads/join",
+      "destination": "/api/data?route=squads/join"
+    },
+    {
+      "source": "/api/squads/get",
+      "destination": "/api/data?route=squads/get"
+    },
+    {
+      "source": "/api/squads/leave",
+      "destination": "/api/data?route=squads/leave"
+    },
+    {
+      "source": "/api/challenges/create",
+      "destination": "/api/data?route=challenges/create"
+    },
+    {
+      "source": "/api/challenges/accept",
+      "destination": "/api/data?route=challenges/accept"
+    },
+    {
+      "source": "/api/challenges/decline",
+      "destination": "/api/data?route=challenges/decline"
+    },
+    {
+      "source": "/api/challenges/submit-score",
+      "destination": "/api/data?route=challenges/submit-score"
+    },
+    {
+      "source": "/api/challenges/list",
+      "destination": "/api/data?route=challenges/list"
+    },
+    {
+      "source": "/api/challenges/lookup",
+      "destination": "/api/data?route=challenges/lookup"
+    },
+    {
+      "source": "/api/auth/verify",
+      "destination": "/api/data?route=auth/verify"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ],
   "headers": [
     {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'none'; base-uri 'self'; object-src 'none'"
+        }
+      ]
+    },
+    {
       "source": "/api/(.*)",
       "headers": [
         {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
+          "key": "Cache-Control",
+          "value": "no-store"
         }
       ]
     }

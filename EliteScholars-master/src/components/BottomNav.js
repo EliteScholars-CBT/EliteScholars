@@ -12,6 +12,7 @@ export default function BottomNav({ currentScreen, onNavigate, userEmail }) {
     { id: 'subjects', label: 'Study', icon: 'layers', activeIcon: 'bookOpen' },
     { id: 'challenges', label: 'Challenges', icon: 'swords', activeIcon: 'swords' },
     { id: 'leaderboard', label: 'Ranks', icon: 'trophy', activeIcon: 'trophy' },
+    { id: 'shop', label: 'Shop', icon: 'shop', activeIcon: 'shop' },
     { id: 'profile', label: 'Me', icon: 'user', activeIcon: 'user' },
   ];
 

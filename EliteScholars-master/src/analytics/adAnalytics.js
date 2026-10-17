@@ -3,7 +3,6 @@
 // All events are stored locally and flushed to Google Sheets
 // ============================================================================
 
-import { SHEETS_URL } from '../utils/constants';
 
 const STORAGE_KEY = 'es_ad_events';
 const MAX_QUEUED  = 50; // flush after this many queued events
@@ -27,11 +26,10 @@ function writeQueue(q) {
 async function flush(events) {
   if (!events.length) return;
   try {
-    await fetch(SHEETS_URL, {
+    await fetch('/api/events/batch', {
       method: 'POST',
-      mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'adEvents', events }),
+      body: JSON.stringify({ kind: 'ad', events }),
     });
   } catch {}
 }
