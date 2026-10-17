@@ -21,6 +21,7 @@ import {
 } from '../utils/colors';
 import { SFX, speak, stopSpeech } from '../utils/sounds';
 import { sfl } from '../utils/helpers';
+import { EmojiIcon } from './Icon';
 
 export default function Quiz({
   subjectId,
@@ -328,7 +329,7 @@ export default function Quiz({
     if (hidden.includes(i)) return { display: 'none' };
     let border = `2px solid ${LGRAY}`,
       bg = WHITE,
-      color = '#1a0030';
+      color = '#1B0A47';
     if (!done && sel === i) {
       border = `2px solid ${meta.color}`;
       bg = meta.bg;
@@ -406,7 +407,7 @@ export default function Quiz({
           gap: 20,
         }}
       >
-        <div style={{ fontSize: 48 }}>❌</div>
+        <div style={{ fontSize: 48 }}><EmojiIcon emoji="❌" size="1.1em" /></div>
         <div style={{ fontSize: 18, fontWeight: 600, color: PURPLE }}>Error Loading Questions</div>
         <div style={{ fontSize: 14, color: GRAY, textAlign: 'center', maxWidth: 300 }}>
           No questions found for {subjectId}.
@@ -634,7 +635,7 @@ export default function Quiz({
         >
           <div className="modal-content">
             <div className="modal-handle" />
-            <div className="modal-title">💡 Full Explanation</div>
+            <div className="modal-title"><EmojiIcon emoji="💡" size="1.15em" /> Full Explanation</div>
             <div className="modal-question">{q.q}</div>
             <div className="modal-section-title">WHY THIS ANSWER?</div>
             <div className="modal-explanation">

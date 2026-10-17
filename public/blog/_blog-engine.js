@@ -1,12 +1,12 @@
 (function () {
   const AVATARS = {
-    avatar_1: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="24" fill="#6C3FC9"/><circle cx="24" cy="19" r="8" fill="#C4B5FD"/><ellipse cx="24" cy="38" rx="13" ry="8" fill="#C4B5FD"/><circle cx="24" cy="19" r="6" fill="#fff"/><path d="M20 18 Q24 14 28 18" stroke="#6C3FC9" stroke-width="1.5" fill="none"/></svg>`,
+    avatar_1: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="24" fill="#8B5CF6"/><circle cx="24" cy="19" r="8" fill="#C4B5FD"/><ellipse cx="24" cy="38" rx="13" ry="8" fill="#C4B5FD"/><circle cx="24" cy="19" r="6" fill="#fff"/><path d="M20 18 Q24 14 28 18" stroke="#8B5CF6" stroke-width="1.5" fill="none"/></svg>`,
     avatar_2: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="24" fill="#0369A1"/><circle cx="24" cy="19" r="8" fill="#BAE6FD"/><ellipse cx="24" cy="38" rx="13" ry="8" fill="#BAE6FD"/><circle cx="24" cy="19" r="6" fill="#fff"/><rect x="17" y="16" width="14" height="2" rx="1" fill="#0369A1"/></svg>`,
     avatar_3: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="24" fill="#065F46"/><circle cx="24" cy="19" r="8" fill="#A7F3D0"/><ellipse cx="24" cy="38" rx="13" ry="8" fill="#A7F3D0"/><circle cx="24" cy="19" r="6" fill="#fff"/><path d="M21 17 L24 14 L27 17" stroke="#065F46" stroke-width="1.5" fill="none"/></svg>`,
   };
 
   const CATEGORY_COLORS = {
-    jamb: { bg: '#EDE9FE', color: '#6C3FC9', label: 'JAMB' },
+    jamb: { bg: '#EDE9FE', color: '#8B5CF6', label: 'JAMB' },
     'study-tips': { bg: '#DBEAFE', color: '#1D4ED8', label: 'Study Tips' },
     waec: { bg: '#DCFCE7', color: '#065F46', label: 'WAEC' },
     gst: { bg: '#FEE2E2', color: '#DC2626', label: 'GST' },

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { APP_URL, VIBES } from '../utils/constants';
 import { GOLD, GREEN, DPURP, WHITE } from '../utils/colors';
+import { EmojiIcon } from './Icon';
 
 // ============================================================================
 // ShareGate — Share to unlock the next quiz round.
@@ -48,7 +49,7 @@ export default function ShareGate({ name, email, onUnlocked }) {
   return (
     <div className="scr fd sharegate-container">
       <div className="sharegate-card">
-        <div className="sharegate-icon">📤</div>
+        <div className="sharegate-icon"><EmojiIcon emoji="📤" size="1.1em" /></div>
         <div className="sharegate-title">Unlock Your Next Round</div>
         <div className="sharegate-subtitle">
           Share EliteScholars with your friends on WhatsApp to keep playing. 🔥
@@ -57,7 +58,7 @@ export default function ShareGate({ name, email, onUnlocked }) {
         {/* Vibe quote — fades after 3s via separate timer */}
         {quoteVisible && (
           <div className="sharegate-vibe">
-            <div className="sharegate-vibe-badge">✨ FROM ELITE SCHOLARS</div>
+            <div className="sharegate-vibe-badge"><EmojiIcon emoji="✨" size="1.15em" /> FROM ELITE SCHOLARS</div>
             <div className="sharegate-vibe-text">"{vibe}"</div>
           </div>
         )}
@@ -88,7 +89,7 @@ export default function ShareGate({ name, email, onUnlocked }) {
         ) : (
           <div className="sharegate-unlocked">
             <div className="sharegate-success">
-              <div className="sharegate-success-text">✅ Unlocked!</div>
+              <div className="sharegate-success-text"><EmojiIcon emoji="✅" size="1.15em" /> Unlocked!</div>
             </div>
             <button className="sharegate-start-btn" onClick={onUnlocked}>
               🚀 Start Quiz Now

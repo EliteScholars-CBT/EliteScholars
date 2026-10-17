@@ -1,5 +1,6 @@
 import React from 'react';
 import { BG, PURPLE, GOLD, WHITE, LGRAY } from '../utils/colors';
+import { EmojiIcon } from './Icon';
 
 // Available universities with question banks
 const AVAILABLE_UNIVERSITIES = [
@@ -29,7 +30,7 @@ export default function UniversitySelect({ onSelectUniversity, onBack }) {
           ← Back
         </button>
         <div className="university-header-content">
-          <div className="university-icon">🏛️</div>
+          <div className="university-icon"><EmojiIcon emoji="🏛️" size="1.1em" /></div>
           <h1>Select <span style={{ color: GOLD }}>University</span></h1>
           <p>Choose your university for POST UTME practice</p>
         </div>
@@ -51,7 +52,7 @@ export default function UniversitySelect({ onSelectUniversity, onBack }) {
               {uni.available ? (
                 <div className="university-card-badge available">Available</div>
               ) : (
-                <div className="university-card-badge coming">🔒 Coming Soon</div>
+                <div className="university-card-badge coming"><EmojiIcon emoji="🔒" size="1.15em" /> Coming Soon</div>
               )}
             </div>
           ))}

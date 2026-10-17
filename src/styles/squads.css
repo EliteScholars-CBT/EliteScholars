@@ -1,0 +1,88 @@
+/* ============================================================================
+   STUDY SQUADS
+   ============================================================================ */
+
+.squad-loading { display: flex; align-items: center; justify-content: center; padding: 60px 0; color: var(--purple, #7C3AED); animation: sqSpin 1.2s linear infinite; }
+@keyframes sqSpin { to { transform: rotate(360deg); } }
+
+/* ── Setup (create / join) ──────────────────────────────────────────────── */
+.squad-setup { padding: 28px 22px 10px; text-align: center; }
+.squad-setup-icon {
+  width: 60px; height: 60px; margin: 0 auto 14px; border-radius: 20px; display: flex; align-items: center; justify-content: center;
+  color: #fff; background: linear-gradient(135deg, #6D28D9, #8B5CF6); box-shadow: 0 12px 26px rgba(124, 58, 237, .32);
+  animation: cardRise .5s var(--ease-spring, cubic-bezier(.34,1.56,.64,1)) both;
+}
+.squad-setup h3 { font-size: 18px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px; }
+.squad-setup p { font-size: 13px; line-height: 1.55; color: var(--text-secondary); max-width: 280px; margin: 0 auto 22px; }
+.squad-form { display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto; }
+.squad-input {
+  width: 100%; padding: 14px 16px; border-radius: 14px; border: 1.5px solid var(--border-color);
+  background: var(--card-bg); color: var(--text-primary); font-family: inherit; font-size: 14px; font-weight: 600;
+  text-align: center;
+}
+.squad-input:focus { outline: none; border-color: #8B5CF6; }
+.squad-code-input { letter-spacing: 4px; text-transform: uppercase; font-weight: 800; }
+.squad-error { font-size: 12px; color: #DC2626; background: rgba(239, 68, 68, .1); padding: 9px 12px; border-radius: 10px; }
+.squad-primary-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px;
+  border: none; border-radius: 14px; font-family: inherit; font-size: 14px; font-weight: 800; color: #fff;
+  background: linear-gradient(135deg, #6D28D9, #8B5CF6); box-shadow: 0 10px 22px rgba(124, 58, 237, .32);
+}
+.squad-primary-btn:disabled { opacity: .6; }
+.squad-primary-btn:not(:disabled):active { transform: scale(.96); }
+.squad-link-btn { background: none; border: none; font-family: inherit; font-size: 12.5px; font-weight: 700; color: var(--text-secondary); padding: 6px; }
+
+/* ── Hub ─────────────────────────────────────────────────────────────────── */
+.squad-hub { padding: 16px 18px 10px; }
+.squad-hub-card {
+  padding: 18px; border-radius: 22px; margin-bottom: 14px;
+  background: linear-gradient(140deg, #3B1A8F, #6D28D9 60%, #8B5CF6); color: #fff;
+  box-shadow: 0 16px 34px rgba(124, 58, 237, .3);
+  animation: cardRise .45s var(--ease-spring, cubic-bezier(.34,1.56,.64,1)) both;
+}
+.squad-hub-top { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
+.squad-hub-icon { flex-shrink: 0; width: 42px; height: 42px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, .16); }
+.squad-hub-name { font-size: 15.5px; font-weight: 800; }
+.squad-hub-meta { font-size: 11.5px; color: rgba(255, 255, 255, .65); margin-top: 2px; }
+.squad-pending { color: #FFE8A3; }
+.squad-code-row {
+  display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 13px;
+  background: rgba(255, 255, 255, .12); margin-bottom: 10px;
+}
+.squad-code-label { font-size: 10.5px; font-weight: 700; color: rgba(255, 255, 255, .6); flex-shrink: 0; }
+.squad-code { flex: 1; font-size: 16px; font-weight: 900; letter-spacing: 3px; }
+.squad-code-copy { flex-shrink: 0; width: 28px; height: 28px; border-radius: 9px; border: none; background: rgba(255, 255, 255, .18); color: #fff; display: flex; align-items: center; justify-content: center; }
+.squad-whatsapp-btn {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px;
+  border: none; border-radius: 13px; font-family: inherit; font-size: 13px; font-weight: 800;
+  color: #2E1065; background: linear-gradient(135deg, #FFE8A3, #FFC53D);
+}
+.squad-whatsapp-btn:active { transform: scale(.96); }
+
+.squad-sync-note {
+  display: flex; gap: 9px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; margin-bottom: 18px;
+  background: rgba(255, 197, 61, .12); color: var(--text-secondary); font-size: 11.5px; line-height: 1.5;
+}
+.squad-sync-note svg { flex-shrink: 0; color: #D9911A; margin-top: 1px; }
+
+.squad-board-title { font-size: 11px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; color: var(--text-secondary); margin: 4px 0 10px; }
+.squad-board { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.squad-row {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px;
+  background: var(--card-bg); border: 1px solid var(--border-color);
+  animation: cardRise .4s var(--ease-spring, cubic-bezier(.34,1.56,.64,1)) both;
+}
+.squad-row.me { border-color: #8B5CF6; background: rgba(139, 92, 246, .07); }
+.squad-rank { flex-shrink: 0; width: 24px; text-align: center; font-size: 12.5px; font-weight: 800; color: var(--text-secondary); }
+.squad-rank.top { display: flex; align-items: center; justify-content: center; }
+.squad-rank.top1 { color: #FFC53D; }
+.squad-rank.top2 { color: #A1A1AA; }
+.squad-rank.top3 { color: #D97706; }
+.squad-row-name { flex: 1; font-size: 13px; font-weight: 700; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.squad-row-xp { flex-shrink: 0; font-size: 12.5px; font-weight: 800; color: #7C3AED; }
+
+.squad-leave-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 11px;
+  border: none; border-radius: 12px; background: rgba(239, 68, 68, .1); color: #DC2626;
+  font-family: inherit; font-size: 12px; font-weight: 700;
+}

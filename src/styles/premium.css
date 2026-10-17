@@ -34,7 +34,7 @@
   width: 32px;
   height: 32px;
   font-size: 14px;
-  color: #6C3FC9;
+  color: #8B5CF6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,8 +55,8 @@
 .premium-title {
   font-size: 22px;
   font-weight: 900;
-  color: #1a0030;
-  background: linear-gradient(135deg, #6C3FC9, #D4AF37);
+  color: #1B0A47;
+  background: linear-gradient(135deg, #8B5CF6, #FFC53D);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -104,7 +104,7 @@
 }
 
 .premium-col-header {
-  color: #6C3FC9 !important;
+  color: #8B5CF6 !important;
 }
 
 .premium-compare-row {
@@ -149,9 +149,9 @@
 }
 
 .premium-plan-btn.active {
-  background: #4B0082;
+  background: #7C3AED;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(75, 0, 130, 0.25);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
 }
 
 .premium-save-badge {
@@ -177,13 +177,13 @@
 .premium-currency {
   font-size: 20px;
   font-weight: 700;
-  color: #6C3FC9;
+  color: #8B5CF6;
 }
 
 .premium-amount {
   font-size: 40px;
   font-weight: 900;
-  color: #1a0030;
+  color: #1B0A47;
   line-height: 1;
 }
 
@@ -208,7 +208,7 @@
 .premium-cta-btn {
   width: 100%;
   padding: 15px;
-  background: linear-gradient(135deg, #6C3FC9, #4B0082);
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
   color: #fff;
   border: none;
   border-radius: 14px;
@@ -271,7 +271,7 @@
   text-align: center;
   font-size: 22px;
   font-weight: 900;
-  color: #1a0030;
+  color: #1B0A47;
   margin-bottom: 8px;
 }
 
@@ -314,7 +314,7 @@
 .limit-gate-title {
   font-size: 18px;
   font-weight: 900;
-  color: #1a0030;
+  color: #1B0A47;
   margin-bottom: 10px;
 }
 
@@ -345,7 +345,7 @@
 .limit-gate-timer {
   font-size: 36px;
   font-weight: 900;
-  color: #6C3FC9;
+  color: #8B5CF6;
   letter-spacing: 2px;
   font-variant-numeric: tabular-nums;
 }
@@ -366,20 +366,20 @@
 .limit-gate-premium-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #D4AF37, #B8961F);
-  color: #1a0030;
+  background: var(--grad-gold);
+  color: #1B0A47;
   border: none;
   border-radius: 12px;
   font-size: 14px;
   font-weight: 800;
   margin-bottom: 10px;
-  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+  box-shadow: 0 4px 14px rgba(255, 197, 61, 0.35);
 }
 
 .limit-gate-continue-btn {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #6C3FC9, #4B0082);
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
   color: #fff;
   border: none;
   border-radius: 12px;
@@ -391,7 +391,7 @@
   width: 100%;
   padding: 12px;
   background: #F3F0FF;
-  color: #6C3FC9;
+  color: #8B5CF6;
   border: none;
   border-radius: 12px;
   font-size: 13px;
@@ -403,8 +403,8 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: linear-gradient(135deg, #D4AF37, #B8961F);
-  color: #1a0030;
+  background: var(--grad-gold);
+  color: #1B0A47;
   font-size: 10px;
   font-weight: 800;
   padding: 4px 10px;
@@ -415,7 +415,7 @@
 
 .premium-active-box {
   background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
-  border: 1.5px solid #D4AF37;
+  border: 1.5px solid #FFC53D;
   border-radius: 14px;
   padding: 16px;
   margin-bottom: 16px;
@@ -425,7 +425,7 @@
 .premium-active-title {
   font-size: 14px;
   font-weight: 800;
-  color: #1a0030;
+  color: #1B0A47;
   margin-bottom: 4px;
 }
 
@@ -437,9 +437,9 @@
 .premium-manage-btn {
   margin-top: 10px;
   padding: 8px 18px;
-  background: rgba(212, 175, 55, 0.15);
+  background: rgba(255, 197, 61, 0.15);
   color: #B8961F;
-  border: 1px solid #D4AF37;
+  border: 1px solid #FFC53D;
   border-radius: 8px;
   font-size: 11px;
   font-weight: 700;
@@ -447,7 +447,7 @@
 
 /* ── Shop premium card ──────────────────────────────────────────────────────── */
 .shop-premium-card {
-  background: linear-gradient(135deg, #1a0030, #4B0082);
+  background: var(--grad-hero);
   border-radius: 16px;
   padding: 20px 18px;
   margin-bottom: 16px;
@@ -463,7 +463,7 @@
   right: -30px;
   width: 120px;
   height: 120px;
-  background: radial-gradient(circle, rgba(212,175,55,0.2), transparent 70%);
+  background: radial-gradient(circle, rgba(255, 197, 61,0.2), transparent 70%);
   pointer-events: none;
 }
 
@@ -503,14 +503,14 @@
 
 .shop-premium-cta {
   padding: 12px 20px;
-  background: linear-gradient(135deg, #D4AF37, #B8961F);
-  color: #1a0030;
+  background: var(--grad-gold);
+  color: #1B0A47;
   border: none;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 800;
   width: 100%;
-  box-shadow: 0 4px 14px rgba(212,175,55,0.3);
+  box-shadow: 0 4px 14px rgba(255, 197, 61,0.3);
 }
 
 .shop-already-premium {
@@ -518,13 +518,13 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: rgba(212,175,55,0.1);
-  border: 1px solid rgba(212,175,55,0.3);
+  background: rgba(255, 197, 61,0.1);
+  border: 1px solid rgba(255, 197, 61,0.3);
   border-radius: 10px;
   padding: 12px;
   font-size: 12px;
   font-weight: 700;
-  color: #D4AF37;
+  color: #FFC53D;
 }
 
 /* ============================================================================
@@ -536,7 +536,7 @@ body.dark-mode .premium-overlay {
 }
 
 body.dark-mode .premium-modal {
-  background: #1a0030;
+  background: #1B0A47;
   border-top: 1px solid #2d1b4e;
 }
 
@@ -548,7 +548,7 @@ body.dark-mode .premium-close {
 body.dark-mode .premium-title {
   color: #F3F4F6;
   -webkit-text-fill-color: unset;
-  background: linear-gradient(135deg, #C4B5FD, #D4AF37);
+  background: linear-gradient(135deg, #C4B5FD, #FFC53D);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -566,7 +566,7 @@ body.dark-mode .free-col {
 
 body.dark-mode .premium-col {
   background: linear-gradient(160deg, #2d1b4e, #1e0f3a);
-  border-color: #6C3FC9;
+  border-color: #8B5CF6;
 }
 
 body.dark-mode .premium-col-label {
@@ -599,7 +599,7 @@ body.dark-mode .premium-plan-btn {
 }
 
 body.dark-mode .premium-plan-btn.active {
-  background: #6C3FC9;
+  background: #8B5CF6;
   color: #fff;
   box-shadow: 0 2px 8px rgba(108, 63, 201, 0.25);
 }
@@ -629,7 +629,7 @@ body.dark-mode .premium-savings-note {
 
 /* CTA button dark mode */
 body.dark-mode .premium-cta-btn {
-  background: linear-gradient(135deg, #6C3FC9, #4B0082);
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
 }
 
 /* Notes dark mode */
@@ -658,7 +658,7 @@ body.dark-mode .limit-gate-overlay {
 }
 
 body.dark-mode .limit-gate-card {
-  background: #1a0030;
+  background: #1B0A47;
 }
 
 body.dark-mode .limit-gate-title {
@@ -692,18 +692,18 @@ body.dark-mode .limit-gate-close-btn {
 }
 
 body.dark-mode .limit-gate-premium-btn {
-  background: linear-gradient(135deg, #D4AF37, #B8961F);
-  color: #1a0030;
+  background: var(--grad-gold);
+  color: #1B0A47;
 }
 
 body.dark-mode .limit-gate-continue-btn {
-  background: linear-gradient(135deg, #6C3FC9, #4B0082);
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
 }
 
 /* Premium active box dark mode */
 body.dark-mode .premium-active-box {
-  background: rgba(212, 175, 55, 0.08);
-  border-color: rgba(212, 175, 55, 0.25);
+  background: rgba(255, 197, 61, 0.08);
+  border-color: rgba(255, 197, 61, 0.25);
 }
 
 body.dark-mode .premium-active-title {
@@ -711,29 +711,29 @@ body.dark-mode .premium-active-title {
 }
 
 body.dark-mode .premium-active-expiry {
-  color: #D4AF37;
+  color: #FFC53D;
 }
 
 body.dark-mode .premium-manage-btn {
-  background: rgba(212, 175, 55, 0.1);
-  color: #D4AF37;
-  border-color: rgba(212, 175, 55, 0.3);
+  background: rgba(255, 197, 61, 0.1);
+  color: #FFC53D;
+  border-color: rgba(255, 197, 61, 0.3);
 }
 
 /* Shop premium card dark mode */
 body.dark-mode .shop-premium-card {
-  background: linear-gradient(135deg, #0a0015, #1a0030);
+  background: linear-gradient(135deg, #0a0015, #1B0A47);
 }
 
 body.dark-mode .shop-already-premium {
-  background: rgba(212, 175, 55, 0.05);
-  color: #D4AF37;
+  background: rgba(255, 197, 61, 0.05);
+  color: #FFC53D;
 }
 
 /* Premium badge dark mode */
 body.dark-mode .premium-badge {
-  background: linear-gradient(135deg, #D4AF37, #B8961F);
-  color: #1a0030;
+  background: var(--grad-gold);
+  color: #1B0A47;
 }/* ============================================================================
    PREMIUM — Modal, pricing, limit gate, profile subscription section
    ============================================================================ */
@@ -770,7 +770,7 @@ body.dark-mode .premium-badge {
   width: 32px;
   height: 32px;
   font-size: 14px;
-  color: #6C3FC9;
+  color: #8B5CF6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -791,8 +791,8 @@ body.dark-mode .premium-badge {
 .premium-title {
   font-size: 22px;
   font-weight: 900;
-  color: #1a0030;
-  background: linear-gradient(135deg, #6C3FC9, #D4AF37);
+  color: #1B0A47;
+  background: linear-gradient(135deg, #8B5CF6, #FFC53D);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -840,7 +840,7 @@ body.dark-mode .premium-badge {
 }
 
 .premium-col-header {
-  color: #6C3FC9 !important;
+  color: #8B5CF6 !important;
 }
 
 .premium-compare-row {
@@ -885,9 +885,9 @@ body.dark-mode .premium-badge {
 }
 
 .premium-plan-btn.active {
-  background: #4B0082;
+  background: #7C3AED;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(75, 0, 130, 0.25);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
 }
 
 .premium-save-badge {
@@ -913,13 +913,13 @@ body.dark-mode .premium-badge {
 .premium-currency {
   font-size: 20px;
   font-weight: 700;
-  color: #6C3FC9;
+  color: #8B5CF6;
 }
 
 .premium-amount {
   font-size: 40px;
   font-weight: 900;
-  color: #1a0030;
+  color: #1B0A47;
   line-height: 1;
 }
 
@@ -944,7 +944,7 @@ body.dark-mode .premium-badge {
 .premium-cta-btn {
   width: 100%;
   padding: 15px;
-  background: linear-gradient(135deg, #6C3FC9, #4B0082);
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
   color: #fff;
   border: none;
   border-radius: 14px;
@@ -1007,7 +1007,7 @@ body.dark-mode .premium-badge {
   text-align: center;
   font-size: 22px;
   font-weight: 900;
-  color: #1a0030;
+  color: #1B0A47;
   margin-bottom: 8px;
 }
 
@@ -1050,7 +1050,7 @@ body.dark-mode .premium-badge {
 .limit-gate-title {
   font-size: 18px;
   font-weight: 900;
-  color: #1a0030;
+  color: #1B0A47;
   margin-bottom: 10px;
 }
 
@@ -1081,7 +1081,7 @@ body.dark-mode .premium-badge {
 .limit-gate-timer {
   font-size: 36px;
   font-weight: 900;
-  color: #6C3FC9;
+  color: #8B5CF6;
   letter-spacing: 2px;
   font-variant-numeric: tabular-nums;
 }
@@ -1102,20 +1102,20 @@ body.dark-mode .premium-badge {
 .limit-gate-premium-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #D4AF37, #B8961F);
-  color: #1a0030;
+  background: var(--grad-gold);
+  color: #1B0A47;
   border: none;
   border-radius: 12px;
   font-size: 14px;
   font-weight: 800;
   margin-bottom: 10px;
-  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+  box-shadow: 0 4px 14px rgba(255, 197, 61, 0.35);
 }
 
 .limit-gate-continue-btn {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #6C3FC9, #4B0082);
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
   color: #fff;
   border: none;
   border-radius: 12px;
@@ -1127,7 +1127,7 @@ body.dark-mode .premium-badge {
   width: 100%;
   padding: 12px;
   background: #F3F0FF;
-  color: #6C3FC9;
+  color: #8B5CF6;
   border: none;
   border-radius: 12px;
   font-size: 13px;
@@ -1139,8 +1139,8 @@ body.dark-mode .premium-badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: linear-gradient(135deg, #D4AF37, #B8961F);
-  color: #1a0030;
+  background: var(--grad-gold);
+  color: #1B0A47;
   font-size: 10px;
   font-weight: 800;
   padding: 4px 10px;
@@ -1151,7 +1151,7 @@ body.dark-mode .premium-badge {
 
 .premium-active-box {
   background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
-  border: 1.5px solid #D4AF37;
+  border: 1.5px solid #FFC53D;
   border-radius: 14px;
   padding: 16px;
   margin-bottom: 16px;
@@ -1161,7 +1161,7 @@ body.dark-mode .premium-badge {
 .premium-active-title {
   font-size: 14px;
   font-weight: 800;
-  color: #1a0030;
+  color: #1B0A47;
   margin-bottom: 4px;
 }
 
@@ -1173,9 +1173,9 @@ body.dark-mode .premium-badge {
 .premium-manage-btn {
   margin-top: 10px;
   padding: 8px 18px;
-  background: rgba(212, 175, 55, 0.15);
+  background: rgba(255, 197, 61, 0.15);
   color: #B8961F;
-  border: 1px solid #D4AF37;
+  border: 1px solid #FFC53D;
   border-radius: 8px;
   font-size: 11px;
   font-weight: 700;
@@ -1183,7 +1183,7 @@ body.dark-mode .premium-badge {
 
 /* ── Shop premium card ──────────────────────────────────────────────────────── */
 .shop-premium-card {
-  background: linear-gradient(135deg, #1a0030, #4B0082);
+  background: var(--grad-hero);
   border-radius: 16px;
   padding: 20px 18px;
   margin-bottom: 16px;
@@ -1199,7 +1199,7 @@ body.dark-mode .premium-badge {
   right: -30px;
   width: 120px;
   height: 120px;
-  background: radial-gradient(circle, rgba(212,175,55,0.2), transparent 70%);
+  background: radial-gradient(circle, rgba(255, 197, 61,0.2), transparent 70%);
   pointer-events: none;
 }
 
@@ -1239,14 +1239,14 @@ body.dark-mode .premium-badge {
 
 .shop-premium-cta {
   padding: 12px 20px;
-  background: linear-gradient(135deg, #D4AF37, #B8961F);
-  color: #1a0030;
+  background: var(--grad-gold);
+  color: #1B0A47;
   border: none;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 800;
   width: 100%;
-  box-shadow: 0 4px 14px rgba(212,175,55,0.3);
+  box-shadow: 0 4px 14px rgba(255, 197, 61,0.3);
 }
 
 .shop-already-premium {
@@ -1254,13 +1254,13 @@ body.dark-mode .premium-badge {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: rgba(212,175,55,0.1);
-  border: 1px solid rgba(212,175,55,0.3);
+  background: rgba(255, 197, 61,0.1);
+  border: 1px solid rgba(255, 197, 61,0.3);
   border-radius: 10px;
   padding: 12px;
   font-size: 12px;
   font-weight: 700;
-  color: #D4AF37;
+  color: #FFC53D;
 }
 
 
@@ -1376,7 +1376,7 @@ body.dark-mode .premium-badge {
 .pm-title {
   font-size: 22px;
   font-weight: 900;
-  color: var(--text-primary, #1a0030);
+  color: var(--text-primary, #1B0A47);
   letter-spacing: -0.3px;
   margin-bottom: 5px;
 }
@@ -1438,7 +1438,7 @@ body.dark-mode .premium-badge {
   border-radius: 20px;
   padding: 20px 18px;
   margin-bottom: 14px;
-  background: var(--bg-primary, #F8F5FF);
+  background: var(--bg-primary, #F6F2FF);
   transition: border-color 0.3s;
 }
 
@@ -1446,6 +1446,34 @@ body.dark-mode .premium-badge {
 .pm-price-block {
   margin-bottom: 14px;
 }
+
+.pm-price-was {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.pm-price-was-strike {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-secondary, #6B7280);
+  text-decoration: line-through;
+  text-decoration-color: #DC2626;
+  text-decoration-thickness: 2px;
+  opacity: 0.75;
+}
+
+.pm-price-was-badge {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  color: #2E1065;
+  padding: 2px 9px;
+  border-radius: 99px;
+  animation: pmBadgePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes pmBadgePop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
 .pm-price-row {
   display: flex;
@@ -1515,7 +1543,7 @@ body.dark-mode .premium-badge {
 .pm-feature-text {
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-primary, #1a0030);
+  color: var(--text-primary, #1B0A47);
   line-height: 1.4;
 }
 
@@ -1593,7 +1621,7 @@ body.dark-mode .pm-sheet {
 }
 
 body.dark-mode .pm-card {
-  background: #1a0030;
+  background: #1B0A47;
   border-color: rgba(255, 255, 255, 0.08);
 }
 

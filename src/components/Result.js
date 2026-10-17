@@ -10,6 +10,8 @@ import {
 import { DPURP, PURPLE, BG, WHITE, GRAY, GOLD, GREEN } from '../utils/colors';
 import { SFX } from '../utils/sounds';
 import ScoreCard from './ScoreCard';
+import Confetti from './Confetti';
+import { EmojiIcon } from './Icon';
 
 // ============================================================================
 // Result — Clean score display + full question review (correct/incorrect)
@@ -74,6 +76,7 @@ export default function Result({
 
   return (
     <div className="scr fd" style={{ background: BG }}>
+      {pct >= 70 && <Confetti count={pct === 100 ? 100 : 70} />}
       {/* Hero */}
       <div
         className="result-hero"
@@ -139,7 +142,7 @@ export default function Result({
             className="gate-container"
             style={{ background: `linear-gradient(135deg,${DPURP},#3d0070)` }}
           >
-            <div className="gate-badge">🎬 SUPPORT ELITESCHOLARS</div>
+            <div className="gate-badge"><EmojiIcon emoji="🎬" size="1.15em" /> SUPPORT ELITESCHOLARS</div>
             <div className="gate-quote">Watch a quick ad to unlock your next quiz round!</div>
             <button
               className="gate-share-btn"
@@ -152,7 +155,7 @@ export default function Result({
         )}
         {needAdGate && adCompleted && (
           <div className="su gate-success">
-            <div className="gate-success-text">✅ Thank you! Next round unlocked!</div>
+            <div className="gate-success-text"><EmojiIcon emoji="✅" size="1.15em" /> Thank you! Next round unlocked!</div>
             <button
               className="join-play-again"
               onClick={onHome}
@@ -230,7 +233,7 @@ export default function Result({
         >
           <div className="review-modal">
             <div className="review-modal-header">
-              <div className="review-modal-title">📋 Question Review</div>
+              <div className="review-modal-title"><EmojiIcon emoji="📋" size="1.15em" /> Question Review</div>
               <button className="review-modal-close" onClick={() => setShowReview(false)}>
                 ✕
               </button>
@@ -254,7 +257,7 @@ export default function Result({
                         <div key={i} className={cls}>
                           <span className="review-opt-letter">{['A', 'B', 'C', 'D'][i]}</span>
                           {opt}
-                          {isAnswer && <span className="review-correct-badge">✅ Correct</span>}
+                          {isAnswer && <span className="review-correct-badge"><EmojiIcon emoji="✅" size="1.15em" /> Correct</span>}
                           {isSelected && !isAnswer && (
                             <span className="review-wrong-badge">Your answer</span>
                           )}
@@ -263,7 +266,7 @@ export default function Result({
                     })}
                   </div>
                   <div className="review-explanation">
-                    <span className="review-exp-label">💡 Explanation</span>
+                    <span className="review-exp-label"><EmojiIcon emoji="💡" size="1.15em" /> Explanation</span>
                     <p>{questionLog[reviewIdx].explanation}</p>
                   </div>
                 </div>

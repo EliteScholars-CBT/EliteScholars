@@ -3,7 +3,6 @@
 // Tracks who studies, what subject/exam/topic, for how long, and when
 // ============================================================================
 
-import { SHEETS_URL } from '../utils/constants';
 
 const KEY_SESSION  = (email) => `es_study_session_${email}`;
 const KEY_QUEUE    = 'es_study_queue';
@@ -18,20 +17,19 @@ async function flushToServer(events) {
   if (!events.length || flushInFlight) return false;
   flushInFlight = true;
 
-  const payload = JSON.stringify({ action: 'studyEvents', events });
+  const payload = JSON.stringify({ kind: 'study', events });
 
   try {
     // sendBeacon works during page unload and doesn't block
     if (navigator.sendBeacon) {
       const blob = new Blob([payload], { type: 'application/json' });
-      const ok = navigator.sendBeacon(SHEETS_URL, blob);
+      const ok = navigator.sendBeacon('/api/events/batch', blob);
       flushInFlight = false;
       return ok;
     }
 
-    await fetch(SHEETS_URL, {
+    await fetch('/api/events/batch', {
       method: 'POST',
-      mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: payload,
     });

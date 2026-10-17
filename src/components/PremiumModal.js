@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { initiatePayment } from '../utils/profileApi';
+import Icon, { EmojiIcon } from './Icon';
 
 const FMT = (n) => n?.toLocaleString('en-NG') ?? '0';
 
@@ -8,19 +9,20 @@ export default function PremiumModal({
   name,
   onClose,
   onActivated,
-  initialPlan = 'monthly',
+  initialPlan = 'annual',
   pricing = {},
 }) {
-  const [plan, setPlan] = useState(initialPlan);
+  const [plan, setPlan] = useState(initialPlan === 'monthly' ? 'annual' : initialPlan);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // All prices from API via props, frontend values as fallback only
-  const proPrice = pricing.pro ?? 3000;
-  const monthlyPrice = pricing.premiumMonthly ?? 9000;
-  const annualPrice = pricing.premiumAnnual ?? 89000;
-  const annualSavings = monthlyPrice * 12 - annualPrice;
-  const annualDiscountPct = Math.round((annualSavings / (monthlyPrice * 12)) * 100);
+  // All prices from API via props, frontend values as fallback only.
+  // Premium is annual-only — no monthly tier.
+  const proPrice      = pricing.pro ?? 3000;
+  const annualPrice   = pricing.premiumAnnual ?? 3000;
+  const originalPrice = pricing.premiumAnnualOriginal ?? 15000;
+  const annualSavings = originalPrice - annualPrice;
+  const annualDiscountPct = Math.round((annualSavings / originalPrice) * 100);
 
   const PLANS = {
     pro: {
@@ -29,7 +31,7 @@ export default function PremiumModal({
       emoji: '🚀',
       price: proPrice,
       period: '/month',
-      color: '#6C3FC9',
+      color: '#8B5CF6',
       glow: 'rgba(108,63,201,0.35)',
       tag: null,
       pitch: 'Essential access, no limits.',
@@ -41,48 +43,34 @@ export default function PremiumModal({
         { icon: '📚', text: 'All 5 exam types' },
       ],
     },
-    monthly: {
-      id: 'monthly',
-      name: 'Premium',
-      emoji: '⭐',
-      price: monthlyPrice,
-      period: '/month',
-      color: '#D4AF37',
-      glow: 'rgba(212,175,55,0.30)',
-      tag: 'Most Popular',
-      pitch: 'Full power, month by month.',
-      features: [
-        { icon: '♾️', text: 'Unlimited topics' },
-        { icon: '⏱️', text: 'Unlimited sessions' },
-        { icon: '🚫', text: 'Zero cooldown, ever' },
-        { icon: '🚫', text: 'Zero ads' },
-        { icon: '📚', text: 'All 5 exam types' },
-        { icon: '💬', text: 'Priority support' },
-      ],
-    },
     annual: {
       id: 'annual',
-      name: 'Annual',
+      name: 'Premium',
       emoji: '👑',
       price: annualPrice,
+      originalPrice,
       period: '/year',
-      color: '#22C55E',
-      glow: 'rgba(34,197,94,0.28)',
-      tag: `Save ${annualDiscountPct}%`,
-      pitch: 'Best value. Pay once, win all year.',
+      color: '#FFC53D',
+      glow: 'rgba(255,197,61,0.30)',
+      tag: `${annualDiscountPct}% OFF`,
+      pitch: 'Everything, unlocked, for a full year.',
       features: [
-        { icon: '♾️', text: 'Unlimited topics' },
-        { icon: '⏱️', text: 'Unlimited sessions' },
+        { icon: '♾️', text: 'Unlimited topics, every exam' },
+        { icon: '⏱️', text: 'Unlimited sessions, no time limit' },
         { icon: '🚫', text: 'Zero cooldown, ever' },
-        { icon: '🚫', text: 'Zero ads' },
-        { icon: '📚', text: 'All 5 exam types' },
+        { icon: '🚫', text: 'Zero ads, completely' },
+        { icon: '📚', text: 'WAEC, NECO, JAMB, GST & POST-UTME' },
+        { icon: '🎮', text: 'All 6 arcade games unlocked' },
+        { icon: '📤', text: 'Unlimited file uploads & study packs' },
+        { icon: '⚔️', text: 'Unlimited challenges & squads' },
+        { icon: '📶', text: 'Full offline access' },
         { icon: '💬', text: 'Priority support' },
-        { icon: '💰', text: `Save ₦${FMT(annualSavings)} vs monthly` },
+        { icon: '💰', text: `Save ₦${FMT(annualSavings)} — was ₦${FMT(originalPrice)}` },
       ],
     },
   };
 
-  const current = PLANS[plan] || PLANS.monthly;
+  const current = PLANS[plan] || PLANS.annual;
 
   const handleSubscribe = async () => {
     setError('');
@@ -109,12 +97,12 @@ export default function PremiumModal({
 
         {/* Close */}
         <button className="pm-close" onClick={onClose} aria-label="Close">
-          ✕
+          <Icon name="x" size={16} />
         </button>
 
         {/* Header */}
         <div className="pm-header">
-          <span className="pm-crown">👑</span>
+          <span className="pm-crown"><EmojiIcon emoji="👑" size="1.1em" /></span>
           <div className="pm-title">Go Premium</div>
           <div className="pm-subtitle">Unlock your full potential. No limits.</div>
         </div>
@@ -145,6 +133,12 @@ export default function PremiumModal({
         <div className="pm-card" style={{ borderColor: `${current.color}55` }}>
           {/* Price */}
           <div className="pm-price-block">
+            {current.originalPrice && (
+              <div className="pm-price-was">
+                <span className="pm-price-was-strike">₦{FMT(current.originalPrice)}</span>
+                <span className="pm-price-was-badge">{current.tag}</span>
+              </div>
+            )}
             <div className="pm-price-row">
               <span className="pm-currency">₦</span>
               <span className="pm-amount" style={{ color: current.color }}>
@@ -169,18 +163,11 @@ export default function PremiumModal({
           </div>
         </div>
 
-        {/* Annual savings callout */}
-        {plan === 'annual' && (
-          <div className="pm-savings-pill">
-            🎉 You save ₦{FMT(annualSavings)} compared to monthly billing
-          </div>
-        )}
-
         {/* Pro note */}
         {plan === 'pro' && (
           <div className="pm-pro-note">
-            💡 Pro gives core unlimited access. Upgrade to Premium for zero ads &amp; priority
-            support.
+            💡 Pro gives core unlimited access. Upgrade to Premium for zero ads, games, squads &amp;
+            priority support — for less than one month of Pro.
           </div>
         )}
 
@@ -199,7 +186,7 @@ export default function PremiumModal({
             : `${current.emoji} Subscribe — ₦${FMT(current.price)}${current.period}`}
         </button>
 
-        <div className="pm-trust">🔒 Secured by Flutterwave · Cancel anytime · No hidden fees</div>
+        <div className="pm-trust"><EmojiIcon emoji="🔒" size="1.15em" /> Secured by Flutterwave · Cancel anytime · No hidden fees</div>
       </div>
     </div>
   );

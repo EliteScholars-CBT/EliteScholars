@@ -27,8 +27,7 @@ export function applySecurityMeasures() {
     document.head.appendChild(noSelectStyle);
   }
 
-  // ── 2. Disable right-click context menu ─────────────────────────────────────
-  document.addEventListener('contextmenu', preventDefault, { passive: false });
+  // ── 2. Right-click is allowed (context menu left enabled on purpose) ────────
 
   // ── 3. Disable copy / cut keyboard shortcuts ─────────────────────────────────
   document.addEventListener('copy',  preventDefault, { passive: false });
@@ -61,7 +60,7 @@ export function applySecurityMeasures() {
       if (!devtoolsOpen) {
         devtoolsOpen = true;
         console.clear();
-        console.log('%cEliteScholars CBT', 'color:#6C3FC9;font-size:20px;font-weight:900;');
+        console.log('%cEliteScholars CBT', 'color:#8B5CF6;font-size:20px;font-weight:900;');
         console.log('%cContent is protected. Unauthorised scraping is not permitted.', 'color:#ef4444;font-size:13px;');
       }
     } else {
@@ -74,7 +73,7 @@ export function applySecurityMeasures() {
   document.addEventListener('dragstart', preventDefault, { passive: false });
 
   // ── 7. Console warning ────────────────────────────────────────────────────────
-  console.log('%cEliteScholars', 'color:#6C3FC9;font-size:24px;font-weight:900;');
+  console.log('%cEliteScholars', 'color:#8B5CF6;font-size:24px;font-weight:900;');
   console.log('%c⚠️  Content is protected. Unauthorised scraping is a violation of our Terms of Service.', 'color:#ef4444;font-size:13px;');
 }
 
@@ -84,7 +83,6 @@ function preventDefault(e) {
 }
 
 export function removeSecurityMeasures() {
-  document.removeEventListener('contextmenu', preventDefault);
   document.removeEventListener('copy',        preventDefault);
   document.removeEventListener('cut',         preventDefault);
   document.removeEventListener('dragstart',   preventDefault);

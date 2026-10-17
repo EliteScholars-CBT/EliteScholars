@@ -1,6 +1,6 @@
+import { getSessionToken } from './utils/sessionFetch';
 import React, { lazy, Suspense, useState, useEffect, useCallback } from 'react';
 
-import { SHEETS_URL } from './utils/constants';
 
 import { verifyProfile, syncProfileToSheet, pullProfileFromSheet } from './utils/profileApi';
 
@@ -11,6 +11,10 @@ import { installGlobalErrorDebugger } from "./utils/debugError";
 import Toast from './components/Toast';
 
 import AchievementPopup from './components/AchievementPopup';
+import PWAInstallBanner from './components/PWAInstallBanner';
+import OfflineBanner from './components/OfflineBanner';
+import ReferralModal from './components/ReferralModal';
+import { captureReferralFromURL, shouldShowReferralPrompt, markReferralPromptShown } from './utils/referral';
 
 import AuthScreen from './components/AuthScreen';
 
@@ -98,6 +102,8 @@ import './styles/theme.css';
 
 import './styles/auth.css';
 
+import './styles/polish.css';
+
 
 
 // Lazy loaded pages/components
@@ -154,7 +160,7 @@ class ErrorBoundary extends React.Component {
 
       return (
 
-        <div style={{ color: 'white', background: '#1a0030', padding: 24, minHeight: '100vh' }}>
+        <div style={{ color: 'white', background: '#1B0A47', padding: 24, minHeight: '100vh' }}>
 
           <h2>Something went wrong</h2>
 
@@ -182,7 +188,7 @@ class ErrorBoundary extends React.Component {
 
 const LoadingScreen = () => (
 
-  <div className="loading-screen" style={{ background: 'linear-gradient(160deg, #1a0030, #4B0082, #1a0030)' }}>
+  <div className="loading-screen" style={{ background: 'linear-gradient(160deg, #1B0A47, #7C3AED, #1B0A47)' }}>
 
     <div className="loading-spinner" />
 
@@ -356,6 +362,8 @@ export default function App() {
 
   const [achPopup, setAchPopup] = useState({ show: false, achievement: null });
 
+  const [showReferralModal, setShowReferralModal] = useState(false);
+
   const [achievements, setAchievements] = useState([]);
 
   const [quizTimeLeft, setQuizTimeLeft] = useState(null);
@@ -403,6 +411,8 @@ export default function App() {
     installGlobalErrorDebugger();
 
     applySecurityMeasures();
+
+    captureReferralFromURL();
 
 
 
@@ -482,9 +492,9 @@ export default function App() {
 
       const payload = JSON.stringify({
 
-        action: 'syncProfile',
-
         email,
+
+        token: getSessionToken(),
 
         stats: JSON.stringify(stats),
 
@@ -498,7 +508,7 @@ export default function App() {
 
         navigator.sendBeacon
 
-          ? navigator.sendBeacon(`${SHEETS_URL}`, new Blob([payload], { type: 'application/json' }))
+          ? navigator.sendBeacon('/api/profile/sync', new Blob([payload], { type: 'application/json' }))
 
           : syncProfileToSheet({ email, stats, achievements: ach, subjectPerformance: subjPrf });
 
@@ -641,6 +651,9 @@ export default function App() {
             if (result.success) {
 
               const p = result.profile;
+
+              // Refresh the signed login token (also upgrades old installs)
+              if (p.passwordHash) { try { saveUser({ ...loadUser(), passwordHash: p.passwordHash }); } catch {} }
 
 
 
@@ -1194,6 +1207,13 @@ export default function App() {
 
     else showToast('Review the explanations and try again! 📚', 'warning');
 
+    // Ask to refer right after a strong result — a real good moment, not a
+    // timer. Gated by a 5-day cooldown so it asks once in a while, not nags.
+    if (pct >= 80 && shouldShowReferralPrompt()) {
+      markReferralPromptShown();
+      setTimeout(() => setShowReferralModal(true), 1800);
+    }
+
 
 
     trackEvent('quiz_complete', {
@@ -1518,6 +1538,8 @@ export default function App() {
 
                   email={email}
 
+                  username={username}
+
                   sessions={sessions}
 
                   streak={streak}
@@ -1834,6 +1856,24 @@ export default function App() {
 
       )}
 
+      <PWAInstallBanner />
+
+      <OfflineBanner />
+
+      {showReferralModal && (
+
+        <ReferralModal
+
+          name={name}
+
+          email={email}
+
+          onClose={() => setShowReferralModal(false)}
+
+        />
+
+      )}
+
 
 
       {paymentModal && (
@@ -1866,9 +1906,9 @@ export default function App() {
 
             style={{
 
-              background: 'linear-gradient(160deg,#1a0030,#2a0050)',
+              background: 'linear-gradient(160deg,#1B0A47,#2a0050)',
 
-              border: '1px solid #4B0082',
+              border: '1px solid #7C3AED',
 
               borderRadius: 20,
 
@@ -1972,7 +2012,7 @@ export default function App() {
 
                 padding: '14px 0',
 
-                background: 'linear-gradient(135deg,#4B0082,#7B2FBE)',
+                background: 'linear-gradient(135deg,#7C3AED,#7B2FBE)',
 
                 border: 'none',
 

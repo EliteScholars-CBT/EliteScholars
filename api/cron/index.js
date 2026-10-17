@@ -3,7 +3,7 @@
 // Runs via Vercel Cron Jobs (schedule configured in vercel.json)
 // ============================================================================
 
-import { sheetsGet } from '../_helpers/sheets.js';
+import { getUsersWithGuardians, getExpiringSubscriptions } from '../_helpers/queries.js';
 import { Resend }    from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -426,7 +426,7 @@ function missYouEmail({ firstName }) {
 
 async function runGuardianReports() {
   const { from: weekFrom, to: weekTo } = getWeekRange();
-  const result = await sheetsGet({ action: 'getUsersWithGuardians' });
+  const result = await getUsersWithGuardians();
 
   if (!result?.success) throw new Error('Failed to fetch users with guardians');
 
@@ -476,7 +476,7 @@ async function runGuardianReports() {
 async function runSubscriptionReminders(isSunday = false) {
 
   console.log('About to call getExpiringSubscriptions');
-  const result = await sheetsGet({ action: 'getExpiringSubscriptions' });
+  const result = await getExpiringSubscriptions();
 console.log('Finished calling getExpiringSubscriptions ', result);
 
   if (!result?.success) throw new Error('Failed to fetch subscriptions');
@@ -546,7 +546,7 @@ console.log('Finished calling getExpiringSubscriptions ', result);
 export default async function handler(req, res) {
   // ⚠️ TEMPORARILY DISABLE AUTH FOR TESTING ⚠️
   const authHeader = req.headers['authorization'];
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return res.status(401).json({ error: 'Unauthorized' });
   }
 

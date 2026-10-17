@@ -9,6 +9,7 @@ import {
   observeAdElement, trackAdClick, flushAdAnalytics,
 } from '../analytics/adAnalytics';
 import '../styles/ads.css';
+import { EmojiIcon } from './Icon';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function getAffiliateAds(examType) {
@@ -101,7 +102,7 @@ function PublisherAd({ refreshTrigger, examType }) {
 
 // ── Affiliate card ────────────────────────────────────────────────────────────
 function AffiliateCard({ ad, index, examType }) {
-  const COLORS = ['#6C3FC9', '#065F46', '#B45309', '#0369A1', '#831843', '#9A3412'];
+  const COLORS = ['#8B5CF6', '#065F46', '#B45309', '#0369A1', '#831843', '#9A3412'];
   const color  = COLORS[index % COLORS.length];
   const ref    = useRef(null);
 
@@ -128,7 +129,7 @@ function AffiliateCard({ ad, index, examType }) {
           {ad.image ? (
             <img src={ad.image} alt={ad.title} />
           ) : (
-            <div className="ad-affiliate-img-placeholder">📢</div>
+            <div className="ad-affiliate-img-placeholder"><EmojiIcon emoji="📢" size="1.1em" /></div>
           )}
         </div>
         <div className="ad-affiliate-body">
@@ -167,7 +168,7 @@ function CustomCard({ ad, examType }) {
         {ad.image ? (
           <img src={ad.image} alt={ad.title} className="ad-custom-img" />
         ) : (
-          <div className="ad-custom-img-placeholder">📢</div>
+          <div className="ad-custom-img-placeholder"><EmojiIcon emoji="📢" size="1.1em" /></div>
         )}
         <div className="ad-custom-body">
           <div className="ad-custom-badge">PARTNER</div>

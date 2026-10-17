@@ -1,4 +1,3 @@
-import { SHEETS_URL } from './constants';
 
 // ============================================================================
 // BASE ANALYTICS FUNCTIONS
@@ -32,17 +31,15 @@ export function fmtTimestamp() {
 }
 
 export function trackEvent(eventName, data) {
-  if (!SHEETS_URL) return;
   const eventData = {
     event: eventName,
     timestamp: fmtTimestamp(),
     ...data,
   };
-  fetch(SHEETS_URL, {
+  fetch('/api/events/track', {
     method: 'POST',
-    mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(eventData),
+    body: JSON.stringify({ ...eventData, type: eventName }),
   }).catch(() => {});
 }
 

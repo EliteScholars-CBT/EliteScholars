@@ -8,7 +8,7 @@
       '<div style="font-size:48px;margin-bottom:16px">' + (msg === 'soon' ? '⏳' : '😕') + '</div>' +
       '<h2 style="font-size:20px;font-weight:800;color:#111827">' + (msg === 'soon' ? 'Coming Soon' : 'Post not found') + '</h2>' +
       '<p style="color:#6B7280;margin-top:8px">' + sub + '</p>' +
-      '<a href="../index.html" style="display:inline-block;margin-top:20px;background:#6C3FC9;color:#fff;padding:10px 22px;border-radius:20px;font-weight:700;text-decoration:none">Browse Posts</a>' +
+      '<a href="../index.html" style="display:inline-block;margin-top:20px;background:#8B5CF6;color:#fff;padding:10px 22px;border-radius:20px;font-weight:700;text-decoration:none">Browse Posts</a>' +
     '</div>';
   }
 

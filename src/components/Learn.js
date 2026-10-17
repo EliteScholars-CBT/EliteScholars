@@ -20,6 +20,8 @@ import {
   trackLearnQuizComplete,
   trackTopicComplete,
 } from '../analytics/studyAnalytics';
+import Icon, { EmojiIcon } from './Icon';
+import { splitIntoSentences, normalizeForSpeech } from '../utils/ttsNormalize';
 
 const FONT_SIZES = [13, 15, 17, 19, 21];
 const STORAGE_KEY = (examType, subjectId) => `es_learn_${examType}_${subjectId}`;
@@ -73,7 +75,7 @@ function ContentBlock({ block, refreshTrigger, examType, email }) {
   return <div className="learn-content-html" dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
-function CircleProgress({ pct = 0, color = '#6C3FC9', size = 36 }) {
+function CircleProgress({ pct = 0, color = '#8B5CF6', size = 36 }) {
   const r = size / 2 - 4;
   const circ = 2 * Math.PI * r;
   const dash = (pct / 100) * circ;
@@ -160,7 +162,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
   const meta = allSubjects.find((s) => s.id === subjectId) || {
     label: subjectId,
     icon: '📖',
-    color: '#6C3FC9',
+    color: '#8B5CF6',
     bg: '#F3F0FF',
   };
 
@@ -190,6 +192,11 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
   const [selectedCharId, setSelectedCharId] = useState('sophia');
   const [speaking, setSpeaking] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [speakingWords, setSpeakingWords] = useState([]);
+  const [speakingWordIdx, setSpeakingWordIdx] = useState(-1);
+  const sentenceQueueRef = useRef([]);
+  const stoppedRef = useRef(true);
+  const pauseTimerRef = useRef(null);
   const [adSequence, setAdSequence] = useState(() => Math.floor(Math.random() * 100));
   const [adRefresh] = useState(0);
 
@@ -238,22 +245,58 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
     }
   };
 
+  const fullStopSpeech = useCallback(() => {
+    stoppedRef.current = true;
+    sentenceQueueRef.current = [];
+    clearTimeout(pauseTimerRef.current);
+    stopSpeech();
+    setSpeaking(false);
+    setPaused(false);
+    setSpeakingWords([]);
+    setSpeakingWordIdx(-1);
+  }, []);
+
+  const speakNextSentence = () => {
+    if (stoppedRef.current) return;
+    const next = sentenceQueueRef.current.shift();
+    if (next === undefined) {
+      fullStopSpeech();
+      return;
+    }
+    const words = next.split(' ').filter(Boolean);
+    setSpeakingWords(words);
+    setSpeakingWordIdx(0);
+    const utter = new SpeechSynthesisUtterance(next);
+    const voice = getVoiceForCharacter(selectedCharId, characterVoices);
+    if (voice) utter.voice = voice;
+    utter.rate = 0.8;
+    utter.pitch = 1.0;
+    let counter = 0;
+    utter.onboundary = (e) => {
+      if (e.name === 'sentence') return;
+      setSpeakingWordIdx(Math.min(counter, words.length - 1));
+      counter += 1;
+    };
+    const advance = () => {
+      if (stoppedRef.current) return;
+      pauseTimerRef.current = setTimeout(speakNextSentence, 260);
+    };
+    utter.onend = advance;
+    utter.onerror = advance;
+    window.speechSynthesis.speak(utter);
+  };
+
   const speakContent = () => {
     if (activeIdx === null) return;
     const text = stripHtml(topics[activeIdx]?.contentHTML || topics[activeIdx]?.content || '');
-    stopSpeech();
-    const utter = new SpeechSynthesisUtterance(text);
-    const voice = getVoiceForCharacter(selectedCharId, characterVoices);
-    if (voice) utter.voice = voice;
-    utter.rate = 0.75;
-    utter.pitch = 1.0;
-    utter.onend = () => {
-      setSpeaking(false);
-      setPaused(false);
-    };
-    window.speechSynthesis.speak(utter);
+    fullStopSpeech();
+    const sentences = splitIntoSentences(text).map(normalizeForSpeech).filter(Boolean);
+    if (!sentences.length) return;
+    sentenceQueueRef.current = sentences;
+    stoppedRef.current = false;
     setSpeaking(true);
     setPaused(false);
+    speakNextSentence();
   };
 
   const handlePause = () => {
@@ -266,14 +309,11 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
     }
   };
   const handleStop = () => {
-    stopSpeech();
-    setSpeaking(false);
-    setPaused(false);
+    fullStopSpeech();
   };
 
   const openTopic = (idx) => {
-    stopSpeech();
-    setSpeaking(false);
+    fullStopSpeech();
     if (idx !== activeIdx) endStudySession(email);
     startStudySession({
       email,
@@ -300,8 +340,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
 
   const closeTopic = () => {
     endStudySession(email);
-    stopSpeech();
-    setSpeaking(false);
+    fullStopSpeech();
     setActiveIdx(null);
     setHeaderCollapsed(false);
     setQuizMode(false);
@@ -445,7 +484,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
             <BackButton
               onClick={() => {
                 endStudySession(email);
-                stopSpeech();
+                fullStopSpeech();
                 onBack();
               }}
               light
@@ -481,7 +520,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
           <div className="learn-header-progress-bar">
             <div
               className="learn-header-progress-fill"
-              style={{ width: `${overallPct}%`, background: '#D4AF37' }}
+              style={{ width: `${overallPct}%`, background: '#FFC53D' }}
             />
           </div>
           <div className="learn-header-progress-label">{overallPct}% complete</div>
@@ -506,7 +545,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
               );
             })}
             {topics.length === 0 && (
-              <div className="learn-empty">📚 Content coming soon for this subject!</div>
+              <div className="learn-empty"><EmojiIcon emoji="📚" size="1.15em" /> Content coming soon for this subject!</div>
             )}
           </div>
         </div>
@@ -588,19 +627,34 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
               </select>
               {!speaking ? (
                 <button className="learn-tts-btn" onClick={speakContent}>
-                  ▶ Read
+                  <Icon name="play" size={14} /> Read
                 </button>
               ) : (
                 <>
-                  <button className="learn-tts-btn" onClick={handlePause}>
-                    {paused ? '▶' : '⏸'}
+                  <button className="learn-tts-btn" onClick={handlePause} aria-label={paused ? 'Resume reading' : 'Pause reading'}>
+                    <Icon name={paused ? 'play' : 'pause'} size={14} />
                   </button>
-                  <button className="learn-tts-btn learn-tts-stop" onClick={handleStop}>
-                    ⏹
+                  <button className="learn-tts-btn learn-tts-stop" onClick={handleStop} aria-label="Stop reading">
+                    <Icon name="stop" size={14} />
                   </button>
                 </>
               )}
             </div>
+            {speaking && speakingWords.length > 0 && (
+              <div className="learn-now-reading" aria-live="off">
+                {speakingWords.map((w, i) => (
+                  <span
+                    key={i}
+                    className={
+                      'learn-now-reading-word' +
+                      (i === speakingWordIdx ? ' active' : i < speakingWordIdx ? ' done' : '')
+                    }
+                  >
+                    {w}{' '}
+                  </span>
+                ))}
+              </div>
+            )}
           </>
         )}
       </div>
@@ -732,7 +786,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
                     className="learn-quiz-retry-btn"
                     onClick={() => {
                       endStudySession(email);
-                      stopSpeech();
+                      fullStopSpeech();
                       onBack();
                     }}
                   >
@@ -775,7 +829,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
             {/* If topic is done and next topic prompt is showing */}
             {showNextTopicPrompt ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <div className="learn-completed-badge">✅ Topic Completed!</div>
+                <div className="learn-completed-badge"><EmojiIcon emoji="✅" size="1.15em" /> Topic Completed!</div>
                 <button
                   className="learn-quiz-trigger-full"
                   onClick={goToNextTopic}
@@ -793,7 +847,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
               </div>
             ) : isDoneNow ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <div className="learn-completed-badge">✅ Topic Completed</div>
+                <div className="learn-completed-badge"><EmojiIcon emoji="✅" size="1.15em" /> Topic Completed</div>
                 {!isLastTopic && (
                   <button
                     className="learn-quiz-trigger-full"
@@ -808,7 +862,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
                     className="learn-quiz-retry-btn"
                     onClick={() => {
                       endStudySession(email);
-                      stopSpeech();
+                      fullStopSpeech();
                       onBack();
                     }}
                   >

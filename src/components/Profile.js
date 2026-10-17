@@ -10,10 +10,13 @@ import { ROUND_SIZE, ACHIEVEMENTS } from '../utils/constants';
 import { loadAchievements, loadSubjectPerformance } from '../utils/storage';
 import { useTheme } from '../context/ThemeContext';
 import { updateGuardianEmail, fetchGuardianEmail } from '../utils/profileApi';
+import Icon, { EmojiIcon } from './Icon';
+import { buildReferralCode, referralLink, referralShareText } from '../utils/referral';
 
 export default function Profile({
   name,
   email,
+  username,
   sessions,
   streak,
   allScores,
@@ -28,6 +31,10 @@ export default function Profile({
   const [allAchievements, setAllAchievements]       = useState([]);
   const [subjectPerformance, setSubjectPerformance] = useState({});
   const [performanceData, setPerformanceData]       = useState([]);
+  const [refCopied, setRefCopied]                   = useState(false);
+  const refCode = buildReferralCode(username || name, email);
+  const refLink = referralLink(refCode);
+  const refShareText = referralShareText(name, refCode);
   const [subjectChartData, setSubjectChartData]     = useState([]);
   const [showPremiumModal, setShowPremiumModal]     = useState(false);
   const [localPremium, setLocalPremium]             = useState(premiumUser);
@@ -210,7 +217,7 @@ export default function Profile({
 
               {performanceData.length > 0 && (
                 <div className="profile-chart-section">
-                  <div className="profile-stats-title">📈 Performance Trend</div>
+                  <div className="profile-stats-title"><EmojiIcon emoji="📈" size="1.15em" /> Performance Trend</div>
                   <div className="profile-chart-container">
                     <ResponsiveContainer width="100%" height={200}>
                       <LineChart data={performanceData}>
@@ -220,13 +227,13 @@ export default function Profile({
                           tickFormatter={(v) => `${v}%`}
                         />
                         <Tooltip
-                          contentStyle={{ background: '#1a0030', border: '1px solid #4B0082', borderRadius: 8 }}
-                          labelStyle={{ color: '#D4AF37' }}
+                          contentStyle={{ background: '#1B0A47', border: '1px solid #7C3AED', borderRadius: 8 }}
+                          labelStyle={{ color: '#FFC53D' }}
                           itemStyle={{ color: '#fff' }}
                         />
                         <Line
-                          type="monotone" dataKey="score" stroke="#D4AF37"
-                          strokeWidth={2} dot={{ fill: '#D4AF37', r: 3 }}
+                          type="monotone" dataKey="score" stroke="#FFC53D"
+                          strokeWidth={2} dot={{ fill: '#FFC53D', r: 3 }}
                         />
                       </LineChart>
                     </ResponsiveContainer>
@@ -250,12 +257,12 @@ export default function Profile({
                           <XAxis type="number" domain={[0, 100]} stroke="#6B7280" fontSize={9} tickFormatter={(v) => `${v}%`} />
                           <YAxis type="category" dataKey="subject" stroke="#6B7280" fontSize={9} width={70} />
                           <Tooltip
-                            contentStyle={{ background: '#1a0030', border: '1px solid #4B0082', borderRadius: 8 }}
-                            labelStyle={{ color: '#D4AF37' }}
+                            contentStyle={{ background: '#1B0A47', border: '1px solid #7C3AED', borderRadius: 8 }}
+                            labelStyle={{ color: '#FFC53D' }}
                             itemStyle={{ color: '#fff' }}
                           />
-                          <Bar dataKey="bestScore"    fill="#D4AF37" name="Best Score" radius={[0,4,4,0]} />
-                          <Bar dataKey="averageScore" fill="#6C3FC9" name="Avg Score"  radius={[0,4,4,0]} />
+                          <Bar dataKey="bestScore"    fill="#FFC53D" name="Best Score" radius={[0,4,4,0]} />
+                          <Bar dataKey="averageScore" fill="#8B5CF6" name="Avg Score"  radius={[0,4,4,0]} />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
@@ -271,7 +278,7 @@ export default function Profile({
                 </>
               ) : (
                 <div className="profile-empty-state">
-                  <div className="profile-empty-icon">📚</div>
+                  <div className="profile-empty-icon"><EmojiIcon emoji="📚" size="1.1em" /></div>
                   <div className="profile-empty-text">No subject data yet. Complete some quizzes!</div>
                 </div>
               )}
@@ -302,7 +309,7 @@ export default function Profile({
                 </div>
               ) : (
                 <div className="profile-empty-state">
-                  <div className="profile-empty-icon">🏆</div>
+                  <div className="profile-empty-icon"><EmojiIcon emoji="🏆" size="1.1em" /></div>
                   <div className="profile-empty-text">No achievements yet. Keep practising!</div>
                 </div>
               )}
@@ -312,7 +319,37 @@ export default function Profile({
           {activeTab === 'settings' && (
             <div className="profile-stats-section">
 
-              <div className="profile-stats-title">⚙️ Appearance</div>
+              <div className="profile-stats-title"><Icon name="gem" size={16} /> Invite Friends</div>
+              <div className="referral-card">
+                <div className="referral-card-top">
+                  <div className="referral-card-icon"><Icon name="gift" size={22} /></div>
+                  <div>
+                    <div className="referral-card-title">Share your referral code</div>
+                    <div className="referral-card-desc">Every 10 friends who join and start using EliteScholars earns you a data reward 🎁</div>
+                  </div>
+                </div>
+                <div className="referral-code-row">
+                  <span className="referral-code">{refCode}</span>
+                  <button
+                    className="referral-copy-btn"
+                    onClick={() => {
+                      navigator.clipboard?.writeText(refLink).catch(() => {});
+                      setRefCopied(true);
+                      setTimeout(() => setRefCopied(false), 1800);
+                    }}
+                  >
+                    <Icon name={refCopied ? 'check' : 'share'} size={14} /> {refCopied ? 'Copied' : 'Copy link'}
+                  </button>
+                </div>
+                <button
+                  className="referral-whatsapp-btn"
+                  onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(refShareText)}`, '_blank')}
+                >
+                  <Icon name="share" size={15} /> Share on WhatsApp
+                </button>
+              </div>
+
+              <div className="profile-stats-title"><EmojiIcon emoji="⚙️" size="1.15em" /> Appearance</div>
               <div className="settings-card" onClick={toggleTheme} style={{ cursor: 'pointer' }}>
                 <div className="settings-item">
                   <div className="settings-icon">{theme === 'light' ? '🌙' : '☀️'}</div>
@@ -336,7 +373,7 @@ export default function Profile({
               {!localPremium ? (
                 <div className="settings-card guardian-card" style={{ opacity: 0.65 }}>
                   <div className="settings-item">
-                    <div className="settings-icon">🔒</div>
+                    <div className="settings-icon"><EmojiIcon emoji="🔒" size="1.1em" /></div>
                     <div className="settings-info">
                       <div className="settings-name">Guardian Weekly Report</div>
                       <div className="settings-desc">
@@ -350,7 +387,7 @@ export default function Profile({
                 <div className="settings-card guardian-card">
                   <div className="settings-item" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 10 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div className="settings-icon">📧</div>
+                      <div className="settings-icon"><EmojiIcon emoji="📧" size="1.1em" /></div>
                       <div className="settings-info">
                         <div className="settings-name">Guardian Weekly Report</div>
                         <div className="settings-desc">
@@ -396,7 +433,7 @@ export default function Profile({
 
               <div className="settings-card about-settings-card" style={{ cursor: 'pointer' }}>
                 <div className="settings-item">
-                  <div className="settings-icon">🎓</div>
+                  <div className="settings-icon"><EmojiIcon emoji="🎓" size="1.1em" /></div>
                   <div className="settings-info">
                     <div className="settings-name">About EliteScholars CBT</div>
                     <div className="settings-desc">Learn about our mission and features</div>
@@ -418,7 +455,7 @@ export default function Profile({
 
               <div className="settings-card privacy-settings-card" style={{ cursor: 'pointer' }}>
                 <div className="settings-item">
-                  <div className="settings-icon">🔒</div>
+                  <div className="settings-icon"><EmojiIcon emoji="🔒" size="1.1em" /></div>
                   <div className="settings-info">
                     <div className="settings-name">Privacy Policy</div>
                     <div className="settings-desc">How we protect your data and privacy</div>
@@ -444,7 +481,7 @@ export default function Profile({
 
               <div className="settings-card guardian-card">
                 <div className="settings-item">
-                  <div className="settings-icon">📧</div>
+                  <div className="settings-icon"><EmojiIcon emoji="📧" size="1.1em" /></div>
                   <div className="settings-info">
                     <div className="settings-name">Contact Support</div>
                     <div className="settings-desc">elitescholars.site@gmail.com</div>
@@ -459,7 +496,7 @@ export default function Profile({
           <div style={{ margin: '20px 0 8px' }}>
             {localPremium ? (
               <div className="premium-active-box">
-                <div className="premium-badge">⭐ Premium Active</div>
+                <div className="premium-badge"><EmojiIcon emoji="⭐" size="1.15em" /> Premium Active</div>
                 <div className="premium-active-title" style={{ marginTop: 8 }}>
                   {premData?.plan === 'annual' ? '👑 Annual Plan' : '💎 Monthly Plan'}
                 </div>

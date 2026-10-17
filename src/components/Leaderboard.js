@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { getLeaderboard, getUserRank } from '../utils/leaderboardApi';
 import XPBar from './XPBar';
+import Icon, { EmojiIcon } from './Icon';
+import StudySquads from './StudySquads';
 
 export default function Leaderboard({ userEmail, userName }) {
+  const [view, setView] = useState('global'); // global | squad
   const [activeTimeframe, setActiveTimeframe] = useState('alltime');
   const [activeExam, setActiveExam] = useState('all');
   const [leaderboard, setLeaderboard] = useState([]);
@@ -77,10 +80,23 @@ export default function Leaderboard({ userEmail, userName }) {
   return (
     <div className="leaderboard-page">
       <div className="leaderboard-header">
-        <div className="leaderboard-title">🏆 Leaderboard</div>
+        <div className="leaderboard-title"><EmojiIcon emoji="🏆" size="1.15em" /> Leaderboard</div>
         <div className="leaderboard-subtitle">Compete with top students</div>
       </div>
 
+      <div className="leaderboard-view-toggle">
+        <button className={`lb-view-btn ${view === 'global' ? 'active' : ''}`} onClick={() => setView('global')}>
+          <Icon name="globe" size={14} /> Global
+        </button>
+        <button className={`lb-view-btn ${view === 'squad' ? 'active' : ''}`} onClick={() => setView('squad')}>
+          <Icon name="users" size={14} /> My Squad
+        </button>
+      </div>
+
+      {view === 'squad' ? (
+        <StudySquads userEmail={userEmail} userName={userName} />
+      ) : (
+      <>
       <div className="leaderboard-filters">
         <div className="filter-group">
           {timeframes.map((tf) => (
@@ -110,7 +126,7 @@ export default function Leaderboard({ userEmail, userName }) {
         <div className="leaderboard-loading">Loading rankings...</div>
       ) : leaderboard.length === 0 ? (
         <div className="leaderboard-empty">
-          <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
+          <div style={{ fontSize: 40, marginBottom: 12 }}><EmojiIcon emoji="📭" size="1.1em" /></div>
           <div style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
             {activeTimeframe === 'daily'
               ? 'No one has played today yet. Be the first!'
@@ -161,6 +177,8 @@ export default function Leaderboard({ userEmail, userName }) {
             ))}
           </div>
         </>
+      )}
+      </>
       )}
     </div>
   );

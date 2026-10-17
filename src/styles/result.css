@@ -15,19 +15,19 @@
   height: 108px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
-  border: 3px solid #D4AF37;
+  border: 3px solid #FFC53D;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   margin: 0 auto 12px;
-  box-shadow: 0 0 32px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 0 32px rgba(255, 197, 61, 0.3);
   position: relative;
 }
 .result-score-number {
   font-size: 26px;
   font-weight: 900;
-  color: #D4AF37;
+  color: #FFC53D;
 }
 .result-score-label {
   font-size: 9px;
@@ -61,7 +61,7 @@
 .result-stat-value {
   font-size: 18px;
   font-weight: 800;
-  color: #4B0082;
+  color: #7C3AED;
 }
 .result-stat-label {
   font-size: 9px;
@@ -85,7 +85,7 @@
 }
 
 .gate-container {
-  background: linear-gradient(135deg, #280050, #3d0070);
+  background: linear-gradient(135deg, #2E1065, #3d0070);
   border-radius: 16px;
   padding: 16px 18px;
   margin-bottom: 12px;
@@ -93,7 +93,7 @@
 .gate-badge {
   font-size: 9px;
   font-weight: 700;
-  color: #D4AF37;
+  color: #FFC53D;
   letter-spacing: 1.5px;
   margin-bottom: 6px;
 }
@@ -161,7 +161,7 @@
   color: rgba(255, 255, 255, 0.45);
   line-height: 1.5;
 }
-.gate-countdown-number { color: #D4AF37; font-weight: 700; }
+.gate-countdown-number { color: #FFC53D; font-weight: 700; }
 .gate-progress-bar {
   height: 3px;
   background: rgba(255, 255, 255, 0.1);
@@ -190,7 +190,7 @@
 }
 
 .join-card {
-  background: linear-gradient(135deg, #280050, #4B0082);
+  background: var(--grad-hero);
   border-radius: 16px;
   padding: 16px;
   text-align: center;
@@ -237,17 +237,17 @@
   width: 100%;
   padding: 13px;
   background: #FFFFFF;
-  border: 2px solid #4B0082;
+  border: 2px solid #7C3AED;
   border-radius: 13px;
   font-size: 13px;
   font-weight: 700;
-  color: #4B0082;
+  color: #7C3AED;
   margin-bottom: 8px;
 }
 .back-menu-btn {
   width: 100%;
   padding: 12px;
-  background: #F8F5FF;
+  background: #F6F2FF;
   border: 1px solid #E5E7EB;
   border-radius: 13px;
   font-size: 12px;
@@ -261,7 +261,7 @@
 
 
 .adgate-container {
-  background: linear-gradient(160deg, #1a0030, #4B0082, #1a0030);
+  background: var(--grad-deep);
   align-items: center;
   justify-content: center;
   padding: 40px 24px;
@@ -287,8 +287,8 @@
   line-height: 1.5;
 }
 .adgate-vibe {
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.25);
+  background: rgba(255, 197, 61, 0.1);
+  border: 1px solid rgba(255, 197, 61, 0.25);
   border-radius: 14px;
   padding: 16px;
   margin-bottom: 22px;
@@ -297,7 +297,7 @@
 .adgate-vibe-badge {
   font-size: 9px;
   font-weight: 700;
-  color: #D4AF37;
+  color: #FFC53D;
   margin-bottom: 8px;
 }
 .adgate-vibe-text {
@@ -314,7 +314,7 @@
 .adgate-countdown-number {
   font-size: 48px;
   font-weight: 800;
-  color: #D4AF37;
+  color: #FFC53D;
 }
 .adgate-countdown-hint {
   font-size: 11px;
@@ -330,18 +330,18 @@
 }
 .adgate-progress-fill {
   height: 100%;
-  background: #D4AF37;
+  background: #FFC53D;
   transition: width 1s linear;
 }
 .adgate-retry-btn {
   width: 100%;
   padding: 12px;
-  background: rgba(212, 175, 55, 0.2);
-  border: 1px solid #D4AF37;
+  background: rgba(255, 197, 61, 0.2);
+  border: 1px solid #FFC53D;
   border-radius: 11px;
   font-size: 13px;
   font-weight: 600;
-  color: #D4AF37;
+  color: #FFC53D;
   margin-bottom: 10px;
 }
 .adgate-waiting-btn {
@@ -376,13 +376,13 @@
 .adgate-continue-btn {
   width: 100%;
   padding: 15px;
-  background: #D4AF37;
+  background: #FFC53D;
   border: none;
   border-radius: 13px;
   font-size: 15px;
   font-weight: 700;
-  color: #280050;
-  box-shadow: 0 8px 22px rgba(212, 175, 55, 0.4);
+  color: #2E1065;
+  box-shadow: 0 8px 22px rgba(255, 197, 61, 0.4);
 }
 
 /* ============================================================================
@@ -391,7 +391,7 @@
 
 
 .sharegate-container {
-  background: linear-gradient(160deg, #1a0030, #4B0082, #1a0030);
+  background: var(--grad-deep);
   align-items: center;
   justify-content: center;
   padding: 40px 24px;
@@ -416,8 +416,8 @@
   text-align: center;
 }
 .sharegate-vibe {
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.25);
+  background: rgba(255, 197, 61, 0.1);
+  border: 1px solid rgba(255, 197, 61, 0.25);
   border-radius: 14px;
   padding: 13px 16px;
   margin-bottom: 22px;
@@ -426,7 +426,7 @@
 .sharegate-vibe-badge {
   font-size: 9px;
   font-weight: 700;
-  color: #D4AF37;
+  color: #FFC53D;
   margin-bottom: 6px;
 }
 .sharegate-vibe-text {
@@ -493,12 +493,12 @@
 .sharegate-start-btn {
   width: 100%;
   padding: 15px;
-  background: #D4AF37;
+  background: #FFC53D;
   border: none;
   border-radius: 13px;
   font-size: 15px;
   font-weight: 700;
-  color: #280050;
-  box-shadow: 0 8px 22px rgba(212, 175, 55, 0.4);
+  color: #2E1065;
+  box-shadow: 0 8px 22px rgba(255, 197, 61, 0.4);
 }
 

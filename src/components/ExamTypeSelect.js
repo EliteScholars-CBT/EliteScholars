@@ -1,6 +1,8 @@
 import React from 'react';
 import { EXAM_TYPES } from '../utils/constants';
 import { GOLD } from '../utils/colors';
+import Icon, { EmojiIcon } from './Icon';
+import FileStudyHub from './FileStudy';
 
 // ============================================================================
 // ExamTypeSelect — Compact grid layout (3 cols / 2 cols alternating)
@@ -20,7 +22,7 @@ export default function ExamTypeSelect({ onSelectExam }) {
     <div className="scr fd exam-type-page">
       <div className="exam-type-header-section">
         <div className="exam-type-header-content">
-          <div className="exam-type-icon">📚</div>
+          <div className="exam-type-icon"><Icon name="cap" size={40} stroke={1.7} /></div>
           <h1>
             What are you <span style={{ color: GOLD }}>studying</span> for?
           </h1>
@@ -40,12 +42,15 @@ export default function ExamTypeSelect({ onSelectExam }) {
             onKeyDown={(e) => handleKeyDown(e, exam.id)}
             aria-label={`Select ${exam.label}`}
           >
-            <span className="exam-type-compact-icon">{exam.icon}</span>
+            <span className="exam-type-compact-icon"><EmojiIcon emoji={exam.icon} size={28} /></span>
             <span className="exam-type-compact-label">{exam.label}</span>
             <span className="exam-type-compact-desc">{exam.desc}</span>
           </div>
         ))}
       </div>
+
+      {/* Study from your own files — upload, save locally, learn any way you like */}
+      <FileStudyHub />
     </div>
   );
 }

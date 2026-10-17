@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadXP, getLevel, getLevelTitle } from '../utils/xpManager';
+import { EmojiIcon } from './Icon';
 
 // ============================================================================
 // XPBar — Displays user XP progress bar and level
@@ -44,7 +45,7 @@ export default function XPBar({ email, name, showLevel = true, compact = false }
       {showLevel && (
         <div className="xp-bar-header">
           <div className="xp-bar-level">
-            <span className="xp-icon">⭐</span>
+            <span className="xp-icon"><EmojiIcon emoji="⭐" size="1.1em" /></span>
             <span>Level {xpData.level} · {title}</span>
           </div>
           <div className="xp-bar-total">{xpData.totalXP.toLocaleString()} XP</div>

@@ -9,7 +9,9 @@ import { Resend } from "resend";
 
 import { redis } from "../_helpers/redis.js";
 import { checkRateLimit } from "../_helpers/rateLimit.js";
-import { sheetsGet } from "../_helpers/sheets.js";
+import { legacyProfileExists } from "../_helpers/legacy.js";
+import { clientIp } from "../_helpers/guard.js";
+import { selectOne, supabaseEnabled } from "../_helpers/supabase.js";
 
 import {
   sendOk,
@@ -31,32 +33,24 @@ export default async function handler(req, res) {
 
     // ── Body ──────────────────────────────────────────────────────────────────
     const { email } = req.body || {};
-    if (!email) return sendErr(res, "Email required.");
-
+    if (typeof email !== "string" || !email || email.length > 254) return sendErr(res, "Email required.");
     const emailLower = email.toLowerCase().trim();
 
-    // ── Rate limit ────────────────────────────────────────────────────────────
-    const rateKey = `forgot:${emailLower}`;
-    const { allowed, retryAfter } = await checkRateLimit(rateKey, 3, 3600);
-    if (!allowed) return sendRateLimited(res, retryAfter);
+    // ── Rate limit (per email and per IP) ─────────────────────────────────────
+    const r1 = await checkRateLimit(`forgot:${emailLower}`, 3, 3600);
+    const r2 = await checkRateLimit(`forgot-ip:${clientIp(req)}`, 10, 3600);
+    if (!r1.allowed || !r2.allowed) return sendRateLimited(res, r1.retryAfter || r2.retryAfter);
 
-    // ── Check account exists ──────────────────────────────────────────────────
-    let existing;
-    try {
-      existing = await sheetsGet({
-        action: "getProfile",
-        email:  emailLower,
-      });
-    } catch (err) {
-      console.error("getProfile error:", err);
-      return sendErr(res, "Failed to verify account. Please try again.");
+    // ── Account check. The reply is identical either way so this endpoint
+    //    cannot be used to discover which emails have accounts. ────────────────
+    const GENERIC = "If an account exists for that email, a reset code has been sent.";
+    let accountExists = false;
+    if (supabaseEnabled()) {
+      const found = await selectOne("profiles", { email: emailLower });
+      if (found.ok) accountExists = !!found.row;
     }
-
-    console.log("getProfile result:", JSON.stringify(existing));
-
-    if (!existing?.success) {
-      return sendErr(res, existing?.error || "No account found with this email.");
-    }
+    if (!accountExists) accountExists = await legacyProfileExists(emailLower);
+    if (!accountExists) return sendOk(res, { message: GENERIC });
 
     // ── Generate secure 6-digit code ──────────────────────────────────────────
     const code = crypto.randomInt(100000, 1000000).toString();
@@ -177,13 +171,13 @@ export default async function handler(req, res) {
     }
 
     // ── Success ───────────────────────────────────────────────────────────────
-    return sendOk(res, { message: "Reset code sent to your email." });
+    return sendOk(res, { message: GENERIC });
 
   } catch (err) {
     console.error("Forgot handler crash:", err);
     return res.status(500).json({
       success: false,
-      error: err.message || "Internal server error",
+      error: "Something went wrong. Please try again.",
     });
   }
 }
