@@ -3,6 +3,7 @@ import { GOLD, DPURP, GREEN } from '../utils/colors';
 import { triggerPopoverAd } from '../utils/ads';
 import { POPOVER_AD_URL } from '../utils/constants';
 import { trackEvent } from '../analytics/quizAnalytics';
+import { EmojiIcon } from './Icon';
 
 export default function AdGate({ name, email, totalSessions, onUnlocked }) {
   const [countdown, setCountdown] = useState(3);
@@ -39,19 +40,19 @@ export default function AdGate({ name, email, totalSessions, onUnlocked }) {
   return (
     <div className="scr fd adgate-container">
       <div className="adgate-card">
-        <div className="adgate-icon">🎬</div>
+        <div className="adgate-icon"><EmojiIcon emoji="🎬" size="1.1em" /></div>
         <div className="adgate-title">Support EliteScholars</div>
         <div className="adgate-subtitle">{unlocked ? 'Thank you! Ready to continue!' : 'A quick ad helps keep this free for everyone'}</div>
-        <div className="adgate-vibe"><div className="adgate-vibe-badge">✨ FROM ELITE JAMB</div><div className="adgate-vibe-text">{vibe}</div></div>
+        <div className="adgate-vibe"><div className="adgate-vibe-badge"><EmojiIcon emoji="✨" size="1.15em" /> FROM ELITE JAMB</div><div className="adgate-vibe-text">{vibe}</div></div>
         {!unlocked ? (
           <>
             <div className="adgate-countdown"><div className="adgate-countdown-label">Unlocks in</div><div className="adgate-countdown-number">{countdown}s</div><div className="adgate-countdown-hint">A new tab will open - close it to continue</div></div>
             <div className="adgate-progress"><div className="adgate-progress-fill" style={{ width: `${((3 - countdown) / 3) * 100}%` }} /></div>
-            <button className="adgate-retry-btn" onClick={handleManualAd}>🔄 Click here if ad doesn't open</button>
-            <button className="adgate-waiting-btn">🔒 Waiting...</button>
+            <button className="adgate-retry-btn" onClick={handleManualAd}><EmojiIcon emoji="🔄" size="1.15em" /> Click here if ad doesn't open</button>
+            <button className="adgate-waiting-btn"><EmojiIcon emoji="🔒" size="1.15em" /> Waiting...</button>
           </>
         ) : (
-          <div className="su"><div className="adgate-success"><div className="adgate-success-title">✅ Thank You!</div><div className="adgate-success-text">Your support helps keep EliteScholars free</div></div><button className="adgate-continue-btn" onClick={() => onUnlocked(true)}>🚀 Continue to Quiz</button></div>
+          <div className="su"><div className="adgate-success"><div className="adgate-success-title"><EmojiIcon emoji="✅" size="1.15em" /> Thank You!</div><div className="adgate-success-text">Your support helps keep EliteScholars free</div></div><button className="adgate-continue-btn" onClick={() => onUnlocked(true)}><EmojiIcon emoji="🚀" size="1.15em" /> Continue to Quiz</button></div>
         )}
       </div>
     </div>

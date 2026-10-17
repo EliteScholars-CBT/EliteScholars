@@ -51,30 +51,30 @@ export const GST_LEARN_GST_ENGLISH = [
   <svg class="learn-svg" viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg">
     <rect width="520" height="200" fill="#0f0020" rx="10"/>
     <!-- Stage boxes -->
-    <rect x="10" y="80" width="85" height="40" rx="8" fill="#4B0082"/>
-    <rect x="110" y="80" width="85" height="40" rx="8" fill="#4B0082"/>
-    <rect x="210" y="80" width="85" height="40" rx="8" fill="#4B0082"/>
-    <rect x="310" y="80" width="85" height="40" rx="8" fill="#4B0082"/>
-    <rect x="410" y="80" width="95" height="40" rx="8" fill="#4B0082"/>
+    <rect x="10" y="80" width="85" height="40" rx="8" fill="#7C3AED"/>
+    <rect x="110" y="80" width="85" height="40" rx="8" fill="#7C3AED"/>
+    <rect x="210" y="80" width="85" height="40" rx="8" fill="#7C3AED"/>
+    <rect x="310" y="80" width="85" height="40" rx="8" fill="#7C3AED"/>
+    <rect x="410" y="80" width="95" height="40" rx="8" fill="#7C3AED"/>
     <!-- Arrows -->
-    <path d="M96 100 L108 100" stroke="#D4AF37" stroke-width="2" marker-end="url(#arr)"/>
-    <path d="M196 100 L208 100" stroke="#D4AF37" stroke-width="2" marker-end="url(#arr)"/>
-    <path d="M296 100 L308 100" stroke="#D4AF37" stroke-width="2" marker-end="url(#arr)"/>
-    <path d="M396 100 L408 100" stroke="#D4AF37" stroke-width="2" marker-end="url(#arr)"/>
-    <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#D4AF37"/></marker></defs>
+    <path d="M96 100 L108 100" stroke="#FFC53D" stroke-width="2" marker-end="url(#arr)"/>
+    <path d="M196 100 L208 100" stroke="#FFC53D" stroke-width="2" marker-end="url(#arr)"/>
+    <path d="M296 100 L308 100" stroke="#FFC53D" stroke-width="2" marker-end="url(#arr)"/>
+    <path d="M396 100 L408 100" stroke="#FFC53D" stroke-width="2" marker-end="url(#arr)"/>
+    <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#FFC53D"/></marker></defs>
     <!-- Labels -->
     <text x="52" y="97" text-anchor="middle" fill="#fff" font-size="9">Receiving</text>
-    <text x="52" y="108" text-anchor="middle" fill="#D4AF37" font-size="8">Hearing sound</text>
+    <text x="52" y="108" text-anchor="middle" fill="#FFC53D" font-size="8">Hearing sound</text>
     <text x="152" y="97" text-anchor="middle" fill="#fff" font-size="9">Attending</text>
-    <text x="152" y="108" text-anchor="middle" fill="#D4AF37" font-size="8">Focusing</text>
+    <text x="152" y="108" text-anchor="middle" fill="#FFC53D" font-size="8">Focusing</text>
     <text x="252" y="97" text-anchor="middle" fill="#fff" font-size="9">Understanding</text>
-    <text x="252" y="108" text-anchor="middle" fill="#D4AF37" font-size="8">Interpreting</text>
+    <text x="252" y="108" text-anchor="middle" fill="#FFC53D" font-size="8">Interpreting</text>
     <text x="352" y="97" text-anchor="middle" fill="#fff" font-size="9">Responding</text>
-    <text x="352" y="108" text-anchor="middle" fill="#D4AF37" font-size="8">Reacting</text>
+    <text x="352" y="108" text-anchor="middle" fill="#FFC53D" font-size="8">Reacting</text>
     <text x="457" y="97" text-anchor="middle" fill="#fff" font-size="9">Remembering</text>
-    <text x="457" y="108" text-anchor="middle" fill="#D4AF37" font-size="8">Retaining</text>
+    <text x="457" y="108" text-anchor="middle" fill="#FFC53D" font-size="8">Retaining</text>
     <!-- Animated pulse on first box -->
-    <rect x="10" y="80" width="85" height="40" rx="8" fill="none" stroke="#D4AF37" stroke-width="2">
+    <rect x="10" y="80" width="85" height="40" rx="8" fill="none" stroke="#FFC53D" stroke-width="2">
       <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
     </rect>
     <text x="260" y="170" text-anchor="middle" fill="#9090b0" font-size="11">The Five-Stage Listening Process</text>
@@ -150,15 +150,15 @@ export const GST_LEARN_GST_ENGLISH = [
   <svg class="learn-svg" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
     <rect width="400" height="280" fill="#0f0020" rx="8"/>
     <!-- Page outline -->
-    <rect x="20" y="20" width="360" height="240" rx="4" fill="#1a0030" stroke="#4B0082" stroke-width="1.5"/>
+    <rect x="20" y="20" width="360" height="240" rx="4" fill="#1B0A47" stroke="#7C3AED" stroke-width="1.5"/>
     <!-- Vertical divider -->
-    <line x1="120" y1="20" x2="120" y2="210" stroke="#D4AF37" stroke-width="1.5"/>
+    <line x1="120" y1="20" x2="120" y2="210" stroke="#FFC53D" stroke-width="1.5"/>
     <!-- Horizontal divider -->
-    <line x1="20" y1="210" x2="380" y2="210" stroke="#D4AF37" stroke-width="1.5"/>
+    <line x1="20" y1="210" x2="380" y2="210" stroke="#FFC53D" stroke-width="1.5"/>
     <!-- Labels -->
-    <text x="70" y="45" text-anchor="middle" fill="#D4AF37" font-size="10" font-weight="bold">CUE COLUMN</text>
-    <text x="250" y="45" text-anchor="middle" fill="#D4AF37" font-size="10" font-weight="bold">NOTES COLUMN</text>
-    <text x="200" y="228" text-anchor="middle" fill="#D4AF37" font-size="10" font-weight="bold">SUMMARY</text>
+    <text x="70" y="45" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="bold">CUE COLUMN</text>
+    <text x="250" y="45" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="bold">NOTES COLUMN</text>
+    <text x="200" y="228" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="bold">SUMMARY</text>
     <!-- Sample content -->
     <text x="30" y="65" fill="#9090b0" font-size="8">What is</text>
     <text x="30" y="76" fill="#9090b0" font-size="8">listening?</text>
@@ -170,7 +170,7 @@ export const GST_LEARN_GST_ENGLISH = [
     <text x="130" y="120" fill="#c8c8c8" font-size="8">• Critical, comprehensive, empathetic</text>
     <text x="30" y="215" fill="#9090b0" font-size="8">Summary: Listening = active process with 5 stages. Types vary by purpose.</text>
     <!-- Animated highlight -->
-    <rect x="120" y="58" width="255" height="12" rx="2" fill="#D4AF37" opacity="0.1">
+    <rect x="120" y="58" width="255" height="12" rx="2" fill="#FFC53D" opacity="0.1">
       <animate attributeName="opacity" values="0.1;0.3;0.1" dur="2s" repeatCount="indefinite"/>
     </rect>
     <text x="200" y="265" text-anchor="middle" fill="#9090b0" font-size="9">Cornell Note-Taking System</text>
@@ -465,33 +465,33 @@ export const GST_LEARN_GST_ENGLISH = [
   <svg class="learn-svg" viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
     <rect width="500" height="220" fill="#0f0020" rx="10"/>
     <!-- Five circles for SQ3R -->
-    <circle cx="60" cy="100" r="45" fill="#4B0082" stroke="#D4AF37" stroke-width="2"/>
-    <circle cx="165" cy="100" r="45" fill="#4B0082" stroke="#D4AF37" stroke-width="2"/>
-    <circle cx="270" cy="100" r="45" fill="#4B0082" stroke="#D4AF37" stroke-width="2"/>
-    <circle cx="375" cy="100" r="45" fill="#4B0082" stroke="#D4AF37" stroke-width="2"/>
-    <circle cx="455" cy="100" r="40" fill="#4B0082" stroke="#D4AF37" stroke-width="2"/>
+    <circle cx="60" cy="100" r="45" fill="#7C3AED" stroke="#FFC53D" stroke-width="2"/>
+    <circle cx="165" cy="100" r="45" fill="#7C3AED" stroke="#FFC53D" stroke-width="2"/>
+    <circle cx="270" cy="100" r="45" fill="#7C3AED" stroke="#FFC53D" stroke-width="2"/>
+    <circle cx="375" cy="100" r="45" fill="#7C3AED" stroke="#FFC53D" stroke-width="2"/>
+    <circle cx="455" cy="100" r="40" fill="#7C3AED" stroke="#FFC53D" stroke-width="2"/>
     <!-- Animated pulse on first circle -->
-    <circle cx="60" cy="100" r="45" fill="none" stroke="#D4AF37" stroke-width="1">
+    <circle cx="60" cy="100" r="45" fill="none" stroke="#FFC53D" stroke-width="1">
       <animate attributeName="r" values="45;52;45" dur="2s" repeatCount="indefinite"/>
       <animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite"/>
     </circle>
     <!-- Letters -->
-    <text x="60" y="90" text-anchor="middle" fill="#D4AF37" font-size="22" font-weight="bold">S</text>
+    <text x="60" y="90" text-anchor="middle" fill="#FFC53D" font-size="22" font-weight="bold">S</text>
     <text x="60" y="115" text-anchor="middle" fill="#fff" font-size="9">Survey</text>
-    <text x="165" y="90" text-anchor="middle" fill="#D4AF37" font-size="22" font-weight="bold">Q</text>
+    <text x="165" y="90" text-anchor="middle" fill="#FFC53D" font-size="22" font-weight="bold">Q</text>
     <text x="165" y="115" text-anchor="middle" fill="#fff" font-size="9">Question</text>
-    <text x="270" y="90" text-anchor="middle" fill="#D4AF37" font-size="22" font-weight="bold">R</text>
+    <text x="270" y="90" text-anchor="middle" fill="#FFC53D" font-size="22" font-weight="bold">R</text>
     <text x="270" y="115" text-anchor="middle" fill="#fff" font-size="9">Read</text>
-    <text x="375" y="90" text-anchor="middle" fill="#D4AF37" font-size="22" font-weight="bold">R</text>
+    <text x="375" y="90" text-anchor="middle" fill="#FFC53D" font-size="22" font-weight="bold">R</text>
     <text x="375" y="115" text-anchor="middle" fill="#fff" font-size="9">Recite</text>
-    <text x="455" y="90" text-anchor="middle" fill="#D4AF37" font-size="22" font-weight="bold">R</text>
+    <text x="455" y="90" text-anchor="middle" fill="#FFC53D" font-size="22" font-weight="bold">R</text>
     <text x="455" y="115" text-anchor="middle" fill="#fff" font-size="9">Review</text>
     <!-- Connector arrows -->
-    <path d="M105 100 L118 100" stroke="#D4AF37" stroke-width="1.5" marker-end="url(#a2)"/>
-    <path d="M210 100 L223 100" stroke="#D4AF37" stroke-width="1.5" marker-end="url(#a2)"/>
-    <path d="M315 100 L328 100" stroke="#D4AF37" stroke-width="1.5" marker-end="url(#a2)"/>
-    <path d="M420 100 L413 100" stroke="#D4AF37" stroke-width="1.5" marker-end="url(#a2)"/>
-    <defs><marker id="a2" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#D4AF37"/></marker></defs>
+    <path d="M105 100 L118 100" stroke="#FFC53D" stroke-width="1.5" marker-end="url(#a2)"/>
+    <path d="M210 100 L223 100" stroke="#FFC53D" stroke-width="1.5" marker-end="url(#a2)"/>
+    <path d="M315 100 L328 100" stroke="#FFC53D" stroke-width="1.5" marker-end="url(#a2)"/>
+    <path d="M420 100 L413 100" stroke="#FFC53D" stroke-width="1.5" marker-end="url(#a2)"/>
+    <defs><marker id="a2" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#FFC53D"/></marker></defs>
     <text x="250" y="190" text-anchor="middle" fill="#9090b0" font-size="10">SQ3R Reading Method (Robinson, 1941)</text>
   </svg>
 </div>
@@ -596,20 +596,20 @@ export const GST_LEARN_GST_ENGLISH = [
   <svg class="learn-svg" viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg">
     <rect width="480" height="200" fill="#0f0020" rx="10"/>
     <!-- Reading comprehension pyramid -->
-    <polygon points="240,20 60,160 420,160" fill="none" stroke="#4B0082" stroke-width="2"/>
+    <polygon points="240,20 60,160 420,160" fill="none" stroke="#7C3AED" stroke-width="2"/>
     <!-- Layers -->
-    <line x1="147" y1="90" x2="333" y2="90" stroke="#4B0082" stroke-width="1.5"/>
-    <line x1="107" y1="125" x2="373" y2="125" stroke="#4B0082" stroke-width="1.5"/>
+    <line x1="147" y1="90" x2="333" y2="90" stroke="#7C3AED" stroke-width="1.5"/>
+    <line x1="107" y1="125" x2="373" y2="125" stroke="#7C3AED" stroke-width="1.5"/>
     <!-- Labels -->
-    <text x="240" y="62" text-anchor="middle" fill="#D4AF37" font-size="10" font-weight="bold">Conclusions</text>
+    <text x="240" y="62" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="bold">Conclusions</text>
     <text x="240" y="75" text-anchor="middle" fill="#9090b0" font-size="8">Synthesising multiple ideas</text>
-    <text x="240" y="108" text-anchor="middle" fill="#D4AF37" font-size="10" font-weight="bold">Inferences</text>
+    <text x="240" y="108" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="bold">Inferences</text>
     <text x="240" y="120" text-anchor="middle" fill="#9090b0" font-size="8">Reading between the lines</text>
-    <text x="240" y="140" text-anchor="middle" fill="#D4AF37" font-size="10" font-weight="bold">Supporting Details</text>
+    <text x="240" y="140" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="bold">Supporting Details</text>
     <text x="240" y="152" text-anchor="middle" fill="#9090b0" font-size="8">Facts, examples, evidence</text>
     <text x="240" y="170" text-anchor="middle" fill="#28c840" font-size="10" font-weight="bold">Main Idea — Foundation</text>
     <!-- Animated glow -->
-    <polygon points="240,20 60,160 420,160" fill="none" stroke="#D4AF37" stroke-width="1">
+    <polygon points="240,20 60,160 420,160" fill="none" stroke="#FFC53D" stroke-width="1">
       <animate attributeName="opacity" values="0.2;0.8;0.2" dur="3s" repeatCount="indefinite"/>
     </polygon>
     <text x="240" y="195" text-anchor="middle" fill="#9090b0" font-size="9">Reading Comprehension Levels</text>
@@ -890,14 +890,14 @@ export const GST_LEARN_GST_ENGLISH = [
   <svg class="learn-svg" viewBox="0 0 500 240" xmlns="http://www.w3.org/2000/svg">
     <rect width="500" height="240" fill="#0f0020" rx="10"/>
     <!-- Grid headers -->
-    <rect x="10" y="15" width="120" height="30" rx="4" fill="#4B0082"/>
-    <rect x="140" y="15" width="105" height="30" rx="4" fill="#4B0082"/>
-    <rect x="255" y="15" width="105" height="30" rx="4" fill="#4B0082"/>
-    <rect x="370" y="15" width="120" height="30" rx="4" fill="#4B0082"/>
-    <text x="70" y="35" text-anchor="middle" fill="#D4AF37" font-size="10" font-weight="bold">ASPECT</text>
-    <text x="192" y="35" text-anchor="middle" fill="#D4AF37" font-size="10" font-weight="bold">PRESENT</text>
-    <text x="307" y="35" text-anchor="middle" fill="#D4AF37" font-size="10" font-weight="bold">PAST</text>
-    <text x="430" y="35" text-anchor="middle" fill="#D4AF37" font-size="10" font-weight="bold">FUTURE</text>
+    <rect x="10" y="15" width="120" height="30" rx="4" fill="#7C3AED"/>
+    <rect x="140" y="15" width="105" height="30" rx="4" fill="#7C3AED"/>
+    <rect x="255" y="15" width="105" height="30" rx="4" fill="#7C3AED"/>
+    <rect x="370" y="15" width="120" height="30" rx="4" fill="#7C3AED"/>
+    <text x="70" y="35" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="bold">ASPECT</text>
+    <text x="192" y="35" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="bold">PRESENT</text>
+    <text x="307" y="35" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="bold">PAST</text>
+    <text x="430" y="35" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="bold">FUTURE</text>
     <!-- Row labels -->
     <text x="70" y="72" text-anchor="middle" fill="#c8b4f0" font-size="9">Simple</text>
     <text x="70" y="110" text-anchor="middle" fill="#c8b4f0" font-size="9">Continuous</text>
@@ -940,7 +940,7 @@ export const GST_LEARN_GST_ENGLISH = [
     <line x1="10" y1="128" x2="490" y2="128" stroke="#2a2a4a" stroke-width="1"/>
     <line x1="10" y1="166" x2="490" y2="166" stroke="#2a2a4a" stroke-width="1"/>
     <!-- Animated highlight on Present Simple -->
-    <rect x="140" y="55" width="105" height="35" rx="3" fill="#D4AF37" opacity="0.08">
+    <rect x="140" y="55" width="105" height="35" rx="3" fill="#FFC53D" opacity="0.08">
       <animate attributeName="opacity" values="0.08;0.2;0.08" dur="2s" repeatCount="indefinite"/>
     </rect>
     <text x="250" y="230" text-anchor="middle" fill="#9090b0" font-size="9">The 12 English Tenses — Overview</text>
@@ -1251,17 +1251,17 @@ export const GST_LEARN_GST_ENGLISH = [
   <svg class="learn-svg" viewBox="0 0 480 210" xmlns="http://www.w3.org/2000/svg">
     <rect width="480" height="210" fill="#0f0020" rx="10"/>
     <!-- Central node -->
-    <ellipse cx="240" cy="60" rx="80" ry="28" fill="#4B0082" stroke="#D4AF37" stroke-width="1.5"/>
-    <text x="240" y="55" text-anchor="middle" fill="#D4AF37" font-size="11" font-weight="bold">DEPENDENT CLAUSES</text>
+    <ellipse cx="240" cy="60" rx="80" ry="28" fill="#7C3AED" stroke="#FFC53D" stroke-width="1.5"/>
+    <text x="240" y="55" text-anchor="middle" fill="#FFC53D" font-size="11" font-weight="bold">DEPENDENT CLAUSES</text>
     <text x="240" y="70" text-anchor="middle" fill="#9090b0" font-size="9">Subject + Verb (cannot stand alone)</text>
     <!-- Three branch nodes -->
-    <rect x="30" y="130" width="120" height="55" rx="8" fill="#2d1b4e" stroke="#6C3FC9" stroke-width="1.5"/>
-    <rect x="180" y="130" width="120" height="55" rx="8" fill="#2d1b4e" stroke="#6C3FC9" stroke-width="1.5"/>
-    <rect x="330" y="130" width="130" height="55" rx="8" fill="#2d1b4e" stroke="#6C3FC9" stroke-width="1.5"/>
+    <rect x="30" y="130" width="120" height="55" rx="8" fill="#2d1b4e" stroke="#8B5CF6" stroke-width="1.5"/>
+    <rect x="180" y="130" width="120" height="55" rx="8" fill="#2d1b4e" stroke="#8B5CF6" stroke-width="1.5"/>
+    <rect x="330" y="130" width="130" height="55" rx="8" fill="#2d1b4e" stroke="#8B5CF6" stroke-width="1.5"/>
     <!-- Connecting lines -->
-    <line x1="160" y1="88" x2="90" y2="130" stroke="#6C3FC9" stroke-width="1.5"/>
-    <line x1="240" y1="88" x2="240" y2="130" stroke="#6C3FC9" stroke-width="1.5"/>
-    <line x1="320" y1="88" x2="395" y2="130" stroke="#6C3FC9" stroke-width="1.5"/>
+    <line x1="160" y1="88" x2="90" y2="130" stroke="#8B5CF6" stroke-width="1.5"/>
+    <line x1="240" y1="88" x2="240" y2="130" stroke="#8B5CF6" stroke-width="1.5"/>
+    <line x1="320" y1="88" x2="395" y2="130" stroke="#8B5CF6" stroke-width="1.5"/>
     <!-- Labels -->
     <text x="90" y="150" text-anchor="middle" fill="#28c840" font-size="10" font-weight="bold">NOUN Clause</text>
     <text x="90" y="163" text-anchor="middle" fill="#9090b0" font-size="8">Functions as noun</text>
@@ -1273,7 +1273,7 @@ export const GST_LEARN_GST_ENGLISH = [
     <text x="395" y="163" text-anchor="middle" fill="#9090b0" font-size="8">Modifies verb/adj.</text>
     <text x="395" y="175" text-anchor="middle" fill="#9090b0" font-size="8">because, when, if...</text>
     <!-- Animation -->
-    <ellipse cx="240" cy="60" rx="80" ry="28" fill="none" stroke="#D4AF37" stroke-width="1">
+    <ellipse cx="240" cy="60" rx="80" ry="28" fill="none" stroke="#FFC53D" stroke-width="1">
       <animate attributeName="opacity" values="0.3;1;0.3" dur="2.5s" repeatCount="indefinite"/>
     </ellipse>
     <text x="240" y="200" text-anchor="middle" fill="#9090b0" font-size="9">Three Types of Dependent (Subordinate) Clauses</text>
@@ -1919,15 +1919,15 @@ export const GST_LEARN_GST_ENGLISH = [
   <svg class="learn-svg" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
     <rect width="500" height="200" fill="#0f0020" rx="10"/>
     <!-- Five stages in a cycle -->
-    <ellipse cx="250" cy="95" rx="55" ry="30" fill="#4B0082" stroke="#D4AF37" stroke-width="1.5"/>
-    <text x="250" y="90" text-anchor="middle" fill="#D4AF37" font-size="10" font-weight="bold">WRITING</text>
-    <text x="250" y="103" text-anchor="middle" fill="#D4AF37" font-size="10" font-weight="bold">PROCESS</text>
+    <ellipse cx="250" cy="95" rx="55" ry="30" fill="#7C3AED" stroke="#FFC53D" stroke-width="1.5"/>
+    <text x="250" y="90" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="bold">WRITING</text>
+    <text x="250" y="103" text-anchor="middle" fill="#FFC53D" font-size="10" font-weight="bold">PROCESS</text>
     <!-- Surrounding stage boxes -->
-    <rect x="10" y="15" width="95" height="40" rx="8" fill="#2d1b4e" stroke="#6C3FC9" stroke-width="1.5"/>
-    <rect x="390" y="15" width="95" height="40" rx="8" fill="#2d1b4e" stroke="#6C3FC9" stroke-width="1.5"/>
-    <rect x="10" y="140" width="95" height="40" rx="8" fill="#2d1b4e" stroke="#6C3FC9" stroke-width="1.5"/>
-    <rect x="390" y="140" width="95" height="40" rx="8" fill="#2d1b4e" stroke="#6C3FC9" stroke-width="1.5"/>
-    <rect x="200" y="155" width="100" height="40" rx="8" fill="#2d1b4e" stroke="#6C3FC9" stroke-width="1.5"/>
+    <rect x="10" y="15" width="95" height="40" rx="8" fill="#2d1b4e" stroke="#8B5CF6" stroke-width="1.5"/>
+    <rect x="390" y="15" width="95" height="40" rx="8" fill="#2d1b4e" stroke="#8B5CF6" stroke-width="1.5"/>
+    <rect x="10" y="140" width="95" height="40" rx="8" fill="#2d1b4e" stroke="#8B5CF6" stroke-width="1.5"/>
+    <rect x="390" y="140" width="95" height="40" rx="8" fill="#2d1b4e" stroke="#8B5CF6" stroke-width="1.5"/>
+    <rect x="200" y="155" width="100" height="40" rx="8" fill="#2d1b4e" stroke="#8B5CF6" stroke-width="1.5"/>
     <!-- Labels -->
     <text x="57" y="32" text-anchor="middle" fill="#28c840" font-size="10" font-weight="bold">1. Pre-writing</text>
     <text x="57" y="46" text-anchor="middle" fill="#9090b0" font-size="8">Brainstorm, outline</text>
@@ -1940,14 +1940,14 @@ export const GST_LEARN_GST_ENGLISH = [
     <text x="250" y="172" text-anchor="middle" fill="#28c840" font-size="10" font-weight="bold">4. Editing</text>
     <text x="250" y="185" text-anchor="middle" fill="#9090b0" font-size="8">Fix grammar/style</text>
     <!-- Arrows -->
-    <path d="M105 30 L193 75" stroke="#D4AF37" stroke-width="1.5" marker-end="url(#a3)"/>
-    <path d="M390 30 L307 75" stroke="#D4AF37" stroke-width="1.5" marker-end="url(#a3)"/>
-    <path d="M307 115 L390 155" stroke="#D4AF37" stroke-width="1.5" marker-end="url(#a3)"/>
-    <path d="M193 115 L105 155" stroke="#D4AF37" stroke-width="1.5" marker-end="url(#a3)"/>
-    <path d="M250 125 L250 153" stroke="#D4AF37" stroke-width="1.5" marker-end="url(#a3)"/>
-    <defs><marker id="a3" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#D4AF37"/></marker></defs>
+    <path d="M105 30 L193 75" stroke="#FFC53D" stroke-width="1.5" marker-end="url(#a3)"/>
+    <path d="M390 30 L307 75" stroke="#FFC53D" stroke-width="1.5" marker-end="url(#a3)"/>
+    <path d="M307 115 L390 155" stroke="#FFC53D" stroke-width="1.5" marker-end="url(#a3)"/>
+    <path d="M193 115 L105 155" stroke="#FFC53D" stroke-width="1.5" marker-end="url(#a3)"/>
+    <path d="M250 125 L250 153" stroke="#FFC53D" stroke-width="1.5" marker-end="url(#a3)"/>
+    <defs><marker id="a3" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#FFC53D"/></marker></defs>
     <!-- Animated pulse -->
-    <ellipse cx="250" cy="95" rx="55" ry="30" fill="none" stroke="#D4AF37" stroke-width="1">
+    <ellipse cx="250" cy="95" rx="55" ry="30" fill="none" stroke="#FFC53D" stroke-width="1">
       <animate attributeName="opacity" values="0.2;0.8;0.2" dur="2s" repeatCount="indefinite"/>
     </ellipse>
   </svg>
@@ -2006,11 +2006,11 @@ export const GST_LEARN_GST_ENGLISH = [
   <svg class="learn-svg" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
     <rect width="400" height="250" fill="#0f0020" rx="10"/>
     <!-- Essay structure diagram -->
-    <rect x="30" y="15" width="340" height="55" rx="8" fill="#4B0082" stroke="#D4AF37" stroke-width="1.5"/>
-    <rect x="30" y="85" width="340" height="120" rx="8" fill="#2d1b4e" stroke="#6C3FC9" stroke-width="1.5"/>
+    <rect x="30" y="15" width="340" height="55" rx="8" fill="#7C3AED" stroke="#FFC53D" stroke-width="1.5"/>
+    <rect x="30" y="85" width="340" height="120" rx="8" fill="#2d1b4e" stroke="#8B5CF6" stroke-width="1.5"/>
     <rect x="30" y="220" width="340" height="22" rx="8" fill="#0a3a1a" stroke="#28c840" stroke-width="1.5"/>
     <!-- Labels -->
-    <text x="200" y="37" text-anchor="middle" fill="#D4AF37" font-size="12" font-weight="bold">INTRODUCTION</text>
+    <text x="200" y="37" text-anchor="middle" fill="#FFC53D" font-size="12" font-weight="bold">INTRODUCTION</text>
     <text x="200" y="52" text-anchor="middle" fill="#c8b4f0" font-size="9">Hook → Background → Thesis Statement</text>
     <text x="200" y="65" text-anchor="middle" fill="#9090b0" font-size="8">States the main argument and essay roadmap</text>
     <text x="200" y="105" text-anchor="middle" fill="#c8b4f0" font-size="12" font-weight="bold">BODY PARAGRAPHS</text>
@@ -2021,7 +2021,7 @@ export const GST_LEARN_GST_ENGLISH = [
     <text x="200" y="185" text-anchor="middle" fill="#5a5a7a" font-size="8">Each body paragraph develops ONE aspect of the thesis</text>
     <text x="200" y="230" text-anchor="middle" fill="#28c840" font-size="10" font-weight="bold">CONCLUSION: Restate thesis → Summarise → Final thought</text>
     <!-- Animated highlight on thesis -->
-    <rect x="30" y="15" width="340" height="55" rx="8" fill="none" stroke="#D4AF37" stroke-width="1">
+    <rect x="30" y="15" width="340" height="55" rx="8" fill="none" stroke="#FFC53D" stroke-width="1">
       <animate attributeName="opacity" values="0.2;0.8;0.2" dur="2.5s" repeatCount="indefinite"/>
     </rect>
     <text x="200" y="245" text-anchor="middle" fill="#9090b0" font-size="8">Standard Academic Essay Structure</text>
@@ -2259,17 +2259,17 @@ export const GST_LEARN_GST_ENGLISH = [
   <svg class="learn-svg" viewBox="0 0 420 290" xmlns="http://www.w3.org/2000/svg">
     <rect width="420" height="290" fill="#0f0020" rx="10"/>
     <!-- Letter outline -->
-    <rect x="20" y="15" width="380" height="262" rx="6" fill="#1a0030" stroke="#4B0082" stroke-width="1.5"/>
+    <rect x="20" y="15" width="380" height="262" rx="6" fill="#1B0A47" stroke="#7C3AED" stroke-width="1.5"/>
     <!-- Section blocks -->
     <rect x="230" y="25" width="160" height="30" rx="4" fill="#2d1b4e"/>
     <rect x="30" y="25" width="130" height="30" rx="4" fill="#0a3a1a"/>
     <rect x="30" y="65" width="130" height="22" rx="4" fill="#0a3a1a"/>
     <rect x="30" y="97" width="160" height="22" rx="4" fill="#3a1a00"/>
-    <rect x="30" y="128" width="100" height="18" rx="4" fill="#4B0082"/>
+    <rect x="30" y="128" width="100" height="18" rx="4" fill="#7C3AED"/>
     <rect x="30" y="155" width="350" height="80" rx="4" fill="#1e1e3a"/>
     <rect x="30" y="245" width="130" height="20" rx="4" fill="#2d1b4e"/>
     <!-- Labels -->
-    <text x="310" y="36" text-anchor="middle" fill="#D4AF37" font-size="9" font-weight="bold">Writer's Address (top right)</text>
+    <text x="310" y="36" text-anchor="middle" fill="#FFC53D" font-size="9" font-weight="bold">Writer's Address (top right)</text>
     <text x="310" y="47" text-anchor="middle" fill="#9090b0" font-size="7">123 University Road, Ibadan</text>
     <text x="95" y="36" text-anchor="middle" fill="#28c840" font-size="9" font-weight="bold">Date (top left or below address)</text>
     <text x="95" y="47" text-anchor="middle" fill="#9090b0" font-size="7">15th May, 2026</text>
@@ -2281,9 +2281,9 @@ export const GST_LEARN_GST_ENGLISH = [
     <text x="205" y="190" text-anchor="middle" fill="#9090b0" font-size="7">Introduction paragraph (state purpose)</text>
     <text x="205" y="205" text-anchor="middle" fill="#9090b0" font-size="7">Body paragraphs (develop the message)</text>
     <text x="205" y="220" text-anchor="middle" fill="#9090b0" font-size="7">Closing paragraph (request/action/conclusion)</text>
-    <text x="95" y="257" text-anchor="middle" fill="#D4AF37" font-size="9">Yours faithfully/sincerely, [Signature]</text>
+    <text x="95" y="257" text-anchor="middle" fill="#FFC53D" font-size="9">Yours faithfully/sincerely, [Signature]</text>
     <!-- Animated highlight -->
-    <rect x="30" y="128" width="100" height="18" rx="4" fill="none" stroke="#D4AF37" stroke-width="1">
+    <rect x="30" y="128" width="100" height="18" rx="4" fill="none" stroke="#FFC53D" stroke-width="1">
       <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
     </rect>
     <text x="210" y="283" text-anchor="middle" fill="#9090b0" font-size="9">Standard Formal Letter Layout</text>
@@ -2724,14 +2724,14 @@ export const GST_LEARN_GST_ENGLISH = [
   <svg class="learn-svg" viewBox="0 0 480 210" xmlns="http://www.w3.org/2000/svg">
     <rect width="480" height="210" fill="#0f0020" rx="10"/>
     <!-- Grid of figures of speech -->
-    <rect x="10" y="15" width="100" height="55" rx="6" fill="#2d1b4e" stroke="#6C3FC9" stroke-width="1"/>
-    <rect x="120" y="15" width="100" height="55" rx="6" fill="#2d1b4e" stroke="#6C3FC9" stroke-width="1"/>
-    <rect x="230" y="15" width="110" height="55" rx="6" fill="#2d1b4e" stroke="#6C3FC9" stroke-width="1"/>
-    <rect x="350" y="15" width="120" height="55" rx="6" fill="#2d1b4e" stroke="#6C3FC9" stroke-width="1"/>
-    <rect x="10" y="80" width="100" height="55" rx="6" fill="#1a0a30" stroke="#D4AF37" stroke-width="1"/>
-    <rect x="120" y="80" width="100" height="55" rx="6" fill="#1a0a30" stroke="#D4AF37" stroke-width="1"/>
-    <rect x="230" y="80" width="110" height="55" rx="6" fill="#1a0a30" stroke="#D4AF37" stroke-width="1"/>
-    <rect x="350" y="80" width="120" height="55" rx="6" fill="#1a0a30" stroke="#D4AF37" stroke-width="1"/>
+    <rect x="10" y="15" width="100" height="55" rx="6" fill="#2d1b4e" stroke="#8B5CF6" stroke-width="1"/>
+    <rect x="120" y="15" width="100" height="55" rx="6" fill="#2d1b4e" stroke="#8B5CF6" stroke-width="1"/>
+    <rect x="230" y="15" width="110" height="55" rx="6" fill="#2d1b4e" stroke="#8B5CF6" stroke-width="1"/>
+    <rect x="350" y="15" width="120" height="55" rx="6" fill="#2d1b4e" stroke="#8B5CF6" stroke-width="1"/>
+    <rect x="10" y="80" width="100" height="55" rx="6" fill="#1a0a30" stroke="#FFC53D" stroke-width="1"/>
+    <rect x="120" y="80" width="100" height="55" rx="6" fill="#1a0a30" stroke="#FFC53D" stroke-width="1"/>
+    <rect x="230" y="80" width="110" height="55" rx="6" fill="#1a0a30" stroke="#FFC53D" stroke-width="1"/>
+    <rect x="350" y="80" width="120" height="55" rx="6" fill="#1a0a30" stroke="#FFC53D" stroke-width="1"/>
     <!-- Comparison devices -->
     <text x="60" y="35" text-anchor="middle" fill="#28c840" font-size="9" font-weight="bold">SIMILE</text>
     <text x="60" y="48" text-anchor="middle" fill="#9090b0" font-size="7">Comparison with</text>
@@ -2746,16 +2746,16 @@ export const GST_LEARN_GST_ENGLISH = [
     <text x="410" y="48" text-anchor="middle" fill="#9090b0" font-size="7">Deliberate</text>
     <text x="410" y="59" text-anchor="middle" fill="#9090b0" font-size="7">exaggeration</text>
     <!-- Sound/contrast devices -->
-    <text x="60" y="100" text-anchor="middle" fill="#D4AF37" font-size="9" font-weight="bold">ALLITERATION</text>
+    <text x="60" y="100" text-anchor="middle" fill="#FFC53D" font-size="9" font-weight="bold">ALLITERATION</text>
     <text x="60" y="113" text-anchor="middle" fill="#9090b0" font-size="7">Initial consonant</text>
     <text x="60" y="124" text-anchor="middle" fill="#9090b0" font-size="7">repetition</text>
-    <text x="170" y="100" text-anchor="middle" fill="#D4AF37" font-size="9" font-weight="bold">IRONY</text>
+    <text x="170" y="100" text-anchor="middle" fill="#FFC53D" font-size="9" font-weight="bold">IRONY</text>
     <text x="170" y="113" text-anchor="middle" fill="#9090b0" font-size="7">Saying opposite</text>
     <text x="170" y="124" text-anchor="middle" fill="#9090b0" font-size="7">of what is meant</text>
-    <text x="285" y="100" text-anchor="middle" fill="#D4AF37" font-size="9" font-weight="bold">OXYMORON</text>
+    <text x="285" y="100" text-anchor="middle" fill="#FFC53D" font-size="9" font-weight="bold">OXYMORON</text>
     <text x="285" y="113" text-anchor="middle" fill="#9090b0" font-size="7">Contradictory words</text>
     <text x="285" y="124" text-anchor="middle" fill="#9090b0" font-size="7">together</text>
-    <text x="410" y="100" text-anchor="middle" fill="#D4AF37" font-size="9" font-weight="bold">ONOMATOPOEIA</text>
+    <text x="410" y="100" text-anchor="middle" fill="#FFC53D" font-size="9" font-weight="bold">ONOMATOPOEIA</text>
     <text x="410" y="113" text-anchor="middle" fill="#9090b0" font-size="7">Words that sound</text>
     <text x="410" y="124" text-anchor="middle" fill="#9090b0" font-size="7">like their meaning</text>
     <!-- Animated highlight -->
@@ -3086,7 +3086,7 @@ export const GST_LEARN_GST_ENGLISH = [
   <svg class="learn-svg" viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg">
     <rect width="480" height="200" fill="#0f0020" rx="10"/>
     <!-- Falling intonation -->
-    <text x="120" y="30" text-anchor="middle" fill="#D4AF37" font-size="11" font-weight="bold">FALLING INTONATION ↘</text>
+    <text x="120" y="30" text-anchor="middle" fill="#FFC53D" font-size="11" font-weight="bold">FALLING INTONATION ↘</text>
     <text x="120" y="48" text-anchor="middle" fill="#9090b0" font-size="9">Statements, commands, wh-questions</text>
     <path d="M30 80 L100 85 L170 95 L220 130" stroke="#28c840" stroke-width="2.5" fill="none"/>
     <circle cx="30" cy="80" r="4" fill="#28c840"/>
@@ -3098,7 +3098,7 @@ export const GST_LEARN_GST_ENGLISH = [
     <text x="190" y="125" fill="#c8c8c8" font-size="8">HARD ↘</text>
     <text x="120" y="155" text-anchor="middle" fill="#9090b0" font-size="8">Definite, complete</text>
     <!-- Rising intonation -->
-    <text x="360" y="30" text-anchor="middle" fill="#D4AF37" font-size="11" font-weight="bold">RISING INTONATION ↗</text>
+    <text x="360" y="30" text-anchor="middle" fill="#FFC53D" font-size="11" font-weight="bold">RISING INTONATION ↗</text>
     <text x="360" y="48" text-anchor="middle" fill="#9090b0" font-size="9">Yes/No questions, uncertainty</text>
     <path d="M260 130 L310 120 L370 100 L430 75" stroke="#ff9500" stroke-width="2.5" fill="none"/>
     <circle cx="260" cy="130" r="4" fill="#ff9500"/>
@@ -3378,11 +3378,11 @@ export const GST_LEARN_GST_ENGLISH = [
   <svg class="learn-svg" viewBox="0 0 440 220" xmlns="http://www.w3.org/2000/svg">
     <rect width="440" height="220" fill="#0f0020" rx="10"/>
     <!-- Speech structure -->
-    <rect x="20" y="15" width="400" height="50" rx="8" fill="#4B0082" stroke="#D4AF37" stroke-width="1.5"/>
-    <rect x="20" y="80" width="400" height="90" rx="8" fill="#2d1b4e" stroke="#6C3FC9" stroke-width="1.5"/>
+    <rect x="20" y="15" width="400" height="50" rx="8" fill="#7C3AED" stroke="#FFC53D" stroke-width="1.5"/>
+    <rect x="20" y="80" width="400" height="90" rx="8" fill="#2d1b4e" stroke="#8B5CF6" stroke-width="1.5"/>
     <rect x="20" y="185" width="400" height="28" rx="8" fill="#0a3a1a" stroke="#28c840" stroke-width="1.5"/>
     <!-- Opening labels -->
-    <text x="220" y="35" text-anchor="middle" fill="#D4AF37" font-size="11" font-weight="bold">OPENING (Introduction)</text>
+    <text x="220" y="35" text-anchor="middle" fill="#FFC53D" font-size="11" font-weight="bold">OPENING (Introduction)</text>
     <text x="220" y="50" text-anchor="middle" fill="#c8b4f0" font-size="9">Attention-getter → Self-introduction → Preview of main points (roadmap)</text>
     <text x="220" y="62" text-anchor="middle" fill="#9090b0" font-size="8">"Good morning, I am going to speak about... My three main points are..."</text>
     <!-- Body labels -->
@@ -3394,7 +3394,7 @@ export const GST_LEARN_GST_ENGLISH = [
     <!-- Closing labels -->
     <text x="220" y="202" text-anchor="middle" fill="#28c840" font-size="10" font-weight="bold">CLOSING: Summary → Restate thesis → Call to action → Thank you</text>
     <!-- Animated highlight -->
-    <rect x="20" y="15" width="400" height="50" rx="8" fill="none" stroke="#D4AF37" stroke-width="1">
+    <rect x="20" y="15" width="400" height="50" rx="8" fill="none" stroke="#FFC53D" stroke-width="1">
       <animate attributeName="opacity" values="0.2;0.7;0.2" dur="2.5s" repeatCount="indefinite"/>
     </rect>
     <text x="220" y="215" text-anchor="middle" fill="#9090b0" font-size="8">Standard Speech Structure with Signposting</text>

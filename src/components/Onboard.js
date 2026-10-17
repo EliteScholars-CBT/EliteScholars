@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GOLD, DPURP, WHITE } from '../utils/colors';
 import { saveUser } from '../utils/storage';
 import { trackEvent, getDeviceInfo } from '../analytics/quizAnalytics';
+import { EmojiIcon } from './Icon';
 
 export default function Onboard({ onDone }) {
   const [name, setName] = useState('');
@@ -19,7 +20,7 @@ export default function Onboard({ onDone }) {
   return (
     <div className="scr fd onboard-container">
       <div style={{ padding: '44px 24px 24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
-        <div className="onboard-icon">🎓</div>
+        <div className="onboard-icon"><EmojiIcon emoji="🎓" size="1.1em" /></div>
         <div className="onboard-title">JAMB · WAEC · NECO<br /><span className="onboard-title-gold">All in one place.</span></div>
         <div className="onboard-subtitle">Free exam prep for POST UTME, WAEC, NECO, GST &amp; JAMB.</div>
         <div className="onboard-text">Enter your name and email to save your progress, streaks and achievements. No password needed.</div>

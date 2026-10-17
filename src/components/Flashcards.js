@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SUBJ } from '../data/subjects';
 import { getFlashcardsForSubject } from '../data/flashcards';
 import { useTheme } from '../context/ThemeContext';
+import Icon, { EmojiIcon } from './Icon';
 
 export default function Flashcards({ subjectId, onBack }) {
   const [cards, setCards] = useState([]);
@@ -65,8 +66,8 @@ export default function Flashcards({ subjectId, onBack }) {
     return (
       <div className="scr fd flashcards-page">
         <div className="flashcards-result-container">
-          <button className="flashcards-back-btn" onClick={onBack}>←</button>
-          <div className="flashcards-result-icon">📊</div>
+          <button className="flashcards-back-btn" onClick={onBack} aria-label="Back"><Icon name="arrowLeft" size={16} /></button>
+          <div className="flashcards-result-icon"><EmojiIcon emoji="📊" size="1.1em" /></div>
           <div className="flashcards-result-title">Session Complete!</div>
           <div className="flashcards-result-subtitle">You've reviewed all {totalCards} flashcards</div>
           
@@ -88,8 +89,8 @@ export default function Flashcards({ subjectId, onBack }) {
             <div className="flashcards-progress-text">{percentage}% Mastered</div>
           </div>
           
-          <button className="flashcards-restart-btn" onClick={handleRestart}>🔄 Study Again</button>
-          <button className="flashcards-back-subjects-btn" onClick={onBack}>📚 Back to Subjects</button>
+          <button className="flashcards-restart-btn" onClick={handleRestart}><EmojiIcon emoji="🔄" size="1.15em" /> Study Again</button>
+          <button className="flashcards-back-subjects-btn" onClick={onBack}><EmojiIcon emoji="📚" size="1.15em" /> Back to Subjects</button>
         </div>
       </div>
     );
@@ -99,13 +100,13 @@ export default function Flashcards({ subjectId, onBack }) {
     return (
       <div className="scr fd flashcards-page">
         <div className="flashcards-empty-container">
-          <button className="flashcards-back-btn" onClick={onBack}>←</button>
-          <div className="flashcards-empty-icon">📭</div>
+          <button className="flashcards-back-btn" onClick={onBack} aria-label="Back"><Icon name="arrowLeft" size={16} /></button>
+          <div className="flashcards-empty-icon"><EmojiIcon emoji="📭" size="1.1em" /></div>
           <div className="flashcards-empty-title">No Flashcards Available</div>
           <div className="flashcards-empty-subtitle">
             No flashcards found for {meta.label}. Check back later!
           </div>
-          <button className="flashcards-back-subjects-btn" onClick={onBack}>📚 Back to Subjects</button>
+          <button className="flashcards-back-subjects-btn" onClick={onBack}><EmojiIcon emoji="📚" size="1.15em" /> Back to Subjects</button>
         </div>
       </div>
     );
@@ -114,8 +115,8 @@ export default function Flashcards({ subjectId, onBack }) {
   return (
     <div className="scr fd flashcards-page">
       {/* Header */}
-      <div className="flashcards-header" style={{ background: `linear-gradient(135deg, #280050, ${meta.color || '#4B0082'})` }}>
-        <button className="flashcards-header-back" onClick={onBack}>← Back</button>
+      <div className="flashcards-header" style={{ background: `linear-gradient(135deg, #2E1065, ${meta.color || '#7C3AED'})` }}>
+        <button className="flashcards-header-back" onClick={onBack}><Icon name="arrowLeft" size={15} /> Back</button>
         <div className="flashcards-header-content">
           <div className="flashcards-header-icon">{meta.icon}</div>
           <div className="flashcards-header-title">{meta.label} Flashcards</div>
@@ -134,24 +135,24 @@ export default function Flashcards({ subjectId, onBack }) {
         >
           {/* Front of card */}
           <div className="flashcards-card-front">
-            <div className="flashcards-card-label">📖 TERM</div>
+            <div className="flashcards-card-label"><EmojiIcon emoji="📖" size="1.15em" /> TERM</div>
             <div className="flashcards-card-term">{currentCard.term}</div>
             <div className="flashcards-card-tip">👆 Tap to flip</div>
           </div>
           
           {/* Back of card */}
           <div className="flashcards-card-back">
-            <div className="flashcards-card-label">📝 DEFINITION</div>
+            <div className="flashcards-card-label"><EmojiIcon emoji="📝" size="1.15em" /> DEFINITION</div>
             <div className="flashcards-card-definition">{currentCard.definition}</div>
             {currentCard.example && (
               <>
-                <div className="flashcards-card-sub-label">💡 EXAMPLE</div>
+                <div className="flashcards-card-sub-label"><EmojiIcon emoji="💡" size="1.15em" /> EXAMPLE</div>
                 <div className="flashcards-card-example">{currentCard.example}</div>
               </>
             )}
             {currentCard.tip && (
               <>
-                <div className="flashcards-card-sub-label">✨ TIP</div>
+                <div className="flashcards-card-sub-label"><EmojiIcon emoji="✨" size="1.15em" /> TIP</div>
                 <div className="flashcards-card-tip-text">{currentCard.tip}</div>
               </>
             )}
@@ -161,8 +162,8 @@ export default function Flashcards({ subjectId, onBack }) {
 
       {/* Action Buttons */}
       <div className="flashcards-actions">
-        <button className="flashcards-btn-need-review" onClick={handleUnknown}>❌ Need Review</button>
-        <button className="flashcards-btn-know" onClick={handleKnown}>✅ I Know This</button>
+        <button className="flashcards-btn-need-review" onClick={handleUnknown}><EmojiIcon emoji="❌" size="1.15em" /> Need Review</button>
+        <button className="flashcards-btn-know" onClick={handleKnown}><EmojiIcon emoji="✅" size="1.15em" /> I Know This</button>
       </div>
       
       <div className="flashcards-footer">

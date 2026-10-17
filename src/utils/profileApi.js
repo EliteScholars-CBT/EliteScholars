@@ -2,8 +2,10 @@
 // profileApi.js — DEBUGGER-INTEGRATED SAFE VERSION
 // ============================================================================
 
-import { SHEETS_URL } from './constants';
 import { addLog } from './debugStore';
+
+// Auth traffic is never written to the console.
+const devLog = () => {};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CORE SAFE FETCH — logs everything, never throws
@@ -14,7 +16,7 @@ async function safeFetchJSON(endpoint, options = {}) {
   const method = options.method || 'GET';
 
   console.group(`🌐 [profileApi] ${method} ${endpoint}`);
-  console.log('📤 Request options:', {
+  devLog('📤 Request options:', {
     method,
     headers: options.headers,
     body: options.body ? JSON.parse(options.body) : undefined,
@@ -24,7 +26,7 @@ async function safeFetchJSON(endpoint, options = {}) {
     type: 'info',
     category: 'network',
     message: 'REQUEST',
-    data: { url: endpoint, method, body: options.body || null },
+    data: { url: endpoint, method, body: options.body ? '[hidden]' : null },
   });
 
   try {
@@ -32,13 +34,13 @@ async function safeFetchJSON(endpoint, options = {}) {
     const text = await res.text();
     const duration = Math.round(performance.now() - start);
 
-    console.log(`📥 Response [${res.status}] in ${duration}ms`);
-    console.log('📥 Raw response text:', text.slice(0, 500));
+    devLog(`📥 Response [${res.status}] in ${duration}ms`);
+    devLog('📥 Raw response text:', text.slice(0, 500));
 
     let data;
     try {
       data = JSON.parse(text);
-      console.log('✅ Parsed JSON:', data);
+      devLog('✅ Parsed JSON:', data);
       console.groupEnd();
 
       addLog({
@@ -89,7 +91,7 @@ async function safeFetchJSON(endpoint, options = {}) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function apiPost(endpoint, body) {
-  console.log(`📮 [profileApi] POST ${endpoint}`, body);
+  devLog(`📮 [profileApi] POST ${endpoint}`, body);
   return safeFetchJSON(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -100,7 +102,7 @@ async function apiPost(endpoint, body) {
 async function apiGet(endpoint, params = {}) {
   const qs = new URLSearchParams(params).toString();
   const url = `${endpoint}${qs ? '?' + qs : ''}`;
-  console.log(`📡 [profileApi] GET ${url}`);
+  devLog(`📡 [profileApi] GET ${url}`);
   return safeFetchJSON(url);
 }
 
@@ -110,14 +112,14 @@ async function apiGet(endpoint, params = {}) {
 
 export async function registerProfile(payload) {
   console.group('🔐 [registerProfile] Starting registration');
-  console.log('📦 Payload sent to /api/auth/register:', {
+  devLog('📦 Payload sent to /api/auth/register:', {
     ...payload,
     password: payload.password ? '[REDACTED]' : undefined,
   });
 
   const result = await apiPost('/api/auth/register', payload);
 
-  console.log('📨 Raw result from /api/auth/register:', result);
+  devLog('📨 Raw result from /api/auth/register:', result);
 
   if (!result || result.error === 'INVALID_JSON_RESPONSE') {
     console.warn('⚠️ Got invalid JSON from register endpoint. Raw:', result?.raw);
@@ -146,44 +148,44 @@ export async function registerProfile(payload) {
     };
   }
 
-  console.log('📋 Register result:', result);
+  devLog('📋 Register result:', result);
   console.groupEnd();
   return result;
 }
 
 export async function loginProfile(payload) {
   console.group('🔑 [loginProfile] Starting login');
-  console.log('📦 Payload sent to /api/auth/login:', {
+  devLog('📦 Payload sent to /api/auth/login:', {
     email: payload.email,
     password: payload.password ? '[REDACTED]' : undefined,
   });
 
   const result = await apiPost('/api/auth/login', payload);
 
-  console.log('📨 Raw result from /api/auth/login:', result);
+  devLog('📨 Raw result from /api/auth/login:', result);
   console.groupEnd();
   return result;
 }
 
 export async function verifyProfile(payload) {
-  console.log('🔄 [verifyProfile]', payload.email);
+  devLog('🔄 [verifyProfile]', payload.email);
   return apiPost('/api/auth/verify', payload);
 }
 
 export async function requestPasswordReset(email) {
-  console.log('📧 [requestPasswordReset]', email);
+  devLog('📧 [requestPasswordReset]', email);
   return apiPost('/api/auth/forgot', { email });
 }
 
 export async function confirmPasswordReset(payload) {
-  console.log('🔑 [confirmPasswordReset]', payload.email);
+  devLog('🔑 [confirmPasswordReset]', payload.email);
   return apiPost('/api/auth/reset', payload);
 }
 
-// Check whether a username is available — calls Apps Script directly
+// Check whether a username is available (our API: Supabase first, Sheets fallback)
 export async function checkUsernameAvailable(username) {
-  console.log('🔍 [checkUsernameAvailable]', username);
-  return apiGet(SHEETS_URL, { action: 'checkUsername', username });
+  devLog('🔍 [checkUsernameAvailable]', username);
+  return apiGet('/api/profile/check-username', { username });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -234,22 +236,19 @@ export async function fetchAds(exam) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function syncProfileToSheet(data) {
-  console.log('🔄 [syncProfileToSheet]', data.email);
+  devLog('🔄 [syncProfileToSheet]', data.email);
   try {
-    await fetch(SHEETS_URL, {
+    const r = await fetch('/api/profile/sync', {
       method: 'POST',
-      mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        action: 'syncProfile',
-        ...data,
         email: data.email?.toLowerCase().trim(),
-        stats: JSON.stringify(data.stats || {}),
-        achievements: JSON.stringify(data.achievements || []),
-        subjectPerformance: JSON.stringify(data.subjectPerformance || {}),
+        stats: data.stats || {},
+        achievements: data.achievements || [],
+        subjectPerformance: data.subjectPerformance || {},
       }),
     });
-    console.log('✅ [syncProfileToSheet] sent (no-cors, response unreadable)');
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
   } catch (err) {
     console.error('❌ [syncProfileToSheet] failed:', err.message);
     addLog({
@@ -267,7 +266,7 @@ export async function syncProfileToSheet(data) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function pullProfileFromSheet(email, passwordHash) {
-  console.log('📥 [pullProfileFromSheet]', email);
+  devLog('📥 [pullProfileFromSheet]', email);
   try {
     const result = await apiPost('/api/auth/verify', { email, passwordHash });
     if (!result?.success) return null;
@@ -294,9 +293,9 @@ export async function pullProfileFromSheet(email, passwordHash) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function updateGuardianEmail({ email, guardianEmail }) {
-  return apiGet(SHEETS_URL, { action: 'updateGuardianEmail', email, guardianEmail });
+  return apiPost('/api/profile/guardian', { email, guardianEmail });
 }
 
 export async function fetchGuardianEmail(email) {
-  return apiGet(SHEETS_URL, { action: 'getProfile', email });
+  return apiGet('/api/profile/guardian', { email });
 }

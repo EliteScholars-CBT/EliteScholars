@@ -6,6 +6,7 @@ import {
   checkUserByUsername,
 } from '../utils/challengeApi';
 import Quiz from './Quiz';
+import Icon, { EmojiIcon } from './Icon';
 import BackButton from './BackButton';
 import { WAEC_SUBJECTS } from '../data/waec/index';
 import { NECO_SUBJECTS } from '../data/neco/index';
@@ -181,8 +182,8 @@ export default function CreateChallenge({ userEmail, userName, userUsername, onC
       <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
         <div className="create-challenge-modal">
           <div className="modal-header">
-            <div className="modal-title">⚔️ Create Challenge</div>
-            <button className="modal-close" onClick={onClose}>✕</button>
+            <div className="modal-title"><EmojiIcon emoji="⚔️" size="1.15em" /> Create Challenge</div>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={16} /></button>
           </div>
 
           <div className="modal-body">
@@ -198,7 +199,7 @@ export default function CreateChallenge({ userEmail, userName, userUsername, onC
                 onBlur={handleInputBlur}
                 className={inputError ? 'input-error' : userChecked ? 'input-success' : ''}
               />
-              {checkingUser && <div className="checking-text">🔍 Checking account...</div>}
+              {checkingUser && <div className="checking-text"><EmojiIcon emoji="🔍" size="1.15em" /> Checking account...</div>}
               {!checkingUser && inputError && <div className="error-text">{inputError}</div>}
               {!checkingUser && userChecked && !inputError && (
                 <div className="success-text">✅ Found: {opponentName}</div>
@@ -244,11 +245,11 @@ export default function CreateChallenge({ userEmail, userName, userUsername, onC
 
             <div className="challenge-info-box">
               <div className="info-row">
-                <span>📚 Questions:</span>
+                <span><EmojiIcon emoji="📚" size="1.15em" /> Questions:</span>
                 <span><strong>{NUM_QUESTIONS}</strong></span>
               </div>
               <div className="info-row">
-                <span>⏱️ Time/question:</span>
+                <span><EmojiIcon emoji="⏱️" size="1.15em" /> Time/question:</span>
                 <span><strong>{TIME_LIMIT}s</strong></span>
               </div>
             </div>
@@ -323,7 +324,7 @@ export default function CreateChallenge({ userEmail, userName, userUsername, onC
       <div className="modal-overlay">
         <div className="create-challenge-modal" style={{ textAlign: 'center', padding: 44 }}>
           <div className="loading-spinner" style={{ margin: '0 auto 16px' }} />
-          <div style={{ fontWeight: 700, fontSize: 15, color: '#1a0030' }}>Sending challenge…</div>
+          <div style={{ fontWeight: 700, fontSize: 15, color: '#1B0A47' }}>Sending challenge…</div>
           <div style={{ fontSize: 12, color: '#6B7280', marginTop: 6 }}>
             Your score: <strong>{correct}/{totalQ}</strong> — {opponentName} will need to beat it!
           </div>
@@ -338,7 +339,7 @@ export default function CreateChallenge({ userEmail, userName, userUsername, onC
       <div className="modal-overlay">
         <div className="create-challenge-modal" style={{ textAlign: 'center', padding: 40 }}>
           <div style={{ fontSize: 52 }}>🎉</div>
-          <div style={{ fontSize: 18, fontWeight: 900, color: '#1a0030', margin: '12px 0 6px' }}>
+          <div style={{ fontSize: 18, fontWeight: 900, color: '#1B0A47', margin: '12px 0 6px' }}>
             Challenge Sent!
           </div>
           <div style={{ fontSize: 13, color: '#6B7280', lineHeight: 1.6 }}>
@@ -354,7 +355,7 @@ export default function CreateChallenge({ userEmail, userName, userUsername, onC
   return (
     <div className="modal-overlay">
       <div className="create-challenge-modal" style={{ textAlign: 'center', padding: 40 }}>
-        <div style={{ fontSize: 40 }}>⚠️</div>
+        <div style={{ fontSize: 40 }}><EmojiIcon emoji="⚠️" size="1.1em" /></div>
         <div style={{ fontSize: 15, fontWeight: 700, color: '#DC2626', margin: '10px 0 6px' }}>
           Could Not Send
         </div>

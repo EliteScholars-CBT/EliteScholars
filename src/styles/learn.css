@@ -4,7 +4,7 @@
 
 /* Page layout */
 .learn-page {
-  background: #F8F5FF;
+  background: #F6F2FF;
   display: flex;
   flex-direction: column;
   height: 100dvh;
@@ -131,7 +131,7 @@
   height: 28px;
   border-radius: 50%;
   background: #F3F0FF;
-  color: #6C3FC9;
+  color: #8B5CF6;
   font-size: 11px;
   font-weight: 700;
   display: flex;
@@ -146,7 +146,7 @@
 .learn-accordion-title {
   font-size: 13px;
   font-weight: 700;
-  color: #1a0030;
+  color: #1B0A47;
 }
 .learn-accordion-chevron {
   font-size: 10px;
@@ -180,7 +180,7 @@
 }
 .learn-tts-btn {
   padding: 6px 12px;
-  background: #6C3FC9;
+  background: #8B5CF6;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -208,13 +208,13 @@
   padding: 12px 14px;
   background: #F3F0FF;
   border-radius: 10px;
-  border-left: 3px solid #6C3FC9;
+  border-left: 3px solid #8B5CF6;
 }
 
 /* Keywords / highlighted terms */
 .learn-content-html .learn-keyword {
   background: rgba(108, 63, 201, 0.1);
-  color: #6C3FC9;
+  color: #8B5CF6;
   font-weight: 700;
   padding: 1px 5px;
   border-radius: 4px;
@@ -226,7 +226,7 @@
 .learn-content-html h3.learn-subheading {
   font-size: 1.08em;
   font-weight: 800;
-  color: #1a0030;
+  color: #1B0A47;
   margin: 18px 0 8px;
   padding-bottom: 5px;
   border-bottom: 2px solid #E9E4FF;
@@ -279,7 +279,7 @@
   overflow: hidden;
 }
 .learn-content-html .learn-table thead tr {
-  background: #6C3FC9;
+  background: #8B5CF6;
 }
 .learn-content-html .learn-table th {
   padding: 10px 12px;
@@ -322,7 +322,7 @@
   display: flex;
   gap: 10px;
   background: #FFFBEB;
-  border: 1px solid #D4AF37;
+  border: 1px solid #FFC53D;
   border-radius: 12px;
   padding: 12px 14px;
   margin: 14px 0;
@@ -397,23 +397,23 @@
   margin-bottom: 14px;
 }
 .learn-content-html .learn-formula {
-  background: #F8F5FF;
+  background: #F6F2FF;
   border: 1px solid #E9E4FF;
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 13px;
-  color: #1a0030;
+  color: #1B0A47;
   font-family: 'Courier New', monospace;
 }
 .learn-content-html .learn-formula-label {
   font-weight: 700;
-  color: #6C3FC9;
+  color: #8B5CF6;
   font-family: 'Poppins', sans-serif;
   margin-right: 6px;
 }
 .learn-content-html .learn-formula-inline {
   background: #F3F0FF;
-  color: #6C3FC9;
+  color: #8B5CF6;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 5px;
@@ -459,7 +459,7 @@
 .learn-nav-btn {
   padding: 8px 14px;
   background: #F3F0FF;
-  color: #6C3FC9;
+  color: #8B5CF6;
   border: none;
   border-radius: 9px;
   font-size: 11px;
@@ -496,7 +496,7 @@
   flex: 1;
   overflow-y: auto;
   padding: 16px;
-  background: #F8F5FF;
+  background: #F6F2FF;
 }
 .learn-quiz-header {
   display: flex;
@@ -507,7 +507,7 @@
 .learn-quiz-badge {
   font-size: 12px;
   font-weight: 700;
-  color: #6C3FC9;
+  color: #8B5CF6;
 }
 .learn-quiz-progress {
   font-size: 11px;
@@ -523,7 +523,7 @@
 .learn-quiz-q {
   font-size: 14px;
   font-weight: 700;
-  color: #1a0030;
+  color: #1B0A47;
   line-height: 1.55;
   margin-bottom: 14px;
 }
@@ -537,7 +537,7 @@
   width: 100%;
   text-align: left;
   padding: 11px 14px;
-  background: #F8F5FF;
+  background: #F6F2FF;
   border: 2px solid #E9E4FF;
   border-radius: 10px;
   font-size: 13px;
@@ -554,8 +554,8 @@
 }
 .learn-quiz-opt.selected {
   background: #EDE9FE;
-  border-color: #6C3FC9;
-  color: #6C3FC9;
+  border-color: #8B5CF6;
+  color: #8B5CF6;
 }
 .learn-quiz-opt.correct {
   background: #DCFCE7;
@@ -572,7 +572,7 @@
   height: 26px;
   border-radius: 50%;
   background: rgba(108,63,201,0.1);
-  color: #6C3FC9;
+  color: #8B5CF6;
   font-size: 11px;
   font-weight: 700;
   display: flex;
@@ -611,7 +611,7 @@
   font-size: 12px;
   color: #374151;
   line-height: 1.65;
-  background: #F8F5FF;
+  background: #F6F2FF;
   border-radius: 8px;
   padding: 10px 12px;
   margin-bottom: 12px;
@@ -626,7 +626,7 @@
 .learn-quiz-summary-score {
   font-size: 36px;
   font-weight: 900;
-  color: #6C3FC9;
+  color: #8B5CF6;
   margin-bottom: 8px;
 }
 
@@ -657,7 +657,7 @@
 .learn-topic-card:hover,
 .learn-topic-card:focus { outline: none; box-shadow: 0 4px 16px rgba(108,63,201,0.12); transform: translateY(-1px); }
 .learn-topic-card:active { transform: scale(0.98); }
-.learn-topic-card.active { border-color: var(--topic-color, #6C3FC9); background: linear-gradient(135deg,#faf8ff,#f3f0ff); }
+.learn-topic-card.active { border-color: var(--topic-color, #8B5CF6); background: linear-gradient(135deg,#faf8ff,#f3f0ff); }
 .learn-topic-card.done   { border-color: rgba(22,163,74,0.3); background: #f0fdf4; }
 .learn-topic-card.locked { opacity: 0.5; cursor: not-allowed; }
 .learn-topic-card.locked:hover { transform: none; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
@@ -675,7 +675,7 @@
   height: 32px;
   border-radius: 50%;
   background: #F3F0FF;
-  color: #6C3FC9;
+  color: #8B5CF6;
   font-size: 12px;
   font-weight: 800;
   display: flex;
@@ -692,7 +692,7 @@
 .learn-topic-title {
   font-size: 13px;
   font-weight: 700;
-  color: #1a0030;
+  color: #1B0A47;
   line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
@@ -821,7 +821,7 @@
   flex: 1;
   padding: 10px;
   background: #F3F0FF;
-  color: #6C3FC9;
+  color: #8B5CF6;
   border: none;
   border-radius: 10px;
   font-size: 12px;
@@ -848,14 +848,14 @@
   background: #E9E4FF;
   transition: all 0.2s;
 }
-.learn-quiz-dot.active { background: #6C3FC9; transform: scale(1.2); }
+.learn-quiz-dot.active { background: #8B5CF6; transform: scale(1.2); }
 .learn-quiz-dot.done   { background: #16A34A; }
 
 /* Quiz back button */
 .learn-quiz-back-btn {
   background: none;
   border: none;
-  color: #6C3FC9;
+  color: #8B5CF6;
   font-size: 12px;
   font-weight: 700;
   padding: 0;
@@ -909,7 +909,7 @@
   width: 100%;
   padding: 12px;
   background: #F3F0FF;
-  color: #6C3FC9;
+  color: #8B5CF6;
   border: none;
   border-radius: 12px;
   font-size: 13px;
@@ -932,7 +932,7 @@ body.dark-mode .learn-topic-list {
 }
 
 body.dark-mode .learn-accordion-item {
-  background: #1a0030;
+  background: #1B0A47;
 }
 body.dark-mode .learn-accordion-num {
   background: #2d1b4e;
@@ -986,7 +986,7 @@ body.dark-mode .learn-content-html .learn-table tbody tr {
   background: rgba(255, 255, 255, 0.02);
 }
 body.dark-mode .learn-content-html .learn-table thead tr {
-  background: #6C3FC9;
+  background: #8B5CF6;
 }
 body.dark-mode .learn-content-html .learn-table th {
   color: #ffffff;
@@ -1006,9 +1006,9 @@ body.dark-mode .learn-content-html .learn-keyword {
 
 /* Tip boxes in dark mode */
 body.dark-mode .learn-content-html .learn-tip-box {
-  background: rgba(212, 175, 55, 0.1);
-  border-color: #d4af37;
-  color: #ffeb82;
+  background: rgba(255, 197, 61, 0.1);
+  border-color: #FFC53D;
+  color: #FFE8A3;
 }
 body.dark-mode .learn-content-html .learn-tip-warn {
   background: rgba(244, 63, 94, 0.1);
@@ -1021,11 +1021,11 @@ body.dark-mode .learn-content-html .learn-tip-icon {
 
 /* Topic cards */
 body.dark-mode .learn-topic-card {
-  background: #1a0030;
+  background: #1B0A47;
   box-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }
 body.dark-mode .learn-topic-card.active {
-  background: linear-gradient(135deg, #1a0030, #2d1b4e);
+  background: linear-gradient(135deg, #1B0A47, #2d1b4e);
   border-color: #a78bfa;
 }
 body.dark-mode .learn-topic-card.done {
@@ -1047,7 +1047,7 @@ body.dark-mode .learn-topic-card.done .learn-topic-status {
 
 /* Quiz in dark mode */
 body.dark-mode .learn-quiz-card {
-  background: #1a0030;
+  background: #1B0A47;
 }
 body.dark-mode .learn-quiz-q {
   color: #c4b5fd;
@@ -1081,7 +1081,7 @@ body.dark-mode .learn-quiz-exp-text {
   color: #F3F4F6;
 }
 body.dark-mode .learn-quiz-summary {
-  background: #1a0030;
+  background: #1B0A47;
 }
 body.dark-mode .learn-quiz-results-score {
   color: #c4b5fd;
@@ -1102,7 +1102,7 @@ body.dark-mode .learn-quiz-retry-btn {
   color: #c4b5fd;
 }
 body.dark-mode .learn-quiz-finish-btn {
-  background: #6C3FC9;
+  background: #8B5CF6;
   color: #fff;
 }
 body.dark-mode .learn-completed-badge {
@@ -1140,7 +1140,7 @@ body.dark-mode .learn-svg path {
 }
 body.dark-mode .learn-svg [fill="#ffffff"],
 body.dark-mode .learn-svg [fill="white"] {
-  fill: #1a0030;
+  fill: #1B0A47;
 }
 
 /* Increase SVG size */
@@ -1203,9 +1203,9 @@ body.dark-mode .learn-content-html .learn-table tbody tr:nth-child(odd) td {
 
 /* Ensure dark mode tip boxes override inline styles */
 body.dark-mode .learn-content-html .learn-tip-box {
-  background: rgba(212, 175, 55, 0.12) !important;
-  border-color: #d4af37 !important;
-  color: #ffeb82 !important;
+  background: rgba(255, 197, 61, 0.12) !important;
+  border-color: #FFC53D !important;
+  color: #FFE8A3 !important;
 }
 
 body.dark-mode .learn-content-html .learn-tip-warn {
@@ -1275,12 +1275,12 @@ body.dark-mode .learn-topic-title {
 /* Ensure all tip boxes have consistent styling */
 .learn-tip-box, .learn-tip-warn {
   background: var(--tip-bg, #fffbeb);
-  border-left: 4px solid var(--tip-border, #d4af37);
+  border-left: 4px solid var(--tip-border, #FFC53D);
 }
 
 body.dark-mode .learn-tip-box {
-  --tip-bg: rgba(212, 175, 55, 0.1);
-  --tip-border: #d4af37;
+  --tip-bg: rgba(255, 197, 61, 0.1);
+  --tip-border: #FFC53D;
 }
 
 body.dark-mode .learn-tip-warn {

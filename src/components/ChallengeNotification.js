@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { getPendingChallenges } from '../utils/challengeApi';
+import Icon from './Icon';
 
 export default function ChallengeNotification({ userEmail, onClick }) {
   const [count, setCount]         = useState(0);
@@ -39,19 +40,19 @@ export default function ChallengeNotification({ userEmail, onClick }) {
 
   return (
     <>
-      <button className="notification-bell" onClick={onClick}>
-        🔔
+      <button className="notification-bell" onClick={onClick} aria-label="Challenges">
+        <Icon name="swords" size={22} />
         {count > 0 && <span className="notification-badge">{count}</span>}
       </button>
 
       {showPopup && (
         <div className={`notification-popup${hiding ? ' hiding' : ''}`}>
-          <div className="popup-icon">⚔️</div>
+          <div className="popup-icon"><Icon name="swords" size={22} /></div>
           <div className="popup-text">
             <strong>New Challenge!</strong>
             <span>You have {count} pending challenge{count !== 1 ? 's' : ''}</span>
           </div>
-          <button className="popup-dismiss" onClick={dismissPopup}>✕</button>
+          <button className="popup-dismiss" onClick={dismissPopup} aria-label="Dismiss"><Icon name="x" size={16} /></button>
         </div>
       )}
     </>

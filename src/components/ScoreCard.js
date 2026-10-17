@@ -1,17 +1,22 @@
 import React from 'react';
 import { getSubjectMeta } from '../data/subjectMeta';
-import { APP_URL } from '../utils/constants';
 import { GOLD, LGOLD, GREEN, RED } from '../utils/colors';
+import { loadUser } from '../utils/storage';
+import { buildReferralCode, referralLink } from '../utils/referral';
 
 export default function ScoreCard({ name, subjectId, score, correct, totalQ, onClose }) {
   const meta = getSubjectMeta(subjectId);
+  const savedUser = loadUser();
+  const refCode = buildReferralCode(savedUser.username || name, savedUser.email);
+  const refLink = referralLink(refCode);
+  const refLinkShort = refLink.replace(/^https?:\/\//, '');
   const pct = totalQ ? Math.round((correct / totalQ) * 100) : 0;
   const wrong = totalQ - correct;
   const grade =
     pct >= 80
       ? { emoji: '🏆', label: 'ELITE', ac: '#F59E0B', bg: 'rgba(245,158,11,.18)' }
       : pct >= 60
-        ? { emoji: '⭐', label: 'SHARP', ac: GOLD, bg: 'rgba(212,175,55,.18)' }
+        ? { emoji: '⭐', label: 'SHARP', ac: GOLD, bg: 'rgba(255, 197, 61,.18)' }
         : pct >= 40
           ? { emoji: '💪', label: 'RISING', ac: '#06B6D4', bg: 'rgba(6,182,212,.18)' }
           : { emoji: '📚', label: 'LEARNING', ac: LGOLD, bg: 'rgba(255,235,130,.12)' };
@@ -43,7 +48,7 @@ export default function ScoreCard({ name, subjectId, score, correct, totalQ, onC
           ? messages.rising
           : messages.learning;
   const msg = pool[Math.floor(Math.random() * pool.length)];
-  const shareText = `${grade.emoji} ${msg}\n\nI scored ${correct}/${totalQ} (${pct}%) in ${meta.label} on EliteScholars CBT!\n\n🎓 Free JAMB practice at ${APP_URL} — by Elite JAMB & PUTME Clinic`;
+  const shareText = `${grade.emoji} ${msg}\n\nI scored ${correct}/${totalQ} (${pct}%) in ${meta.label} on EliteScholars CBT!\n\n🎓 Free WAEC, NECO, JAMB & GST practice — join me: ${refLink}`;
 
   return (
     <div className="scorecard-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
@@ -112,7 +117,7 @@ export default function ScoreCard({ name, subjectId, score, correct, totalQ, onC
           <div className="scorecard-quote-text">"{msg}"</div>
         </div>
         <div className="scorecard-footer">
-          <div className="scorecard-url">{APP_URL}</div>
+          <div className="scorecard-url">{refLinkShort}</div>
           <button
             className="scorecard-share-btn"
             onClick={() => {

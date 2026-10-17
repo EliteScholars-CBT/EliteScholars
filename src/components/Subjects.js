@@ -9,11 +9,13 @@ import { SUBJ } from '../data/subjects';
 import { LGRAY, GRAY } from '../utils/colors';
 import { SFX } from '../utils/sounds';
 import { useTheme } from '../context/ThemeContext';
+import Icon, { EmojiIcon } from './Icon';
 
 const MODES = [
-  { id: 'learn',    label: 'Learn' },
-  { id: 'cbt',      label: 'CBT' },
-  // { id: 'flashcard',label: 'Flash' },
+  { id: 'learn',     label: 'Learn', icon: 'bookOpen' },
+  { id: 'cbt',       label: 'CBT', icon: 'clipboard' },
+  { id: 'flashcard', label: 'Flash', icon: 'cards' },
+  { id: 'game',      label: 'Game', icon: 'gamepad' },
 ];
 
 const MODE_DESC = {
@@ -188,12 +190,12 @@ export default function Subjects({
           <div className="settings-group">
             {onBack && (
               <button className="settings-group-btn theme-btn" onClick={onBack}>
-                <span className="settings-group-icon">←</span>
+                <span className="settings-group-icon"><Icon name="arrowLeft" size={16} /></span>
                 <span className="settings-group-text">Back</span>
               </button>
             )}
             <button className="settings-group-btn theme-btn" onClick={toggleTheme}>
-              <span className="settings-group-icon">{theme === 'light' ? '🌙' : '☀️'}</span>
+              <span className="settings-group-icon"><Icon name={theme === 'light' ? 'moon' : 'sun'} size={16} /></span>
               <span className="settings-group-text">{theme === 'light' ? 'Dark' : 'Light'}</span>
             </button>
           </div>
@@ -209,7 +211,7 @@ export default function Subjects({
               className={`subjects-mode-btn ${mode === m.id ? 'active' : ''}`}
               onClick={() => handleModeSwitch(m.id)}
             >
-              {m.label}
+              <Icon name={m.icon} size={13} /> {m.label}
             </button>
           ))}
         </div>
@@ -221,7 +223,7 @@ export default function Subjects({
         {/* Flashcard unavailable for grid exams */}
         {flashUnavailable ? (
           <div className="subjects-empty-state">
-            <div className="subjects-empty-icon">📚</div>
+            <div className="subjects-empty-icon"><Icon name="layers" size={40} /></div>
             <div className="subjects-empty-title">Flashcards Coming Soon</div>
             <div className="subjects-empty-sub">Flashcards are currently only available for JAMB. Check back later!</div>
             <button className="subjects-empty-btn" onClick={() => setMode('cbt')}>Switch to CBT</button>
@@ -239,7 +241,7 @@ export default function Subjects({
             if (!cardSubjects.length) {
               return (
                 <div className="subjects-empty-state">
-                  <div className="subjects-empty-icon">📭</div>
+                  <div className="subjects-empty-icon"><Icon name="file" size={40} /></div>
                   <div className="subjects-empty-title">
                     {mode === 'learn' ? 'No Study Notes Available Yet' : 'No Questions Available Yet'}
                   </div>
@@ -276,8 +278,8 @@ export default function Subjects({
                         style={{ '--subject-color': subj.color, '--subject-bg': subj.bg }}
                         onClick={() => handleSubjectClick(subj.id)}
                       >
-                        <div className="subjects-grid-icon" style={{ background: subj.bg }}>
-                          {subj.icon}
+                        <div className="subjects-grid-icon" style={{ background: subj.bg, color: subj.color }}>
+                          <EmojiIcon emoji={subj.icon} size={24} />
                         </div>
                         <div className="subjects-grid-label">{subj.label}</div>
                         <div className="subjects-grid-meta">
@@ -302,7 +304,7 @@ export default function Subjects({
                     className="lekki-card"
                     style={{ margin: '12px 0 0' }}
                   >
-                    <div className="lekki-icon" style={{ background: '#FCE7F3' }}>📗</div>
+                    <div className="lekki-icon" style={{ background: '#FCE7F3', color: '#831843' }}><Icon name="book" size={24} /></div>
                     <div style={{ flex: 1 }}>
                       <div className="lekki-title">The Lekki Headmaster</div>
                       <div className="lekki-author">Kabir Alabi Garba · Literature</div>
@@ -328,7 +330,7 @@ export default function Subjects({
             if (!subs.length) {
               return (
                 <div className="subjects-empty-state">
-                  <div className="subjects-empty-icon">📭</div>
+                  <div className="subjects-empty-icon"><Icon name="file" size={40} /></div>
                   <div className="subjects-empty-title">No Flashcards Available Yet</div>
                   <div className="subjects-empty-sub">Flashcard decks are being added. Check back later!</div>
                   <button className="subjects-empty-btn" onClick={() => setMode('cbt')}>Switch to CBT</button>
@@ -347,7 +349,7 @@ export default function Subjects({
                       className="subject-card"
                       style={{ '--subject-bg': meta.bg, '--subject-color': meta.color }}
                     >
-                      <div className="subject-icon" style={{ background: meta.bg }}>{meta.icon}</div>
+                      <div className="subject-icon" style={{ background: meta.bg, color: meta.color }}><EmojiIcon emoji={meta.icon} size={22} /></div>
                       <div className="subject-name">{meta.label}</div>
                       <div className="subject-question-count">{count} cards</div>
                       <div className="subject-status" style={{ background: LGRAY, color: GRAY }}>REVIEW</div>

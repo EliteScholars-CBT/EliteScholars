@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import Confetti from './Confetti';
 
 const AchievementPopup = ({ achievement, onClose }) => {
   useEffect(() => {
@@ -10,6 +11,7 @@ const AchievementPopup = ({ achievement, onClose }) => {
 
   return (
     <div className="achievement-popup">
+      <Confetti count={50} duration={2200} />
       <div className="achievement-popup-icon">{achievement.icon}</div>
       <div className="achievement-popup-content">
         <div className="achievement-popup-title">Achievement Unlocked!</div>

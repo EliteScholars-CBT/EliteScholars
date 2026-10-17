@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FREE_COOLDOWN_HOURS } from '../utils/constants';
 import { getCooldownSecondsLeft } from '../utils/premium';
 import PremiumModal from './PremiumModal';
+import { EmojiIcon } from './Icon';
 
 // ============================================================================
 // FreeLimitGate — Shown when free user hits their daily/session limit.
@@ -63,7 +64,7 @@ export default function FreeLimitGate({ email, name, reason = 'session', onClose
           )}
 
           {isCooldownDone && (
-            <div className="limit-gate-ready">✅ You can continue now!</div>
+            <div className="limit-gate-ready"><EmojiIcon emoji="✅" size="1.15em" /> You can continue now!</div>
           )}
 
           {/* Actions */}

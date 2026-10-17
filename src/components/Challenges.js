@@ -10,6 +10,8 @@ import {
 import CreateChallenge from './CreateChallenge';
 import Quiz from './Quiz';
 import Toast from './Toast';
+import Confetti from './Confetti';
+import { EmojiIcon } from './Icon';
 
 export default function Challenges({ userEmail, userName, userUsername }) {
   const [activeTab, setActiveTab]        = useState('pending');
@@ -26,6 +28,14 @@ export default function Challenges({ userEmail, userName, userUsername }) {
 
   const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
   const showToast = (message, type = 'info') => setToast({ show: true, message, type });
+
+  const [celebrate, setCelebrate] = useState(false);
+  const fireConfetti = () => {
+    setCelebrate(false);
+    // restart the burst even if one just fired (double-tap replay, quick rematch)
+    requestAnimationFrame(() => setCelebrate(true));
+    setTimeout(() => setCelebrate(false), 2700);
+  };
 
   const loadChallenges = useCallback(async (silent = false) => {
     if (!userEmail) return;
@@ -89,17 +99,30 @@ export default function Challenges({ userEmail, userName, userUsername }) {
     setActiveTab('history');
     await loadChallenges(false);
 
+    if (!result?.success) {
+      // The score genuinely never reached the server (even after the retry
+      // inside submitChallengeScore) — say so plainly instead of a vague
+      // "waiting for opponent" that hides a failed submission.
+      showToast("Couldn't submit your score — check your connection and reopen this challenge to retry.", 'error');
+      return;
+    }
+
     if (result?.xpAwarded > 0) {
       const winnerEmail = result.winner?.toString().toLowerCase().trim();
       const isDraw = result.winner === 'draw';
       const iWon   = !isDraw && winnerEmail === userEmail?.toLowerCase().trim();
-      if (result.completed && iWon)        showToast(`🏆 You won! +${result.xpAwarded} XP`, 'success');
+      if (result.completed && iWon)        { showToast(`🏆 You won! +${result.xpAwarded} XP`, 'success'); fireConfetti(); }
       else if (result.completed && isDraw) showToast(`🤝 Draw! +${result.xpAwarded} XP`, 'info');
       else if (result.completed)           showToast(`+${result.xpAwarded} XP for playing`, 'info');
       else                                 showToast('Score submitted! Waiting for opponent…', 'info');
     } else if (result?.success) {
       showToast('Score submitted! Waiting for opponent…', 'info');
     }
+
+    // The sheet write can lag a beat behind the read on a cold Apps Script
+    // instance — re-sync shortly after so "Victory"/"Defeat" appears without
+    // needing a manual refresh.
+    setTimeout(() => loadChallenges(true), 2500);
   };
 
   // ── Helpers ───────────────────────────────────────────────────────────────
@@ -110,11 +133,11 @@ export default function Challenges({ userEmail, userName, userUsername }) {
   };
 
   const getStatusBadge = (status) => {
-    if (status === 'pending')   return <span className="badge-pending">⏳ Pending</span>;
-    if (status === 'accepted')  return <span className="badge-accepted">✅ Accepted</span>;
-    if (status === 'completed') return <span className="badge-completed">🏆 Completed</span>;
-    if (status === 'declined')  return <span className="badge-declined">🚫 Declined</span>;
-    if (status === 'expired')   return <span className="badge-expired">⏰ Expired</span>;
+    if (status === 'pending')   return <span className="badge-pending"><EmojiIcon emoji="⏳" size="1.15em" /> Pending</span>;
+    if (status === 'accepted')  return <span className="badge-accepted"><EmojiIcon emoji="✅" size="1.15em" /> Accepted</span>;
+    if (status === 'completed') return <span className="badge-completed"><EmojiIcon emoji="🏆" size="1.15em" /> Completed</span>;
+    if (status === 'declined')  return <span className="badge-declined"><EmojiIcon emoji="🚫" size="1.15em" /> Declined</span>;
+    if (status === 'expired')   return <span className="badge-expired"><EmojiIcon emoji="⏰" size="1.15em" /> Expired</span>;
     return null;
   };
 
@@ -258,8 +281,9 @@ export default function Challenges({ userEmail, userName, userUsername }) {
 
   return (
     <div className="challenges-page">
+      {celebrate && <Confetti />}
       <div className="challenges-header">
-        <div className="challenges-title">⚔️ Challenges</div>
+        <div className="challenges-title"><EmojiIcon emoji="⚔️" size="1.15em" /> Challenges</div>
         <div className="challenges-subtitle">Challenge friends and climb the ranks</div>
         <button className="create-challenge-btn" onClick={() => setShowCreate(true)}>+ New Challenge</button>
       </div>
@@ -350,7 +374,7 @@ export default function Challenges({ userEmail, userName, userUsername }) {
 
               {needsMyAction.length === 0 && waitingOnOpponent.length === 0 && (
                 <div className="empty-state">
-                  <div className="empty-icon">🎯</div>
+                  <div className="empty-icon"><EmojiIcon emoji="🎯" size="1.1em" /></div>
                   <div>No pending challenges</div>
                   <button className="empty-action" onClick={() => setShowCreate(true)}>Create one</button>
                 </div>
@@ -361,7 +385,7 @@ export default function Challenges({ userEmail, userName, userUsername }) {
           {/* ── HISTORY TAB ── */}
           {activeTab === 'history' && history.length === 0 && (
             <div className="empty-state">
-              <div className="empty-icon">📭</div>
+              <div className="empty-icon"><EmojiIcon emoji="📭" size="1.1em" /></div>
               <div>No challenge history yet</div>
             </div>
           )}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { BG, PURPLE, GOLD, WHITE } from '../utils/colors';
+import { EmojiIcon } from '../components/Icon';
 
 export default function PrivacyPolicy() {
 
@@ -11,7 +12,7 @@ export default function PrivacyPolicy() {
           ← Back
         </button>
         <div className="legal-header-content">
-          <div className="legal-icon">🔒</div>
+          <div className="legal-icon"><EmojiIcon emoji="🔒" size="1.1em" /></div>
           <h1>Privacy <span style={{ color: GOLD }}>Policy</span></h1>
           <p>Last updated: April 2026</p>
         </div>
@@ -99,7 +100,7 @@ export default function PrivacyPolicy() {
         <div className="legal-card">
           <h3>11. Contact Us</h3>
           <p>If you have any questions about this Privacy Policy or our data practices, please contact us:</p>
-          <p>📧 <a href="mailto:elitescholars.site@gmail.com" className="legal-link">elitescholars.site@gmail.com</a></p>
+          <p><EmojiIcon emoji="📧" size="1.1em" /> <a href="mailto:elitescholars.site@gmail.com" className="legal-link">elitescholars.site@gmail.com</a></p>
         </div>
       </div>
 

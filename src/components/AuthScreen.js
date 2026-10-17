@@ -15,6 +15,10 @@ import {
 
 import { logSessionToSheet } from '../utils/auth';
 import { saveUser } from '../utils/storage';
+import { getReferralAttribution, sendReferralSignup, clearReferralAttribution } from '../utils/referral';
+
+// Auth traffic is never written to the console.
+const devLog = () => {};
 
 const EXAM_TYPES = [
   { id: 'jamb', label: 'JAMB UTME', icon: '📝' },
@@ -132,9 +136,9 @@ export default function AuthScreen({ onDone }) {
     setUsernameStatus('checking');
     usernameCheckTimer.current = setTimeout(async () => {
       try {
-        console.log('🔍 [AuthScreen] Checking username availability:', cleaned);
+        devLog('🔍 [AuthScreen] Checking username availability:', cleaned);
         const result = await checkUsernameAvailable(cleaned);
-        console.log('🔍 [AuthScreen] Username check result:', result);
+        devLog('🔍 [AuthScreen] Username check result:', result);
         if (result?.error && result.error !== 'INVALID_JSON_RESPONSE') {
           setUsernameStatus('invalid');
         } else if (result?.error === 'INVALID_JSON_RESPONSE') {
@@ -181,18 +185,18 @@ export default function AuthScreen({ onDone }) {
     setLoading(true);
 
     console.group('🔑 [AuthScreen] Login attempt');
-    console.log('Email:', email.trim());
+    devLog('Email:', email.trim());
 
     try {
       const result = await loginProfile({ email: email.trim(), password });
-      console.log('Login result:', result);
+      devLog('Login result:', result);
       console.groupEnd();
 
       if (!result.success) {
         return err(result.message || result.error || 'Invalid email or password.');
       }
       const u = result.profile;
-      console.log('✅ Login success, profile:', u);
+      devLog('✅ Login success, profile:', u);
 
       saveUser({
         name: `${u.firstName} ${u.lastName}`,
@@ -229,7 +233,7 @@ export default function AuthScreen({ onDone }) {
   // ── SIGNUP STEP 1 ────────────────────────────────────────────────────────
   const handleSignupStep1 = () => {
     clear();
-    console.log('📋 [AuthScreen] Step 1 validation:', {
+    devLog('📋 [AuthScreen] Step 1 validation:', {
       firstName,
       lastName,
       email,
@@ -241,7 +245,7 @@ export default function AuthScreen({ onDone }) {
     if (usernameStatus === 'taken') return err('Username is already taken. Please choose another.');
     if (usernameStatus === 'checking') return err('Please wait — checking username availability…');
     if (usernameStatus === 'invalid') return err('Please choose a valid username.');
-    console.log('✅ Step 1 passed, moving to step 2');
+    devLog('✅ Step 1 passed, moving to step 2');
     setStep(2);
   };
 
@@ -255,7 +259,7 @@ export default function AuthScreen({ onDone }) {
     setLoading(true);
 
     console.group('📝 [AuthScreen] Registration attempt');
-    console.log('Fields:', {
+    devLog('Fields:', {
       firstName,
       lastName,
       email: email.trim(),
@@ -272,12 +276,13 @@ export default function AuthScreen({ onDone }) {
       studentType,
       selectedExams,
       username: username.trim(),
+      referredBy: getReferralAttribution() || '',
     };
-    console.log('📤 Sending payload to registerProfile:', { ...payload, password: '[REDACTED]' });
+    devLog('📤 Sending payload to registerProfile:', { ...payload, password: '[REDACTED]' });
 
     try {
       const result = await registerProfile(payload);
-      console.log('📨 registerProfile result:', result);
+      devLog('📨 registerProfile result:', result);
 
       if (result._bypassed) {
         // Backend had an issue but we're letting the user in anyway for debugging
@@ -298,6 +303,8 @@ export default function AuthScreen({ onDone }) {
         });
 
         logSessionToSheet(`${u.firstName} ${u.lastName}`, u.email);
+        sendReferralSignup(u.email, payload.referredBy);
+        clearReferralAttribution();
         setLoading(false);
         console.groupEnd();
 
@@ -322,7 +329,7 @@ export default function AuthScreen({ onDone }) {
       }
 
       const u = result.profile;
-      console.log('✅ Registration success, profile:', u);
+      devLog('✅ Registration success, profile:', u);
       console.groupEnd();
 
       saveUser({
@@ -337,6 +344,8 @@ export default function AuthScreen({ onDone }) {
       });
 
       logSessionToSheet(`${u.firstName} ${u.lastName}`, u.email);
+      sendReferralSignup(u.email, payload.referredBy);
+      clearReferralAttribution();
       setLoading(false);
 
       onDone({
@@ -366,7 +375,7 @@ export default function AuthScreen({ onDone }) {
     setLoading(true);
     try {
       const result = await requestPasswordReset(resetEmail.trim());
-      console.log('Forgot password result:', result);
+      devLog('Forgot password result:', result);
       setLoading(false);
       if (!result.success) return err(result.message || result.error || 'Email not found.');
       setSuccess('A reset code has been sent to your email.');
@@ -390,7 +399,7 @@ export default function AuthScreen({ onDone }) {
         code: resetCode.trim(),
         newPassword: newPw,
       });
-      console.log('Reset confirm result:', result);
+      devLog('Reset confirm result:', result);
       setLoading(false);
       if (!result.success) return err(result.message || result.error || 'Invalid or expired code.');
       setSuccess('Password reset! You can now log in.');

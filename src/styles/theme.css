@@ -5,14 +5,14 @@
 
 body.dark-mode {
   --bg-primary: #0a0015;
-  --bg-secondary: #1a0030;
-  --card-bg: #1a0030;
+  --bg-secondary: #1B0A47;
+  --card-bg: #1B0A47;
   --text-primary: #F3F4F6;
   --text-secondary: #9CA3AF;
   --border-color: #3d2a5e;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-hover: 0 4px 14px rgba(0, 0, 0, 0.4);
-  --bg-header: linear-gradient(135deg, #0a0015, #1a0030);
+  --bg-header: linear-gradient(135deg, #0a0015, #1B0A47);
   --green: #22C55E;
   --red: #EF4444;
 }
@@ -87,7 +87,7 @@ body.dark-mode .question-card {
 }
 body.dark-mode .question-text { color: var(--text-primary); }
 body.dark-mode .quiz-option {
-  background: #1a0030 !important;
+  background: #1B0A47 !important;
   border: 1px solid #3d2a5e !important;
   color: #F3F4F6 !important;
 }
@@ -115,7 +115,7 @@ body.dark-mode .quiz-option-letter {
 }
 body.dark-mode .quiz-option.selected .quiz-option-letter {
   background: var(--gold) !important;
-  color: #1a0030 !important;
+  color: #1B0A47 !important;
 }
 body.dark-mode .quiz-option.correct .quiz-option-letter {
   background: #16A34A !important;
@@ -169,7 +169,7 @@ body.dark-mode .hint-box {
 body.dark-mode .hint-title { color: var(--gold); }
 body.dark-mode .hint-text { color: #FFD6A5; }
 body.dark-mode .quick-take {
-  background: linear-gradient(135deg, #1a0030, #2a1a4e);
+  background: linear-gradient(135deg, #1B0A47, #2a1a4e);
 }
 body.dark-mode .quick-take-text { color: rgba(255, 255, 255, 0.88); }
 body.dark-mode .quick-take-link { color: var(--gold); }
@@ -234,7 +234,7 @@ body.dark-mode .onboard-container,
 body.dark-mode .ready-container,
 body.dark-mode .sharegate-container,
 body.dark-mode .adgate-container {
-  background: linear-gradient(160deg, #0a0015, #1a0030, #0a0015);
+  background: var(--grad-deep, linear-gradient(160deg, #0a0015, #1B0A47, #0a0015));
 }
 body.dark-mode .adgate-vibe {
   background: rgba(139, 92, 246, 0.1);
@@ -300,7 +300,7 @@ body.dark-mode .active-label { color: #C4B5FD !important; }
    ============================================================================ */
 
 body.dark-mode .exam-type-page {
-  background: linear-gradient(160deg, #050010, #1a0030 60%, #050010);
+  background: var(--grad-deep, linear-gradient(160deg, #050010, #1B0A47 60%, #050010));
 }
 body.dark-mode .exam-type-compact-card {
   background: rgba(255,255,255,0.06);
@@ -315,7 +315,7 @@ body.dark-mode .exam-type-compact-desc  { color: rgba(255,255,255,0.45); }
 
 body.dark-mode .learn-page { background: #0a0015; }
 body.dark-mode .learn-accordion-item {
-  background: #1a0030;
+  background: #1B0A47;
   box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 body.dark-mode .learn-accordion-header { background: transparent; }
@@ -334,12 +334,12 @@ body.dark-mode .learn-content-html h3.learn-subheading {
   color: #F3F4F6;
   border-bottom-color: #2d1b4e;
 }
-body.dark-mode .learn-content-html .learn-table thead tr { background: #4B0082; }
+body.dark-mode .learn-content-html .learn-table thead tr { background: #7C3AED; }
 body.dark-mode .learn-content-html .learn-table td { color: #D1D5DB; border-bottom-color: #2d1b4e; }
 body.dark-mode .learn-content-html .learn-table tbody tr:nth-child(even) { background: #1f0035; }
 body.dark-mode .learn-content-html .learn-tip-box {
-  background: rgba(212,175,55,0.1);
-  border-color: rgba(212,175,55,0.3);
+  background: rgba(255, 197, 61,0.1);
+  border-color: rgba(255, 197, 61,0.3);
   color: #FDE68A;
 }
 body.dark-mode .learn-content-html .learn-tip-warn {
@@ -349,7 +349,7 @@ body.dark-mode .learn-content-html .learn-tip-warn {
 }
 body.dark-mode .learn-content-html .learn-formula {
   background: rgba(108,63,201,0.2);
-  border-color: #4B0082;
+  border-color: #7C3AED;
   color: #E9D5FF;
 }
 body.dark-mode .learn-content-html .learn-worked-example {
@@ -361,12 +361,12 @@ body.dark-mode .learn-nav-btn { background: #2d1b4e; color: #C4B5FD; }
 body.dark-mode .learn-progress-bar { background: rgba(108,63,201,0.2); }
 body.dark-mode .learn-keyboard-hint { color: #4B5563; }
 body.dark-mode .learn-voice-select {
-  background: #1a0030;
+  background: #1B0A47;
   border-color: #3d2a5e;
   color: #D1D5DB;
 }
-body.dark-mode .learn-tts-btn { background: #4B0082; }
-body.dark-mode .learn-quiz-card { background: #1a0030; box-shadow: 0 3px 12px rgba(0,0,0,0.3); }
+body.dark-mode .learn-tts-btn { background: #7C3AED; }
+body.dark-mode .learn-quiz-card { background: #1B0A47; box-shadow: 0 3px 12px rgba(0,0,0,0.3); }
 body.dark-mode .learn-quiz-q { color: #F3F4F6; }
 body.dark-mode .learn-quiz-opt {
   background: #2d1b4e;
@@ -381,7 +381,7 @@ body.dark-mode .learn-empty { color: #4B5563; }
    DARK MODE — Mode Select
    ============================================================================ */
 
-body.dark-mode .mode-select-page { background: linear-gradient(160deg, #0a0015, #1a0030 60%, #0a0015); }
+body.dark-mode .mode-select-page { background: linear-gradient(160deg, #0a0015, #1B0A47 60%, #0a0015); }
 body.dark-mode .mode-select-card {
   background: rgba(255,255,255,0.06);
   border-color: rgba(255,255,255,0.1);
@@ -401,13 +401,13 @@ body.dark-mode .shop-plans-note  { color: #4B5563; }
 
 /* New pricing card dark mode */
 body.dark-mode .shop-pricing-card {
-  background: #1a0030;
+  background: #1B0A47;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
 }
 
 body.dark-mode .shop-pricing-card-header {
-  background: linear-gradient(135deg, #2d1b4e, #1a0030);
-  border-bottom-color: rgba(212, 175, 55, 0.15);
+  background: linear-gradient(135deg, #2d1b4e, #1B0A47);
+  border-bottom-color: rgba(255, 197, 61, 0.15);
 }
 
 body.dark-mode .shop-pricing-card-title {
@@ -420,7 +420,7 @@ body.dark-mode .save-badge {
 }
 
 body.dark-mode .shop-plans-comparison {
-  background: #1a0030;
+  background: #1B0A47;
 }
 
 body.dark-mode .shop-compare-plan {
@@ -432,8 +432,8 @@ body.dark-mode .shop-compare-plan:last-child {
 }
 
 body.dark-mode .shop-compare-plan.highlighted {
-  background: linear-gradient(160deg, #2d1b4e, #1a0030);
-  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.12);
+  background: linear-gradient(160deg, #2d1b4e, #1B0A47);
+  box-shadow: 0 4px 16px rgba(255, 197, 61, 0.12);
 }
 
 body.dark-mode .shop-compare-plan.annual-disabled {
@@ -448,7 +448,7 @@ body.dark-mode .shop-plan-name {
 
 body.dark-mode .shop-plan-currency,
 body.dark-mode .shop-plan-amount {
-  color: #D4AF37;
+  color: #FFC53D;
 }
 
 body.dark-mode .shop-plan-period {
@@ -470,19 +470,19 @@ body.dark-mode .shop-plan-check {
 
 /* CTA buttons dark mode */
 body.dark-mode .shop-plan-cta.cta-primary {
-  background: linear-gradient(135deg, #4B0082, #6C3FC9);
+  background: linear-gradient(135deg, #7C3AED, #8B5CF6);
   color: #fff;
 }
 
 body.dark-mode .shop-plan-cta.cta-secondary {
   background: transparent;
-  color: #D4AF37;
-  border: 1.5px solid #D4AF37;
+  color: #FFC53D;
+  border: 1.5px solid #FFC53D;
 }
 
 body.dark-mode .shop-plan-cta.cta-secondary:hover:not(:disabled) {
-  background: #D4AF37;
-  color: #1a0030;
+  background: #FFC53D;
+  color: #1B0A47;
 }
 
 body.dark-mode .shop-plan-cta:disabled {
@@ -496,8 +496,8 @@ body.dark-mode .shop-plan-disabled-note {
 
 /* Plan tag dark mode */
 body.dark-mode .shop-plan-tag {
-  background: linear-gradient(135deg, #D4AF37, #FFEB82);
-  color: #1a0030;
+  background: linear-gradient(135deg, #FFC53D, #FFE8A3);
+  color: #1B0A47;
 }
 
 /* Billing toggle inside card dark mode */
@@ -510,23 +510,23 @@ body.dark-mode .shop-pricing-card .shop-billing-btn {
 }
 
 body.dark-mode .shop-pricing-card .shop-billing-btn.active {
-  background: #6C3FC9;
+  background: #8B5CF6;
   color: #fff;
 }
 
 /* Mobile horizontal scroll dark mode */
 @media (max-width: 640px) {
   body.dark-mode .shop-plans-comparison {
-    background: #1a0030;
+    background: #1B0A47;
   }
   
   body.dark-mode .shop-compare-plan {
-    background: #1a0030;
+    background: #1B0A47;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
   }
   
   body.dark-mode .shop-compare-plan.highlighted {
-    background: linear-gradient(160deg, #2d1b4e, #1a0030);
+    background: linear-gradient(160deg, #2d1b4e, #1B0A47);
   }
   
   body.dark-mode .shop-compare-plan.annual-disabled {
@@ -536,20 +536,20 @@ body.dark-mode .shop-pricing-card .shop-billing-btn.active {
 
 /* Old plan cards (fallback) */
 body.dark-mode .shop-plan-card {
-  background: #1a0030;
+  background: #1B0A47;
   border-color: #3d2a5e;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
 }
 
 body.dark-mode .shop-plan-card.highlighted {
-  background: linear-gradient(160deg, #2d1b4e, #1a0030);
-  border-color: #D4AF37;
-  box-shadow: 0 6px 24px rgba(212, 175, 55, 0.12);
+  background: linear-gradient(160deg, #2d1b4e, #1B0A47);
+  border-color: #FFC53D;
+  box-shadow: 0 6px 24px rgba(255, 197, 61, 0.12);
 }
 
 /* Shop item cards dark mode */
 body.dark-mode .shop-item-card {
-  background: #1a0030;
+  background: #1B0A47;
   border-color: #2d1b4e;
 }
 
@@ -561,8 +561,8 @@ body.dark-mode .shop-footer-note { color: #4B5563; }
 
 /* Premium active box dark mode */
 body.dark-mode .premium-active-box {
-  background: linear-gradient(135deg, #0a0015, #1a0030);
-  border-color: rgba(212, 175, 55, 0.3);
+  background: linear-gradient(135deg, #0a0015, #1B0A47);
+  border-color: rgba(255, 197, 61, 0.3);
 }
 
 
@@ -577,7 +577,7 @@ body.dark-mode .ad-section-wrapper {
   border-color: rgba(108,63,201,0.2);
 }
 body.dark-mode .ad-affiliate-card {
-  background: #1a0030;
+  background: #1B0A47;
   border-color: #2d1b4e;
 }
 body.dark-mode .ad-affiliate-title { color: #F3F4F6; }
@@ -587,7 +587,7 @@ body.dark-mode .ad-affiliate-desc  { color: #9CA3AF; }
    DARK MODE — Review modal
    ============================================================================ */
 
-body.dark-mode .review-modal { background: #1a0030; }
+body.dark-mode .review-modal { background: #1B0A47; }
 body.dark-mode .review-modal-header { border-bottom-color: #2d1b4e; }
 body.dark-mode .review-modal-title  { color: #F3F4F6; }
 body.dark-mode .review-modal-close  { background: #2d1b4e; color: #C4B5FD; }
@@ -596,7 +596,7 @@ body.dark-mode .review-item-wrong   { background: rgba(239,68,68,0.1);  border-c
 body.dark-mode .review-item-q       { color: #D1D5DB; }
 body.dark-mode .review-detail-q     { color: #F3F4F6; }
 body.dark-mode .review-detail-opt   { background: #2d1b4e; border-color: #3d2a5e; color: #D1D5DB; }
-body.dark-mode .review-explanation  { background: rgba(212,175,55,0.08); border-color: rgba(212,175,55,0.3); }
+body.dark-mode .review-explanation  { background: rgba(255, 197, 61,0.08); border-color: rgba(255, 197, 61,0.3); }
 body.dark-mode .review-explanation p { color: #FDE68A; }
 
 /* ============================================================================
@@ -606,7 +606,7 @@ body.dark-mode .review-explanation p { color: #FDE68A; }
 body.dark-mode .loading-screen { background: #0a0015; }
 body.dark-mode .loading-spinner {
   border-color: #2d1b4e;
-  border-top-color: #6C3FC9 !important;
+  border-top-color: #8B5CF6 !important;
 }
 body.dark-mode .loading-text { color: #6B7280; }
 
@@ -620,21 +620,21 @@ body.dark-mode .challenge-flow-notice {
   color: #C4B5FD;
 }
 body.dark-mode .create-challenge-modal {
-  background: #1a0030;
+  background: #1B0A47;
   border-color: #2d1b4e;
 }
 body.dark-mode .challenge-score-circle {
-  background: linear-gradient(135deg, #1a0030, #2d1b4e);
-  border-color: #6C3FC9;
+  background: linear-gradient(135deg, #1B0A47, #2d1b4e);
+  border-color: #8B5CF6;
 }
 
 /* ============================================================================
    DARK MODE — Result page vibe box
    ============================================================================ */
 
-body.dark-mode .result-vibe-box { background: linear-gradient(135deg, #0f0020, #1a0030); }
+body.dark-mode .result-vibe-box { background: linear-gradient(135deg, #0f0020, #1B0A47); }
 body.dark-mode .result-review-btn {
-  background: #1a0030;
+  background: #1B0A47;
   color: #C4B5FD;
   border-color: #2d1b4e;
 }

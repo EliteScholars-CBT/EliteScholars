@@ -5,8 +5,6 @@
 export const WA_GROUP   = 'https://chat.whatsapp.com/DSeaqKuKRhw1bIFVpAJreB?mode=gi_t';
 export const WA_CHANNEL = 'https://whatsapp.com/channel/0029Vb6wPv72kNFnjr4FMr24';
 export const APP_URL    = 'https://elitescholars.site';
-export const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxmY2qZ-5zexeOLdZba1U6k3Sl7czKLzC0PjW4jP1FSO4P_mMkSWN4fUmmCBPjt09YU/exec';
-// export const SHEETS_URL = process.env.SHEETS_URL;
 
 // ── Group chat links per exam type ───────────────────────────────────────────
 export const GC_LINKS = {
@@ -40,7 +38,7 @@ export function getStudentGCLinks(studentType, selectedExams = []) {
 
 // ── Exam types ────────────────────────────────────────────────────────────────
 export const EXAM_TYPES = [
-  { id: 'jamb',     label: 'JAMB',      icon: '📝', color: '#6C3FC9', desc: 'UTME' },
+  { id: 'jamb',     label: 'JAMB',      icon: '📝', color: '#8B5CF6', desc: 'UTME' },
   // { id: 'postutme', label: 'POST UTME', icon: '🎓', color: '#0369A1', desc: 'University' },
   { id: 'waec',     label: 'WAEC',      icon: '🏫', color: '#065F46', desc: 'Senior School' },
   { id: 'neco',     label: 'NECO',      icon: '📋', color: '#9A3412', desc: 'Senior School' },

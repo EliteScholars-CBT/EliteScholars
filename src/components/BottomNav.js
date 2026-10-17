@@ -1,5 +1,6 @@
 import React from 'react';
 import ChallengeNotification from './ChallengeNotification';
+import Icon from './Icon';
 
 // ============================================================================
 // BottomNav — 5 tabs: Study, Challenges, Leaderboard, Shop, Me
@@ -8,11 +9,11 @@ import ChallengeNotification from './ChallengeNotification';
 
 export default function BottomNav({ currentScreen, onNavigate, userEmail }) {
   const navItems = [
-    { id: 'subjects', label: 'Study', icon: '📚', activeIcon: '📖' },
-    { id: 'challenges', label: 'Challenges', icon: '⚔️', activeIcon: '⚔️' },
-    { id: 'leaderboard', label: 'Ranks', icon: '🏆', activeIcon: '🏆' },
-    // { id: 'shop', label: 'Shop', icon: '🛍️', activeIcon: '🛍️' },
-    { id: 'profile', label: 'Me', icon: '👤', activeIcon: '👤' },
+    { id: 'subjects', label: 'Study', icon: 'layers', activeIcon: 'bookOpen' },
+    { id: 'challenges', label: 'Challenges', icon: 'swords', activeIcon: 'swords' },
+    { id: 'leaderboard', label: 'Ranks', icon: 'trophy', activeIcon: 'trophy' },
+    { id: 'shop', label: 'Shop', icon: 'shop', activeIcon: 'shop' },
+    { id: 'profile', label: 'Me', icon: 'user', activeIcon: 'user' },
   ];
 
   const STUDY_SCREENS = new Set([
@@ -46,7 +47,7 @@ export default function BottomNav({ currentScreen, onNavigate, userEmail }) {
                   onClick={() => onNavigate('challenges')}
                 />
               ) : (
-                <span>{isActive ? item.activeIcon : item.icon}</span>
+                <Icon name={isActive ? item.activeIcon : item.icon} size={23} stroke={isActive ? 2.2 : 1.8} />
               )}
             </div>
             <div className={`bottom-nav-label ${isActive ? 'active-label' : ''}`}>{item.label}</div>

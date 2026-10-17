@@ -2,7 +2,6 @@
 // securityAnalytics.js — Security breach & suspicious activity tracking
 // ============================================================================
 
-import { SHEETS_URL } from '../utils/constants';
 
 const STORAGE_KEY = 'es_sec_events';
 const MAX_QUEUED  = 30;
@@ -18,11 +17,10 @@ function writeQueue(q) {
 async function flush(events) {
   if (!events.length) return;
   try {
-    await fetch(SHEETS_URL, {
+    await fetch('/api/events/batch', {
       method: 'POST',
-      mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'securityEvents', events }),
+      body: JSON.stringify({ kind: 'security', events }),
     });
   } catch {}
 }
@@ -87,11 +85,6 @@ export function flushSecurityAnalytics() {
 // ── Patch security.js to call these trackers ─────────────────────────────────
 // Called from security.js applySecurityMeasures() via import
 export function attachSecurityTrackers() {
-  // Right-click
-  document.addEventListener('contextmenu', (e) => {
-    trackRightClickAttempt(e.target?.className?.toString?.()?.slice(0, 60) || '');
-  }, { capture: true, passive: true });
-
   // Copy
   document.addEventListener('copy', () => {
     trackCopyAttempt(document.activeElement?.className?.toString?.()?.slice(0, 60) || '');
