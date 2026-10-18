@@ -22,6 +22,7 @@
     "blog": "node scripts/build-blog.js"
   },
   "devDependencies": {
+    "eslint-plugin-react-hooks": "^7.1.1",
     "javascript-obfuscator": "^4.2.2",
     "prettier": "^3.8.3",
     "react-scripts": "latest"
@@ -36,6 +37,11 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "eslintConfig": {
+    "plugins": [
+      "react-hooks"
     ]
   }
 }
