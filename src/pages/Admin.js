@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { fmtN, fmtNaira, TrendChart, ColumnChart, Donut, Bars, Funnel, Kpi } from '../components/AdminCharts';
 import AdminPartners from '../components/AdminPartners';
+import AdminAccess from '../components/AdminAccess';
 import '../styles/admin.css';
 
 const TOKEN_KEY = 'es_admin_token';
@@ -109,7 +110,10 @@ export default function Admin() {
       <div className="adm-tabs adm-maintabs">
         <button className={view === 'analytics' ? 'on' : ''} onClick={() => setView('analytics')}>Analytics</button>
         <button className={view === 'partners' ? 'on' : ''} onClick={() => setView('partners')}>Affiliate partners</button>
+        <button className={view === 'access' ? 'on' : ''} onClick={() => setView('access')}>Access &amp; trials</button>
       </div>
+
+      {view === 'access' && <AdminAccess token={token} onAuthFail={(m) => { signOut(); setError(m || 'Session expired.'); }} />}
 
       {view === 'partners' && <AdminPartners token={token} onAuthFail={(m) => { signOut(); setError(m || 'Session expired.'); }} />}
 

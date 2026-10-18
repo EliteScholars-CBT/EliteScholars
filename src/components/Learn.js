@@ -1,3 +1,4 @@
+import { reserve } from '../utils/entitlement';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { WAEC_SUBJECTS } from '../data/waec/index';
 import { WAEC_LEARN } from '../data/waec/learn/index';
@@ -10,7 +11,7 @@ import {
   PUBLISHER_AD_ENABLED,
 } from '../utils/constants';
 import AdSection from './AdSection';
-import { SFX, stopSpeech } from '../utils/sounds';
+import { SFX, stopSpeech, getVoicesCached } from '../utils/sounds';
 import BackButton from './BackButton';
 import { mapToCharacterVoices, getVoiceForCharacter } from '../utils/voices';
 import {
@@ -154,7 +155,22 @@ function getLearnData(examType) {
   return WAEC_LEARN;
 }
 
-export default function Learn({ subjectId, onBack, onTopicComplete, examType = 'waec', email }) {
+// Long sentences make some voices wait several seconds before the first word.
+// Split them at natural pauses so speech starts at once.
+function chunkForSpeech(sentence) {
+  if (sentence.length <= 140) return [sentence];
+  const parts = sentence.match(/[^,;:]+[,;:]?\s*/g) || [sentence];
+  const out = [];
+  let cur = '';
+  parts.forEach((p) => {
+    if ((cur + ' ' + p).trim().length > 120 && cur) { out.push(cur.trim()); cur = p; }
+    else cur = (cur + ' ' + p).trim();
+  });
+  if (cur) out.push(cur.trim());
+  return out;
+}
+
+export default function Learn({ subjectId, onBack, onTopicComplete, examType = 'waec', email, onLimit }) {
   const learnData = getLearnData(examType);
   const topics = learnData[subjectId] || [];
 
@@ -221,7 +237,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
 
   useEffect(() => {
     const load = () => {
-      const raw = window.speechSynthesis?.getVoices() || [];
+      const raw = getVoicesCached() || [];
       const mapped = mapToCharacterVoices(raw);
       setCharVoices(mapped);
       const firstAvail = mapped.find((c) => c.voice);
@@ -290,7 +306,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
     if (activeIdx === null) return;
     const text = stripHtml(topics[activeIdx]?.contentHTML || topics[activeIdx]?.content || '');
     fullStopSpeech();
-    const sentences = splitIntoSentences(text).map(normalizeForSpeech).filter(Boolean);
+    const sentences = splitIntoSentences(text).map(normalizeForSpeech).filter(Boolean).flatMap(chunkForSpeech);
     if (!sentences.length) return;
     sentenceQueueRef.current = sentences;
     stoppedRef.current = false;
@@ -312,7 +328,14 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
     fullStopSpeech();
   };
 
-  const openTopic = (idx) => {
+  // Free students get a few new topics a day. Reopening one already counted is free.
+  const openTopic = async (idx) => {
+    const slot = await reserve(email, 'topic', `${examType}:${subjectId}:${topics[idx]?.topic || idx}`);
+    if (!slot.allowed) { if (onLimit) onLimit('topics'); return; }
+    openTopicNow(idx);
+  };
+
+  const openTopicNow = (idx) => {
     fullStopSpeech();
     if (idx !== activeIdx) endStudySession(email);
     startStudySession({

@@ -44,7 +44,7 @@ export function getPremiumData(email) {
   }
 }
 
-export function activatePremium(email, plan = 'monthly') {
+export function activatePremium(email, plan = 'annual') {
   if (!email) return;
   const now = Date.now();
   const duration = plan === 'annual'

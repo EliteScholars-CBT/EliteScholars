@@ -7,7 +7,7 @@ const ABBREV = /\b(e\.g|i\.e|etc|vs|approx|Mr|Mrs|Dr|Prof|No|Fig|St)\.$/i;
 export function splitIntoSentences(text) {
   const clean = String(text || '').replace(/\s+/g, ' ').trim();
   if (!clean) return [];
-  const raw = clean.split(/(?<=[.!?])\s+(?=[A-Z0-9"'(\[])/);
+  const raw = clean.replace(/([.!?])\s+(?=[A-Z0-9"'(\[])/g, '$1\u0001').split('\u0001');
   const out = [];
   for (const part of raw) {
     if (out.length && ABBREV.test(out[out.length - 1])) {

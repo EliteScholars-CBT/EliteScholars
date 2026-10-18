@@ -544,7 +544,6 @@ console.log('Finished calling getExpiringSubscriptions ', result);
 // ============================================================================
 
 export default async function handler(req, res) {
-  // ⚠️ TEMPORARILY DISABLE AUTH FOR TESTING ⚠️
   const authHeader = req.headers['authorization'];
   if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return res.status(401).json({ error: 'Unauthorized' });
@@ -594,7 +593,17 @@ export default async function handler(req, res) {
       };
     }
 
-    return res.status(200).json({ success: true, ...result });
+    // Publish today's scheduled blog post: rebuild the site once a day.
+    // (Needs the VERCEL_DEPLOY_HOOK_URL env var; skipped if it isn't set.)
+    let blogRebuild = false;
+    if (hour === 7 && process.env.VERCEL_DEPLOY_HOOK_URL) {
+      try {
+        const r = await fetch(process.env.VERCEL_DEPLOY_HOOK_URL, { method: 'POST' });
+        blogRebuild = r.ok;
+      } catch (e) { console.error('Blog rebuild hook failed:', e?.message); }
+    }
+
+    return res.status(200).json({ success: true, ...result, blogRebuild });
 
   } catch (err) {
     console.error('Cron handler crash:', err.message);

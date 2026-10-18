@@ -1,3 +1,4 @@
+import { reserve } from '../utils/entitlement';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { addXP } from '../utils/xpManager';
 import { GOLD } from '../utils/colors';
@@ -782,7 +783,7 @@ const GK_BANK = [
   { term: 'Cactus',      clue: 'A spiky plant that stores water and thrives in the desert', category: 'Nature', emoji: '🌵' },
 ];
 
-export default function GameMode({ onBack, email, name }) {
+export default function GameMode({ onBack, email, name, onLimit }) {
   const [phase, setPhase]       = useState('menu');
   const [difficulty, setDiff]   = useState('medium');
   const [gameType, setGameType] = useState(null);
@@ -792,7 +793,9 @@ export default function GameMode({ onBack, email, name }) {
   const [sliceCfg, setSliceCfg] = useState(null);
   const [result, setResult]     = useState(null);
 
-  const startGame = () => {
+  const startGame = async () => {
+    const slot = await reserve(email, 'game', `game_${Date.now()}`);
+    if (!slot.allowed) { if (onLimit) onLimit('games'); return; }
     const type = GAME_TYPES[Math.floor(Math.random() * GAME_TYPES.length)];
     setGameType(type);
     const count = difficulty === 'easy' ? 6 : difficulty === 'hard' ? 10 : 8;

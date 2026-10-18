@@ -7,10 +7,11 @@ import { logSecurityEvent } from "../_helpers/security.js";
 import { profileOut } from "../_helpers/profileOut.js";
 import { clientIp } from "../_helpers/guard.js";
 import { setCors, sendMethodNotAllowed } from "../_helpers/response.js";
+import { safeHandler } from "../_helpers/safe.js";
 
 const FAIL = { success: false, stage: "login_failed", message: "Incorrect email or password." };
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   try {
     setCors(res);
     if (req.method === "OPTIONS") return res.status(200).end();
@@ -70,3 +71,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ success: false, stage: "internal_error", message: "Something went wrong. Please try again." });
   }
 }
+
+
+export default safeHandler(handler, "auth/login");

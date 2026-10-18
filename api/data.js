@@ -18,6 +18,8 @@ import chList from "./_routes/challenges-list.js";
 import chLookup from "./_routes/challenges-lookup.js";
 import leaderboard from "./_routes/leaderboard.js";
 import profile from "./_routes/profile.js";
+import entitlement from "./_routes/entitlement.js";
+import adminAccess from "./_routes/admin-access.js";
 import eventsBatch from "./_routes/events-batch.js";
 import admin from "./_routes/admin.js";
 import partner from "./_routes/partner.js";
@@ -65,6 +67,10 @@ const ROUTES = {
   "profile/sync": withOp(profile, "sync"),
   "profile/check-username": withOp(profile, "check-username"),
   "profile/guardian": withOp(profile, "guardian"),
+  "entitlement/get": withOp(entitlement, "get"),
+  "entitlement/use": withOp(entitlement, "use"),
+  "admin/access": withOp(adminAccess, "access"),
+  "admin/access-action": withOp(adminAccess, "access-action"),
 };
 
 export default async function handler(req, res) {

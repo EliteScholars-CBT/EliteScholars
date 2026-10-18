@@ -844,3 +844,24 @@ body.dark-mode .bottom-nav { background: rgba(27, 10, 71, .86); }
 .learn-now-reading-word.done{opacity:.85}
 .learn-now-reading-word.active{opacity:1;font-weight:700;background:linear-gradient(135deg,#7c3aed,#f5b400);color:#fff;border-radius:6px;padding:1px 5px;animation:nowReadingPop .25s ease}
 @keyframes nowReadingPop{0%{transform:scale(.9)}60%{transform:scale(1.1)}100%{transform:scale(1)}}
+
+/* ---- Desktop pass: roomier app frame, nav kept inside the frame ---- */
+@media (min-width: 640px) {
+  .bottom-nav {
+    left: 50% !important;
+    right: auto !important;
+    width: min(var(--frame-w, 460px), 100vw);
+    transform: translateX(-50%);
+    bottom: max(0px, calc((100dvh - min(920px, 100dvh)) / 2));
+    border-radius: 0 0 32px 32px;
+  }
+}
+@media (min-width: 1024px) {
+  :root { --frame-w: 560px; }
+  .phone { max-width: 560px !important; }
+}
+@media (min-width: 1440px) {
+  :root { --frame-w: 640px; }
+  .phone { max-width: 640px !important; }
+  body { padding: 28px 20px; }
+}

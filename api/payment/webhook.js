@@ -4,13 +4,14 @@
 import crypto from 'crypto';
 import { setCors, sendMethodNotAllowed } from '../_helpers/response.js';
 import { finalizePayment } from '../_helpers/payments.js';
+import { safeHandler } from "../_helpers/safe.js";
 
 const same = (a, b) => {
   const x = Buffer.from(String(a)), y = Buffer.from(String(b));
   return x.length === y.length && crypto.timingSafeEqual(x, y);
 };
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   setCors(res);
   if (req.method !== 'POST') return sendMethodNotAllowed(res);
 
@@ -22,3 +23,6 @@ export default async function handler(req, res) {
   try { await finalizePayment(txRef, 'webhook'); } catch (e) { console.error('[webhook]', e?.message); }
   return res.status(200).end(); // always 200 so Flutterwave doesn't keep retrying
 }
+
+
+export default safeHandler(handler, "payment/webhook");

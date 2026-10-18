@@ -6,8 +6,9 @@
 import { sendOk, sendErr, sendMethodNotAllowed, setCors } from '../_helpers/response.js';
 import { requireUser } from '../_helpers/session.js';
 import { getPremiumStatus } from '../_helpers/premium.js';
+import { safeHandler } from "../_helpers/safe.js";
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return sendMethodNotAllowed(res);
@@ -18,3 +19,5 @@ export default async function handler(req, res) {
   const result = await getPremiumStatus(email);
   return sendOk(res, result);
 }
+
+export default safeHandler(handler, "payment/status");

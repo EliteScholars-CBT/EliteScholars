@@ -31,7 +31,12 @@ export default function FreeLimitGate({ email, name, reason = 'session', onClose
     return () => clearInterval(t);
   }, [email]);
 
-  const isTopicLimit   = reason === 'topics';
+  const COPY = {
+    topics: { icon: '📚', title: 'Free topics used up for today', msg: "You've used your free topics for today. They come back tomorrow, or go Premium for unlimited topics." },
+    cbt:    { icon: '📝', title: 'Free CBT sessions used up for today', msg: "You've used your free CBT practice sessions for today. They come back tomorrow, or go Premium for unlimited practice." },
+    games:  { icon: '🎮', title: 'Free games used up for today', msg: "You've used your free games for today. They come back tomorrow, or go Premium for unlimited games." },
+  };
+  const daily = COPY[reason];
   const isCooldownDone = secsLeft <= 0;
 
   return (
@@ -39,23 +44,23 @@ export default function FreeLimitGate({ email, name, reason = 'session', onClose
       <div className="limit-gate-overlay">
         <div className="limit-gate-card">
           {/* Icon */}
-          <div className="limit-gate-icon">{isTopicLimit ? '📚' : '⏱️'}</div>
+          <div className="limit-gate-icon">{daily ? daily.icon : '⏱️'}</div>
 
           {/* Title */}
           <div className="limit-gate-title">
-            {isTopicLimit ? "Daily Topic Limit Reached" : "Session Time's Up!"}
+            {daily ? daily.title : "Session Time's Up!"}
           </div>
 
           {/* Message */}
           <div className="limit-gate-msg">
-            {isTopicLimit
-              ? `You've completed your free topics for today. Come back tomorrow or go Premium for unlimited access.`
+            {daily
+              ? daily.msg
               : `Your free session (${30}-min) has ended. Take a break and come back in ${FREE_COOLDOWN_HOURS} hours, or upgrade now.`
             }
           </div>
 
           {/* Countdown */}
-          {!isCooldownDone && secsLeft > 0 && (
+          {!daily && !isCooldownDone && secsLeft > 0 && (
             <div className="limit-gate-timer-wrap">
               <div className="limit-gate-timer-label">Time until you can continue:</div>
               <div className="limit-gate-timer">{fmtTime(secsLeft)}</div>
@@ -63,7 +68,7 @@ export default function FreeLimitGate({ email, name, reason = 'session', onClose
             </div>
           )}
 
-          {isCooldownDone && (
+          {!daily && isCooldownDone && (
             <div className="limit-gate-ready"><EmojiIcon emoji="✅" size="1.15em" /> You can continue now!</div>
           )}
 
@@ -75,7 +80,7 @@ export default function FreeLimitGate({ email, name, reason = 'session', onClose
             ⭐ Go Premium — Remove All Limits
           </button>
 
-          {isCooldownDone
+          {!daily && isCooldownDone
             ? <button className="limit-gate-continue-btn" onClick={onClose}>Continue →</button>
             : <button className="limit-gate-close-btn" onClick={onClose}>Close</button>
           }

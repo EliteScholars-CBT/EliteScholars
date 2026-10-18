@@ -7,7 +7,7 @@ export const SHOP_ITEMS = [
     id: 'premium',
     title: '⭐ EliteScholars Premium',
     description: 'No ads · Unlimited topics · Unlimited sessions · All subjects unlocked',
-    price: '₦9,000/mo',
+    price: '₦3,000/year',
     image: null,
     link: null,
     category: 'Premium',

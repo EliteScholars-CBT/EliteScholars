@@ -171,7 +171,7 @@ function splitSentences(text) {
   text.split(/\n+/).forEach((block) => {
     const b = block.replace(/^(•|[-*]|\d+[.)]|[a-z][.)])\s*/i, '').trim();
     if (!b || isHeading(b)) return;
-    const parts = b.split(/(?<=[.!?])\s+(?=[A-Z0-9"“(])/);
+    const parts = b.replace(/([.!?])\s+(?=[A-Z0-9"“(])/g, '$1\u0001').split('\u0001');
     let buf = '';
     parts.forEach((p) => {
       buf = buf ? buf + ' ' + p : p;
@@ -256,7 +256,8 @@ function extractKeyTerms(sentences, defs, limit = 40) {
   sentences.forEach((s) => {
     // Acronyms & capitalised phrases (not the sentence-initial word alone)
     for (const m of s.matchAll(/\b[A-Z]{2,5}\b/g)) if (s !== s.toUpperCase()) bump(m[0], 1.6);
-    for (const m of s.matchAll(/(?<!^)(?<![.!?]\s)\b([A-Z][a-z]{2,}(?:\s+(?:of|and|the)\s+[A-Z][a-z]{2,}|\s+[A-Z][a-z]{2,}){0,3})\b/g)) {
+    for (const m of s.matchAll(/\b([A-Z][a-z]{2,}(?:\s+(?:of|and|the)\s+[A-Z][a-z]{2,}|\s+[A-Z][a-z]{2,}){0,3})\b/g)) {
+      if (m.index === 0 || /[.!?]\s$/.test(s.slice(0, m.index))) continue; // sentence-initial
       const t = m[1];
       if (!STOP.has(t.toLowerCase())) bump(t, words(t).length > 1 ? 2.2 : 1.3);
     }
@@ -398,8 +399,8 @@ function buildSections(cleaned, terms, rand) {
 /* ── Flashcards ──────────────────────────────────────────────────────────── */
 
 function blankOut(sentence, answer) {
-  const re = new RegExp(`(?<![A-Za-z0-9])${escRe(answer)}(?![A-Za-z0-9])`, 'i');
-  return re.test(sentence) ? sentence.replace(re, '_____') : null;
+  const re = new RegExp(`(^|[^A-Za-z0-9])${escRe(answer)}(?![A-Za-z0-9])`, 'i');
+  return re.test(sentence) ? sentence.replace(re, '$1_____') : null;
 }
 
 function makeCards(defs, ranked, terms, rand) {

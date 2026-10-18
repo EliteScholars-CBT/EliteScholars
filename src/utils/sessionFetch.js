@@ -26,6 +26,34 @@ export function installSessionFetch() {
         }
       }
     } catch { /* fall through to a plain request */ }
-    return orig(input, init);
+    const isApi = (() => {
+      try { return (typeof input === 'string' ? input : (input && input.url) || '').indexOf('/api/') !== -1; } catch { return false; }
+    })();
+    const p = orig(input, init);
+    return isApi ? p.then(makeJsonSafe) : p;
   };
+}
+
+// If the server (or a proxy, or a captive Wi-Fi page) answers with HTML or plain
+// text instead of JSON, res.json() would throw "Unexpected token < in JSON".
+// Make it resolve to a normal failure object instead, so no screen ever shows
+// that message and every caller's existing error handling just works.
+function makeJsonSafe(res) {
+  try {
+    const raw = res.clone();
+    res.json = async () => {
+      let text = '';
+      try { text = await raw.text(); } catch { /* network cut mid-body */ }
+      try { return JSON.parse(text); } catch {
+        return {
+          success: false,
+          _nonJson: true,
+          status: res.status,
+          error: res.status >= 500 ? 'Server is busy. Please try again in a moment.' : 'Could not reach the server. Check your connection and try again.',
+          message: res.status >= 500 ? 'Server is busy. Please try again in a moment.' : 'Could not reach the server. Check your connection and try again.',
+        };
+      }
+    };
+  } catch { /* leave the response untouched */ }
+  return res;
 }

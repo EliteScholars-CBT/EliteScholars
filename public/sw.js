@@ -1,4 +1,4 @@
-const CACHE_NAME  = 'elitescholars-v4';
+const CACHE_NAME  = 'elitescholars-v5';
 const STATIC_ASSETS = ['/', '/app', '/index.html', '/manifest.json'];
 
 let _reminderTids = [];
@@ -24,7 +24,10 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   if (!event.request.url.startsWith(self.location.origin)) return;
   // Never cache the owner dashboard's data.
-  if (new URL(event.request.url).pathname.startsWith('/api/admin')) return;
+  // API calls always go straight to the network: a cached answer to
+  // /api/entitlement or /api/payment/status could show the wrong plan, and the
+  // app already has its own offline handling for API failures.
+  if (new URL(event.request.url).pathname.startsWith('/api/')) return;
 
   // Page navigations (typing a URL, hard refresh, following a link) — this
   // is a client-routed SPA, so ANY /app/* path should resolve to the same
@@ -35,8 +38,10 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(event.request)
         .then((res) => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then((c) => c.put(event.request, clone));
+          if (res && res.ok) {
+            const clone = res.clone();
+            caches.open(CACHE_NAME).then((c) => c.put(event.request, clone)).catch(() => {});
+          }
           return res;
         })
         .catch(async () => {
@@ -51,11 +56,13 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
       .then((res) => {
-        const clone = res.clone();
-        caches.open(CACHE_NAME).then((c) => c.put(event.request, clone));
+        if (res && res.ok && res.type === 'basic') {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then((c) => c.put(event.request, clone)).catch(() => {});
+        }
         return res;
       })
-      .catch(() => caches.match(event.request))
+      .catch(async () => (await caches.match(event.request)) || Response.error())
   );
 });
 

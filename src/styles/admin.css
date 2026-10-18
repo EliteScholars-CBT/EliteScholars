@@ -116,3 +116,5 @@ body:has(.adm-wrap){background:#0f0b1f}
 .adm-tr5{grid-template-columns:1.6fr 1.4fr 1fr 1fr 1fr!important;align-items:center}
 .adm-tr5 span,.adm-tr5 b{overflow:hidden;text-overflow:ellipsis}
 @media (max-width:640px){.adm-tr5{grid-template-columns:1fr 1fr!important;row-gap:4px}.adm-tr span:nth-child(2){display:block!important}}
+.adm-chip.active{background:#10301f;color:#9af0c0}
+.adm-chip.ended{background:#3b1230;color:#ffb3d1}

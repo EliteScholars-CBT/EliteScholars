@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Icon from './Icon';
 import Confetti from './Confetti';
+import PremiumModal from './PremiumModal';
+import { loadUser } from '../utils/storage';
+import { reserve, refreshEntitlement } from '../utils/entitlement';
 import { SFX } from '../utils/sounds';
 import { buildScramble, buildScrambleDeck, buildMatchDeck, normalizeAnswer } from '../utils/gameEngine';
 import {
@@ -50,12 +53,17 @@ export default function FileStudyHub() {
   const [studying, setStudying] = useState(null); // { entry, modes }
   const [drag, setDrag] = useState(false);
   const [confirmDel, setConfirmDel] = useState(null);
+  const [showUpgrade, setShowUpgrade] = useState(false);
   const inputRef = useRef(null);
 
   const handleFile = useCallback(async (file) => {
     if (!file) return;
     setError('');
     if (file.size > MAX_BYTES) { setError('That file is over 25 MB. Try a smaller one.'); return; }
+    // Free students get 2 files for life; Premium (and trial / free-access) is unlimited.
+    const me = loadUser();
+    const slot = await reserve(me.email, 'file_study', `${file.name}:${file.size}`);
+    if (!slot.allowed) { setShowUpgrade(true); return; }
     try {
       SFX.select?.();
       setBusy({ name: file.name, stage: 'Reading your file', pct: 0.05 });
@@ -196,6 +204,15 @@ export default function FileStudyHub() {
           entry={studying.entry}
           modes={studying.modes}
           onClose={() => { setStudying(null); refreshFiles(); }}
+        />
+      )}
+
+      {showUpgrade && (
+        <PremiumModal
+          email={loadUser().email}
+          name={loadUser().firstName || ''}
+          onClose={() => setShowUpgrade(false)}
+          onActivated={() => { setShowUpgrade(false); refreshEntitlement(loadUser().email); }}
         />
       )}
     </section>

@@ -146,6 +146,26 @@
       "destination": "/api/data?route=auth/verify"
     },
     {
+      "source": "/api/entitlement/get",
+      "destination": "/api/data?route=entitlement/get"
+    },
+    {
+      "source": "/api/entitlement/use",
+      "destination": "/api/data?route=entitlement/use"
+    },
+    {
+      "source": "/api/admin/access",
+      "destination": "/api/data?route=admin/access"
+    },
+    {
+      "source": "/api/admin/access-action",
+      "destination": "/api/data?route=admin/access-action"
+    },
+    {
+      "source": "/blog",
+      "destination": "/blog/index.html"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }

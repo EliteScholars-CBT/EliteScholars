@@ -18,6 +18,7 @@ import { captureReferralFromURL, shouldShowReferralPrompt, markReferralPromptSho
 
 import AuthScreen from './components/AuthScreen';
 
+import { reserve, refreshEntitlement, isUnlimitedCached } from './utils/entitlement';
 import GameMode from './components/GameMode';
 
 import ExamTypeSelect from './components/ExamTypeSelect';
@@ -74,7 +75,7 @@ import {
 
   isPremium, isSessionExpired, startSession, startCooldown,
 
-  canUseTopic, incrementTopicsToday, resetSession, syncPremiumFromServer,
+  incrementTopicsToday, resetSession, syncPremiumFromServer,
 
 } from './utils/premium';
 
@@ -384,7 +385,10 @@ export default function App() {
 
   const [questionLog, setQuestionLog] = useState([]);
 
-  const [premiumUser, setPremiumUser] = useState(false);
+  const [premiumPaid, setPremiumUser] = useState(false);
+  const [entUnlimited, setEntUnlimited] = useState(false);
+  // Unlimited = paid Premium, a free trial, or a free-access gift from the admin.
+  const premiumUser = premiumPaid || entUnlimited;
 
   const [showLimitGate, setShowLimitGate] = useState(false);
 
@@ -393,6 +397,7 @@ export default function App() {
   const [flashcardSubject, setFlashSub] = useState(null);
 
   const [paymentModal, setPaymentModal] = useState(null);
+  const [payNotice, setPayNotice] = useState('');
 
 
 
@@ -442,6 +447,10 @@ export default function App() {
 
 
 
+    if (paymentStatus === 'failed' || paymentStatus === 'cancelled' || paymentStatus === 'pending') {
+      setPayNotice(paymentStatus);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
     registerSW().then((reg) => {
 
       if (reg) {
@@ -895,6 +904,18 @@ export default function App() {
 
 
 
+  // ── Trial / free-access / premium status from the server ───────────────────
+  useEffect(() => {
+    if (!email) { setEntUnlimited(false); return undefined; }
+    setEntUnlimited(isUnlimitedCached(email));
+    let alive = true;
+    const refresh = () => refreshEntitlement(email).then((e) => { if (alive && e) setEntUnlimited(!!e.unlimited); });
+    refresh();
+    const onVis = () => { if (document.visibilityState === 'visible') refresh(); };
+    document.addEventListener('visibilitychange', onVis);
+    return () => { alive = false; document.removeEventListener('visibilitychange', onVis); };
+  }, [email]);
+
   // ── Session expiry check ─────────────────────────────────────────────────────
 
   const checkSessionLimit = useCallback(() => {
@@ -953,9 +974,14 @@ export default function App() {
 
   // ── CBT start ────────────────────────────────────────────────────────────────
 
-  const startQuiz = (sel) => {
+  const startQuiz = async (sel) => {
 
     if (checkSessionLimit()) return;
+
+    if (!premiumUser) {
+      const slot = await reserve(email, 'cbt', `cbt_${Date.now()}`);
+      if (!slot.allowed) { setLimitReason('cbt'); setShowLimitGate(true); return; }
+    }
 
     if (SHOW_ADS) triggerAdRefresh();
 
@@ -1016,16 +1042,6 @@ export default function App() {
   // ── Learn start ───────────────────────────────────────────────────────────────
 
   const startLearn = (subjectId) => {
-
-    if (!canUseTopic(email) && !premiumUser) {
-
-      setLimitReason('topics');
-
-      setShowLimitGate(true);
-
-      return;
-
-    }
 
     setLearnSubject(subjectId);
 
@@ -1438,6 +1454,8 @@ export default function App() {
 
                 <Learn
 
+                  onLimit={(reason) => { setLimitReason(reason); setShowLimitGate(true); }}
+
                   subjectId={learnSubject}
 
                   onBack={() => setScreen('subjects')}
@@ -1485,14 +1503,6 @@ export default function App() {
                     });
 
 
-
-                    if (!canUseTopic(email) && !premiumUser) {
-
-                      setLimitReason('topics');
-
-                      setShowLimitGate(true);
-
-                    }
 
                   }}
 
@@ -1744,7 +1754,7 @@ export default function App() {
 
               {screen === 'game' && (
 
-                <GameMode onBack={() => setScreen('subjects')} email={email} name={name} />
+                <GameMode onBack={() => setScreen('subjects')} email={email} name={name} onLimit={(reason) => { setLimitReason(reason); setShowLimitGate(true); }} />
 
               )}
 
@@ -1876,6 +1886,22 @@ export default function App() {
 
 
 
+      {payNotice && (
+        <div
+          role="alert"
+          onClick={() => setPayNotice('')}
+          style={{
+            position: 'fixed', left: 12, right: 12, bottom: 90, zIndex: 999997, maxWidth: 520, margin: '0 auto',
+            background: payNotice === 'failed' ? '#7f1d1d' : '#1e1b4b', color: '#fff', border: '1px solid rgba(255,255,255,.18)',
+            borderRadius: 16, padding: '14px 16px', fontSize: 14, lineHeight: 1.5, boxShadow: '0 12px 30px rgba(0,0,0,.45)',
+          }}
+        >
+          {payNotice === 'failed' && 'We could not confirm your payment. If money left your account, do not pay again — it is added automatically within a few minutes, and your premium will appear. Still nothing? Contact support with your payment receipt.'}
+          {payNotice === 'cancelled' && 'Payment cancelled. You have not been charged.'}
+          {payNotice === 'pending' && 'We are confirming your payment. Your premium will switch on automatically in a minute — you do not need to pay again.'}
+          <div style={{ marginTop: 6, fontSize: 12, opacity: 0.7 }}>Tap to dismiss</div>
+        </div>
+      )}
       {paymentModal && (
 
         <div
@@ -1940,11 +1966,7 @@ export default function App() {
 
                   ? 'Premium Annual'
 
-                  : paymentModal.plan === 'pro'
-
-                    ? 'Pro Monthly'
-
-                    : 'Premium Monthly'}
+                  : 'Premium'}
 
               </strong>{' '}
 

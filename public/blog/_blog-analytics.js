@@ -1,5 +1,5 @@
 (function () {
-  var GAS_URL = 'https://script.google.com/macros/s/AKfycbxmY2qZ-5zexeOLdZba1U6k3Sl7czKLzC0PjW4jP1FSO4P_mMkSWN4fUmmCBPjt09YU/exec';
+  var TRACK_URL = '/api/events/track';
 
   function uid() {
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -11,16 +11,17 @@
   }
 
   function post() {
-    if (typeof BLOG_POSTS === 'undefined' || typeof BlogEngine === 'undefined') return null;
-    var slug = window.location.pathname.split('/').pop().replace('.html', '');
-    return BLOG_POSTS.find(function (p) { return p.id === slug; }) || null;
+    // Each page carries its own small post descriptor (no big posts.js download).
+    return window.__BLOG_POST || null;
   }
 
   function send(payload) {
     try {
-      navigator.sendBeacon
-        ? navigator.sendBeacon(GAS_URL, JSON.stringify(payload))
-        : fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload), keepalive: true });
+      (payload.events || []).forEach(function (ev) {
+        var body = JSON.stringify(Object.assign({}, ev, { type: 'blog_' + ev.type }));
+        if (navigator.sendBeacon) navigator.sendBeacon(TRACK_URL, new Blob([body], { type: 'application/json' }));
+        else fetch(TRACK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true });
+      });
     } catch (_) {}
   }
 

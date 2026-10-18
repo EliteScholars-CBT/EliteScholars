@@ -199,3 +199,18 @@
 .land-footer-links { display: flex; gap: 22px; font-size: 13px; font-weight: 600; color: var(--l-text-soft); }
 .land-footer-links a:hover { color: var(--l-violet); }
 .land-footer-copy { font-size: 12px; color: var(--l-text-soft); width: 100%; text-align: center; margin-top: 10px; }
+
+/* ── Desktop pass: landing is a full-bleed page, not the app frame ────────── */
+@media (min-width: 640px) {
+  body:has(.land) { display: block !important; padding: 0 !important; overflow: auto !important; background: #FBFAFF !important; }
+  body:has(.land)::before, body:has(.land)::after { display: none !important; }
+}
+.land { overflow-x: clip; width: 100%; }
+.land-hero { overflow: visible; }
+@media (min-width: 1100px) {
+  .land-nav-inner, .land-hero { max-width: 1240px; }
+  .land-hero { padding: 96px 32px 120px; gap: 64px; }
+  .land-hero-content { max-width: 600px; }
+  .land-hero h1 { font-size: 56px; }
+  .land-hero-sub { font-size: 18px; max-width: 540px; }
+}

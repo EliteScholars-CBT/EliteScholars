@@ -46,7 +46,6 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
   const FMT = (n) => n?.toLocaleString('en-NG') ?? '0';
 
   // ── Derived pricing — Premium is annual-only, no monthly tier ─────────────
-  const proPrice          = pricing.pro                    ?? 3000;
   const annualPrice       = pricing.premiumAnnual           ?? 3000;
   const originalPrice     = pricing.premiumAnnualOriginal   ?? 15000;
   const annualSavings     = originalPrice - annualPrice;
@@ -78,7 +77,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('payment') === 'success' && params.get('email') === userEmail) {
-      const plan = params.get('plan') || 'monthly';
+      const plan = params.get('plan') || 'annual';
       setLocalPremium(true);
       if (onPremiumActivated) onPremiumActivated({ plan });
       window.history.replaceState({}, '', window.location.pathname);
@@ -121,12 +120,6 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
       id: 'free', label: 'Free', icon: '🎓', tag: null,
       features: ['Limited topics', 'Limited sessions', 'Has cooldown', 'Ads shown', 'All exam types'],
       highlight: false, ctaDisabled: true,
-    },
-    {
-      id: 'pro', label: 'Pro', icon: '🚀', tag: null,
-      price: proPrice, period: '/mo',
-      features: ['Unlimited topics', 'Unlimited sessions', 'No cooldown', 'Ads reduced', 'All 5 exam types'],
-      highlight: false,
     },
     {
       id: 'premium', label: 'Premium', icon: '👑', tag: `${annualDiscountPct}% OFF`,
@@ -204,7 +197,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
               {/* Header row */}
               <div className="shop-plans-card-header">
                 <div className="shop-plans-card-title">Compare Plans</div>
-                <div className="shop-plans-card-sub">Pro is billed monthly. Premium is one price, once a year.</div>
+                <div className="shop-plans-card-sub">One plan, one price: Premium for the full year.</div>
               </div>
 
               {/* Plans grid */}

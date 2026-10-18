@@ -67,6 +67,9 @@ async function safeFetchJSON(endpoint, options = {}) {
       return {
         success: false,
         error: 'INVALID_JSON_RESPONSE',
+        message: res.status >= 500
+          ? 'Our server is busy right now. Please try again in a moment.'
+          : 'Could not reach the server. Check your connection and try again.',
         raw: text.slice(0, 300),
         status: res.status,
       };
@@ -122,29 +125,13 @@ export async function registerProfile(payload) {
   devLog('📨 Raw result from /api/auth/register:', result);
 
   if (!result || result.error === 'INVALID_JSON_RESPONSE') {
-    console.warn('⚠️ Got invalid JSON from register endpoint. Raw:', result?.raw);
-    console.warn('⚠️ Bypassing error — returning synthetic success so user can enter app');
+    // Never pretend sign-up worked: an account with no saved login would get
+    // the student signed out on the next visit. If the reply was lost the account
+    // may exist already, so point them to Log in.
     console.groupEnd();
-
-    // Bypass: construct a synthetic profile so the user can proceed
-    // The account may or may not have been created on the backend —
-    // the next login attempt will confirm. We log this silently.
     return {
-      success: true,
-      _bypassed: true,
-      _bypassReason: 'invalid_json_from_register',
-      profile: {
-        email: payload.email?.toLowerCase().trim() || '',
-        firstName: payload.firstName || '',
-        lastName: payload.lastName || '',
-        studentType: payload.studentType || '',
-        selectedExams: payload.selectedExams || [],
-        passwordHash: '', // will be filled in properly on next login
-        username: payload.username || '',
-        stats: {},
-        achievements: [],
-        subjectPerformance: {},
-      },
+      success: false,
+      message: 'We could not confirm your sign-up. If you already tapped Sign up once, try logging in with the same email and password. Otherwise please try again.',
     };
   }
 

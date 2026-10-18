@@ -7,12 +7,14 @@ import { findPartnerByCode } from '../_helpers/partners.js';
 import { legacyProfileExists } from '../_helpers/legacy.js';
 import { profileOut } from '../_helpers/profileOut.js';
 import { clientIp } from '../_helpers/guard.js';
+import { startTrialIfEnabled } from '../_helpers/access.js';
+import { safeHandler } from "../_helpers/safe.js";
 
 const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/;
 const NAME_MAX = 60;
 const str = (v) => typeof v === 'string';
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return sendMethodNotAllowed(res);
@@ -78,7 +80,11 @@ export default async function handler(req, res) {
   if (refCode) await insertRow('referrals', { code: refCode, referred_email: emailLower, partner_id: partner ? partner.id : null });
   await insertRow('events', { type: 'register', email: emailLower, payload: { username: usernameTrimmed } });
 
+  await startTrialIfEnabled(emailLower);
   const row = (await selectOne('profiles', { email: emailLower })).row;
   if (!row) return sendErr(res, 'Registration failed. Please try again.');
   return sendOk(res, { profile: profileOut(row) });
 }
+
+
+export default safeHandler(handler, "auth/register");

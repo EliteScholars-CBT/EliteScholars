@@ -7,13 +7,14 @@ import { selectOne, updateRow, supabaseEnabled } from '../_helpers/supabase.js';
 import { backfillProfile } from '../_helpers/backfill.js';
 import { rateLimitOk } from '../_helpers/guard.js';
 import crypto from 'crypto';
+import { safeHandler } from "../_helpers/safe.js";
 
 const same = (a, b) => {
   const x = Buffer.from(String(a).trim()), y = Buffer.from(String(b).trim());
   return x.length === y.length && crypto.timingSafeEqual(x, y);
 };
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   try {
     setCors(res);
     if (req.method === 'OPTIONS') return res.status(200).end();
@@ -70,3 +71,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ success: false, error: 'Something went wrong. Please try again.' });
   }
 }
+
+
+export default safeHandler(handler, "auth/reset");

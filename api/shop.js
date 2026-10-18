@@ -13,7 +13,8 @@ import {
   PAYMENT_URL_PRO,
 } from './_helpers/constants/premium.js';
 
-export default async function handler(req, res) {
+import { safeHandler } from "./_helpers/safe.js";
+async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return sendMethodNotAllowed(res);
@@ -31,3 +32,5 @@ export default async function handler(req, res) {
     },
   });
 }
+
+export default safeHandler(handler, "shop");

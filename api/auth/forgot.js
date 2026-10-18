@@ -21,10 +21,11 @@ import {
   setCors
 } from "../_helpers/response.js";
 
+import { safeHandler } from "../_helpers/safe.js";
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM   = process.env.FROM_EMAIL;
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   try {
 
     setCors(res);
@@ -181,3 +182,5 @@ export default async function handler(req, res) {
     });
   }
 }
+
+export default safeHandler(handler, "auth/forgot");

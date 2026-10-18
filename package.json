@@ -15,12 +15,13 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "obfuscate": "javascript-obfuscator build/static/js --output build/static/js --compact true --string-array true --rotate-string-array true --string-array-threshold 0.75 --dead-code-injection false --self-defending true --disable-console-output true",
-    "build:prod": "react-scripts build && npm run obfuscate",
+    "build:prod": "node scripts/build-blog.js && react-scripts build && npm run obfuscate",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prebuild": "node scripts/build-blog.js",
+    "blog": "node scripts/build-blog.js"
   },
   "devDependencies": {
-    "eslint-plugin-react-hooks": "^7.1.1",
     "javascript-obfuscator": "^4.2.2",
     "prettier": "^3.8.3",
     "react-scripts": "latest"
@@ -35,11 +36,6 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
-    ]
-  },
-  "eslintConfig": {
-    "plugins": [
-      "react-hooks"
     ]
   }
 }

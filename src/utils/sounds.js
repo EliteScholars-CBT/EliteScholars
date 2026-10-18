@@ -7,10 +7,80 @@ let _audioCtx = null;
 function getAudioCtx() {
   if (!_audioCtx) {
     try {
-      _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      _audioCtx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'interactive' });
+    } catch (e) {
+      try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e2) {}
+    }
+  }
+  const ctx = _audioCtx;
+  // Browsers start the context "suspended" until a user gesture; resume every
+  // time we need it so the very first sound is not swallowed or delayed.
+  if (ctx && ctx.state === 'suspended') {
+    try { const r = ctx.resume(); if (r && r.catch) r.catch(() => {}); } catch (e) {}
+  }
+  return ctx;
+}
+
+// ── Warm-up: remove first-sound / first-voice latency ──────────────────────
+let _unlocked = false;
+let _voicesCache = [];
+let _speechPrimed = false;
+
+function refreshVoices() {
+  try {
+    const v = window.speechSynthesis && window.speechSynthesis.getVoices();
+    if (v && v.length) _voicesCache = v;
+  } catch (e) {}
+  return _voicesCache;
+}
+
+export function getVoicesCached() {
+  return _voicesCache.length ? _voicesCache : refreshVoices();
+}
+
+function primeSpeech() {
+  if (_speechPrimed || !window.speechSynthesis || typeof SpeechSynthesisUtterance === 'undefined') return;
+  _speechPrimed = true;
+  try {
+    // A silent, empty utterance wakes the speech engine so the first real
+    // sentence starts immediately instead of after a long cold start.
+    const u = new SpeechSynthesisUtterance(' ');
+    u.volume = 0;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+export function unlockAudio() {
+  const ctx = getAudioCtx();
+  if (ctx && !_unlocked) {
+    try {
+      const buf = ctx.createBuffer(1, 1, 22050);
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(ctx.destination);
+      src.start(0);
+      _unlocked = true;
     } catch (e) {}
   }
-  return _audioCtx;
+  primeSpeech();
+}
+
+if (typeof window !== 'undefined') {
+  refreshVoices();
+  try {
+    if (window.speechSynthesis) {
+      if (window.speechSynthesis.addEventListener) window.speechSynthesis.addEventListener('voiceschanged', refreshVoices);
+      else window.speechSynthesis.onvoiceschanged = refreshVoices;
+    }
+  } catch (e) {}
+  const once = () => {
+    unlockAudio();
+    ['pointerdown', 'touchstart', 'keydown', 'click'].forEach((ev) => window.removeEventListener(ev, once, true));
+  };
+  ['pointerdown', 'touchstart', 'keydown', 'click'].forEach((ev) => window.addEventListener(ev, once, { capture: true, passive: true }));
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && _audioCtx && _audioCtx.state === 'suspended') getAudioCtx();
+  });
 }
 
 function playTone(frequency, duration, type = 'sine', volume = 0.18, delay = 0) {
@@ -73,23 +143,26 @@ export const SFX = {
   },
 };
 
-// Add speech functions here
+const PREFERRED_VOICES = ['Google UK English Male', 'Microsoft David Desktop', 'Microsoft Mark Desktop', 'Daniel', 'Fred', 'Thomas', 'Arthur', 'Google US English', 'Alex'];
+
 export function speak(text) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
+  if (!window.speechSynthesis || typeof SpeechSynthesisUtterance === 'undefined') return;
+  const synth = window.speechSynthesis;
+  const wasBusy = synth.speaking || synth.pending;
+  if (wasBusy) synth.cancel();
   const utter = new SpeechSynthesisUtterance(text);
   utter.rate = 0.95;
   utter.pitch = 1.0;
   utter.volume = 1;
-  const trySpeak = () => {
-    const voices = window.speechSynthesis.getVoices();
-    const preferred = ['Google UK English Male', 'Microsoft David Desktop', 'Microsoft Mark Desktop', 'Daniel', 'Fred', 'Thomas', 'Arthur', 'Google US English', 'Alex'];
-    const male = voices.find(v => preferred.some(p => v.name.includes(p))) || voices.find(v => v.name.toLowerCase().includes('male')) || null;
+  const go = () => {
+    const voices = getVoicesCached();
+    const male = voices.find((v) => PREFERRED_VOICES.some((p) => v.name.includes(p))) || voices.find((v) => v.name.toLowerCase().includes('male')) || null;
     if (male) utter.voice = male;
-    window.speechSynthesis.speak(utter);
+    try { synth.resume(); } catch (e) {}
+    synth.speak(utter);
   };
-  if (window.speechSynthesis.getVoices().length > 0) trySpeak();
-  else window.speechSynthesis.onvoiceschanged = trySpeak;
+  // Chrome drops a speak() fired in the same tick as cancel(); wait a beat only when needed.
+  if (wasBusy) setTimeout(go, 60); else go();
   return utter;
 }
 

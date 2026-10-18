@@ -8,7 +8,9 @@ import About from './pages/About';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import { installSessionFetch } from './utils/sessionFetch';
+import { installLoginPersistence } from './utils/persistLogin';
 
+installLoginPersistence();
 installSessionFetch();
 
 // Loaded on demand so students never download the admin dashboard code.

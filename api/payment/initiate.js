@@ -12,13 +12,12 @@ import { getFirstName } from '../_helpers/premium.js';
 const FLW_SECRET_KEY = process.env.FLW_SECRET_KEY;
 
 // Premium is annual-only — no monthly tier.
-const PLAN_AMOUNTS = { annual: 3000, pro: 3000 };
+const PLAN_AMOUNTS = { annual: 3000 };
 const PLAN_NAMES   = {
   annual: 'EliteScholars Premium Annual',
-  pro:    'EliteScholars Pro',
 };
 
-export default async function handler(req, res) {
+async function run(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return sendMethodNotAllowed(res);
@@ -94,5 +93,14 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('Payment initiate network error:', err.message);
     return sendErr(res, 'Could not reach payment provider. Please check your connection and try again.');
+  }
+}
+
+export default async function handler(req, res) {
+  try {
+    return await run(req, res);
+  } catch (err) {
+    console.error('Payment initiate crash:', err?.message);
+    if (!res.headersSent) return sendErr(res, 'Something went wrong starting your payment. Please try again.', 500);
   }
 }

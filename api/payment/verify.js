@@ -4,7 +4,8 @@
 import { setCors, sendMethodNotAllowed } from '../_helpers/response.js';
 import { finalizePayment } from '../_helpers/payments.js';
 import { getPremiumStatus } from '../_helpers/premium.js';
-import { rateLimitOk } from '../_helpers/guard.js';
+import { checkRateLimit } from '../_helpers/rateLimit.js';
+import { clientIp } from '../_helpers/guard.js';
 
 const APP_URL = 'https://elitescholars.site';
 
@@ -16,7 +17,11 @@ export default async function handler(req, res) {
   const tx_ref = String(Array.isArray(req.query.tx_ref) ? req.query.tx_ref[0] : req.query.tx_ref || '');
   if (req.query.status === 'cancelled') return res.redirect(`${APP_URL}/app?payment=cancelled`);
   if (!tx_ref) return res.redirect(`${APP_URL}/app?payment=failed`);
-  if (!(await rateLimitOk(req, res, 'payverify', 30, 600))) return;
+  // This is a browser redirect, so never answer with raw JSON — send them back to the app.
+  try {
+    const { allowed } = await checkRateLimit(`rl:payverify:${clientIp(req)}`, 60, 600);
+    if (!allowed) return res.redirect(`${APP_URL}/app?payment=pending`);
+  } catch { /* limiter unavailable — carry on */ }
 
   try {
     const r = await finalizePayment(tx_ref, 'redirect');

@@ -12,7 +12,8 @@ import {
   CUSTOM_AD,
 } from './_helpers/constants/ads.js';
 
-export default async function handler(req, res) {
+import { safeHandler } from "./_helpers/safe.js";
+async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return sendMethodNotAllowed(res);
@@ -31,3 +32,5 @@ export default async function handler(req, res) {
     customAd:         CUSTOM_AD_ENABLED ? CUSTOM_AD : null,
   });
 }
+
+export default safeHandler(handler, "ads");

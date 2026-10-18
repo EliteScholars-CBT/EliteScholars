@@ -12,37 +12,18 @@ export default function PremiumModal({
   initialPlan = 'annual',
   pricing = {},
 }) {
-  const [plan, setPlan] = useState(initialPlan === 'monthly' ? 'annual' : initialPlan);
+  const [plan] = useState('annual');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   // All prices from API via props, frontend values as fallback only.
   // Premium is annual-only — no monthly tier.
-  const proPrice      = pricing.pro ?? 3000;
   const annualPrice   = pricing.premiumAnnual ?? 3000;
   const originalPrice = pricing.premiumAnnualOriginal ?? 15000;
   const annualSavings = originalPrice - annualPrice;
   const annualDiscountPct = Math.round((annualSavings / originalPrice) * 100);
 
   const PLANS = {
-    pro: {
-      id: 'pro',
-      name: 'Pro',
-      emoji: '🚀',
-      price: proPrice,
-      period: '/month',
-      color: '#8B5CF6',
-      glow: 'rgba(108,63,201,0.35)',
-      tag: null,
-      pitch: 'Essential access, no limits.',
-      features: [
-        { icon: '♾️', text: 'Unlimited topics' },
-        { icon: '⏱️', text: 'Unlimited sessions' },
-        { icon: '🚫', text: 'No cooldown' },
-        { icon: '📉', text: 'Ads reduced' },
-        { icon: '📚', text: 'All 5 exam types' },
-      ],
-    },
     annual: {
       id: 'annual',
       name: 'Premium',
@@ -107,28 +88,6 @@ export default function PremiumModal({
           <div className="pm-subtitle">Unlock your full potential. No limits.</div>
         </div>
 
-        {/* Plan pills */}
-        <div className="pm-pills">
-          {Object.values(PLANS).map((p) => (
-            <button
-              key={p.id}
-              className={`pm-pill ${plan === p.id ? 'pm-pill--active' : ''}`}
-              style={plan === p.id ? { borderColor: p.color, color: p.color } : {}}
-              onClick={() => {
-                setPlan(p.id);
-                setError('');
-              }}
-            >
-              {p.emoji} {p.name}
-              {p.tag && (
-                <span className="pm-pill-tag" style={{ background: p.color }}>
-                  {p.tag}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-
         {/* Plan card */}
         <div className="pm-card" style={{ borderColor: `${current.color}55` }}>
           {/* Price */}
@@ -162,14 +121,6 @@ export default function PremiumModal({
             ))}
           </div>
         </div>
-
-        {/* Pro note */}
-        {plan === 'pro' && (
-          <div className="pm-pro-note">
-            💡 Pro gives core unlimited access. Upgrade to Premium for zero ads, games, squads &amp;
-            priority support — for less than one month of Pro.
-          </div>
-        )}
 
         {/* Error */}
         {error && <div className="pm-error">{error}</div>}

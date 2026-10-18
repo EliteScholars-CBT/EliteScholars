@@ -269,6 +269,30 @@ create or replace view leaderboard_alltime as
          quizzes_taken as total_quizzes
   from profiles where total_xp > 0;
 
+-- ---------------------------------------------- free limits, trial, grants --
+-- Per-student access overrides. "Free access" is an admin gift (no payment, no
+-- commission); a trial starts automatically at sign-up when switched on.
+alter table profiles add column if not exists trial_ends_at          timestamptz;
+alter table profiles add column if not exists free_access_until      timestamptz;
+alter table profiles add column if not exists free_access_forever    boolean not null default false;
+alter table profiles add column if not exists free_access_note       text;
+alter table profiles add column if not exists free_access_granted_at timestamptz;
+
+-- How much a free student has used. period = Lagos day (YYYY-MM-DD) or 'lifetime'.
+create table if not exists usage_counters (
+  email      text not null,
+  kind       text not null,
+  period     text not null,
+  count      int  not null default 0,
+  refs       jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now(),
+  primary key (email, kind, period)
+);
+
+insert into settings (key, value) values
+  ('access_config', '{"trialEnabled":false,"trialDays":14,"limits":{"topics":3,"cbt":3,"games":3,"fileStudy":2},"global":{"active":false,"forever":false,"until":null,"note":""}}'::jsonb)
+on conflict (key) do nothing;
+
 -- ------------------------------------------------------------ row security --
 alter table profiles           enable row level security;
 alter table xp_events          enable row level security;
@@ -283,4 +307,5 @@ alter table settings            enable row level security;
 alter table partners            enable row level security;
 alter table partner_payouts     enable row level security;
 alter table partner_commissions enable row level security;
+alter table usage_counters      enable row level security;
 -- No policies on purpose: only the server (service-role key) can read/write.
