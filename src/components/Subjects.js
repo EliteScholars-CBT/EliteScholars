@@ -334,7 +334,7 @@ export default function Subjects({
             return (
               <div className="subjects-card-container">
                 {subs.map(([id, meta]) => {
-                  const count = getFlashcardsForSubject(id).length;
+                  const count = getDeck(id, examType).length;
                   return (
                     <div
                       key={id}
