@@ -2,9 +2,6 @@
   "functions": {
     "api/**/*.js": {
       "maxDuration": 10
-    },
-    "api/data.js": {
-      "maxDuration": 30
     }
   },
   "rewrites": [
