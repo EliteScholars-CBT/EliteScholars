@@ -44,21 +44,23 @@ function Reveal({ as: Tag = 'div', className = '', delay = 0, children, ...rest 
 }
 
 const STEPS = [
-  { n: '01', title: 'Pick your exam', desc: "WAEC, NECO, JAMB, GST or POST-UTME — choose what you're preparing for." },
+  { n: '01', title: 'Pick your exam', desc: "WAEC, NECO, JAMB or GST — choose what you're preparing for." },
   { n: '02', title: 'Study your way', desc: 'CBT drills, bite-sized lessons, flashcards, arcade games, or upload your own notes.' },
   { n: '03', title: 'Track your progress', desc: 'Watch your XP, streak and scores climb, and see exactly where you still need work.' },
 ];
 
-const EXAMS = ['WAEC', 'NECO', 'JAMB', 'GST', 'POST-UTME'];
+const EXAMS = ['WAEC', 'NECO', 'JAMB', 'GST'];
 
-const ROTATE_WORDS = ['WAEC', 'NECO', 'JAMB', 'GST', 'POST-UTME'];
+const ROTATE_WORDS = ['WAEC', 'NECO', 'JAMB', 'GST'];
 
 const SHOTS = [
-  { key: 'subjects', img: '/landing/m-subjects.webp', icon: 'clipboard', title: 'CBT Practice', desc: 'Real exam-style questions for WAEC, NECO, JAMB, GST and POST-UTME — timed like the real thing, with instant explanations.' },
+  { key: 'subjects', img: '/landing/m-subjects.webp', icon: 'clipboard', title: 'CBT Practice', desc: 'Real exam-style questions for WAEC, NECO, JAMB and GST — timed like the real thing, with instant explanations.' },
   { key: 'quiz', img: '/landing/m-quiz.webp', icon: 'target', title: 'Instant Answers', desc: 'Tap, submit, learn. Every question comes with a quick take that explains why — so you never repeat a mistake.' },
   { key: 'lesson', img: '/landing/m-lesson.webp', icon: 'bookOpen', title: 'Bite-sized Lessons', desc: 'Topics broken into clear notes, tables and tips. Tap Read and a voice reads the lesson to you, word by word.' },
   { key: 'games', img: '/landing/m-games.webp', icon: 'gamepad', title: '6 Arcade Games', desc: 'Word Scramble, Memory Match, Picture Round, Colour Memory, Word Slice and Sort Rush. Learning that feels like play.' },
   { key: 'flash', img: '/landing/m-flash.webp', icon: 'cards', title: 'Flashcards', desc: 'Flip, mark what you know, and revise only what you need. Fast, focused and perfect for the night before.' },
+  { key: 'status', img: '/landing/m-status.webp', icon: 'chat', title: 'Status & Squads', desc: 'Post a 24-hour status for just yourself, your squad or everyone, and see what your classmates are up to.' },
+  { key: 'share', img: '/landing/m-share.webp', icon: 'share', title: 'Share Your Wins', desc: 'Every score and badge becomes a ready-made picture you can share anywhere or download, with your invite link on it.' },
   { key: 'me', img: '/landing/m-me.webp', icon: 'trophy', title: 'XP, Streaks & Ranks', desc: 'Earn XP for everything you do, build a daily streak and climb the leaderboard against friends and squads.' },
 ];
 
@@ -68,9 +70,35 @@ const BENEFITS = [
   { icon: 'wifiOff', title: 'Study with no data', desc: 'Load once and keep studying offline. Progress syncs the moment you are back online.' },
   { icon: 'flame', title: 'Stay consistent', desc: 'Streaks, XP and rewards make daily study a habit, not a struggle.' },
   { icon: 'users', title: 'Learn with friends', desc: 'Challenge classmates, join a squad and push each other up the ranks.' },
-  { icon: 'upload', title: 'Your notes, upgraded', desc: 'Upload a PDF or DOCX and get lessons, flashcards and questions. Your file never leaves your phone.' },
+  { icon: 'upload', title: 'Your notes, upgraded', desc: 'Upload a PDF or DOCX and get simple-language lessons, flashcards and questions.' },
   { icon: 'gift', title: 'Free to start', desc: 'Begin with no payment and no card. Go Premium later for ₦3,000 a year.' },
   { icon: 'rocket', title: 'Installs in seconds', desc: 'Add it to your home screen straight from the browser. No app store, no big download.' },
+];
+
+const MORE = [
+  { icon: 'bell', title: 'Daily streak reminders', desc: 'A gentle push notification when your streak is at risk, so you never lose it by accident.' },
+  { icon: 'clipboard', title: 'Assignments from teachers', desc: 'Your teacher posts homework with pictures. You get a notification and tick it off when done.' },
+  { icon: 'chat', title: '24-hour status', desc: 'Share a thought, a win or a study goal. Choose Only me, My squad or Everyone.' },
+  { icon: 'share', title: 'Shareable score and badge cards', desc: 'Beautiful pictures with your invite link. Share to WhatsApp or anywhere, or download.' },
+  { icon: 'wand', title: 'Study from your own files', desc: 'Upload notes and get them rewritten in simple words, with flashcards and questions.' },
+  { icon: 'flag', title: 'Report a wrong question', desc: 'Spot a mistake? One tiny tap and our team reviews it. Questions keep getting better.' },
+  { icon: 'wifiOff', title: 'Data saver mode', desc: 'Turn off sounds and heavy effects to save data and battery on any phone.' },
+  { icon: 'gem', title: 'Elite badge', desc: 'Premium students wear a gold Spartan badge on their profile, status and leaderboard rank.' },
+];
+
+const SCHOOL_POINTS = [
+  'Create a class in seconds and share a 6-letter code. Students join from their own phones.',
+  'Post assignments with instructions and pictures. Every student gets a notification.',
+  'See each student\'s average score, streak, last active day and weakest subjects.',
+  'Know who has finished each assignment, at a glance.',
+  'Free for teachers and students. Works with JAMB, WAEC, NECO and GST practice.',
+];
+
+const PARENT_POINTS = [
+  { icon: 'mail', title: 'Weekly report card', desc: 'Add a parent or guardian email and they get a simple progress report every Sunday: scores, streak and weak subjects.' },
+  { icon: 'shield', title: 'Safe by design', desc: 'No ads inside the practice app, no chat with strangers, and statuses are private unless your child chooses otherwise.' },
+  { icon: 'bell', title: 'Habit, not pressure', desc: 'Short daily sessions and streak reminders build steady revision instead of last-minute cramming.' },
+  { icon: 'coins', title: 'Affordable', desc: 'Start free. Premium is ₦3,000 for a whole year, far cheaper than one lesson.' },
 ];
 
 const DEMO_QS = [
@@ -80,9 +108,11 @@ const DEMO_QS = [
 ];
 
 const FAQ = [
+  { q: 'Can my school or teacher use EliteScholars?', a: 'Yes. Any teacher can create a class, share the class code, set assignments with pictures and see how every student is doing. Students get a notification for each new assignment.' },
+  { q: 'Can parents follow their child\'s progress?', a: 'Yes. Students add a parent or guardian email in their profile and the parent receives a weekly progress report by email every Sunday.' },
   { q: 'Is EliteScholars really free?', a: 'Yes. You can start studying for free with daily limits. Premium removes the limits and costs ₦3,000 for a full year.' },
   { q: 'Does it work without data?', a: 'Yes. Once your content has loaded, topics, flashcards and quizzes keep working offline, and your progress syncs when you reconnect.' },
-  { q: 'Which exams are covered?', a: 'WAEC, NECO, JAMB, GST and POST-UTME, with lessons, past-question style practice, flashcards and games.' },
+  { q: 'Which exams are covered?', a: 'WAEC, NECO, JAMB and GST, with lessons, past-question style practice, flashcards and games.' },
   { q: 'Do I need to download it from an app store?', a: 'No. Open it in your browser and tap Install or Add to Home Screen. It opens like any other app.' },
   { q: 'What happens to the notes I upload?', a: 'They are processed on your own phone. Nothing from your file is sent to our servers.' },
 ];
@@ -188,6 +218,12 @@ function TryIt({ onStart }) {
 export default function Landing() {
   const navigate = useNavigate();
   const heroRef = useRef(null);
+  const [blogPosts, setBlogPosts] = useState([]);
+  useEffect(() => {
+    let off = false;
+    fetch('/blog/latest.json').then((r) => (r.ok ? r.json() : [])).then((j) => { if (!off && Array.isArray(j)) setBlogPosts(j.slice(0, 5)); }).catch(() => {});
+    return () => { off = true; };
+  }, []);
   const [scrollY, setScrollY] = useState(0);
   const [progress, setProgress] = useState(0);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -250,6 +286,8 @@ export default function Landing() {
             <a href="#tour">Features</a>
             <a href="#try">Try it</a>
             <a href="#benefits">Benefits</a>
+            <a href="#schools">Schools</a>
+            <a href="#parents">Parents</a>
             <a href="#faq">FAQ</a>
             <a href="/blog/">Blog</a>
           </div>
@@ -315,7 +353,7 @@ export default function Landing() {
         <div className="l2-marquee-track">
           {[0, 1].map((r) => (
             <div className="l2-marquee-row" key={r}>
-              {['English', 'Mathematics', 'Biology', 'Chemistry', 'Physics', 'Economics', 'Government', 'Literature', 'Accounting', 'Geography', 'Commerce', 'GST', 'POST-UTME'].map((w) => <span key={w + r}>{w}</span>)}
+              {['English', 'Mathematics', 'Biology', 'Chemistry', 'Physics', 'Economics', 'Government', 'Literature', 'Accounting', 'Geography', 'Commerce', 'GST'].map((w) => <span key={w + r}>{w}</span>)}
             </div>
           ))}
         </div>
@@ -323,7 +361,7 @@ export default function Landing() {
 
       {/* ── Stats ───────────────────────────────────────────────────────── */}
       <section className="l2-stats">
-        <Stat value={10000} suffix="+" label="practice questions" />
+        <Stat value={50000} suffix="+" label="practice questions" />
         <Stat value={5} label="major exams covered" />
         <Stat value={6} label="arcade games" />
         <Stat value={0} suffix=" data" label="needed once loaded" />
@@ -417,6 +455,72 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ── More features ───────────────────────────────────────────────── */}
+      <section className="land-section" id="more">
+        <Reveal className="land-section-head">
+          <span className="land-eyebrow">New</span>
+          <h2>More ways to stay ahead</h2>
+          <p>Reminders, assignments, status updates, shareable cards and more, all built in.</p>
+        </Reveal>
+        <div className="l2-benefits">
+          {MORE.map((b, i) => (
+            <Reveal key={b.title} className="l2-benefit" delay={(i % 4) * 70}>
+              <span className="l2-benefit-ico"><Icon name={b.icon} size={20} /></span>
+              <h3>{b.title}</h3>
+              <p>{b.desc}</p>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Schools & teachers ──────────────────────────────────────────── */}
+      <section className="land-section l3-aud" id="schools">
+        <Reveal className="land-section-head">
+          <span className="land-eyebrow">For schools and teachers</span>
+          <h2>Run your class from your phone</h2>
+          <p>Give homework, track progress and keep every student practising, without any extra software.</p>
+        </Reveal>
+        <div className="l3-aud-grid">
+          <Reveal className="l3-aud-text">
+            <ul className="l3-list">
+              {SCHOOL_POINTS.map((t) => <li key={t}><Icon name="checkCircle" size={18} /><span>{t}</span></li>)}
+            </ul>
+            <button className="land-btn-primary" onClick={() => goApp('schools')}>Set up your class <Icon name="arrowRight" size={17} /></button>
+            <p className="l3-note">In the app: Profile, Settings, School &amp; Classes, I'm a teacher.</p>
+          </Reveal>
+          <Reveal className="l3-phones">
+            <PhoneFrame className="l3-ph a" src="/landing/m-school.webp" alt="Teacher dashboard showing student performance" />
+            <PhoneFrame className="l3-ph b" src="/landing/m-assign-new.webp" alt="Creating a new assignment with a picture" />
+            <PhoneFrame className="l3-ph c" src="/landing/m-assignment.webp" alt="A student viewing an assignment" />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── Parents ─────────────────────────────────────────────────────── */}
+      <section className="land-section l3-par" id="parents">
+        <Reveal className="land-section-head">
+          <span className="land-eyebrow">For parents and guardians</span>
+          <h2>Know how your child is really doing</h2>
+          <p>No more guessing. A short report lands in your inbox every week.</p>
+        </Reveal>
+        <div className="l2-benefits l3-par-grid">
+          {PARENT_POINTS.map((b, i) => (
+            <Reveal key={b.title} className="l2-benefit" delay={i * 70}>
+              <span className="l2-benefit-ico"><Icon name={b.icon} size={20} /></span>
+              <h3>{b.title}</h3>
+              <p>{b.desc}</p>
+            </Reveal>
+          ))}
+        </div>
+        <Reveal className="l3-share">
+          <div className="l3-share-text">
+            <h3>Every win is shareable</h3>
+            <p>Great score? New badge? One tap makes a picture with your invite link, ready for WhatsApp or the gallery. Friends who join help you earn rewards.</p>
+          </div>
+          <img src="/landing/share-card.webp" alt="Share card showing a 92% Biology score" loading="lazy" />
+        </Reveal>
+      </section>
+
       {/* ── How it works ────────────────────────────────────────────────── */}
       <section className="land-section land-how" id="how">
         <Reveal className="land-section-head">
@@ -474,6 +578,27 @@ export default function Landing() {
           </button>
         </Reveal>
       </section>
+
+      {/* ── Latest from the blog ────────────────────────────────────────── */}
+      {blogPosts.length > 0 && (
+        <section className="land-blog" aria-labelledby="land-blog-h">
+          <Reveal className="land-blog-head">
+            <h2 id="land-blog-h">Fresh from the blog</h2>
+            <p>JAMB, WAEC and study tips, straight to the point.</p>
+          </Reveal>
+          <div className="land-blog-grid">
+            {blogPosts.map((p, i) => (
+              <Reveal as="a" key={p.url} delay={i * 60} className="land-blog-card" href={p.url}>
+                <span className="land-blog-cat">{String(p.category || '').replace(/-/g, ' ')}</span>
+                <h3>{p.title}</h3>
+                <p>{p.excerpt}</p>
+                <span className="land-blog-meta">{p.readTime} min read →</span>
+              </Reveal>
+            ))}
+          </div>
+          <a className="land-blog-all" href="/blog/">See all articles</a>
+        </section>
+      )}
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
       <footer className="land-footer">

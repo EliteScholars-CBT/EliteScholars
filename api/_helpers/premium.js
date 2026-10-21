@@ -58,3 +58,22 @@ export async function getPremiumStatus(email) {
     expiresStr: active ? exp.toLocaleDateString("en-NG", { day: "numeric", month: "long", year: "numeric" }) : null,
   };
 }
+
+// A paid shop item: logged once per transaction, and the referring partner earns commission on it
+// exactly like they do on Premium.
+export async function logShopPurchase({ email, txRef, amount, itemId }) {
+  if (!supabaseEnabled()) return { error: true };
+  const sb = getSupabase();
+  try {
+    const claim = await sb.from("payments").insert({ tx_ref: txRef, email, plan: `shop:${itemId}`, amount: Number(amount) || 0, status: "successful" });
+    if (claim.error) {
+      if (claim.error.code === "23505" || /duplicate/i.test(claim.error.message || "")) return { duplicate: true };
+      throw claim.error;
+    }
+    await recordCommission({ email, txRef, amount });
+    return { ok: true };
+  } catch (e) {
+    console.error("[premium] shop write failed:", e?.message);
+    return { error: true };
+  }
+}

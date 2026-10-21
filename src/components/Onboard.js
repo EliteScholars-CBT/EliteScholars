@@ -22,7 +22,7 @@ export default function Onboard({ onDone }) {
       <div style={{ padding: '44px 24px 24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
         <div className="onboard-icon"><EmojiIcon emoji="🎓" size="1.1em" /></div>
         <div className="onboard-title">JAMB · WAEC · NECO<br /><span className="onboard-title-gold">All in one place.</span></div>
-        <div className="onboard-subtitle">Free exam prep for POST UTME, WAEC, NECO, GST &amp; JAMB.</div>
+        <div className="onboard-subtitle">Free exam prep for WAEC, NECO, GST &amp; JAMB.</div>
         <div className="onboard-text">Enter your name and email to save your progress, streaks and achievements. No password needed.</div>
       </div>
       <div style={{ padding: '0 24px 36px', display: 'flex', flexDirection: 'column', gap: 12 }}>

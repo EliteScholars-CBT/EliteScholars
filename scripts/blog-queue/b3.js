@@ -15,8 +15,8 @@ module.exports = [
 ["Track Your Time","Check your phone's screen time report each week. If social media takes more hours than study, adjust."]
 ]],
 ["what-to-do-after-jamb-results-and-admission-process","jamb","11-20","The Nigerian Admission Process Step by Step: From UTME to Matriculation","Admission has several stages and most confusion comes from not knowing the order. Here is the flow.","admission process,JAMB CAPS,Post-UTME,matriculation",[
-["The Flow","Write the UTME, receive your score, apply to your chosen institutions, take Post-UTME where required, wait for merit lists, then accept your admission on JAMB CAPS. After acceptance you pay fees, register and matriculate."],
-["Common Mistakes","Choosing an institution without checking the course cut-off, missing the Post-UTME deadline and ignoring the acceptance step on CAPS."],
+["The Flow","Write the UTME, receive your score, apply to your chosen institutions, complete your school screening where required, wait for merit lists, then accept your admission on JAMB CAPS. After acceptance you pay fees, register and matriculate."],
+["Common Mistakes","Choosing an institution without checking the course cut-off, missing the screening deadline and ignoring the acceptance step on CAPS."],
 ["Stay Informed","Always use official channels for updates, and never pay anyone who claims to guarantee admission. Genuine admission comes only through the official process."]
 ]],
 ["how-to-learn-vocabulary-fast-for-english-exams","study-tips","11-21","How to Learn English Vocabulary Fast for Exams","A bigger vocabulary helps comprehension, lexis and essays. Here is a fast method to expand it.","vocabulary,English language,memory tricks,flashcards",[
@@ -28,11 +28,6 @@ module.exports = [
 ["Draw Neat Labelled Diagrams","Use a sharp pencil, draw large and label with straight lines. Include a title and magnification where required."],
 ["Know Your Practical Tests","Food tests, osmosis experiments, photosynthesis experiments and specimen identification appear regularly. Practise them with a teacher or video."],
 ["Use Precise Terms","Biology marking schemes reward correct terms. Learn definitions word for word where required."]
-]],
-["post-utme-documents-checklist-and-mistakes","postutme","11-23","Post-UTME Documents Checklist: Avoid These Costly Mistakes","Many candidates are disqualified for paperwork errors. Keep this checklist ready.","Post-UTME documents,screening,admission,checklist",[
-["Documents to Prepare","Birth certificate or declaration of age, state of origin or local government letter, O-level results, JAMB result slip, passport photographs, and a valid email and phone number."],
-["Common Errors","Names that do not match across documents, expired or unreadable scans and using a wrong JAMB registration number."],
-["Fix Early","If your names differ across documents, correct them early with the relevant body. It can take weeks, so do not wait until deadlines."]
 ]],
 ["how-to-read-a-textbook-effectively","study-tips","11-24","How to Read a Textbook Effectively (SQ3R in Plain English)","Reading every word from page one is slow. Use SQ3R to get more from less time.","SQ3R,textbook reading,reading skills,study technique",[
 ["Survey and Question","Skim headings, summaries and diagrams first. Turn each heading into a question you want answered."],
@@ -63,10 +58,5 @@ module.exports = [
 ["Remember Why","Write down the course, school and life you are working towards and place it where you will see it."],
 ["Build Small Habits","Commit to just ten minutes. Once you start, you often continue."],
 ["Track Progress","Seeing streaks, XP and improving scores keeps you engaged. Celebrate small victories."]
-]],
-["university-admission-plan-b-what-if-you-miss-your-course","postutme","11-30","Plan B for Admission: What to Do If You Miss Your First-Choice Course","Missing your first choice is not failure. Change of course, institution or pathway are all possible.","change of course,admission plan B,JAMB,direct entry",[
-["Know Your Options","You may be offered an alternative course, apply for change of course or institution through the official process, or consider polytechnic, college of education or direct entry routes."],
-["Think Long-Term","Some courses relate closely to your dream career and can lead you there through postgraduate study."],
-["Act Quickly","Deadlines for change requests are short, so follow official announcements."]
 ]]
 ];

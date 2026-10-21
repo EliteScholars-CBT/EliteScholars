@@ -5,6 +5,7 @@ import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import crypto from "crypto";
 import { requireUser } from "../_helpers/session.js";
 import { rateLimitOk } from "../_helpers/guard.js";
+import { eliteEmails } from "../_helpers/elite.js";
 
 const VIEWS = { daily: "leaderboard_daily", weekly: "leaderboard_weekly", monthly: "leaderboard_monthly", alltime: "leaderboard_alltime" };
 const ord = (n) => { const s = ["th", "st", "nd", "rd"], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
@@ -48,7 +49,8 @@ export default async function handler(req, res) {
   if (op === "get") {
     const limit = Math.min(parseInt(req.query.limit) || 50, 200);
     const rows = await board(type, limit);
-    return res.status(200).json(rows.map((r) => ({ ...r, email: r.email.toLowerCase() === me ? me : opaque(r.email.toLowerCase()) })));
+    const elite = await eliteEmails(rows.map((r) => r.email));
+    return res.status(200).json(rows.map((r) => ({ ...r, elite: elite.has(r.email), email: r.email.toLowerCase() === me ? me : opaque(r.email.toLowerCase()) })));
   }
 
   if (op === "rank") {

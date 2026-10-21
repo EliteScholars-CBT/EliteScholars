@@ -19,7 +19,6 @@ export default function BottomNav({ currentScreen, onNavigate, userEmail }) {
   const STUDY_SCREENS = new Set([
     'subjects',
     'examType',
-    'universitySelect',
     'ready',
     'quiz',
     'result',

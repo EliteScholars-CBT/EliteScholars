@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
+import ShareSheet from './ShareSheet';
 import { getSubjectMeta } from '../data/subjectMeta';
 import { GOLD, LGOLD, GREEN, RED } from '../utils/colors';
 import { loadUser } from '../utils/storage';
 import { buildReferralCode, referralLink } from '../utils/referral';
 
 export default function ScoreCard({ name, subjectId, score, correct, totalQ, onClose }) {
+  const [sharing, setSharing] = useState(false);
   const meta = getSubjectMeta(subjectId);
   const savedUser = loadUser();
   const refCode = buildReferralCode(savedUser.username || name, savedUser.email);
@@ -116,14 +118,19 @@ export default function ScoreCard({ name, subjectId, score, correct, totalQ, onC
         <div className="scorecard-quote">
           <div className="scorecard-quote-text">"{msg}"</div>
         </div>
+        {sharing && (
+          <ShareSheet
+            card={{ kind: 'score', icon: grade.emoji, big: `${pct}%`, headline: `${correct}/${totalQ} correct in ${meta.label}`, sub: msg, name, accent: grade.ac }}
+            text={shareText.split('\n\n')[0] + `\n\nI scored ${correct}/${totalQ} (${pct}%) in ${meta.label} on EliteScholars!`}
+            link={refLink}
+            onClose={() => setSharing(false)}
+          />
+        )}
         <div className="scorecard-footer">
           <div className="scorecard-url">{refLinkShort}</div>
           <button
             className="scorecard-share-btn"
-            onClick={() => {
-              window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
-              onClose();
-            }}
+            onClick={() => setSharing(true)}
           >
             📤 Share My Score Card
           </button>

@@ -13,18 +13,24 @@ import {
   PAYMENT_URL_PRO,
 } from './_helpers/constants/premium.js';
 
+import { getPricing, fmtNaira } from './_helpers/pricing.js';
 import { safeHandler } from "./_helpers/safe.js";
 async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return sendMethodNotAllowed(res);
 
+  let pr = null;
+  try { pr = await getPricing(); } catch { /* defaults */ }
+  const items = SHOP_ITEMS.map((it) => (it.isPremium
+    ? { ...it, price: `${fmtNaira(pr ? pr.premiumAnnual : PREMIUM_ANNUAL_PRICE)}/yr` }
+    : { ...it, priceNGN: pr ? pr.items[it.id] : undefined, price: pr && pr.items[it.id] ? fmtNaira(pr.items[it.id]) : it.price }));
   return sendOk(res, {
-    items: SHOP_ITEMS,
+    items,
     pricing: {
-      premiumAnnual:         PREMIUM_ANNUAL_PRICE,
-      premiumAnnualOriginal: PREMIUM_ANNUAL_ORIGINAL_PRICE,
-      pro:                   PRO_MONTHLY_PRICE,
+      premiumAnnual:         pr ? pr.premiumAnnual : PREMIUM_ANNUAL_PRICE,
+      premiumAnnualOriginal: pr ? pr.premiumAnnualOriginal : PREMIUM_ANNUAL_ORIGINAL_PRICE,
+      pro:                   pr ? pr.pro : PRO_MONTHLY_PRICE,
       urls: {
         annual: PAYMENT_URL_ANNUAL,
         pro:    PAYMENT_URL_PRO,

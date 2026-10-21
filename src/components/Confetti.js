@@ -1,3 +1,4 @@
+import { isDataSaver } from '../utils/dataSaver';
 import React, { useMemo } from 'react';
 
 // ============================================================================
@@ -29,6 +30,7 @@ export default function Confetti({ count = 70, duration = 2600 }) {
     [count]
   );
 
+  if (isDataSaver()) return null;
   return (
     <div className="confetti-burst" aria-hidden="true" style={{ '--confetti-life': `${duration}ms` }}>
       {pieces.map((p) => (

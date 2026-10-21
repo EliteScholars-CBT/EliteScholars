@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { fmtN, fmtNaira, TrendChart, Kpi, Bars } from './AdminCharts';
 
+const dtt = (s) => (s ? new Date(s).toLocaleString('en-NG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Africa/Lagos' }) : 'never');
 const dt = (s) => (s ? new Date(s).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' }) : '—');
 const copy = (t) => { try { navigator.clipboard?.writeText(t); } catch { /* ignore */ } };
 const linkFor = (code) => `https://elitescholars.site/?ref=${code}`;
@@ -243,7 +244,7 @@ function PartnerDetail({ d, err, msg, back, act }) {
       <section className="adm-card">
         <div className="adm-card-head">
           <div><h2 className="adm-name">{p.name} <Chip status={p.status} /></h2>
-            <small className="adm-sub">{p.email} · {p.phone} · joined {dt(p.joined)} · last seen {dt(p.lastLogin)}</small></div>
+            <small className="adm-sub">{p.email} · {p.phone} · joined {dt(p.joined)} · last seen {dtt(p.lastLogin)}</small></div>
           <div className="adm-tabs">
             {p.status === 'pending' && <button className="on" onClick={() => act('partner-action', { action: 'approve', id }, 'Approved. They were emailed.')}>Approve</button>}
             {p.status === 'active' && <button className="adm-ghost" onClick={() => window.confirm('Suspend this partner? They will not earn new commission.') && act('partner-action', { action: 'suspend', id }, 'Suspended.')}>Suspend</button>}

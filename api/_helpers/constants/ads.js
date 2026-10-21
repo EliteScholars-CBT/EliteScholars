@@ -14,10 +14,10 @@ export const AFFILIATE_ADS = [
     id: 'aff_jamb_1',
     image: null,
     title: '📚 JAMB Masterclass Bundle',
-    description: 'Premium offline study pack: 5,000+ questions, answer keys & video solutions.',
+    description: 'Premium offline study pack: 50,000+ questions, answer keys & video solutions.',
     link: 'https://elitescholars.site/shop',
     cta: 'Get It Now →',
-    audiences: ['jamb', 'postutme'],
+    audiences: ['jamb'],
   },
   {
     id: 'aff_waec_1',

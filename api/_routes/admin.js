@@ -4,23 +4,61 @@ import crypto from "crypto";
 import { sendOk, sendErr, sendMethodNotAllowed, setCors, readBody } from "../_helpers/response.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { checkRateLimit } from "../_helpers/rateLimit.js";
+import { verifyPassword } from "../_helpers/hash.js";
 
 const TTL_MS = 12 * 60 * 60 * 1000;
+const SUB_TTL_MS = 6 * 60 * 60 * 1000;
 const secret = () => process.env.ADMIN_SESSION_SECRET || process.env.ADMIN_PASSWORD || "";
 const sign = (exp) => crypto.createHmac("sha256", secret()).update(String(exp)).digest("hex");
 const digest = (s) => crypto.createHash("sha256").update(String(s)).digest();
+const safeEq = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && crypto.timingSafeEqual(x, y); };
+
+// Permissions a sub-admin can be given. Michael (the owner password) always has all of them.
+export const ADMIN_PERMS = {
+  analytics: "Analytics & overview", students: "Students & activity", blog: "Blog analytics", partners: "Affiliate partners",
+  payouts: "Partner payouts & commissions", mail: "Send emails", reports: "Question reports", access: "Access & free trials",
+  prices: "Prices & school plans", schools: "Schools", ai: "AI keys",
+};
+export const ROLE_TEMPLATES = {
+  support: { label: "Support", perms: ["students", "reports", "access"] },
+  marketing: { label: "Marketing", perms: ["analytics", "blog", "mail", "partners"] },
+  finance: { label: "Finance", perms: ["analytics", "partners", "payouts", "prices"] },
+  content: { label: "Content", perms: ["reports", "blog"] },
+};
 
 function makeToken() {
   const exp = Date.now() + TTL_MS;
   return `${exp}.${sign(exp)}`;
 }
-export function tokenOk(token) {
-  if (!secret() || !token) return false;
-  const [exp, sig] = String(token).split(".");
-  if (!exp || !sig || Number(exp) < Date.now()) return false;
-  const good = sign(exp);
-  if (sig.length !== good.length) return false;
-  return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(good));
+export function makeSubToken(admin) {
+  const body = Buffer.from(JSON.stringify({ i: admin.id, n: admin.name, p: admin.perms, e: Date.now() + SUB_TTL_MS })).toString("base64url");
+  return `a1.${body}.${crypto.createHmac("sha256", secret()).update(`a1.${body}`).digest("base64url")}`;
+}
+// Who is this token? → { owner, id, name, perms } or null (signature + expiry only).
+export function adminFromToken(token) {
+  if (!secret() || !token) return null;
+  const t = String(token);
+  if (t.startsWith("a1.")) {
+    const [, body, sig] = t.split(".");
+    if (!body || !sig) return null;
+    const good = crypto.createHmac("sha256", secret()).update(`a1.${body}`).digest("base64url");
+    if (!safeEq(sig, good)) return null;
+    try {
+      const p = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
+      if (!p.e || p.e < Date.now()) return null;
+      return { owner: false, id: p.i, name: p.n, perms: Array.isArray(p.p) ? p.p : [] };
+    } catch { return null; }
+  }
+  const [exp, sig] = t.split(".");
+  if (!exp || !sig || Number(exp) < Date.now()) return null;
+  if (!safeEq(sig, sign(exp))) return null;
+  return { owner: true, id: "owner", name: "Owner", perms: Object.keys(ADMIN_PERMS) };
+}
+// perm omitted = any signed-in admin. Owner passes every check.
+export function tokenOk(token, perm) {
+  const a = adminFromToken(token);
+  if (!a) return false;
+  return a.owner || !perm || a.perms.includes(perm);
 }
 
 // Supabase returns at most 1000 rows per request, so page through.
@@ -290,16 +328,26 @@ export default async function handler(req, res) {
     const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
     const { allowed } = await checkRateLimit(`admin-login:${ip}`, 6, 900);
     if (!allowed) return sendErr(res, "Too many attempts. Try again in 15 minutes.", 429);
-    const { password } = readBody(req);
+    const { password, email } = readBody(req);
+    if (email) {
+      // sub-admin sign-in
+      if (!supabaseEnabled()) return sendErr(res, "Not available.", 503);
+      const em = String(email).toLowerCase().trim();
+      const { data: ad } = await getSupabase().from("admin_users").select("*").eq("email", em).maybeSingle();
+      const okPw = ad && ad.active && password && verifyPassword(String(password), ad.pass_hash).ok;
+      if (!okPw) return sendErr(res, "Wrong email or password.", 401);
+      await getSupabase().from("admin_users").update({ last_login: new Date().toISOString() }).eq("id", ad.id);
+      return sendOk(res, { token: makeSubToken(ad), admin: { name: ad.name, perms: ad.perms } });
+    }
     const ok = password && crypto.timingSafeEqual(digest(password), digest(process.env.ADMIN_PASSWORD));
     if (!ok) return sendErr(res, "Wrong password.", 401);
-    return sendOk(res, { token: makeToken() });
+    return sendOk(res, { token: makeToken(), admin: { name: "Owner", perms: Object.keys(ADMIN_PERMS), owner: true } });
   }
 
   if (op === "stats") {
     if (req.method !== "GET") return sendMethodNotAllowed(res);
     const token = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
-    if (!tokenOk(token)) return sendErr(res, "Session expired. Please sign in again.", 401);
+    if (!tokenOk(token, "analytics")) return sendErr(res, "Session expired. Please sign in again.", 401);
     if (!supabaseEnabled()) return sendErr(res, "Supabase is not configured.", 503);
     try {
       return sendOk(res, { stats: await buildStats(req.query) });

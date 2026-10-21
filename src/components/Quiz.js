@@ -1,3 +1,4 @@
+import ReportQuestion from './ReportQuestion';
 import React, { useState, useEffect, useRef } from 'react';
 import { QB } from '../data/jamb/index';
 import { WAEC_QB } from '../data/waec/index';
@@ -54,10 +55,10 @@ export default function Quiz({
         ? NECO_QB
         : examType === 'gst'
           ? GST_QB
-          : examType === 'waec' || examType === 'postutme'
+          : examType === 'waec'
             ? WAEC_QB
             : QB;
-    const questions = bankByType[subjectId] || WAEC_QB[subjectId] || QB[subjectId] || null;
+    const questions = bankByType[subjectId] || WAEC_QB[subjectId] || QB[subjectId] || NECO_QB[subjectId] || GST_QB[subjectId] || [];
     // Shuffle then slice to exactly effectiveRoundSize questions.
     // This fixes the Q count mismatch — the pool literally has only N questions.
     return sfl(questions).slice(0, effectiveRoundSize);
@@ -543,6 +544,7 @@ export default function Quiz({
             >
               {q.yr}
             </div>
+            <ReportQuestion subject={subjectId} exam={examType} qi={qi} question={q.q} options={q.o} />
           </div>
           <div className="question-text">{q.q}</div>
           {q.o.map((opt, i) => (

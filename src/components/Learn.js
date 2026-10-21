@@ -22,18 +22,12 @@ import {
   trackTopicComplete,
 } from '../analytics/studyAnalytics';
 import Icon, { EmojiIcon } from './Icon';
-import { splitIntoSentences, normalizeForSpeech } from '../utils/ttsNormalize';
+import { normalizeForSpeech } from '../utils/ttsNormalize';
+import { wrapWords, unwrapWords, buildChunks, mapIndex, markChunk, clearChunk, keepInView } from '../utils/ttsHighlight';
 
 const FONT_SIZES = [13, 15, 17, 19, 21];
 const STORAGE_KEY = (examType, subjectId) => `es_learn_${examType}_${subjectId}`;
 const MIN_CORRECT_ANSWERS = 3;
-
-function stripHtml(html = '') {
-  return html
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
 
 function injectAds(html, adEvery, maxAds, topicIdx, adSequence) {
   if (!html || adEvery <= 0) return [{ type: 'html', content: html }];
@@ -68,7 +62,7 @@ function ContentBlock({ block, refreshTrigger, examType, email }) {
     );
 
   let html = block.content;
-  if (examType === 'jamb' || examType === 'postutme') {
+  if (examType === 'jamb') {
     html = html.replace(/\bWAEC\b/gi, 'JAMB');
   } else if (examType === 'neco') {
     html = html.replace(/\bWAEC\b/gi, 'NECO');
@@ -155,21 +149,6 @@ function getLearnData(examType) {
   return WAEC_LEARN;
 }
 
-// Long sentences make some voices wait several seconds before the first word.
-// Split them at natural pauses so speech starts at once.
-function chunkForSpeech(sentence) {
-  if (sentence.length <= 140) return [sentence];
-  const parts = sentence.match(/[^,;:]+[,;:]?\s*/g) || [sentence];
-  const out = [];
-  let cur = '';
-  parts.forEach((p) => {
-    if ((cur + ' ' + p).trim().length > 120 && cur) { out.push(cur.trim()); cur = p; }
-    else cur = (cur + ' ' + p).trim();
-  });
-  if (cur) out.push(cur.trim());
-  return out;
-}
-
 export default function Learn({ subjectId, onBack, onTopicComplete, examType = 'waec', email, onLimit }) {
   const learnData = getLearnData(examType);
   const topics = learnData[subjectId] || [];
@@ -208,8 +187,8 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
   const [selectedCharId, setSelectedCharId] = useState('sophia');
   const [speaking, setSpeaking] = useState(false);
   const [paused, setPaused] = useState(false);
-  const [speakingWords, setSpeakingWords] = useState([]);
-  const [speakingWordIdx, setSpeakingWordIdx] = useState(-1);
+  const curChunkRef = useRef(null);
+  const estTimerRef = useRef(null);
   const sentenceQueueRef = useRef([]);
   const stoppedRef = useRef(true);
   const pauseTimerRef = useRef(null);
@@ -265,37 +244,56 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
     stoppedRef.current = true;
     sentenceQueueRef.current = [];
     clearTimeout(pauseTimerRef.current);
+    clearInterval(estTimerRef.current);
     stopSpeech();
+    clearChunk(curChunkRef.current);
+    curChunkRef.current = null;
+    unwrapWords();
     setSpeaking(false);
     setPaused(false);
-    setSpeakingWords([]);
-    setSpeakingWordIdx(-1);
   }, []);
 
+  // Speak one chunk of the page, lighting up its words in place as the voice moves along.
   const speakNextSentence = () => {
     if (stoppedRef.current) return;
-    const next = sentenceQueueRef.current.shift();
-    if (next === undefined) {
+    clearChunk(curChunkRef.current);
+    clearInterval(estTimerRef.current);
+    const chunk = sentenceQueueRef.current.shift();
+    if (chunk === undefined) {
       fullStopSpeech();
       return;
     }
-    const words = next.split(' ').filter(Boolean);
-    setSpeakingWords(words);
-    setSpeakingWordIdx(0);
-    const utter = new SpeechSynthesisUtterance(next);
+    curChunkRef.current = chunk;
+    const shown = chunk.map((w) => w.text).join(' ');
+    const spoken = normalizeForSpeech(shown) || shown;
+    markChunk(chunk, 0);
+    keepInView(chunk, scrollRef.current);
+    const utter = new SpeechSynthesisUtterance(spoken);
     const voice = getVoiceForCharacter(selectedCharId, characterVoices);
     if (voice) utter.voice = voice;
     utter.rate = 0.8;
     utter.pitch = 1.0;
-    let counter = 0;
+    let gotBoundary = false;
     utter.onboundary = (e) => {
       if (e.name === 'sentence') return;
-      setSpeakingWordIdx(Math.min(counter, words.length - 1));
-      counter += 1;
+      gotBoundary = true;
+      clearInterval(estTimerRef.current);
+      markChunk(chunk, mapIndex(spoken, e.charIndex || 0, chunk.length));
+    };
+    // Some phones never report word positions: estimate them from the speaking pace instead.
+    utter.onstart = () => {
+      const t0 = Date.now();
+      clearInterval(estTimerRef.current);
+      estTimerRef.current = setInterval(() => {
+        if (gotBoundary || stoppedRef.current) { clearInterval(estTimerRef.current); return; }
+        if (Date.now() - t0 < 700) return;
+        markChunk(chunk, Math.min(chunk.length - 1, Math.floor((Date.now() - t0 - 300) / 430)));
+      }, 160);
     };
     const advance = () => {
+      clearInterval(estTimerRef.current);
       if (stoppedRef.current) return;
-      pauseTimerRef.current = setTimeout(speakNextSentence, 260);
+      pauseTimerRef.current = setTimeout(speakNextSentence, 200);
     };
     utter.onend = advance;
     utter.onerror = advance;
@@ -304,11 +302,12 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
 
   const speakContent = () => {
     if (activeIdx === null) return;
-    const text = stripHtml(topics[activeIdx]?.contentHTML || topics[activeIdx]?.content || '');
     fullStopSpeech();
-    const sentences = splitIntoSentences(text).map(normalizeForSpeech).filter(Boolean).flatMap(chunkForSpeech);
-    if (!sentences.length) return;
-    sentenceQueueRef.current = sentences;
+    const roots = Array.from(document.querySelectorAll('.learn-content-html'));
+    if (!roots.length) return;
+    const chunks = buildChunks(wrapWords(roots));
+    if (!chunks.length) return;
+    sentenceQueueRef.current = chunks;
     stoppedRef.current = false;
     setSpeaking(true);
     setPaused(false);
@@ -398,7 +397,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
           import('../data/waec/index').then((m) => m.WAEC_QB),
         ]).then(([necoQB, waecQB]) => ((necoQB[subjectId] || []).length > 0 ? necoQB : waecQB));
       }
-      if (examType === 'jamb' || examType === 'postutme') {
+      if (examType === 'jamb') {
         return Promise.all([
           import('../data/jamb/index').then((m) => m.QB),
           import('../data/waec/index').then((m) => m.WAEC_QB),
@@ -663,21 +662,6 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
                 </>
               )}
             </div>
-            {speaking && speakingWords.length > 0 && (
-              <div className="learn-now-reading" aria-live="off">
-                {speakingWords.map((w, i) => (
-                  <span
-                    key={i}
-                    className={
-                      'learn-now-reading-word' +
-                      (i === speakingWordIdx ? ' active' : i < speakingWordIdx ? ' done' : '')
-                    }
-                  >
-                    {w}{' '}
-                  </span>
-                ))}
-              </div>
-            )}
           </>
         )}
       </div>

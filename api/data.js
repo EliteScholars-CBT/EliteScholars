@@ -25,6 +25,14 @@ import admin from "./_routes/admin.js";
 import partner from "./_routes/partner.js";
 import adminPartners from "./_routes/admin-partners.js";
 import authVerify from "./_routes/auth-verify.js";
+import studyRewrite from "./_routes/study-rewrite.js";
+import status from "./_routes/status.js";
+import adminMail from "./_routes/admin-mail.js";
+import push from "./_routes/push.js";
+import school from "./_routes/school.js";
+import report from "./_routes/report.js";
+import adminOps from "./_routes/admin-ops.js";
+import squadChat from "./_routes/squad-chat.js";
 
 // Several routes share one handler and are told which operation via ?op=
 function withOp(fn, op) {
@@ -46,6 +54,36 @@ const ROUTES = {
   "challenges/lookup": chLookup,
   "auth/verify": authVerify,
   "events/batch": eventsBatch,
+  "study/rewrite": studyRewrite,
+  "admin/mail-audience": withOp(adminMail, "mail-audience"),
+  "admin/mail-history": withOp(adminMail, "mail-history"),
+  "admin/mail-send": withOp(adminMail, "mail-send"),
+  "mail/unsubscribe": withOp(adminMail, "unsubscribe"),
+  "push/key": withOp(push, "key"),
+  "push/subscribe": withOp(push, "subscribe"),
+  "push/unsubscribe": withOp(push, "unsubscribe"),
+  "school/classes": withOp(school, "classes"),
+  "school/class-create": withOp(school, "class-create"),
+  "school/class-join": withOp(school, "class-join"),
+  "school/class-leave": withOp(school, "class-leave"),
+  "school/class-delete": withOp(school, "class-delete"),
+  "school/class-members": withOp(school, "class-members"),
+  "school/class-remove": withOp(school, "class-remove"),
+  "school/assign-create": withOp(school, "assign-create"),
+  "school/assign-list": withOp(school, "assign-list"),
+  "school/assign-get": withOp(school, "assign-get"),
+  "school/assign-done": withOp(school, "assign-done"),
+  "school/assign-delete": withOp(school, "assign-delete"),
+  "report/submit": withOp(report, "submit"),
+  "admin/reports": withOp(report, "list"),
+  "admin/report-action": withOp(report, "action"),
+  "squads/chat": withOp(squadChat, "list"),
+  "squads/chat-send": withOp(squadChat, "send"),
+  "squads/chat-delete": withOp(squadChat, "delete"),
+  "media/get": withOp(squadChat, "media"),
+  "status/post": withOp(status, "post"),
+  "status/feed": withOp(status, "feed"),
+  "status/delete": withOp(status, "delete"),
   "partner/signup": withOp(partner, "signup"),
   "partner/login": withOp(partner, "login"),
   "partner/me": withOp(partner, "me"),
@@ -59,6 +97,24 @@ const ROUTES = {
   "admin/payouts": withOp(adminPartners, "payouts"),
   "admin/payout-action": withOp(adminPartners, "payout-action"),
   "admin/settings": withOp(adminPartners, "settings"),
+  "admin/me": withOp(adminOps, "me"),
+  "admin/alerts": withOp(adminOps, "alerts"),
+  "admin/students": withOp(adminOps, "students"),
+  "admin/student": withOp(adminOps, "student"),
+  "admin/activity": withOp(adminOps, "activity"),
+  "admin/blog": withOp(adminOps, "blog"),
+  "admin/team": withOp(adminOps, "team"),
+  "admin/team-save": withOp(adminOps, "team-save"),
+  "admin/team-reset": withOp(adminOps, "team-reset"),
+  "admin/team-delete": withOp(adminOps, "team-delete"),
+  "admin/audit": withOp(adminOps, "audit"),
+  "admin/prices": withOp(adminOps, "prices"),
+  "admin/prices-save": withOp(adminOps, "prices-save"),
+  "admin/school-plans": withOp(adminOps, "school-plans"),
+  "admin/school-settings": withOp(adminOps, "school-settings"),
+  "admin/school-account": withOp(adminOps, "school-account"),
+  "admin/ai-status": withOp(adminOps, "ai-status"),
+  "admin/ai-test": withOp(adminOps, "ai-test"),
   "admin/login": withOp(admin, "login"),
   "admin/stats": withOp(admin, "stats"),
   "leaderboard/get": withOp(leaderboard, "get"),

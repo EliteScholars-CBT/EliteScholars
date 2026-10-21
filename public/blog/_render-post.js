@@ -17,22 +17,7 @@
 
   var catStyle = BlogEngine.getCategoryStyle(post.category);
 
-  var AFFILIATE_AD = {
-    icon: '📚',
-    title: 'JAMB Masterclass Bundle',
-    desc: '5,000+ questions, video solutions and answer keys. Offline access included.',
-    link: 'https://elitescholars.site/shop',
-    cta: 'Get It Now'
-  };
-
-  var PARTNER_AD = {
-    logo: '🎯',
-    title: 'Score 300+ Coaching',
-    desc: '30-day intensive programme with live tutors. Limited spots.',
-    link: 'https://elitescholars.site/coaching'
-  };
-
-  var contentWithAds = BlogEngine.injectAdsIntoContent(post.content, AFFILIATE_AD, PARTNER_AD);
+  var contentWithAds = BlogEngine.injectAdsIntoContent(post.content);
 
   var otherPosts = BLOG_POSTS.filter(function(p){ return p.id !== post.id && BlogEngine.isLive(p); }).slice(0,2);
 
@@ -57,31 +42,10 @@
   var SIDEBAR_HTML =
     '<div class="blog-sidebar">' +
       '<div class="blog-sidebar-sticky">' +
-        '<div class="blog-sidebar-ad">' +
-          '<div class="blog-sidebar-ad-label">Advertisement</div>' +
-          '<div class="blog-sidebar-pub-slot">Publisher Ad Space<br/><span style="font-size:10px;margin-top:4px;display:block">300 × 250</span></div>' +
-        '</div>' +
-        '<div class="blog-sidebar-ad">' +
-          '<div class="blog-sidebar-ad-label">Sponsored</div>' +
-          '<a href="' + AFFILIATE_AD.link + '" target="_blank" rel="noopener" class="blog-sidebar-aff">' +
-            '<div class="blog-sidebar-aff-icon">' + AFFILIATE_AD.icon + '</div>' +
-            '<div class="blog-sidebar-aff-title">' + AFFILIATE_AD.title + '</div>' +
-            '<div class="blog-sidebar-aff-desc">' + AFFILIATE_AD.desc + '</div>' +
-            '<div class="blog-sidebar-aff-cta">' + AFFILIATE_AD.cta + ' &rarr;</div>' +
-          '</a>' +
-        '</div>' +
-        '<div class="blog-sidebar-ad">' +
-          '<div class="blog-sidebar-ad-label">Partner</div>' +
-          '<a href="' + PARTNER_AD.link + '" target="_blank" rel="noopener" class="blog-sidebar-partner">' +
-            '<div class="blog-sidebar-partner-logo">' + PARTNER_AD.logo + '</div>' +
-            '<div class="blog-sidebar-partner-title">' + PARTNER_AD.title + '</div>' +
-            '<div class="blog-sidebar-partner-desc">' + PARTNER_AD.desc + '</div>' +
-          '</a>' +
-        '</div>' +
-        '<div class="blog-sidebar-ad">' +
-          '<div class="blog-sidebar-ad-label">Advertisement</div>' +
-          '<div class="blog-sidebar-pub-slot" style="min-height:160px">Publisher Ad Space<br/><span style="font-size:10px;margin-top:4px;display:block">300 × 160</span></div>' +
-        '</div>' +
+        BlogEngine.adSlot('side-1') +
+        BlogEngine.adSlot('side-2', 'premium') +
+        BlogEngine.adSlot('side-3', 'partner') +
+        BlogEngine.adSlot('side-4') +
       '</div>' +
     '</div>';
 
@@ -104,14 +68,18 @@
       '</div>' +
     '</div>' +
 
+    '<div class="blog-container es-top">' + BlogEngine.adSlot('top') + '</div>' +
+
     '<div class="blog-page-layout">' +
       '<div>' +
         '<div class="blog-body">' +
           '<div class="blog-content">' + contentWithAds + '</div>' +
+          BlogEngine.adSlot('end', 'whatsapp') +
+          '<p class="es-disclosure">Disclosure: EliteScholars shows advertising and some sponsored or partner links to keep the app free. See our <a href="/app/privacy#ads">advertising policy</a>.</p>' +
           '<div class="blog-tags">' + post.tags.map(function(t){ return '<span class="blog-tag">' + t + '</span>'; }).join('') + '</div>' +
           '<div class="blog-cta-box">' +
             '<h3>Practice What You Just Learned 🔥</h3>' +
-            '<p>Free CBT — JAMB, WAEC, NECO, Post UTME and GST. No signup, no paywall.</p>' +
+            '<p>Free CBT — JAMB, WAEC, NECO and GST. No signup, no paywall.</p>' +
             '<a href="../../" class="blog-cta-btn">Start Practising Free &rarr;</a>' +
           '</div>' +
           '<div class="blog-share">' +

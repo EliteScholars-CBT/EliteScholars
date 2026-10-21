@@ -21,7 +21,7 @@ export default async function handler(req, res) {
   setCors(res);
   if (req.method === "OPTIONS") return res.status(200).end();
   const token = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
-  if (!tokenOk(token)) return res.status(401).json({ success: false, error: "Session expired. Please sign in again." });
+  if (!tokenOk(token, "access")) return res.status(401).json({ success: false, error: "Session expired. Please sign in again." });
   if (!supabaseEnabled()) return sendErr(res, "Database not configured.", 503);
   const sb = getSupabase();
   const op = req.query.op;

@@ -10,5 +10,6 @@ export default async function handler(req, res) {
   if (!supabaseEnabled()) return sendErr(res, "Squads backend not configured.", 503);
   const email = await requireUser(req, res);
   if (!email) return;
-  return sendOk(res, { squad: await loadSquadFor(email) });
+  const squad = await loadSquadFor(email);
+  return sendOk(res, { squad: squad ? { ...squad, is_owner: squad.owner_email === email } : null });
 }

@@ -23,15 +23,17 @@ import GameMode from './components/GameMode';
 
 import ExamTypeSelect from './components/ExamTypeSelect';
 
-import UniversitySelect from './components/UniversitySelect';
 
 import Flashcards from './components/Flashcards';
+import School from './components/School';
 
 import BottomNav from './components/BottomNav';
 
 import Leaderboard from './components/Leaderboard';
 
 import Challenges from './components/Challenges';
+import ScreenGuard from './components/ErrorBoundary';
+import TipsHost from './components/TipsHost';
 
 import Shop from './components/Shop';
 
@@ -80,6 +82,7 @@ import {
 } from './utils/premium';
 
 import { registerSW, requestNotificationPermission, scheduleDailyReminder, listenForSWMessages } from './utils/notifications';
+import { markOpenChat, wantsChat, captureChatParam } from './utils/chatLink';
 
 import { applySecurityMeasures } from './utils/security';
 
@@ -373,8 +376,6 @@ export default function App() {
 
   const [examType, setExamType] = useState(null);
 
-  const [selectedUni, setSelectedUni] = useState(null);
-
   const [sessionStart, setSessionStart] = useState(null);
 
   const [usedFifty, setUsedFifty] = useState(false);
@@ -437,7 +438,11 @@ export default function App() {
 
       const name = params.get('name') || '';
 
-      setPaymentModal({ plan, expiry, name });
+      if (plan === 'shop') {
+        showToast('Payment received. Your item link has been emailed to you.', 'success');
+      } else {
+        setPaymentModal({ plan, expiry, name });
+      }
 
       // Clean URL so refresh doesn't retrigger
 
@@ -473,7 +478,9 @@ export default function App() {
 
     const unsub = listenForSWMessages((data) => {
 
-      if (data.type === 'challenge') setScreen('challenges');
+      const kind = (data && data.data && data.data.type) || data.type;
+      if (kind === 'challenge') setScreen('challenges');
+      if (kind === 'squad-chat') { markOpenChat(); setScreen('leaderboard'); }
 
     });
 
@@ -645,7 +652,8 @@ export default function App() {
 
         loadUserData(u);
 
-        setScreen('examType');
+        captureChatParam();
+        setScreen(wantsChat() ? 'leaderboard' : 'examType');
 
 
 
@@ -952,8 +960,6 @@ export default function App() {
 
     setExamType(null);
 
-    setSelectedUni(null);
-
     setScreen('examType');
 
   };
@@ -964,9 +970,7 @@ export default function App() {
 
     setExamType(type);
 
-    if (type === 'postutme') setScreen('universitySelect');
-
-    else setScreen('subjects');
+    setScreen('subjects');
 
   };
 
@@ -1320,8 +1324,6 @@ export default function App() {
 
     'shop',
 
-    'universitySelect',
-
     'examType',
 
   ]);
@@ -1382,37 +1384,17 @@ export default function App() {
 
 
 
-              {screen === 'universitySelect' && (
-
-                <UniversitySelect
-
-                  onSelectUniversity={(u) => {
-
-                    setSelectedUni(u);
-
-                    setScreen('subjects');
-
-                  }}
-
-                  onBack={() => setScreen('examType')}
-
-                />
-
-              )}
-
-
-
               {/* ── Unified subjects screen — handles ALL exam types ── */}
 
               {screen === 'subjects' && (
 
                 <Subjects
 
+                  onOpenSchool={() => setScreen('school')}
+
                   name={name}
 
                   examType={examType}
-
-                  university={selectedUni}
 
                   email={email}
 
@@ -1430,7 +1412,7 @@ export default function App() {
 
                   onProfile={() => setScreen('profile')}
 
-                  onBack={examType === 'postutme' ? () => setScreen('universitySelect') : null}
+                  onBack={null}
 
                 />
 
@@ -1442,7 +1424,7 @@ export default function App() {
 
               {screen === 'flashcards' && (
 
-                <Flashcards subjectId={flashcardSubject} onBack={() => setScreen('subjects')} />
+                <Flashcards subjectId={flashcardSubject} examType={examType} onBack={() => setScreen('subjects')} />
 
               )}
 
@@ -1514,9 +1496,11 @@ export default function App() {
 
               {screen === 'leaderboard' && <Leaderboard userEmail={email} userName={name} />}
 
+              {screen === 'school' && <School onBack={() => setScreen('profile')} />}
+
               {screen === 'challenges' && (
 
-                <Challenges userEmail={email} userName={name} userUsername={username} />
+                <ScreenGuard onBack={() => setScreen('subjects')}><Challenges userEmail={email} userName={name} userUsername={username} /></ScreenGuard>
 
               )}
 
@@ -1563,6 +1547,8 @@ export default function App() {
                   onPremiumActivated={handlePremiumActivated}
 
                   onBack={() => setScreen('subjects')}
+
+                  onOpenSchool={() => setScreen('school')}
 
                   onSignOut={() => {
 
@@ -1754,7 +1740,7 @@ export default function App() {
 
               {screen === 'game' && (
 
-                <GameMode onBack={() => setScreen('subjects')} email={email} name={name} onLimit={(reason) => { setLimitReason(reason); setShowLimitGate(true); }} />
+                <ScreenGuard onBack={() => setScreen('subjects')}><GameMode onBack={() => setScreen('subjects')} email={email} name={name} onLimit={(reason) => { setLimitReason(reason); setShowLimitGate(true); }} /></ScreenGuard>
 
               )}
 
@@ -1817,6 +1803,8 @@ export default function App() {
         <BottomNav currentScreen={screen} onNavigate={handleNavigate} userEmail={email} />
 
       )}
+
+      {showBottomNav && <TipsHost screen={screen} />}
 
 
 

@@ -29,11 +29,6 @@ module.exports = [
 ["Before the Exam","Sleep well, exercise lightly, drink water and practise under timed conditions so the exam format feels familiar. Prepared students are less anxious."],
 ["During the Exam","Take three slow breaths before you start. Read each question carefully. If your mind goes blank, skip that question and return later. If anxiety feels overwhelming for long periods, speak to a counsellor or a trusted adult."]
 ]],
-["post-utme-practice-general-paper-tips","postutme","11-08","Post-UTME General Paper: How to Prepare for Current Affairs and Reasoning","Some Post-UTME tests include general questions beyond your subjects. A short daily habit covers it.","Post-UTME,current affairs,aptitude test,reasoning",[
-["What May Appear","Quantitative and verbal reasoning, basic Nigerian history and civics, current affairs and sometimes questions about the university itself."],
-["Daily Habit","Read one reliable news summary each day and note three facts. Practise ten aptitude questions per day for two weeks before your screening."],
-["Know the School","Learn the date of founding, the vice-chancellor, the motto and key facts about your target school. These are easy marks that many forget to prepare."]
-]],
 ["how-to-write-waec-essay-answers-that-score-high","waec","11-09","How to Write WAEC Essay Answers That Score High Marks","Examiners award marks for structure and clarity. Learn the pattern and your essays improve at once.","WAEC essay,English language,WASSCE writing,exam answers",[
 ["Plan Before You Write","Spend three minutes listing your points. A plan prevents rambling and keeps your essay on topic."],
 ["Structure","Write an engaging introduction, three or four paragraphs each with one main idea, and a short conclusion. Use simple, correct English. Do not try to impress with difficult words you cannot spell."],

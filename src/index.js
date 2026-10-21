@@ -7,11 +7,16 @@ import Landing from './pages/Landing';
 import About from './pages/About';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import NotFound from './pages/NotFound';
 import { installSessionFetch } from './utils/sessionFetch';
 import { installLoginPersistence } from './utils/persistLogin';
+import { installContentGuard } from './utils/contentGuard';
+import { applyDataSaver } from './utils/dataSaver';
 
 installLoginPersistence();
 installSessionFetch();
+installContentGuard();
+applyDataSaver();
 
 // Loaded on demand so students never download the admin dashboard code.
 const Admin = lazy(() => import('./pages/Admin'));
@@ -48,6 +53,9 @@ root.render(
           <Route path="/about" element={<About />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+
+          {/* Anything else */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </ThemeProvider>
     </BrowserRouter>

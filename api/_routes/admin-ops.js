@@ -1,0 +1,481 @@
+// Admin tools beyond analytics. All GET/POST /api/admin/<op>, Bearer admin token.
+//   me, alerts                      any signed-in admin
+//   students, student               perm: students
+//   activity                        perm: students
+//   blog                            perm: blog
+//   team, team-save, team-reset, team-delete   owner only (sub-admins and their permissions)
+//   prices, prices-save, school-plans, school-settings, school-account   perm: prices / schools
+//   audit                           owner only
+import crypto from "crypto";
+import { sendOk, sendErr, sendMethodNotAllowed, setCors, readBody } from "../_helpers/response.js";
+import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
+import { adminFromToken, ADMIN_PERMS, ROLE_TEMPLATES } from "./admin.js";
+import { hashPasswordStrong } from "../_helpers/hash.js";
+import { sendHtml } from "../_helpers/mail.js";
+import { subAdminWelcomeEmail } from "../_helpers/emailTemplates.js";
+import { getPricing, bustPricingCache, DEFAULT_SCHOOL, tierFor } from "../_helpers/pricing.js";
+import { SHOP_ITEMS } from "../_helpers/constants/shop.js";
+import { accountStatus } from "../_helpers/schoolPlan.js";
+import { poolDiagnostics, loadKeys, callKey } from "../_helpers/aiPool.js";
+
+const MIN = 60000, H = 3600000, D = 86400000;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const clean = (v, n) => String(v || "").replace(/[\u0000-\u001F]/g, "").trim().slice(0, n);
+const iso = (v) => { const t = new Date(v).getTime(); return Number.isFinite(t) ? new Date(t).toISOString() : null; };
+const genPassword = () => {
+  const A = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+  return Array.from({ length: 12 }, () => A[crypto.randomInt(A.length)]).join("");
+};
+const safeRegex = (s) => String(s || "").replace(/[%,()*]/g, " ").trim().slice(0, 60);
+
+async function audit(sb, who, action, detail) {
+  try { await sb.from("admin_audit").insert({ admin_name: who.name, action, detail: String(detail || "").slice(0, 400) }); } catch { /* best effort */ }
+}
+
+const SORTS = { last_seen: "last_active", xp: "total_xp", joined: "created_at", streak: "current_streak", quizzes: "quizzes_taken", level: "level", login: "last_login" };
+
+function studentFilters(q, query) {
+  const text = safeRegex(query.q);
+  if (text) q = q.or(`email.ilike.%${text}%,username.ilike.%${text}%,first_name.ilike.%${text}%,last_name.ilike.%${text}%`);
+  const now = Date.now();
+  const seen = String(query.seen || "");
+  const win = { online: 15 * MIN, "1h": H, "24h": D, "7d": 7 * D, "30d": 30 * D }[seen];
+  if (win) q = q.gte("last_active", new Date(now - win).toISOString());
+  if (seen === "inactive7d") q = q.or(`last_active.is.null,last_active.lt.${new Date(now - 7 * D).toISOString()}`);
+  if (seen === "inactive30d") q = q.or(`last_active.is.null,last_active.lt.${new Date(now - 30 * D).toISOString()}`);
+  if (seen === "never") q = q.is("last_active", null);
+  const f = iso(query.seenFrom), t = iso(query.seenTo);
+  if (f) q = q.gte("last_active", f);
+  if (t) q = q.lte("last_active", t);
+  const jf = iso(query.joinedFrom), jt = iso(query.joinedTo);
+  if (jf) q = q.gte("created_at", jf);
+  if (jt) q = q.lte("created_at", jt);
+  if (query.minXp !== undefined && query.minXp !== "" && Number.isFinite(Number(query.minXp))) q = q.gte("total_xp", Number(query.minXp));
+  if (query.maxXp !== undefined && query.maxXp !== "" && Number.isFinite(Number(query.maxXp))) q = q.lte("total_xp", Number(query.maxXp));
+  if (query.premium === "yes") q = q.gt("expires_at", new Date(now).toISOString());
+  if (query.premium === "no") q = q.or(`expires_at.is.null,expires_at.lt.${new Date(now).toISOString()}`);
+  if (query.type) q = q.eq("student_type", String(query.type).slice(0, 20));
+  return q;
+}
+
+const studentRow = (p) => ({
+  email: p.email, name: [p.first_name, p.last_name].filter(Boolean).join(" ") || p.username || p.email.split("@")[0], username: p.username || "",
+  level: p.level, xp: p.total_xp, streak: p.current_streak, bestStreak: p.best_streak, quizzes: p.quizzes_taken,
+  accuracy: p.total_questions ? Math.round((p.total_correct / p.total_questions) * 100) : null,
+  lastActive: p.last_active, lastLogin: p.last_login, joined: p.created_at, type: p.student_type,
+  premium: !!(p.expires_at && new Date(p.expires_at) > new Date()), plan: p.subscription_plan, expiresAt: p.expires_at,
+});
+
+// Plain-English one-liners for the activity timeline
+const EVENT_LABEL = {
+  quiz_start: "Started a quiz", quiz_complete: "Finished a quiz", signup: "Signed up", login: "Logged in", premium_modal_open: "Looked at Premium",
+  learn_open: "Opened a Learn topic", game_start: "Started a game", game_over: "Finished a game", share: "Shared something", pwa_installed: "Installed the app",
+};
+const labelEvent = (e) => {
+  const p = e.payload || {};
+  const base = EVENT_LABEL[e.type] || String(e.type).replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
+  const extra = [p.subject, p.exam, p.topic, p.score !== undefined ? `score ${p.score}` : "", p.postTitle].filter(Boolean).join(" · ");
+  return extra ? `${base} — ${extra}` : base;
+};
+
+async function timeline(sb, email, limit = 120) {
+  const [ev, xp, ch1, ch2, pay, st, as] = await Promise.all([
+    sb.from("events").select("type,payload,created_at").eq("email", email).order("created_at", { ascending: false }).limit(limit),
+    sb.from("xp_events").select("amount,reason,created_at").eq("email", email).order("created_at", { ascending: false }).limit(60),
+    sb.from("challenges").select("challenger_name,opponent_name,subject,status,created_at").eq("challenger_email", email).order("created_at", { ascending: false }).limit(20),
+    sb.from("challenges").select("challenger_name,opponent_name,subject,status,created_at").eq("opponent_email", email).order("created_at", { ascending: false }).limit(20),
+    sb.from("payments").select("plan,amount,created_at,status").eq("email", email).order("created_at", { ascending: false }).limit(20),
+    sb.from("statuses").select("privacy,created_at").eq("email", email).order("created_at", { ascending: false }).limit(10),
+    sb.from("assignment_done").select("created_at").eq("email", email).order("created_at", { ascending: false }).limit(10),
+  ]);
+  const out = [];
+  for (const e of ev.data || []) out.push({ at: e.created_at, kind: "event", text: labelEvent(e) });
+  for (const x of xp.data || []) out.push({ at: x.created_at, kind: "xp", text: `${x.amount >= 0 ? "+" : ""}${x.amount} XP${x.reason ? ` — ${x.reason}` : ""}` });
+  for (const c of ch1.data || []) out.push({ at: c.created_at, kind: "challenge", text: `Challenged ${c.opponent_name || "a friend"}${c.subject ? ` in ${c.subject}` : ""} (${c.status})` });
+  for (const c of ch2.data || []) out.push({ at: c.created_at, kind: "challenge", text: `Was challenged by ${c.challenger_name || "a friend"}${c.subject ? ` in ${c.subject}` : ""} (${c.status})` });
+  for (const p of pay.data || []) out.push({ at: p.created_at, kind: "payment", text: `Payment ₦${Number(p.amount).toLocaleString("en-NG")} — ${p.plan} (${p.status})` });
+  for (const s of st.data || []) out.push({ at: s.created_at, kind: "status", text: `Posted a status (${s.privacy})` });
+  for (const a of as.data || []) out.push({ at: a.created_at, kind: "school", text: "Completed an assignment" });
+  return out.filter((x) => x.at).sort((a, b) => new Date(b.at) - new Date(a.at));
+}
+
+async function fetchPages(sb, table, cols, apply, maxPages = 30) {
+  const out = [];
+  for (let i = 0; i < maxPages; i++) {
+    let q = sb.from(table).select(cols);
+    if (apply) q = apply(q);
+    const { data, error } = await q.range(i * 1000, i * 1000 + 999);
+    if (error) throw new Error(error.message);
+    out.push(...(data || []));
+    if (!data || data.length < 1000) break;
+  }
+  return out;
+}
+
+const top = (obj, n = 8) => Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, n).map(([name, count]) => ({ name, count }));
+const hostOf = (r) => { if (!r || r === "direct") return "Direct"; try { return new URL(r).hostname.replace(/^www\./, ""); } catch { return String(r).slice(0, 40); } };
+
+async function blogStats(sb, days) {
+  const since = new Date(Date.now() - days * D).toISOString();
+  const rows = await fetchPages(sb, "events", "type,payload,created_at", (q) => q.in("type", ["blog_page_view", "blog_session_end"]).gte("created_at", since), 40);
+  const sessions = new Map();
+  for (const r of rows) {
+    const p = r.payload || {};
+    const sid = p.sessionId || `${r.created_at}`;
+    let s = sessions.get(sid);
+    if (!s) { s = { post: p.postId || p.postTitle || "", title: p.postTitle || p.postId || "Unknown", category: p.category || "", device: p.device || "unknown", ref: hostOf(p.referrer), at: r.created_at, dur: 0, scroll: 0, ended: false }; sessions.set(sid, s); }
+    if (r.type === "blog_session_end") { s.ended = true; s.dur = Math.max(s.dur, Number(p.durationSec) || 0); s.scroll = Math.max(s.scroll, Number(p.maxScrollPct) || 0); }
+    if (r.created_at < s.at) s.at = r.created_at;
+  }
+  const posts = new Map();
+  const dayViews = {}, devices = {}, refs = {}, cats = {};
+  for (const s of sessions.values()) {
+    const key = s.post || s.title;
+    let po = posts.get(key);
+    if (!po) { po = { id: key, title: s.title, category: s.category, views: 0, ended: 0, dur: 0, scroll: 0, finished: 0, devices: {}, refs: {}, days: {} }; posts.set(key, po); }
+    po.views++; po.devices[s.device] = (po.devices[s.device] || 0) + 1; po.refs[s.ref] = (po.refs[s.ref] || 0) + 1;
+    const d = new Date(new Date(s.at).getTime() + H).toISOString().slice(0, 10);
+    po.days[d] = (po.days[d] || 0) + 1; dayViews[d] = (dayViews[d] || 0) + 1;
+    if (s.ended) { po.ended++; po.dur += s.dur; po.scroll += s.scroll; if (s.scroll >= 80) po.finished++; }
+    devices[s.device] = (devices[s.device] || 0) + 1; refs[s.ref] = (refs[s.ref] || 0) + 1;
+    if (s.category) cats[s.category] = (cats[s.category] || 0) + 1;
+  }
+  const list = [...posts.values()].map((p) => ({
+    id: p.id, title: p.title, category: p.category, views: p.views,
+    avgSeconds: p.ended ? Math.round(p.dur / p.ended) : 0, avgScroll: p.ended ? Math.round(p.scroll / p.ended) : 0,
+    finishRate: p.ended ? Math.round((p.finished / p.ended) * 100) : 0,
+    devices: top(p.devices, 4), referrers: top(p.refs, 5), days: Object.entries(p.days).sort(([a], [b]) => (a < b ? -1 : 1)).slice(-14).map(([day, views]) => ({ day, views })),
+  })).sort((a, b) => b.views - a.views);
+  const all = [...sessions.values()];
+  const ended = all.filter((s) => s.ended);
+  const labels = [];
+  for (let i = days - 1; i >= 0 && labels.length < 90; i--) labels.push(new Date(Date.now() + H - i * D).toISOString().slice(0, 10));
+  return {
+    days, totalViews: all.length,
+    avgSeconds: ended.length ? Math.round(ended.reduce((a, s) => a + s.dur, 0) / ended.length) : 0,
+    finishRate: ended.length ? Math.round((ended.filter((s) => s.scroll >= 80).length / ended.length) * 100) : 0,
+    series: { labels: labels.map((l) => l.slice(5)), values: labels.map((l) => dayViews[l] || 0) },
+    devices: top(devices, 4), referrers: top(refs, 8), categories: top(cats, 8), posts: list.slice(0, 60),
+    truncated: rows.length >= 40000,
+  };
+}
+
+export default async function handler(req, res) {
+  setCors(res);
+  res.setHeader("Cache-Control", "no-store");
+  if (req.method === "OPTIONS") return res.status(200).end();
+  const op = String(req.query.op || "");
+  const token = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
+  const who = adminFromToken(token);
+  if (!who) return sendErr(res, "Session expired. Please sign in again.", 401);
+  if (!supabaseEnabled()) return sendErr(res, "Supabase is not configured.", 503);
+  const sb = getSupabase();
+  const need = (perm) => who.owner || who.perms.includes(perm);
+  const deny = () => sendErr(res, "You don't have access to that.", 403);
+  const q = req.method === "GET" ? req.query : { ...req.query, ...readBody(req) };
+  const b = req.method === "POST" ? readBody(req) : {};
+
+  // A sub-admin who has since been switched off loses access straight away.
+  if (!who.owner && op !== "me") {
+    const { data: row } = await sb.from("admin_users").select("active,perms").eq("id", who.id).maybeSingle();
+    if (!row || !row.active) return sendErr(res, "Your admin access has been turned off.", 401);
+    who.perms = Array.isArray(row.perms) ? row.perms : [];
+  }
+
+  try {
+    if (op === "me") {
+      let perms = who.perms;
+      if (!who.owner) {
+        const { data: row } = await sb.from("admin_users").select("active,perms").eq("id", who.id).maybeSingle();
+        if (!row || !row.active) return sendErr(res, "Your admin access has been turned off.", 401);
+        perms = Array.isArray(row.perms) ? row.perms : [];
+      }
+      return sendOk(res, { admin: { name: who.name, owner: who.owner, perms }, permLabels: ADMIN_PERMS, roles: ROLE_TEMPLATES });
+    }
+
+    if (op === "alerts") {
+      const counts = {}, items = [];
+      const cnt = async (table, apply) => { const { count } = await apply(sb.from(table).select("id", { count: "exact", head: true })); return count || 0; };
+      if (need("partners")) {
+        counts.partners = await cnt("partners", (x) => x.eq("status", "pending"));
+        if (counts.partners) {
+          const { data } = await sb.from("partners").select("full_name,created_at").eq("status", "pending").order("created_at", { ascending: false }).limit(5);
+          for (const p of data || []) items.push({ kind: "partner", text: `${p.full_name} wants to be a partner`, at: p.created_at, tab: "partners" });
+        }
+      }
+      if (need("payouts")) {
+        counts.payouts = await cnt("partner_payouts", (x) => x.eq("status", "requested"));
+        if (counts.payouts) items.push({ kind: "payout", text: `${counts.payouts} payout request${counts.payouts === 1 ? "" : "s"} waiting`, at: null, tab: "partners" });
+      }
+      if (need("reports")) {
+        counts.reports = await cnt("question_reports", (x) => x.eq("status", "open"));
+        if (counts.reports) items.push({ kind: "report", text: `${counts.reports} question report${counts.reports === 1 ? "" : "s"} to review`, at: null, tab: "reports" });
+      }
+      if (need("schools")) {
+        const { data } = await sb.from("school_accounts").select("teacher_email,school_name,trial_ends_at,paid_until");
+        const soon = (data || []).filter((a) => { const s = accountStatus(a); return s.status === "expired" || (s.status === "trial" && s.daysLeft <= 3); });
+        counts.schools = soon.length;
+        if (soon.length) items.push({ kind: "school", text: `${soon.length} school${soon.length === 1 ? "" : "s"} with a trial ending or ended`, at: null, tab: "schools" });
+      }
+      return sendOk(res, { counts, total: Object.values(counts).reduce((a, n) => a + n, 0), items });
+    }
+
+    // ── students ──
+    if (op === "students") {
+      if (!need("students")) return deny();
+      const page = Math.max(0, Number(q.page) || 0), size = Math.min(100, Math.max(10, Number(q.size) || 30));
+      const col = SORTS[q.sort] || "last_active";
+      const asc = String(q.dir) === "asc";
+      const cols = "email,username,first_name,last_name,level,total_xp,current_streak,best_streak,quizzes_taken,total_correct,total_questions,last_active,last_login,created_at,student_type,subscription_plan,expires_at";
+      const [{ data, error }, { count }] = await Promise.all([
+        studentFilters(sb.from("profiles").select(cols), q).order(col, { ascending: asc, nullsFirst: false }).range(page * size, page * size + size - 1),
+        studentFilters(sb.from("profiles").select("id", { count: "exact", head: true }), q),
+      ]);
+      if (error) { console.error("[admin students]", error.message); return sendErr(res, "Could not load students.", 500); }
+      const now = Date.now();
+      const { count: onlineNow } = await sb.from("profiles").select("id", { count: "exact", head: true }).gte("last_active", new Date(now - 15 * MIN).toISOString());
+      return sendOk(res, { students: (data || []).map(studentRow), total: count || 0, page, size, onlineNow: onlineNow || 0 });
+    }
+
+    if (op === "student") {
+      if (!need("students")) return deny();
+      const email = String(q.email || "").toLowerCase().trim();
+      if (!EMAIL_RE.test(email)) return sendErr(res, "Invalid student.");
+      const { data: p } = await sb.from("profiles").select("*").eq("email", email).maybeSingle();
+      if (!p) return sendErr(res, "Student not found.", 404);
+      const [{ data: sm }, { data: cm }, { data: tc }, { data: pay }, activity] = await Promise.all([
+        sb.from("squad_members").select("squad_id,xp_contributed").eq("email", email).limit(1).maybeSingle(),
+        sb.from("class_members").select("class_id").eq("email", email),
+        sb.from("classes").select("name,school_name,code").eq("teacher_email", email),
+        sb.from("payments").select("plan,amount,status,created_at").eq("email", email).order("created_at", { ascending: false }).limit(10),
+        timeline(sb, email, 120),
+      ]);
+      let squad = null;
+      if (sm) { const { data: s } = await sb.from("squads").select("name,code").eq("id", sm.squad_id).maybeSingle(); if (s) squad = { name: s.name, code: s.code, xp: sm.xp_contributed }; }
+      let classes = [];
+      if ((cm || []).length) { const { data } = await sb.from("classes").select("name,school_name").in("id", cm.map((c) => c.class_id)); classes = data || []; }
+      const subjects = Object.entries(p.subject_performance || {}).map(([k, v]) => ({ subject: k, ...(typeof v === "object" ? v : { value: v }) })).slice(0, 30);
+      return sendOk(res, {
+        student: {
+          ...studentRow(p), firstName: p.first_name, lastName: p.last_name, exams: p.selected_exams, guardianEmail: p.guardian_email || "",
+          totalCorrect: p.total_correct, totalQuestions: p.total_questions, perfectRounds: p.perfect_rounds, challengesWon: p.challenges_won, challengesLost: p.challenges_lost,
+          achievements: (p.achievements || []).length, subjects, referredBy: p.referred_by_code || "",
+        },
+        squad, classes, teaching: tc || [], payments: pay || [], activity,
+      });
+    }
+
+    if (op === "activity") {
+      if (!need("students")) return deny();
+      const days = Math.min(30, Math.max(1, Number(q.days) || 2));
+      const since = new Date(Date.now() - days * D).toISOString();
+      const before = iso(q.before);
+      let email = "";
+      const needle = safeRegex(q.q);
+      if (needle) {
+        const { data } = await sb.from("profiles").select("email").or(`email.ilike.%${needle}%,username.ilike.%${needle}%,first_name.ilike.%${needle}%`).limit(20);
+        email = (data || []).map((r) => r.email);
+        if (!email.length) return sendOk(res, { items: [], next: null });
+      }
+      const type = String(q.type || "");
+      let evq = sb.from("events").select("type,email,payload,created_at").not("email", "is", null).gte("created_at", since).order("created_at", { ascending: false }).limit(150);
+      if (before) evq = evq.lt("created_at", before);
+      if (email) evq = evq.in("email", email);
+      if (type && type !== "xp") evq = evq.eq("type", type);
+      let xq = sb.from("xp_events").select("email,amount,reason,created_at").gte("created_at", since).order("created_at", { ascending: false }).limit(150);
+      if (before) xq = xq.lt("created_at", before);
+      if (email) xq = xq.in("email", email);
+      const [evRes, xpRes] = await Promise.all([type === "xp" ? Promise.resolve({ data: [] }) : evq, !type || type === "xp" ? xq : Promise.resolve({ data: [] })]);
+      let merged = [
+        ...(evRes.data || []).map((e) => ({ at: e.created_at, email: e.email, kind: "event", type: e.type, text: labelEvent(e) })),
+        ...(xpRes.data || []).map((x) => ({ at: x.created_at, email: x.email, kind: "xp", type: "xp", text: `${x.amount >= 0 ? "+" : ""}${x.amount} XP${x.reason ? ` — ${x.reason}` : ""}` })),
+      ].sort((a, b) => new Date(b.at) - new Date(a.at)).slice(0, 120);
+      const emails = [...new Set(merged.map((m) => m.email))];
+      const names = {};
+      for (let i = 0; i < emails.length; i += 100) {
+        const { data } = await sb.from("profiles").select("email,username,first_name").in("email", emails.slice(i, i + 100));
+        for (const p of data || []) names[p.email] = p.username || p.first_name || p.email.split("@")[0];
+      }
+      merged = merged.map((m) => ({ ...m, who: names[m.email] || m.email.split("@")[0] }));
+      const { data: types } = await sb.from("events").select("type").not("email", "is", null).gte("created_at", since).limit(2000);
+      const tc = {}; for (const t of types || []) tc[t.type] = (tc[t.type] || 0) + 1;
+      return sendOk(res, { items: merged, next: merged.length >= 120 ? merged[merged.length - 1].at : null, types: top(tc, 20) });
+    }
+
+    // ── blog ──
+    if (op === "blog") {
+      if (!need("blog")) return deny();
+      return sendOk(res, { blog: await blogStats(sb, [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 30) });
+    }
+
+    // ── team (owner only) ──
+    if (["team", "team-save", "team-reset", "team-delete", "audit"].includes(op) && !who.owner) return sendErr(res, "Only the owner can manage the admin team.", 403);
+
+    if (op === "team") {
+      const { data } = await sb.from("admin_users").select("id,name,email,perms,role,active,created_at,last_login").order("created_at", { ascending: false });
+      return sendOk(res, { admins: data || [], permLabels: ADMIN_PERMS, roles: ROLE_TEMPLATES });
+    }
+    if (op === "team-save") {
+      if (req.method !== "POST") return sendMethodNotAllowed(res);
+      const perms = [...new Set((Array.isArray(b.perms) ? b.perms : []).filter((p) => ADMIN_PERMS[p]))];
+      if (!perms.length) return sendErr(res, "Pick at least one permission.");
+      if (b.id) {
+        const patch = { perms, role: ROLE_TEMPLATES[b.role] ? b.role : "custom" };
+        if (b.name) patch.name = clean(b.name, 60);
+        if (typeof b.active === "boolean") patch.active = b.active;
+        const { data, error } = await sb.from("admin_users").update(patch).eq("id", String(b.id)).select("id,name");
+        if (error || !(data || []).length) return sendErr(res, "Could not update that admin.");
+        await audit(sb, who, "team.update", `${data[0].name}: ${perms.join(", ")}${typeof b.active === "boolean" ? (b.active ? " (on)" : " (off)") : ""}`);
+        return sendOk(res, {});
+      }
+      const name = clean(b.name, 60), email = String(b.email || "").toLowerCase().trim();
+      if (name.length < 2) return sendErr(res, "Enter the person's name.");
+      if (!EMAIL_RE.test(email)) return sendErr(res, "Enter a valid email.");
+      const password = genPassword();
+      const { error } = await sb.from("admin_users").insert({ name, email, pass_hash: hashPasswordStrong(password), perms, active: true, role: ROLE_TEMPLATES[b.role] ? b.role : "custom" });
+      if (error) return sendErr(res, /duplicate|23505/.test(error.message + error.code) ? "That email is already an admin." : "Could not create the admin.");
+      await audit(sb, who, "team.create", `${name} <${email}>: ${perms.join(", ")}`);
+      let emailed = false;
+      if (b.sendEmail) emailed = await sendHtml(email, "Your EliteScholars admin access", subAdminWelcomeEmail({ name, email, password, perms: perms.map((p) => ADMIN_PERMS[p]) }));
+      return sendOk(res, { created: true, email, password, emailed });
+    }
+    if (op === "team-reset") {
+      const password = genPassword();
+      const { data } = await sb.from("admin_users").update({ pass_hash: hashPasswordStrong(password) }).eq("id", String(b.id || "")).select("name,email,perms");
+      if (!(data || []).length) return sendErr(res, "Admin not found.", 404);
+      await audit(sb, who, "team.reset", data[0].name);
+      let emailed = false;
+      if (b.sendEmail) emailed = await sendHtml(data[0].email, "Your new EliteScholars admin password", subAdminWelcomeEmail({ name: data[0].name, email: data[0].email, password, perms: (data[0].perms || []).map((p) => ADMIN_PERMS[p] || p) }));
+      return sendOk(res, { email: data[0].email, password, emailed });
+    }
+    if (op === "team-delete") {
+      const { data } = await sb.from("admin_users").delete().eq("id", String(b.id || "")).select("name");
+      if ((data || []).length) await audit(sb, who, "team.delete", data[0].name);
+      return sendOk(res, {});
+    }
+    if (op === "audit") {
+      const { data } = await sb.from("admin_audit").select("admin_name,action,detail,created_at").order("created_at", { ascending: false }).limit(150);
+      return sendOk(res, { log: data || [] });
+    }
+
+    // ── AI keys ──
+    if (op === "ai-status") {
+      if (!need("ai")) return deny();
+      const diag = poolDiagnostics();
+      const since = new Date(Date.now() - 7 * D).toISOString();
+      const rows = await fetchPages(sb, "events", "payload,created_at", (x) => x.eq("type", "ai_call").gte("created_at", since), 10);
+      const st = {};
+      for (const r of rows) { const p = r.payload || {}; const o = (st[p.key] ||= { calls: 0, ok: 0, ms: 0, last: null, lastFail: null }); o.calls++; if (p.ok) { o.ok++; o.ms += Number(p.ms) || 0; } else if (!o.lastFail || r.created_at > o.lastFail) o.lastFail = r.created_at; if (!o.last || r.created_at > o.last) o.last = r.created_at; }
+      return sendOk(res, { ...diag, keys: diag.keys.map((k) => { const o = st[k.name] || { calls: 0, ok: 0, ms: 0 }; return { ...k, calls: o.calls, failed: o.calls - o.ok, avgMs: o.ok ? Math.round(o.ms / o.ok) : 0, last: o.last || null, lastFail: o.lastFail || null }; }) });
+    }
+    if (op === "ai-test") {
+      if (!need("ai")) return deny();
+      if (req.method !== "POST") return sendMethodNotAllowed(res);
+      const k = loadKeys().find((x) => x.name === String(b.name || ""));
+      if (!k) return sendErr(res, "Key not found.", 404);
+      const t0 = Date.now();
+      try {
+        const out = await callKey(k, { system: "Reply with a JSON object only.", user: 'Reply with {"ok":true}', maxTokens: 50 });
+        return sendOk(res, { ok: String(out).trim().length > 0, ms: Date.now() - t0 });
+      } catch (e) {
+        return sendOk(res, { ok: false, ms: Date.now() - t0, status: e.status || 0, error: e.status === 401 || e.status === 403 ? "The provider rejected this key." : e.status === 429 ? "Rate limited or out of credit." : e.name === "AbortError" ? "Timed out." : "Could not reach the provider or the model name is wrong." });
+      }
+    }
+
+    // ── prices & school plans ──
+    if (op === "prices") {
+      if (!need("prices")) return deny();
+      const pr = await getPricing();
+      return sendOk(res, {
+        prices: { premiumAnnual: pr.premiumAnnual, premiumAnnualOriginal: pr.premiumAnnualOriginal, pro: pr.pro },
+        items: SHOP_ITEMS.filter((i) => !i.isPremium).map((i) => ({ id: i.id, title: i.title, category: i.category, price: pr.items[i.id] })),
+        school: pr.school,
+      });
+    }
+    if (op === "prices-save") {
+      if (!need("prices")) return deny();
+      if (req.method !== "POST") return sendMethodNotAllowed(res);
+      const num = (v) => { const n = Math.round(Number(v)); return Number.isFinite(n) && n > 0 && n <= 10000000 ? n : null; };
+      const { data: cur } = await sb.from("settings").select("value").eq("key", "prices").maybeSingle();
+      const next = { ...(cur && cur.value) };
+      for (const k of ["premiumAnnual", "premiumAnnualOriginal", "pro"]) if (b[k] !== undefined) { const n = num(b[k]); if (!n) return sendErr(res, "Prices must be whole naira amounts above 0."); next[k] = n; }
+      if (b.items && typeof b.items === "object") {
+        next.items = { ...(next.items || {}) };
+        for (const it of SHOP_ITEMS) if (b.items[it.id] !== undefined) { const n = num(b.items[it.id]); if (!n) return sendErr(res, `Invalid price for ${it.title}.`); next.items[it.id] = n; }
+      }
+      await sb.from("settings").upsert({ key: "prices", value: next, updated_at: new Date().toISOString() }, { onConflict: "key" });
+      bustPricingCache();
+      await audit(sb, who, "prices.save", JSON.stringify({ ...next, items: undefined }).slice(0, 200));
+      return sendOk(res, {});
+    }
+
+    if (op === "school-plans") {
+      if (!need("schools") && !need("prices")) return deny();
+      const pr = await getPricing();
+      const [{ data: accs }, { data: classes }] = await Promise.all([
+        sb.from("school_accounts").select("*").order("created_at", { ascending: false }).limit(300),
+        sb.from("classes").select("id,teacher_email,name"),
+      ]);
+      const cls = classes || [];
+      const { data: mem } = cls.length ? await sb.from("class_members").select("class_id") : { data: [] };
+      const perClass = {}; for (const m of mem || []) perClass[m.class_id] = (perClass[m.class_id] || 0) + 1;
+      const perTeacher = {}, classCount = {};
+      for (const c of cls) { perTeacher[c.teacher_email] = (perTeacher[c.teacher_email] || 0) + (perClass[c.id] || 0); classCount[c.teacher_email] = (classCount[c.teacher_email] || 0) + 1; }
+      return sendOk(res, {
+        settings: pr.school,
+        schools: (accs || []).map((a) => {
+          const st = accountStatus(a), students = perTeacher[a.teacher_email] || 0, tier = tierFor(pr.school, students);
+          return { email: a.teacher_email, school: a.school_name, ...st, students, classes: classCount[a.teacher_email] || 0, tier: tier ? tier.label : "", price: tier ? tier.price : 0, trialStarted: a.trial_started_at, trialEnds: a.trial_ends_at, paidUntil: a.paid_until, amountPaid: a.amount_paid, notes: a.notes };
+        }),
+      });
+    }
+    if (op === "school-settings") {
+      if (!need("prices")) return deny();
+      if (req.method !== "POST") return sendMethodNotAllowed(res);
+      const trialDays = Math.round(Number(b.trialDays));
+      if (!Number.isFinite(trialDays) || trialDays < 0 || trialDays > 365) return sendErr(res, "Trial days must be between 0 and 365.");
+      const tiers = (Array.isArray(b.tiers) ? b.tiers : []).map((t) => ({ min: Math.max(0, Math.round(Number(t.min) || 0)), label: clean(t.label, 60), price: Math.max(0, Math.round(Number(t.price) || 0)) }));
+      if (!tiers.length) return sendErr(res, "Add at least one price tier.");
+      if (tiers.some((t) => !t.price)) return sendErr(res, "Every tier needs a price.");
+      if (new Set(tiers.map((t) => t.min)).size !== tiers.length) return sendErr(res, "Two tiers start at the same student count.");
+      const value = { trialDays, tiers: tiers.map((t) => ({ ...t, label: t.label || `${t.min}+ students` })), period: clean(b.period, 20) || DEFAULT_SCHOOL.period };
+      await sb.from("settings").upsert({ key: "school_plan", value, updated_at: new Date().toISOString() }, { onConflict: "key" });
+      bustPricingCache();
+      await audit(sb, who, "school.settings", `trial ${trialDays}d, ${tiers.length} tiers`);
+      return sendOk(res, {});
+    }
+    if (op === "school-account") {
+      if (!need("schools")) return deny();
+      if (req.method !== "POST") return sendMethodNotAllowed(res);
+      const email = String(b.email || "").toLowerCase().trim();
+      const { data: acc } = await sb.from("school_accounts").select("*").eq("teacher_email", email).maybeSingle();
+      if (!acc) return sendErr(res, "School not found.", 404);
+      const patch = {};
+      const now = Date.now();
+      if (b.action === "extend-trial") {
+        const days = Math.round(Number(b.days));
+        if (!(days > 0 && days <= 365)) return sendErr(res, "Enter 1 to 365 days.");
+        const base = Math.max(now, acc.trial_ends_at ? new Date(acc.trial_ends_at).getTime() : now);
+        patch.trial_ends_at = new Date(base + days * D).toISOString();
+      } else if (b.action === "activate") {
+        const days = Math.round(Number(b.days));
+        if (!(days > 0 && days <= 1100)) return sendErr(res, "Enter how many days to activate (1 to 1100).");
+        const base = Math.max(now, acc.paid_until ? new Date(acc.paid_until).getTime() : now);
+        patch.paid_until = new Date(base + days * D).toISOString();
+        const paid = Math.round(Number(b.amount) || 0);
+        if (paid > 0) patch.amount_paid = Number(acc.amount_paid || 0) + paid;
+      } else if (b.action === "deactivate") {
+        patch.paid_until = null; patch.trial_ends_at = new Date(now - 1000).toISOString();
+      } else if (b.action === "note") {
+        patch.notes = clean(b.note, 500);
+      } else return sendErr(res, "Unknown action.");
+      await sb.from("school_accounts").update(patch).eq("teacher_email", email);
+      await audit(sb, who, `school.${b.action}`, `${acc.school_name || email}${b.days ? ` ${b.days}d` : ""}${b.amount ? ` ₦${b.amount}` : ""}`);
+      return sendOk(res, {});
+    }
+  } catch (e) {
+    console.error(`[admin-ops:${op}]`, e?.message);
+    return sendErr(res, "Server error", 500);
+  }
+  return sendErr(res, "Unknown op.", 404);
+}

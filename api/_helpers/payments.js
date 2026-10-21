@@ -3,10 +3,12 @@
 // webhook (payment/webhook). Whichever arrives first activates premium; the
 // other is a harmless no-op, so a replayed link can never extend a subscription.
 import { Resend } from 'resend';
-import { getFirstName, activatePremiumAndLog } from './premium.js';
+import { getFirstName, activatePremiumAndLog, logShopPurchase } from './premium.js';
+import { getPricing } from './pricing.js';
+import { SHOP_ITEMS } from './constants/shop.js';
 
 const APP_URL = 'https://elitescholars.site';
-const PLAN_AMOUNT = { annual: 3000, pro: 3000 };
+const PLAN_AMOUNT = { annual: 3000, pro: 3000, shop: 1 }; // real prices come from admin settings (see getPricing)
 const PLAN_NAMES = { annual: 'Premium Annual', pro: 'Pro Monthly' };
 const PLAN_DAYS = { annual: 365, pro: 30 };
 const fmt = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -73,7 +75,7 @@ function confirmationEmail({ firstName, plan, amount, activatedOn, expiryDate })
       <tr>
         <td style="background:#13132a;padding:20px 40px;text-align:center;border-top:1px solid #2a2a4a;">
           <p style="margin:0 0 4px;color:#5a5a7a;font-size:11px;">© 2026 EliteScholars · Built for Nigerian Students</p>
-          <p style="margin:0;color:#3a3a5a;font-size:10px;">JAMB · WAEC · NECO · POST UTME · GST</p>
+          <p style="margin:0;color:#3a3a5a;font-size:10px;">JAMB · WAEC · NECO · GST</p>
         </td>
       </tr>
     </table>
@@ -97,10 +99,20 @@ export async function verifyWithFlutterwave(txRef) {
     const t = j?.data;
     if (j?.status !== 'success' || !t) return null;
     if (t.status !== 'successful' || t.currency !== 'NGN' || t.tx_ref !== txRef) return null;
-    if (Number(t.amount) < PLAN_AMOUNT[plan]) return null;
+    const pr = await getPricing();
+    let item = null;
+    let need;
+    if (plan === 'shop') {
+      item = SHOP_ITEMS.find((i) => i.id === t.meta?.item && !i.isPremium);
+      if (!item) return null;
+      need = Number(t.meta?.expected) || pr.items[item.id];
+    } else {
+      need = Number(t.meta?.expected) || (plan === 'pro' ? pr.pro : pr.premiumAnnual);
+    }
+    if (!(need > 0) || Number(t.amount) < need) return null;
     const email = String(t.customer?.email || '').toLowerCase().trim();
     if (!email) return null;
-    return { plan, email, amount: Number(t.amount), tx: t };
+    return { plan, email, amount: Number(t.amount), tx: t, item };
   } catch (e) {
     console.error('[payments] verify failed:', e?.message);
     return null;
@@ -111,8 +123,24 @@ export async function verifyWithFlutterwave(txRef) {
 export async function finalizePayment(txRef, via) {
   const v = await verifyWithFlutterwave(txRef);
   if (!v) return { ok: false };
-  const { plan, email, amount } = v;
+  const { plan, email, amount, item } = v;
   const firstName = await getFirstName(email);
+  if (plan === 'shop') {
+    const r = await logShopPurchase({ email, txRef, amount, itemId: item.id });
+    if (r.error) return { ok: false };
+    if (r.duplicate) return { ok: true, fresh: false, plan, email, firstName, item: item.id, link: item.link };
+    try {
+      if (process.env.RESEND_API_KEY && process.env.FROM_EMAIL) {
+        const { shopReceiptEmail } = await import('./emailTemplates.js');
+        await new Resend(process.env.RESEND_API_KEY).emails.send({
+          from: `EliteScholars <${process.env.FROM_EMAIL}>`, to: email,
+          subject: `🛍️ Your purchase: ${item.title.replace(/[^\w\s:&'-]/g, '').trim()}`,
+          html: shopReceiptEmail({ firstName, title: item.title, link: item.link, amount: `₦${amount.toLocaleString('en-NG')}` }),
+        });
+      }
+    } catch (e) { console.error('[payments] shop email failed:', e?.message); }
+    return { ok: true, fresh: true, plan, email, firstName, item: item.id, link: item.link };
+  }
   const expiry = new Date(Date.now() + PLAN_DAYS[plan] * 86400000);
   const expiresAt = expiry.toISOString();
 

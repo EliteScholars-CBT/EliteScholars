@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Icon from './Icon';
 import Confetti from './Confetti';
+import SquadChat, { chatSeenKey } from './SquadChat';
+import { wantsChat, clearOpenChat } from '../utils/chatLink';
 import { createSquad, joinSquad, getSquad, leaveSquad, genSquadCode, loadSquadCache, saveSquadCache, clearSquadCache } from '../utils/squadApi';
 import { loadUser } from '../utils/storage';
 import '../styles/squads.css';
@@ -25,6 +27,8 @@ export default function StudySquads({ userEmail, userName }) {
   const [error, setError]   = useState('');
   const [celebrate, setCelebrate] = useState(false);
   const [synced, setSynced] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [unread, setUnread] = useState(0);
 
   const refresh = useCallback(async () => {
     if (!userEmail) { setView(squad ? 'hub' : 'create'); return; }
@@ -39,6 +43,22 @@ export default function StudySquads({ userEmail, userName }) {
   }, [userEmail]);
 
   useEffect(() => { refresh(); }, [refresh]);
+
+  // unread badge + deep link from a push notification
+  useEffect(() => {
+    if (!synced || !squad || squad._local) return undefined;
+    if (wantsChat()) { clearOpenChat(); setChatOpen(true); return undefined; }
+    let on = true;
+    const since = (() => { try { const v = Number(localStorage.getItem(chatSeenKey('any'))); return v ? new Date(v).toISOString() : undefined; } catch { return undefined; } })();
+    (async () => {
+      try {
+        const r = await fetch('/api/squads/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ peek: true, since }) });
+        const j = await r.json();
+        if (on && j && j.success !== false) setUnread(j.unread || 0);
+      } catch { /* ignore */ }
+    })();
+    return () => { on = false; };
+  }, [synced, squad, chatOpen]);
 
   const handleCreate = async () => {
     if (!name.trim()) { setError('Give your squad a name first.'); return; }
@@ -128,6 +148,13 @@ export default function StudySquads({ userEmail, userName }) {
           </div>
           <button className="squad-whatsapp-btn" onClick={shareCode}><Icon name="users" size={15} /> Invite friends</button>
         </div>
+
+        {synced && !squad._local && (
+          <button className="sq-chat-btn" onClick={() => { setChatOpen(true); setUnread(0); }}>
+            💬 Squad chat {unread > 0 && <span className="sq-chat-dot">{unread > 9 ? '9+' : unread}</span>}
+          </button>
+        )}
+        {chatOpen && <SquadChat squadName={squad.name} isOwner={!!squad.is_owner} onClose={() => setChatOpen(false)} />}
 
         {!synced && (
           <div className="squad-sync-note">

@@ -1,3 +1,4 @@
+import { isDataSaver } from './dataSaver';
 // ============================================================================
 // SOUND ENGINE
 // ============================================================================
@@ -84,6 +85,7 @@ if (typeof window !== 'undefined') {
 }
 
 function playTone(frequency, duration, type = 'sine', volume = 0.18, delay = 0) {
+  if (isDataSaver()) return;
   const ctx = getAudioCtx();
   if (!ctx) return;
   try {

@@ -24,7 +24,6 @@ const EXAM_TYPES = [
   { id: 'jamb', label: 'JAMB UTME', icon: '📝' },
   { id: 'waec', label: 'WAEC', icon: '📋' },
   { id: 'neco', label: 'NECO', icon: '📄' },
-  { id: 'postutme', label: 'POST UTME', icon: '🎓' },
   { id: 'gst', label: 'GST (Uni)', icon: '🏛️' },
 ];
 
@@ -35,7 +34,7 @@ const STUDENT_TYPES = [
     desc: 'SS1 – SS3 • WAEC • NECO • GCE',
     icon: '🏫',
   },
-  { id: 'aspirant', label: 'Aspirant', desc: 'Preparing for JAMB & Post-UTME', icon: '🎯' },
+  { id: 'aspirant', label: 'Aspirant', desc: 'Preparing for JAMB', icon: '🎯' },
   {
     id: 'university',
     label: 'University Student',

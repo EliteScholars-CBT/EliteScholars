@@ -36,16 +36,6 @@ export const SHOP_ITEMS = [
     badge: null,
   },
   {
-    id: 'shop_3',
-    title: 'POST UTME Bundle',
-    description: 'Past questions & answers for 11 top universities.',
-    price: '₦2,000',
-    image: 'postutme-bundle.jpg',
-    link: 'https://elitescholars.site/shop/postutme',
-    category: 'Bundle',
-    badge: 'Popular',
-  },
-  {
     id: 'shop_4',
     title: 'WAEC Geography Notes',
     description: 'Complete geography notes with maps & diagrams.',

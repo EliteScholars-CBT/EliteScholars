@@ -1,0 +1,6 @@
+# ads.txt for elitescholars.site
+# Adsterra will give you the exact line(s) to publish after your site is approved
+# (Adsterra dashboard -> Websites -> your site -> ads.txt). Paste them below,
+# one per line, in this format:
+#   adsterra.com, YOUR_PUBLISHER_ID, DIRECT, YOUR_CERT_ID
+# Lines starting with # are ignored.

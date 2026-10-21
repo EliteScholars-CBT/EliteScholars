@@ -1,0 +1,30 @@
+.ss-wrap { position: fixed; inset: 0; z-index: 9500; background: #0B0B12; color: #fff; display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+.ss-top { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; gap: 8px; }
+.ss-btn { border: 0; border-radius: 99px; padding: 10px 16px; font-family: inherit; font-weight: 800; font-size: 14px; cursor: pointer; }
+.ss-btn.ghost { background: rgba(255,255,255,.12); color: #fff; width: 40px; padding: 10px 0; }
+.ss-btn.go { background: linear-gradient(135deg, #7C3AED, #A78BFA); color: #fff; }
+.ss-btn:disabled { opacity: .6; }
+.ss-stage-box { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 4px 12px; }
+.ss-stage { position: relative; width: 100%; max-height: 100%; border-radius: 18px; overflow: hidden; touch-action: none; box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+.ss-base { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ss-layer { position: absolute; white-space: nowrap; text-align: center; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.1; }
+.ss-layer.sel { outline: 2px dashed rgba(255,255,255,.9); outline-offset: 6px; }
+.ss-tool { display: flex; gap: 6px; padding: 8px 12px 0; align-items: center; flex-wrap: wrap; }
+.ss-tool button { background: rgba(255,255,255,.14); border: 0; color: #fff; border-radius: 12px; min-width: 40px; height: 38px; font-weight: 800; font-family: inherit; cursor: pointer; }
+.ss-tool .del { background: rgba(220,38,38,.5); }
+.ss-in { flex: 1 1 100%; background: rgba(255,255,255,.12); border: 0; border-radius: 12px; color: #fff; padding: 9px 12px; font-family: inherit; font-size: 15px; outline: 0; }
+.ss-dot { display: inline-block; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; vertical-align: middle; }
+.ss-panel { padding: 8px 0 12px; background: #14141F; border-radius: 20px 20px 0 0; margin-top: 8px; }
+.ss-tabs { display: flex; gap: 6px; padding: 0 12px 8px; }
+.ss-tabs button { flex: 1; padding: 8px 0; border: 0; border-radius: 12px; background: transparent; color: rgba(255,255,255,.65); font-family: inherit; font-weight: 800; font-size: 13px; cursor: pointer; }
+.ss-tabs button.on { background: rgba(124,58,237,.35); color: #fff; }
+.ss-row { display: flex; gap: 8px; padding: 2px 12px; overflow-x: auto; scrollbar-width: none; }
+.ss-row::-webkit-scrollbar { display: none; }
+.ss-row.wrap { flex-wrap: wrap; overflow: visible; }
+.ss-stk { max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+.ss-tpl { flex: 0 0 auto; width: 74px; height: 86px; border-radius: 14px; border: 2px solid transparent; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-family: inherit; cursor: pointer; }
+.ss-tpl span { font-size: 24px; } .ss-tpl small { font-size: 10.5px; font-weight: 800; }
+.ss-tpl.on { border-color: #fff; }
+.ss-em { background: rgba(255,255,255,.08); border: 0; border-radius: 12px; width: 44px; height: 44px; font-size: 24px; cursor: pointer; }
+.ss-tag { border: 0; border-radius: 99px; color: #fff; padding: 8px 14px; font-weight: 800; font-family: inherit; font-size: 13px; cursor: pointer; }
+.ss-add { flex: 0 0 auto; background: rgba(255,255,255,.12); color: #fff; border: 0; border-radius: 14px; padding: 12px 16px; font-weight: 800; font-family: inherit; font-size: 13.5px; cursor: pointer; }

@@ -15,7 +15,6 @@ import { SUBJ } from '../data/subjects';
 
 const EXAM_OPTIONS = [
   { id: 'jamb',     label: 'JAMB' },
-  // { id: 'postutme', label: 'POST UTME' },
   { id: 'waec',     label: 'WAEC' },
   { id: 'neco',     label: 'NECO' },
   { id: 'gst',      label: 'GST' },
@@ -25,10 +24,6 @@ const EXAM_OPTIONS = [
 // the app uses, so they stay in sync automatically.
 const SUBJECT_OPTIONS_BY_EXAM = {
   jamb: Object.entries(SUBJ)
-    .filter(([id]) => id !== 'novel')
-    .map(([id, meta]) => ({ id, label: meta.label })),
-
-  postutme: Object.entries(SUBJ)
     .filter(([id]) => id !== 'novel')
     .map(([id, meta]) => ({ id, label: meta.label })),
 
@@ -52,7 +47,6 @@ export default function CreateChallenge({ userEmail, userName, userUsername, onC
   const [opponentEmail, setOpponentEmail] = useState('');
   const [opponentName, setOpponentName]   = useState('');
   const [examType, setExamType]           = useState('jamb');
-  const [university, setUniversity]       = useState('');
   const [subject, setSubject]             = useState('mathematics');
   const [messageTemplate, setMsgTpl]      = useState('');
   const [customMessage, setCustomMsg]     = useState('');
@@ -156,7 +150,7 @@ export default function CreateChallenge({ userEmail, userName, userUsername, onC
     const result = await createChallenge(
       userEmail, userName,
       opponentEmail, opponentName || opponentEmail.split('@')[0],
-      examType, university, subject,
+      examType, '', subject,
       NUM_QUESTIONS, TIME_LIMIT,
       messageTemplate, customMessage,
       fc,   // ← send correct count as the "score" (number of correct answers)
@@ -222,16 +216,6 @@ export default function CreateChallenge({ userEmail, userName, userUsername, onC
                 ))}
               </div>
             </div>
-
-            {examType === 'postutme' && (
-              <div className="form-group">
-                <label>University (e.g. unilag)</label>
-                <input
-                  type="text" placeholder="e.g. unilag" value={university}
-                  onChange={(e) => setUniversity(e.target.value)}
-                />
-              </div>
-            )}
 
             {/* Subject — dynamically filtered by exam type */}
             <div className="form-group">

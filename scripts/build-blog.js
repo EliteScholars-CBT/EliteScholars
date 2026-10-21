@@ -81,8 +81,9 @@ const footer = (up) => `<footer class="blog-footer">
   <div class="blog-footer-links">
     <a href="${up}../">Home</a>
     <a href="${up}index.html">Blog</a>
-    <a href="${up}../#privacy">Privacy</a>
-    <a href="${up}../#terms">Terms</a>
+    <a href="/app/privacy">Privacy</a>
+    <a href="/app/terms">Terms</a>
+    <a href="/app/privacy#ads">Advertising policy</a>
   </div>
   <div>© ${NOW.getFullYear()} EliteScholars. Free exam prep for every Nigerian student.</div>
 </footer>`;
@@ -162,6 +163,8 @@ ${topbar('../')}
 ${footer('../')}
 <script>window.__BLOG_POST=${JSON.stringify(small)};</script>
 <script src="../_blog-analytics.js" defer></script>
+<script src="../ads-config.js"></script>
+<script src="../_blog-ads.js" defer></script>
 ${pageScript}
 </body>
 </html>
@@ -191,11 +194,22 @@ function indexPage() {
 <div class="blog-card-author"><div class="blog-card-avatar">${Engine.getAvatar(post.authorAvatar)}</div><span class="blog-card-author-name">${esc(post.author)}</span></div>
 <div class="blog-card-meta"><span>${Engine.formatDate(post.publishAt)}</span><span>${post.readTime} min</span></div>
 </div></div></a>`;
-  }).join('\n') || '<div style="padding:60px 0;text-align:center;color:#9CA3AF;grid-column:1/-1;">No posts published yet. Check back soon!</div>';
+  });
+  // full-width in-feed ad slots after the 3rd and 9th card (never before content)
+  const feedAd = (n, house) => `<div class="blog-feed-ad">${Engine.adSlot(n, house)}</div>`;
+  if (cards.length > 3) cards.splice(3, 0, feedAd('feed', 'premium'));
+  if (cards.length > 10) cards.splice(10, 0, feedAd('feed-2', 'whatsapp'));
+  const cardsHtml = cards.join('\n') || '<div style="padding:60px 0;text-align:center;color:#9CA3AF;grid-column:1/-1;">No posts published yet. Check back soon!</div>';
 
   // Keep the existing sidebar/hero from the current index.html where possible.
-  const cur = read('index.html');
-  const side = (cur.match(/<div class="blog-index-sidebar-col">[\s\S]*?<\/footer>/) || [''])[0];
+  const side = `<div class="blog-index-sidebar-col">
+    ${Engine.adSlot('side-1')}
+    ${Engine.adSlot('side-2', 'premium')}
+    ${Engine.adSlot('side-3', 'partner')}
+    ${Engine.adSlot('side-4')}
+  </div>
+</div>
+${footer('./')}`;
   const itemList = {
     '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'EliteScholars Blog', url: `${SITE}/blog/`,
     hasPart: live.slice(0, 50).map((p) => ({ '@type': 'Article', headline: p.title, url: postUrl(p), datePublished: new Date(p.publishAt).toISOString() })),
@@ -205,8 +219,8 @@ function indexPage() {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EliteScholars Blog: JAMB, WAEC, Post-UTME & Study Tips for Nigerian Students</title>
-  <meta name="description" content="JAMB updates, WAEC and Post-UTME strategies, university life and study tips for Nigerian students. New posts every day." />
+  <title>EliteScholars Blog: JAMB, WAEC, GST & Study Tips for Nigerian Students</title>
+  <meta name="description" content="JAMB updates, WAEC and NECO strategies, university life and study tips for Nigerian students. New posts every day." />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="canonical" href="${SITE}/blog/" />
   <meta property="og:title" content="EliteScholars Blog" />
@@ -243,10 +257,12 @@ function indexPage() {
 <div class="blog-index-main">
   <div class="blog-index-posts-col">
     <div class="blog-index-grid" id="blog-grid">
-${cards}
+${cardsHtml}
     </div>
   </div>
   ${side}
+<script src="./ads-config.js"></script>
+<script src="./_blog-ads.js" defer></script>
 ${pageScript}
 </body>
 </html>
@@ -264,9 +280,17 @@ for (const c of cats) {
 for (const p of live) fs.writeFileSync(path.join(BLOG, p.category, `${p.id}.html`), postPage(p));
 fs.writeFileSync(path.join(BLOG, 'index.html'), indexPage());
 
+// Small feed for the landing page's blog cards (latest 5).
+fs.writeFileSync(path.join(BLOG, 'latest.json'), JSON.stringify(live.slice(0, 5).map((p) => ({
+  title: p.title, excerpt: p.excerpt, category: p.category, readTime: p.readTime, url: `/blog/${p.category}/${p.id}.html`,
+}))));
+
 const day = (d) => new Date(d).toISOString().slice(0, 10);
 const urls = [
   { loc: `${SITE}/`, lastmod: day(NOW), pr: '1.0' },
+  { loc: `${SITE}/about`, lastmod: day(NOW), pr: '0.7' },
+  { loc: `${SITE}/terms`, lastmod: day(NOW), pr: '0.3' },
+  { loc: `${SITE}/privacy`, lastmod: day(NOW), pr: '0.3' },
   { loc: `${SITE}/blog/`, lastmod: live[0] ? day(live[0].publishAt) : day(NOW), pr: '0.9' },
   ...live.map((p) => ({ loc: postUrl(p), lastmod: day(p.updatedAt || p.publishAt), pr: '0.8' })),
 ];

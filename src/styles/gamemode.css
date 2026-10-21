@@ -264,3 +264,44 @@
   background: rgba(255, 255, 255, .08); color: rgba(255, 255, 255, .85);
   font-size: 10.5px; font-weight: 800; text-align: center;
 }
+
+/* ── fixes: the menu and every game must scroll on small phones ── */
+.scr.game-menu-screen { overflow-y: auto !important; overflow-x: hidden; max-height: 100dvh; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; }
+.game-arena { max-height: 100dvh; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+.game-arena.slice-game, .game-arena.sort-game { overflow-y: hidden; }
+.game-start-btn, .game-result-btn, .game-back-btn, .gm2-btn { white-space: nowrap; }
+.game-start-btn:disabled { opacity: .6; }
+.game-menu-screen .game-start-btn { position: sticky; bottom: 12px; z-index: 5; }
+
+/* ── five more games ── */
+.gm2-big { margin-top: 12px; font-size: 30px; font-weight: 800; text-align: center; color: #FDE047; word-break: break-word; }
+.gm2-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+.gm2-btn { padding: 20px 10px; border: 0; border-radius: 18px; font-size: 20px; font-weight: 800; font-family: inherit; color: #fff; cursor: pointer; }
+.gm2-btn.yes { background: linear-gradient(135deg, #15803D, #22C55E); }
+.gm2-btn.no { background: linear-gradient(135deg, #B91C1C, #EF4444); }
+.gm2-btn:active { transform: scale(.97); }
+.gm2-reveal { margin-top: 14px; text-align: center; font-size: 14px; background: rgba(0,0,0,.25); border-radius: 12px; padding: 10px 12px; }
+.gm2-word { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 18px 0 8px; font-size: 28px; font-weight: 800; letter-spacing: 2px; }
+.gm2-word span { min-width: 22px; text-align: center; border-bottom: 3px solid rgba(255,255,255,.6); padding: 0 2px; }
+.gm2-word span.sp { border-color: transparent; min-width: 12px; }
+.gm2-word.lost span { color: #FCA5A5; }
+.gm2-lives { display: flex; justify-content: center; gap: 6px; margin-bottom: 14px; }
+.gm2-lives i { width: 12px; height: 12px; border-radius: 50%; background: #FDE047; transition: background .2s; }
+.gm2-lives i.used { background: rgba(255,255,255,.2); }
+.gm2-keys { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.gm2-keys button { padding: 11px 0; border: 0; border-radius: 10px; background: rgba(255,255,255,.16); color: #fff; font-weight: 800; font-family: inherit; font-size: 15px; cursor: pointer; }
+.gm2-keys button.hit { background: #16A34A; } .gm2-keys button.miss { background: rgba(239,68,68,.55); } .gm2-keys button:disabled { cursor: default; }
+.gm2-cards { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.gm2-card { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 22px 14px; border: 2px solid rgba(255,255,255,.2); border-radius: 20px; background: rgba(255,255,255,.1); color: #fff; font-family: inherit; font-size: 16px; font-weight: 700; cursor: pointer; text-align: center; transition: transform .15s, background .2s; }
+.gm2-card b { font-size: 30px; color: #FDE047; }
+.gm2-card:active { transform: scale(.98); }
+.gm2-card.win { background: rgba(34,197,94,.35); border-color: #22C55E; } .gm2-card.lose { opacity: .65; }
+.gm2-vs { text-align: center; font-weight: 800; opacity: .7; letter-spacing: 3px; }
+.gm2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+.gm2-opt { padding: 22px 8px; border: 2px solid rgba(255,255,255,.2); border-radius: 18px; background: rgba(255,255,255,.1); color: #fff; font-family: inherit; font-size: 17px; font-weight: 800; cursor: pointer; word-break: break-word; }
+.gm2-opt.good { background: rgba(34,197,94,.4); border-color: #22C55E; } .gm2-opt.bad { background: rgba(239,68,68,.45); border-color: #EF4444; }
+.gm2-sum { font-size: 38px; font-weight: 800; text-align: center; margin: 14px 0 4px; } .gm2-sum span { color: #FDE047; } .gm2-sum span.bad { color: #FCA5A5; }
+.gm2-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+.gm2-pad button { padding: 17px 0; border: 0; border-radius: 16px; background: rgba(255,255,255,.16); color: #fff; font-size: 22px; font-weight: 800; font-family: inherit; cursor: pointer; }
+.gm2-pad button.go { background: linear-gradient(135deg, #15803D, #22C55E); } .gm2-pad button.del { background: rgba(239,68,68,.4); }
+.gm2-pad button:active { transform: scale(.96); }

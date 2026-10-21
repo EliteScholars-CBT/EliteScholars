@@ -8,11 +8,12 @@ import { sendOk, sendErr, sendMethodNotAllowed, setCors } from '../_helpers/resp
 import { requireUser } from '../_helpers/session.js';
 import { rateLimitOk } from '../_helpers/guard.js';
 import { getFirstName } from '../_helpers/premium.js';
+import { getPricing } from '../_helpers/pricing.js';
+import { SHOP_ITEMS } from '../_helpers/constants/shop.js';
 
 const FLW_SECRET_KEY = process.env.FLW_SECRET_KEY;
 
-// Premium is annual-only — no monthly tier.
-const PLAN_AMOUNTS = { annual: 3000 };
+// Premium is annual-only — no monthly tier. Prices come from the admin-editable settings.
 const PLAN_NAMES   = {
   annual: 'EliteScholars Premium Annual',
 };
@@ -26,8 +27,11 @@ async function run(req, res) {
   const email = await requireUser(req, res);
   if (!email) return;
   if (!(await rateLimitOk(req, res, 'payinit', 10, 3600, email))) return;
-  const { plan } = req.body || {};
-  if (typeof plan !== 'string' || !PLAN_AMOUNTS[plan]) return sendErr(res, 'Invalid plan.');
+  const { plan, item } = req.body || {};
+  const pricing = await getPricing();
+  const shopItem = typeof item === 'string' ? SHOP_ITEMS.find((i) => i.id === item && !i.isPremium) : null;
+  if (item && !shopItem) return sendErr(res, 'That item is not available.');
+  if (!shopItem && (typeof plan !== 'string' || plan !== 'annual')) return sendErr(res, 'Invalid plan.');
   const name = await getFirstName(email);
 
   // ── Guard: env var missing ─────────────────────────────────────────────────
@@ -36,8 +40,9 @@ async function run(req, res) {
     return sendErr(res, 'Payment service is not configured. Please contact support.');
   }
 
-  const amount      = PLAN_AMOUNTS[plan];
-  const txRef       = `ES-${plan.toUpperCase()}-${Date.now()}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
+  const amount      = shopItem ? pricing.items[shopItem.id] : pricing.premiumAnnual;
+  const kind        = shopItem ? 'shop' : plan;
+  const txRef       = `ES-${kind.toUpperCase()}-${Date.now()}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
   const redirectUrl = `https://elitescholars.site/api/payment/verify?tx_ref=${txRef}`;
 
   const payload = {
@@ -48,10 +53,10 @@ async function run(req, res) {
     customer:     { email, name },
     customizations: {
       title:       'EliteScholars (Resumeefy Concepts)',
-      description: PLAN_NAMES[plan],
+      description: shopItem ? shopItem.title : PLAN_NAMES[plan],
       logo:        'https://elitescholars.site/android-chrome-192x192.png',
     },
-    meta: { plan, email },
+    meta: shopItem ? { plan: 'shop', item: shopItem.id, email, expected: amount } : { plan, email, expected: amount },
   };
 
   // ── Call Flutterwave v3 ────────────────────────────────────────────────────
@@ -86,7 +91,7 @@ async function run(req, res) {
     return sendOk(res, {
       paymentLink: data.data.link,
       txRef,
-      plan,
+      plan: kind,
       amount,
     });
 

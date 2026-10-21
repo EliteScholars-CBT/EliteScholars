@@ -1287,3 +1287,9 @@ body.dark-mode .learn-tip-warn {
   --tip-bg: rgba(244, 63, 94, 0.1);
   --tip-border: #f43f5e;
 }
+
+/* Read-aloud: the words already on the page light up as they are spoken */
+.tts-w { border-radius: 4px; transition: background .12s, color .12s; }
+.tts-w.tts-sent { background: rgba(124, 58, 237, .14); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.tts-w.tts-read { background: rgba(124, 58, 237, .07); }
+.tts-w.tts-now { background: linear-gradient(135deg, #7c3aed, #f5b400); color: #fff !important; padding: 1px 3px; margin: 0 -3px; box-shadow: 0 2px 8px rgba(124, 58, 237, .35); }

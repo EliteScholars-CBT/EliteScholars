@@ -1,4 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
+import { QB } from '../data/jamb/index';
+import { WAEC_QB } from '../data/waec/index';
+import { NECO_QB } from '../data/neco/index';
+import { GST_QB } from '../data/gst/index';
 import {
   getPendingChallenges,
   getChallengeHistory,
@@ -12,6 +17,9 @@ import Quiz from './Quiz';
 import Toast from './Toast';
 import Confetti from './Confetti';
 import { EmojiIcon } from './Icon';
+
+// A challenge can only be played when its subject has questions in the bank.
+const hasQuestions = (subject) => [QB, WAEC_QB, NECO_QB, GST_QB].some((b) => b && Array.isArray(b[subject]) && b[subject].length > 0);
 
 export default function Challenges({ userEmail, userName, userUsername }) {
   const [activeTab, setActiveTab]        = useState('pending');
@@ -70,6 +78,7 @@ export default function Challenges({ userEmail, userName, userUsername }) {
 
   // ── Accept ────────────────────────────────────────────────────────────────
   const handleAccept = async (challenge) => {
+    if (!hasQuestions(challenge.subject)) { showToast("This challenge's subject isn't available on your device yet. Ask them to send a different one.", 'error'); return; }
     await acceptChallenge(challenge.challenge_id, userEmail);
     setScore(0); setCorrect(0); setTotalQ(0);
     setPlaying(challenge);
@@ -243,7 +252,7 @@ export default function Challenges({ userEmail, userName, userUsername }) {
 
   // ── Playing screen ────────────────────────────────────────────────────────
   if (playingChallenge) {
-    return (
+    return createPortal(
       <div className="challenge-play-overlay">
         <div className="challenge-play-banner">
           <div style={{ color: '#fff', fontWeight: 700, fontSize: 13, padding: '12px 16px' }}>
@@ -266,7 +275,8 @@ export default function Challenges({ userEmail, userName, userUsername }) {
           roundSize={playingChallenge.num_questions || 5}
           examType={playingChallenge.exam_type}
         />
-      </div>
+      </div>,
+      document.body
     );
   }
 
@@ -335,6 +345,7 @@ export default function Challenges({ userEmail, userName, userUsername }) {
                       {challenge.status === 'accepted' && (
                         <div className="challenge-actions">
                           <button className="accept-btn" onClick={() => {
+                            if (!hasQuestions(challenge.subject)) { showToast("This challenge's subject isn't available on your device yet. Ask them to send a different one.", 'error'); return; }
                             setScore(0); setCorrect(0); setTotalQ(0);
                             setPlaying(challenge);
                           }}>▶ Play Now</button>

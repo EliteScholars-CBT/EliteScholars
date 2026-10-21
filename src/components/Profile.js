@@ -1,5 +1,8 @@
 import PremiumModal from './PremiumModal';
 import { getPremiumData, cancelPremium } from '../utils/premium';
+import EliteBadge from './EliteBadge';
+import { pushStatus, enablePush, disablePush } from '../utils/push';
+import { isDataSaver, setDataSaver } from '../utils/dataSaver';
 import React, { useState, useEffect, useRef } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -23,6 +26,7 @@ export default function Profile({
   bestScore,
   onBack,
   onSignOut,
+  onOpenSchool,
   premiumUser = false,
   onPremiumActivated,
 }) {
@@ -39,6 +43,14 @@ export default function Profile({
   const [showPremiumModal, setShowPremiumModal]     = useState(false);
   const [localPremium, setLocalPremium]             = useState(premiumUser);
   const premData = getPremiumData(email);
+  const [pushState, setPushState] = useState('off');
+  const [saver, setSaver] = useState(isDataSaver());
+  useEffect(() => { pushStatus().then(setPushState); }, []);
+  const togglePush = async () => {
+    if (pushState === 'on') setPushState(await disablePush());
+    else setPushState(await enablePush());
+  };
+  const toggleSaver = () => { const v = !saver; setDataSaver(v); setSaver(v); };
   const { theme, toggleTheme } = useTheme();
   const tabsContainerRef = useRef(null);
 
@@ -163,7 +175,7 @@ export default function Profile({
             height: 40, background: BG, borderRadius: '24px 24px 0 0',
           }} />
           <div className="profile-back" onClick={onBack}>← Back</div>
-          <div className="profile-avatar">{initials}</div>
+          <span className="elite-wrap" style={{ display: 'flex', justifyContent: 'center', width: 'fit-content', margin: '0 auto' }}><div className="profile-avatar">{initials}</div>{localPremium && <EliteBadge size={24} />}</span>
           <div className="profile-name">{name || 'Student'}</div>
           <div className="profile-email">{email}</div>
           <div className="profile-badges">
@@ -365,6 +377,48 @@ export default function Profile({
                 </div>
               </div>
 
+              <div className="settings-card" onClick={toggleSaver} style={{ cursor: 'pointer', marginTop: 10 }}>
+                <div className="settings-item">
+                  <div className="settings-icon">📶</div>
+                  <div className="settings-info">
+                    <div className="settings-name">Data Saver</div>
+                    <div className="settings-desc">Turns off sounds, animations and heavy effects to use less data and battery</div>
+                  </div>
+                  <div className="settings-toggle"><div className={`toggle-switch ${saver ? 'active' : ''}`}><div className="toggle-slider" /></div></div>
+                </div>
+              </div>
+
+              {onOpenSchool && (
+                <div className="settings-card" onClick={onOpenSchool} style={{ cursor: 'pointer', marginTop: 10 }}>
+                  <div className="settings-item">
+                    <div className="settings-icon">🏫</div>
+                    <div className="settings-info">
+                      <div className="settings-name">School &amp; Classes</div>
+                      <div className="settings-desc">Join your teacher's class, get homework, or run your own classes</div>
+                    </div>
+                    <div className="settings-toggle" style={{ fontWeight: 800, color: '#7C3AED' }}>›</div>
+                  </div>
+                </div>
+              )}
+
+              <div className="profile-stats-title" style={{ marginTop: 20 }}><EmojiIcon emoji="🔔" size="1.15em" /> Notifications</div>
+              <div className="settings-card" onClick={pushState === 'unsupported' || pushState === 'blocked' ? undefined : togglePush} style={{ cursor: 'pointer' }}>
+                <div className="settings-item">
+                  <div className="settings-icon">🔥</div>
+                  <div className="settings-info">
+                    <div className="settings-name">Streak &amp; assignment alerts</div>
+                    <div className="settings-desc">
+                      {pushState === 'unsupported' ? 'Not supported on this browser. Install the app to your home screen.'
+                        : pushState === 'blocked' ? 'Blocked. Allow notifications for EliteScholars in your browser settings.'
+                        : 'A daily nudge before your streak ends, and alerts when a teacher sets homework'}
+                    </div>
+                  </div>
+                  {pushState !== 'unsupported' && pushState !== 'blocked' && (
+                    <div className="settings-toggle"><div className={`toggle-switch ${pushState === 'on' ? 'active' : ''}`}><div className="toggle-slider" /></div></div>
+                  )}
+                </div>
+              </div>
+
               {/* ── Guardian / Parent Email ── */}
               <div className="profile-stats-title" style={{ marginTop: 20 }}>
                 👨‍👩‍👧 Parent / Guardian
@@ -391,7 +445,7 @@ export default function Profile({
                       <div className="settings-info">
                         <div className="settings-name">Guardian Weekly Report</div>
                         <div className="settings-desc">
-                          Your guardian receives a report card every Sunday at 6AM covering your week's activity.
+                          Your guardian receives a report card every Sunday morning covering your week's activity.
                         </div>
                       </div>
                     </div>

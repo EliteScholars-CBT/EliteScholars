@@ -4,6 +4,9 @@ import { addXP } from '../utils/xpManager';
 import { GOLD } from '../utils/colors';
 import Icon, { EmojiIcon } from './Icon';
 import { buildScramble, buildScrambleDeck, normalizeAnswer, buildMatchDeck, buildPictureDeck, buildPictureRound, generateSequence, SIMON_COLORS, topCategories, itemsInCategories, buildSliceDeck, shuffle, rng } from '../utils/gameEngine';
+import GameHud from './GameHud';
+import { GK_BANK } from '../data/gkBank';
+import { MoreGames, MORE_GAME_TYPES, MORE_GAME_INFO, buildMoreGame } from './GameMore';
 import '../styles/gamemode.css';
 
 // ============================================================================
@@ -12,30 +15,6 @@ import '../styles/gamemode.css';
 // (Word Scramble) and pairing (Memory Match) instead.
 // ============================================================================
 
-const STORY = {
-  world: 'The EliteScholars Academy is under siege by the Fog of Ignorance.',
-  hero: 'Kemi, a brilliant student from Lagos, must answer questions correctly to restore knowledge and defeat the fog.',
-};
-
-function GameHud({ score, lives, timer, maxTimer, combo }) {
-  const timerPct = (timer / maxTimer) * 100;
-  return (
-    <div className="game-hud">
-      <div className="game-hud-lives">{Array.from({ length: 3 }).map((_, i) => (
-        <Icon key={i} name="heart" size={17} style={{ opacity: i < lives ? 1 : 0.2, color: '#EF4444' }} />
-      ))}</div>
-      <div className="game-hud-center">
-        <div className="game-timer-bar">
-          <div className="game-timer-fill" style={{ width: `${timerPct}%`, background: timerPct < 30 ? '#EF4444' : GOLD }} />
-        </div>
-      </div>
-      <div className="game-hud-score">
-        <span className="game-score-num">{score}</span>
-        {combo > 1 && <span className="game-combo">×{combo}</span>}
-      </div>
-    </div>
-  );
-}
 
 /* ── Word Scramble ───────────────────────────────────────────────────────── */
 
@@ -219,7 +198,7 @@ function MemoryGame({ deck, onEnd, email, name }) {
       </div>
       <div className="game-story-bar">
         <span className="game-story-icon"><EmojiIcon emoji="🧠" size="1.1em" /></span>
-        <span className="game-story-text">Match each question with its correct answer to clear the Fog!</span>
+        <span className="game-story-text">Match each clue with its correct answer</span>
       </div>
       <div className="memory-grid">
         {cards.map((card) => {
@@ -704,7 +683,7 @@ function SortRushGame({ items, categories, fallDuration, onEnd, email, name }) {
 
 /* ── Menu / shell ────────────────────────────────────────────────────────── */
 
-const GAME_TYPES = ['scramble', 'memory', 'picture', 'colormemory', 'slice', 'sort'];
+const GAME_TYPES = ['scramble', 'memory', 'picture', 'colormemory', 'slice', 'sort', ...MORE_GAME_TYPES];
 const DIFFICULTIES = [
   { id: 'easy',   label: 'Easy',   icon: '😊', desc: 'More time, fewer terms' },
   { id: 'medium', label: 'Medium', icon: '😤', desc: 'Standard challenge' },
@@ -714,75 +693,6 @@ const DIFFICULTIES = [
 // Small built-in sampler so the games always have something to play even
 // before real per-subject question-bank wiring lands. Each entry doubles as
 // { term, clue } for Scramble and { a: clue, b: term } for Memory.
-// A broad general-knowledge bank — deliberately NOT tied to school subjects.
-// Spans sports, geography, science, history, entertainment, nature and
-// Nigeria-specific trivia. Items with an `emoji` are eligible for Picture
-// Round; all items are eligible for Scramble and Memory Match.
-const GK_BANK = [
-  // Sports
-  { term: 'Football',   clue: 'The world\'s most popular sport, played with a round ball and two goals', category: 'Sports', emoji: '⚽' },
-  { term: 'Basketball', clue: 'A sport where players score by shooting a ball through a hoop', category: 'Sports', emoji: '🏀' },
-  { term: 'Tennis',     clue: 'A racket sport played across a net, scored in games and sets', category: 'Sports', emoji: '🎾' },
-  { term: 'Boxing',     clue: 'A combat sport decided by punches, rounds and a referee', category: 'Sports', emoji: '🥊' },
-  { term: 'Cricket',    clue: 'A bat-and-ball sport popular in England, India and the Caribbean', category: 'Sports', emoji: '🏏' },
-  { term: 'Volleyball', clue: 'A sport where two teams hit a ball over a net without letting it touch the ground', category: 'Sports', emoji: '🏐' },
-  { term: 'Marathon',   clue: 'A long-distance race of 42.195 kilometres', category: 'Sports' },
-  { term: 'Olympics',   clue: 'A global multi-sport event held every four years', category: 'Sports', emoji: '🥇' },
-  { term: 'Eagles',     clue: "Nickname of Nigeria's national football team", category: 'Sports', emoji: '🦅' },
-  { term: 'Referee',    clue: 'The official who enforces the rules during a match', category: 'Sports' },
-  { term: 'Wrestling',  clue: 'A combat sport where competitors try to pin their opponent', category: 'Sports', emoji: '🤼' },
-  { term: 'Swimming',   clue: 'A sport and skill of moving through water using the arms and legs', category: 'Sports', emoji: '🏊' },
-
-  // Science
-  { term: 'Photosynthesis', clue: 'How green plants manufacture their own food using sunlight', category: 'Science' },
-  { term: 'Evaporation', clue: 'The process by which water changes from liquid to gas', category: 'Science' },
-  { term: 'Condensation', clue: 'The process by which gas changes back into liquid', category: 'Science' },
-  { term: 'Osmosis',     clue: 'Movement of water across a semi-permeable membrane', category: 'Science' },
-  { term: 'Respiration', clue: 'Breaking down glucose to release energy in cells', category: 'Science' },
-  { term: 'Nitrogen',    clue: "The most abundant gas in the Earth's atmosphere", category: 'Science' },
-  { term: 'Pancreas',    clue: 'The organ that produces insulin in the human body', category: 'Science' },
-  { term: 'Gold',        clue: 'The metal with the chemical symbol Au', category: 'Science' },
-  { term: 'Gravity',     clue: 'The force that pulls objects toward the Earth', category: 'Science' },
-  { term: 'Volcano',     clue: 'A mountain that can erupt with lava, ash and gas', category: 'Science', emoji: '🌋' },
-  { term: 'Robot',       clue: 'A programmable machine that can carry out tasks automatically', category: 'Technology', emoji: '🤖' },
-  { term: 'Rocket',      clue: 'A vehicle powered by engines that can travel to space', category: 'Technology', emoji: '🚀' },
-  { term: 'Telescope',   clue: 'An instrument used to see faraway objects like stars and planets', category: 'Technology', emoji: '🔭' },
-  { term: 'Microscope',  clue: 'An instrument used to see extremely small objects', category: 'Science', emoji: '🔬' },
-
-  // Geography / Nigeria
-  { term: 'Abuja',       clue: 'The capital city of Nigeria', category: 'Nigeria' },
-  { term: 'Lagos',       clue: 'The Nigerian state known as the "Centre of Excellence"', category: 'Nigeria' },
-  { term: 'Naira',       clue: "Nigeria's official currency", category: 'Nigeria' },
-  { term: 'Sahara',      clue: "The world's largest hot desert, found in Africa", category: 'Geography' },
-  { term: 'Nile',        clue: 'The longest river in Africa', category: 'Geography' },
-  { term: 'Everest',     clue: "The world's tallest mountain above sea level", category: 'Geography' },
-  { term: 'Amazon',      clue: "The world's largest rainforest, found in South America", category: 'Geography' },
-  { term: 'Pacific',     clue: "The largest and deepest of the world's oceans", category: 'Geography' },
-
-  // History
-  { term: 'Independence', clue: "Nigeria gained this from Britain in 1960", category: 'History' },
-  { term: 'Colonization', clue: 'The act of settling among and taking control of another territory', category: 'History' },
-  { term: 'Democracy',    clue: 'A system of government where citizens vote for their leaders', category: 'History' },
-
-  // Entertainment
-  { term: 'Nollywood',   clue: "The nickname for Nigeria's film industry", category: 'Entertainment' },
-  { term: 'Guitar',      clue: 'A stringed musical instrument played by strumming or plucking', category: 'Entertainment', emoji: '🎸' },
-  { term: 'Camera',      clue: 'A device used to capture photographs or videos', category: 'Entertainment', emoji: '📷' },
-
-  // Nature & animals
-  { term: 'Elephant',    clue: 'The largest land animal, known for its long trunk', category: 'Nature', emoji: '🐘' },
-  { term: 'Giraffe',     clue: 'The tallest land animal, known for its long neck', category: 'Nature', emoji: '🦒' },
-  { term: 'Crocodile',   clue: 'A large reptile that lives in rivers and lakes', category: 'Nature', emoji: '🐊' },
-  { term: 'Butterfly',   clue: 'An insect known for its colourful wings and metamorphosis', category: 'Nature', emoji: '🦋' },
-  { term: 'Tiger',       clue: 'A large striped wild cat found mostly in Asia', category: 'Nature', emoji: '🐯' },
-  { term: 'Zebra',       clue: 'An African animal known for its black and white stripes', category: 'Nature', emoji: '🦓' },
-  { term: 'Penguin',     clue: 'A flightless bird that swims well and lives in cold climates', category: 'Nature', emoji: '🐧' },
-  { term: 'Dolphin',     clue: 'A highly intelligent marine mammal known for its playfulness', category: 'Nature', emoji: '🐬' },
-  { term: 'Kangaroo',    clue: 'An Australian animal known for hopping and carrying its young in a pouch', category: 'Nature', emoji: '🦘' },
-  { term: 'Rainbow',     clue: 'An arc of colours that appears in the sky after rain', category: 'Nature', emoji: '🌈' },
-  { term: 'Cactus',      clue: 'A spiky plant that stores water and thrives in the desert', category: 'Nature', emoji: '🌵' },
-];
-
 export default function GameMode({ onBack, email, name, onLimit }) {
   const [phase, setPhase]       = useState('menu');
   const [difficulty, setDiff]   = useState('medium');
@@ -793,8 +703,15 @@ export default function GameMode({ onBack, email, name, onLimit }) {
   const [sliceCfg, setSliceCfg] = useState(null);
   const [result, setResult]     = useState(null);
 
+  const [starting, setStarting] = useState(false);
+  const [moreCfg, setMoreCfg]   = useState(null);
+
   const startGame = async () => {
-    const slot = await reserve(email, 'game', `game_${Date.now()}`);
+    if (starting) return;
+    setStarting(true);
+    let slot = { allowed: true };
+    try { slot = await reserve(email, 'game', `game_${Date.now()}`); } catch { /* offline: let them play */ }
+    setStarting(false);
     if (!slot.allowed) { if (onLimit) onLimit('games'); return; }
     const type = GAME_TYPES[Math.floor(Math.random() * GAME_TYPES.length)];
     setGameType(type);
@@ -819,6 +736,8 @@ export default function GameMode({ onBack, email, name, onLimit }) {
       const pool = itemsInCategories(GK_BANK, cats, rng(seed + 1)).slice(0, count);
       const fallDuration = difficulty === 'easy' ? 6500 : difficulty === 'hard' ? 4200 : 5300;
       setSortCfg({ categories: cats, items: pool, fallDuration });
+    } else if (MORE_GAME_TYPES.includes(type)) {
+      setMoreCfg(buildMoreGame(type, difficulty, seed));
     }
     setPhase('playing');
   };
@@ -836,6 +755,7 @@ export default function GameMode({ onBack, email, name, onLimit }) {
     if (gameType === 'colormemory') return <ColourMemoryGame targetRounds={colourCfg.targetRounds} startLen={colourCfg.startLen} onEnd={handleEnd} email={email} name={name} />;
     if (gameType === 'slice')       return <WordSliceGame deck={deck} lifetime={sliceCfg.lifetime} onEnd={handleEnd} email={email} name={name} />;
     if (gameType === 'sort')        return <SortRushGame items={sortCfg.items} categories={sortCfg.categories} fallDuration={sortCfg.fallDuration} onEnd={handleEnd} email={email} name={name} />;
+    if (moreCfg && MORE_GAME_TYPES.includes(gameType)) return <MoreGames type={gameType} cfg={moreCfg} onEnd={handleEnd} email={email} name={name} />;
   }
 
   if (phase === 'result') {
@@ -848,7 +768,6 @@ export default function GameMode({ onBack, email, name, onLimit }) {
           <div className="game-result-title">{title}</div>
           <div className="game-result-score">{result.score} pts</div>
           <div className="game-result-xp">+{result.xp} XP earned</div>
-          <div className="game-result-story">The Fog retreats a little further. Kemi grows stronger.</div>
           <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
             <button className="game-result-btn" onClick={startGame}><Icon name="refresh" size={16} /> Play Again</button>
             <button className="game-result-btn" style={{ background: 'transparent', border: `2px solid ${GOLD}`, color: GOLD }} onClick={onBack}><Icon name="arrowLeft" size={15} /> Exit</button>
@@ -863,12 +782,7 @@ export default function GameMode({ onBack, email, name, onLimit }) {
       <div className="game-menu-header">
         <button className="game-back-btn" onClick={onBack}><Icon name="arrowLeft" size={15} /> Back</button>
         <div className="game-menu-title"><EmojiIcon emoji="🎮" size="1.15em" /> Game Mode</div>
-        <div className="game-menu-sub">Battle the Fog of Ignorance with your general knowledge</div>
-      </div>
-
-      <div className="game-story-intro">
-        <div className="game-story-world">{STORY.world}</div>
-        <div className="game-hero-tag"><EmojiIcon emoji="🦸" size="1.1em" /> You play as: <strong>Kemi, Scholar of Lagos</strong></div>
+        <div className="game-menu-sub">Quick brain games. Play, score and earn XP.</div>
       </div>
 
       <div className="game-diff-label">Choose Difficulty:</div>
@@ -927,10 +841,19 @@ export default function GameMode({ onBack, email, name, onLimit }) {
         </div>
       </div>
 
+      <div className="game-modes-preview">
+        {MORE_GAME_INFO.map((g) => (
+          <div className="game-mode-preview-card" key={g.name}>
+            <span className="game-mode-preview-icon"><EmojiIcon emoji={g.icon} size="1.1em" /></span>
+            <div><div className="game-mode-preview-name">{g.name}</div><div className="game-mode-preview-desc">{g.desc}</div></div>
+          </div>
+        ))}
+      </div>
+
       <div className="game-random-note"><EmojiIcon emoji="🎲" size="1.1em" /> Game type is selected randomly each round</div>
 
-      <button className="game-start-btn" onClick={startGame}>
-        <Icon name="swords" size={17} /> Enter the Battle
+      <button className="game-start-btn" onClick={startGame} disabled={starting}>
+        <Icon name="swords" size={17} /> {starting ? 'Getting ready…' : 'Start playing'}
       </button>
     </div>
   );

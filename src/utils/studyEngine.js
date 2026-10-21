@@ -1,7 +1,7 @@
 // ============================================================================
 // studyEngine.js — turns any document into a study pack, fully on-device.
 //
-// No generative AI, no API key, nothing uploaded anywhere: files are read in
+// On-device engine (fallback). buildSmartPack() below can also rewrite via the server AI route. Files are read in
 // the browser, analysed with classic extractive NLP (term frequency, sentence
 // ranking, definition pattern matching, cloze generation) and the resulting
 // pack is saved in localStorage.
@@ -550,6 +550,87 @@ export function buildStudyPack(rawText, fileName = 'Study file') {
     questions,
     stats: { words: wc, minutes: Math.max(1, Math.round(wc / 220)), terms: terms.length },
   };
+}
+
+/* ── Smart pack: AI rewrite with on-device fallback ──────────────────────── */
+
+const AI_CHUNK = 4200;
+const AI_MAX_CHUNKS = 10;
+
+function chunkForAI(cleaned) {
+  const paras = cleaned.split(/\n+/).map((p) => p.trim()).filter(Boolean);
+  const chunks = [];
+  let buf = '';
+  paras.forEach((p) => {
+    if (buf && buf.length + p.length + 1 > AI_CHUNK) { chunks.push(buf); buf = ''; }
+    buf += (buf ? '\n' : '') + (p.length > AI_CHUNK ? p.slice(0, AI_CHUNK) : p);
+  });
+  if (buf) chunks.push(buf);
+  return chunks.filter((c) => c.length >= 200).slice(0, AI_MAX_CHUNKS);
+}
+
+async function rewriteChunk(text, title) {
+  const res = await fetch('/api/study/rewrite', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, title }),
+  });
+  const j = await res.json().catch(() => null);
+  if (!res.ok || !j || j.success === false || j._nonJson) {
+    const err = new Error((j && j.error) || 'rewrite failed');
+    err.code = j && j.code;
+    throw err;
+  }
+  return j;
+}
+
+// Always resolves with a usable pack. engine: 'ai' | 'local'
+export async function buildSmartPack(rawText, fileName, onProgress) {
+  const local = buildStudyPack(rawText, fileName);
+  let chunks = [];
+  try { chunks = chunkForAI(cleanText(rawText.length > 200000 ? rawText.slice(0, 200000) : rawText)); } catch { chunks = []; }
+  if (!chunks.length || (typeof navigator !== 'undefined' && navigator.onLine === false)) return { pack: local, engine: 'local' };
+
+  const results = new Array(chunks.length).fill(null);
+  let next = 0, done = 0, unavailable = false;
+  const worker = async () => {
+    while (!unavailable) {
+      const k = next++;
+      if (k >= chunks.length) return;
+      try { results[k] = await rewriteChunk(chunks[k], local.title); }
+      catch (e) { if (e.code === 'NO_AI') unavailable = true; }
+      done++;
+      onProgress && onProgress(done / chunks.length);
+    }
+  };
+  await Promise.all([worker(), worker(), worker()]);
+
+  const ok = results.filter(Boolean);
+  if (!ok.length) return { pack: local, engine: 'local' };
+
+  const sections = ok.flatMap((r) => r.sections);
+  const seen = new Set();
+  const dedupe = (arr, key) => arr.filter((x) => { const k = norm(key(x)); if (!k || seen.has(k)) return false; seen.add(k); return true; });
+  let cards = dedupe(ok.flatMap((r) => r.cards), (c) => c.front);
+  let questions = dedupe(ok.flatMap((r) => r.questions), (q) => q.q);
+  if (cards.length < 8) cards = cards.concat(dedupe(local.cards, (c) => c.front)).slice(0, 14);
+  if (questions.length < 6) questions = questions.concat(dedupe(local.questions, (q) => q.q)).slice(0, 12);
+  const overview = ok.flatMap((r) => r.overview).slice(0, 4);
+  const terms = [...new Set(sections.flatMap((x) => x.terms))].slice(0, 14);
+  const pack = {
+    ...local,
+    summary: {
+      overview: overview.length ? overview : local.summary.overview,
+      points: sections.flatMap((x) => x.points.slice(0, 1)).slice(0, 14),
+      terms: terms.length ? terms : local.summary.terms,
+    },
+    sections,
+    cards,
+    questions,
+    engine: 'ai',
+    aiParts: `${ok.length}/${chunks.length}`,
+  };
+  return { pack, engine: 'ai' };
 }
 
 /* ── Local library (localStorage) ────────────────────────────────────────── */

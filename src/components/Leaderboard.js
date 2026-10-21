@@ -1,11 +1,13 @@
+import EliteBadge from './EliteBadge';
 import React, { useState, useEffect } from 'react';
 import { getLeaderboard, getUserRank } from '../utils/leaderboardApi';
 import XPBar from './XPBar';
 import Icon, { EmojiIcon } from './Icon';
+import { wantsChat } from '../utils/chatLink';
 import StudySquads from './StudySquads';
 
 export default function Leaderboard({ userEmail, userName }) {
-  const [view, setView] = useState('global'); // global | squad
+  const [view, setView] = useState(() => (wantsChat() ? 'squad' : 'global')); // global | squad
   const [activeTimeframe, setActiveTimeframe] = useState('alltime');
   const [activeExam, setActiveExam] = useState('all');
   const [leaderboard, setLeaderboard] = useState([]);
@@ -25,7 +27,6 @@ export default function Leaderboard({ userEmail, userName }) {
     { id: 'waec', label: 'WAEC' },
     { id: 'neco', label: 'NECO' },
     { id: 'gst', label: 'GST' },
-    // { id: 'postutme', label: 'POST UTME' },
   ];
 
   useEffect(() => {
@@ -158,9 +159,12 @@ export default function Leaderboard({ userEmail, userName }) {
                 className={`leaderboard-item ${user.email === userEmail ? 'is-current-user' : ''}`}
               >
                 <div className="leaderboard-rank">{getMedal(user, index)}</div>
-                <div className="leaderboard-avatar">
-                  {user.name?.charAt(0)?.toUpperCase() || '?'}
-                </div>
+                <span className="elite-wrap">
+                  <div className="leaderboard-avatar">
+                    {user.name?.charAt(0)?.toUpperCase() || '?'}
+                  </div>
+                  {user.elite && <EliteBadge size={17} />}
+                </span>
                 <div className="leaderboard-info">
                   <div className="leaderboard-name">{user.name}</div>
                   {user.username && <div className="leaderboard-username">@{user.username}</div>}

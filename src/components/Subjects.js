@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { QB, JAMB_LEARN } from '../data/jamb';
-import { POST_UTME, POSTUTME_LEARN } from '../data/postutme';
 import { WAEC_SUBJECTS, WAEC_QB, WAEC_LEARN } from '../data/waec/index';
 import { NECO_SUBJECTS, NECO_QB, NECO_LEARN } from '../data/neco/index';
 import { GST_SUBJECTS, GST_QB, GST_LEARN } from '../data/gst/index';
-import { getFlashcardsForSubject } from '../data/flashcards';
+import { getDeck } from '../utils/flashDeck';
+import StatusBar from './StatusBar';
+import AssignmentBanner from './AssignmentBanner';
+import { getSessionToken } from '../utils/sessionFetch';
 import { SUBJ } from '../data/subjects';
 import { LGRAY, GRAY } from '../utils/colors';
 import { SFX } from '../utils/sounds';
@@ -43,13 +45,13 @@ function countTotalQuestions(qbArr = [], learnTopics = []) {
 export default function Subjects({
   name,
   examType = 'jamb',
-  university = null,
   email = '',
   premiumUser = false,
   refreshTrigger,
   onStartCBT,
   onStartLearn,
   onStartFlashcard,
+  onOpenSchool,
   onStartGame,
   onProfile,
   onBack,
@@ -65,7 +67,6 @@ export default function Subjects({
       case 'waec':    return { subjects: WAEC_SUBJECTS, qb: WAEC_QB, learn: WAEC_LEARN };
       case 'neco':    return { subjects: NECO_SUBJECTS, qb: NECO_QB, learn: NECO_LEARN };
       case 'jamb':    return { subjects: WAEC_SUBJECTS, qb: QB,      learn: JAMB_LEARN };
-      case 'postutme':return { subjects: WAEC_SUBJECTS, qb: POST_UTME, learn: POSTUTME_LEARN };
       case 'gst':     return { subjects: GST_SUBJECTS,  qb: GST_QB,  learn: GST_LEARN };
       default:        return { subjects: null, qb: null, learn: null };
     }
@@ -75,7 +76,7 @@ export default function Subjects({
 
   const isGridExam = GRID_EXAMS.includes(examType);
 
-  // ── For JAMB/POSTUTME: fall back to WAEC_QB if subject not in JAMB QB ───
+  // ── For JAMB: fall back to WAEC_QB if subject not in JAMB QB ───
   const getQuestionPool = (subjectId) => {
     const jambPool = QB[subjectId] || [];
     if (jambPool.length > 0) return jambPool;
@@ -83,32 +84,23 @@ export default function Subjects({
   };
 
   const getJambTotalCount = (subjectId) => {
-    const learnBank = examType === 'postutme' ? POSTUTME_LEARN : JAMB_LEARN;
-    if (mode === 'flashcard') return getFlashcardsForSubject(subjectId).length;
-    if (examType === 'postutme' && university) {
-      const uniCount = POST_UTME[university?.toUpperCase()]?.[subjectId]?.length || 0;
-      return countTotalQuestions(Array(uniCount).fill({ q: '' }), learnBank[subjectId] || []);
-    }
+    const learnBank = JAMB_LEARN;
+    if (mode === 'flashcard') return getDeck(subjectId, examType).length;
     return countTotalQuestions(getQuestionPool(subjectId), (learnBank[subjectId] || []));
   };
 
   const hasLearnContent = (subjectId) => {
-    const learnBank = examType === 'postutme' ? POSTUTME_LEARN : JAMB_LEARN;
+    const learnBank = JAMB_LEARN;
     return (learnBank[subjectId] || []).length > 0;
   };
 
   const hasQuestions = (subjectId) => {
-    if (examType === 'postutme' && university) {
-      const uniData = POST_UTME[university?.toUpperCase()];
-      return !!uniData?.[subjectId]?.length;
-    }
     return getQuestionPool(subjectId).length > 0;
   };
 
   // ── Header label ─────────────────────────────────────────────────────────
   const examLabel = {
     jamb:    'JAMB',
-    postutme: university ? `${university.toUpperCase()} POST UTME` : 'POST UTME',
     waec:    'WAEC',
     neco:    'NECO',
     gst:     'GST',
@@ -132,7 +124,7 @@ export default function Subjects({
   // ── Build JAMB subject list for grid (used in CBT + Learn modes) ─────────
   // Replaces the old flat-list card layout for JAMB CBT mode.
   const getJambGridSubjects = () => {
-    const learnBank = examType === 'postutme' ? POSTUTME_LEARN : JAMB_LEARN;
+    const learnBank = JAMB_LEARN;
     if (mode === 'learn') {
       // Learn mode: show subjects that have study notes
       return Object.entries(SUBJ)
@@ -143,7 +135,7 @@ export default function Subjects({
     if (mode === 'flashcard') {
       return Object.entries(SUBJ)
         .filter(([id]) => id !== 'novel')
-        .filter(([id]) => getFlashcardsForSubject(id).length > 0)
+        .filter(([id]) => getDeck(id, examType).length > 0)
         .map(([id, meta]) => ({ id, ...meta }));
     }
     // CBT mode: show subjects that have questions (jamb QB or waec QB fallback)
@@ -151,27 +143,21 @@ export default function Subjects({
       .filter(([id]) => id !== 'novel')
       .filter(([id]) => hasQuestions(id))
       .map(([id, meta]) => ({ id, ...meta }));
-
-    // POSTUTME may need university filter
-    if (examType === 'postutme' && university) {
-      const uniData = POST_UTME[university?.toUpperCase()] || {};
-      return subs.filter(s => uniData[s.id]?.length > 0);
-    }
     return subs;
   };
 
   // ── Lekki Headmaster novel card (CBT/Flash only) ──────────────────────────
   const novelCount = mode === 'flashcard'
-    ? getFlashcardsForSubject('novel').length
+    ? getDeck('novel', 'jamb').length
     : (QB['novel'] || []).length;
 
   const showNovel = mode !== 'learn' && novelCount > 0;
 
-  const flashUnavailable = mode === 'flashcard' && (examType === 'postutme' || isGridExam);
+  const flashUnavailable = false;
 
   // ── Whether to use grid layout ────────────────────────────────────────────
   // Grid exams (waec/neco/gst) always use grid.
-  // JAMB/POSTUTME now ALSO use grid for CBT and Learn (not just Learn).
+  // JAMB now ALSO use grid for CBT and Learn (not just Learn).
   // Flashcard for JAMB stays as the old card list since it's unavailable anyway.
   const useGridLayout = isGridExam || mode === 'learn' || mode === 'cbt';
 
@@ -201,6 +187,11 @@ export default function Subjects({
           </div>
         </div>
       </div>
+
+      {getSessionToken() && onOpenSchool ? <AssignmentBanner onOpen={onOpenSchool} /> : null}
+
+      {/* ── Status updates (signed-in students) ── */}
+      {getSessionToken() ? <StatusBar /> : null}
 
       {/* ── Mode toggle ── */}
       <div className="subjects-mode-toggle-wrap">
@@ -233,10 +224,12 @@ export default function Subjects({
           /* ── GRID LAYOUT — used for all exam types in CBT and Learn mode ── */
           (() => {
             // For WAEC/NECO/GST use their dedicated subject list
-            // For JAMB/POSTUTME build from SUBJ filtered by availability
-            const cardSubjects = isGridExam ? (gridSubjects || []) : getJambGridSubjects();
-            const cardQB       = isGridExam ? gridQB : (examType === 'postutme' ? POST_UTME : QB);
-            const cardLearn    = isGridExam ? gridLearn : (examType === 'postutme' ? POSTUTME_LEARN : JAMB_LEARN);
+            // For JAMB build from SUBJ filtered by availability
+            const cardSubjects = isGridExam
+              ? (gridSubjects || []).filter((x) => mode !== 'flashcard' || getDeck(x.id, examType).length > 0)
+              : getJambGridSubjects();
+            const cardQB       = isGridExam ? gridQB : QB;
+            const cardLearn    = isGridExam ? gridLearn : (JAMB_LEARN);
 
             if (!cardSubjects.length) {
               return (
@@ -246,9 +239,7 @@ export default function Subjects({
                     {mode === 'learn' ? 'No Study Notes Available Yet' : 'No Questions Available Yet'}
                   </div>
                   <div className="subjects-empty-sub">
-                    {examType === 'postutme' && university
-                      ? `We're adding ${mode === 'learn' ? 'study notes' : 'questions'} for ${university.toUpperCase()}. Check back soon!`
-                      : `More ${mode === 'learn' ? 'study notes are' : 'questions are'} being added. Please check back later!`}
+                    {`More ${mode === 'learn' ? 'study notes are' : 'questions are'} being added. Please check back later!`}
                   </div>
                   <button className="subjects-empty-btn" onClick={onProfile}>Go to Profile</button>
                 </div>
@@ -262,7 +253,9 @@ export default function Subjects({
                     // For grid exams: count from QB array + topic questions
                     // For JAMB: use the helper that already handles fallback + topics
                     let qCount;
-                    if (isGridExam) {
+                    if (mode === 'flashcard') {
+                      qCount = getDeck(subj.id, examType).length;
+                    } else if (isGridExam) {
                       qCount = countTotalQuestions(
                         gridQB?.[subj.id] || [],
                         gridLearn?.[subj.id] || []
@@ -286,11 +279,11 @@ export default function Subjects({
                           {mode === 'learn'
                             ? 'Study notes'
                             : qCount > 0
-                              ? `${qCount} questions`
+                              ? `${qCount} ${mode === 'flashcard' ? 'cards' : 'questions'}`
                               : 'Coming soon'}
                         </div>
                         <div className="subjects-grid-badge" style={{ background: subj.bg, color: subj.color }}>
-                          {mode === 'learn' ? 'STUDY' : 'READY'}
+                          {mode === 'learn' ? 'STUDY' : mode === 'flashcard' ? 'REVISE' : 'READY'}
                         </div>
                       </div>
                     );
@@ -325,7 +318,7 @@ export default function Subjects({
           (() => {
             const subs = Object.entries(SUBJ)
               .filter(([id]) => id !== 'novel')
-              .filter(([id]) => getFlashcardsForSubject(id).length > 0);
+              .filter(([id]) => getDeck(id, examType).length > 0);
 
             if (!subs.length) {
               return (

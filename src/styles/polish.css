@@ -865,3 +865,35 @@ body.dark-mode .bottom-nav { background: rgba(27, 10, 71, .86); }
   .phone { max-width: 640px !important; }
   body { padding: 28px 20px; }
 }
+
+/* Deter copying of questions/notes inside the app (see utils/contentGuard.js) */
+html[data-guard] body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+html[data-guard] input, html[data-guard] textarea, html[data-guard] select, html[data-guard] [contenteditable="true"], html[data-guard] .land, html[data-guard] .sp, html[data-guard] .allow-copy { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+
+/* Elite (paid Premium) badge — bottom-right of an avatar */
+.elite-wrap { position: relative; display: inline-flex; flex: 0 0 auto; }
+.elite-badge { position: absolute; right: -3px; bottom: -3px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, #FFE8A3, #FFC53D); border: 2px solid #fff; box-shadow: 0 2px 8px rgba(46,16,101,.35); z-index: 2; }
+
+/* Data Saver mode: calm the UI, drop heavy effects */
+html.data-saver *, html.data-saver *::before, html.data-saver *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+html.data-saver { --es-blur: 0; }
+html.data-saver * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+html.data-saver canvas.confetti, html.data-saver .confetti, html.data-saver [class*="confetti"] { display: none !important; }
+
+/* ── Action buttons: label stays on ONE line; shrink instead of wrapping ── */
+.auth-btn, .create-challenge-btn, .accept-btn, .quiz-next-btn, .onboard-button, .game-start-btn,
+.join-button, .sharegate-start-btn, .adgate-continue-btn, .learn-nav-btn, .learn-quiz-finish-btn,
+button[class*="-btn"]:not([class*="option"]):not([class*="opt"]),
+button[class*="cta"], button[class*="primary"], .shop-item-buy, .pm-cta {
+  white-space: nowrap;
+  max-width: 100%;
+}
+@media (max-width: 420px) {
+  .auth-btn, .create-challenge-btn, .accept-btn, .quiz-next-btn, .onboard-button, .game-start-btn,
+  .join-button, .sharegate-start-btn, .adgate-continue-btn, .learn-nav-btn, .learn-quiz-finish-btn,
+  button[class*="cta"], button[class*="primary"], .pm-cta {
+    font-size: clamp(11.5px, 3.6vw, 15px);
+    padding-left: 12px; padding-right: 12px;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+}

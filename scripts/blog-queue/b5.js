@@ -34,11 +34,6 @@ module.exports = [
 ["Office Tools","Learn word processing, spreadsheets and presentations."],
 ["CBT Familiarity","Practice on CBT interfaces to reduce stress on exam day."]
 ]],
-["post-utme-2027-how-to-prepare-early","postutme","12-23","Post-UTME 2027: How to Prepare Before the Notice Is Out","The best Post-UTME preparation starts before registration opens.","Post-UTME 2027,screening,university admission,early preparation",[
-["Pick Your Schools","Choose your first and second choice institutions and learn their admission requirements."],
-["Know the Format","Look at previous Post-UTME formats and questions for those schools."],
-["Prepare Documents","Gather and verify documents, and keep digital copies."]
-]],
 ["how-to-deal-with-procrastination","study-tips","12-24","How to Beat Procrastination: A Practical Guide","Procrastination is usually about avoiding discomfort, not laziness. Here is how to start anyway.","procrastination,motivation,time management,productivity",[
 ["Shrink the Task","Commit to just five minutes. Starting is the hard part."],
 ["Remove Friction","Prepare your materials the night before and place your phone out of reach."],
@@ -57,7 +52,7 @@ module.exports = [
 ["neco-and-waec-results-what-to-do-next","waec","12-27","Got Your O-Level Result? What to Do Next","Your result opens specific doors. Understand your options.","O-level results,WAEC,NECO,next steps",[
 ["Check Requirements","Confirm that you have five credits including English and Mathematics for your target course."],
 ["Verify Your Result","Confirm that your result is correct and obtain a certificate or statement of result when required."],
-["Plan Admission","Apply for admission using your result and prepare for UTME or Post-UTME as needed."]
+["Plan Admission","Apply for admission using your result and prepare for UTME as needed."]
 ]],
 ["how-to-prepare-for-university-lectures-and-note-taking","gst","12-28","Note-Taking in Lectures: The Cornell Method for Students","Good notes save revision time. The Cornell method makes notes easier to review.","note taking,Cornell method,lectures,university study",[
 ["Divide the Page","Create a narrow left column for cues, a wide right column for notes and a bottom area for a summary."],

@@ -1,7 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { fmtN, fmtNaira, TrendChart, ColumnChart, Donut, Bars, Funnel, Kpi } from '../components/AdminCharts';
 import AdminPartners from '../components/AdminPartners';
 import AdminAccess from '../components/AdminAccess';
+import AdminMail from '../components/AdminMail';
+import AdminReports from '../components/AdminReports';
+import AdminStudents from '../components/AdminStudents';
+import AdminActivity from '../components/AdminActivity';
+import AdminBlog from '../components/AdminBlog';
+import AdminTeam from '../components/AdminTeam';
+import AdminAI from '../components/AdminAI';
+import { AdminPrices, AdminSchools } from '../components/AdminPrices';
+import { makeApi, ago } from '../components/adminApi';
 import '../styles/admin.css';
 
 const TOKEN_KEY = 'es_admin_token';
@@ -19,6 +28,21 @@ const METRICS = {
   challenges: { label: 'Challenges', fmt: fmtN },
 };
 
+const TABS = [
+  { id: 'analytics', label: 'Analytics', perms: ['analytics'] },
+  { id: 'students', label: 'Students', perms: ['students'] },
+  { id: 'activity', label: 'Activity', perms: ['students'] },
+  { id: 'blog', label: 'Blog', perms: ['blog'] },
+  { id: 'partners', label: 'Partners', perms: ['partners', 'payouts'], badge: ['partners', 'payouts'] },
+  { id: 'schools', label: 'Schools', perms: ['schools'], badge: ['schools'] },
+  { id: 'prices', label: 'Prices', perms: ['prices'] },
+  { id: 'access', label: 'Access & trials', perms: ['access'] },
+  { id: 'mail', label: 'Email', perms: ['mail'] },
+  { id: 'reports', label: 'Reports', perms: ['reports'], badge: ['reports'] },
+  { id: 'ai', label: 'AI keys', perms: ['ai'] },
+  { id: 'team', label: 'Team', perms: [], owner: true },
+];
+
 const HOUR_LABELS = Array.from({ length: 24 }, (_, h) => `${h % 12 || 12}${h < 12 ? 'a' : 'p'}`);
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -34,12 +58,35 @@ export default function Admin() {
   const [to, setTo] = useState('');
   const [metric, setMetric] = useState('signups');
   const [compare, setCompare] = useState(true);
-  const [view, setView] = useState('analytics');
+  const [view, setView] = useState('');
+  const [me, setMe] = useState(null);
+  const [alerts, setAlerts] = useState({ counts: {}, total: 0, items: [] });
+  const [bell, setBell] = useState(false);
+  const [teamMode, setTeamMode] = useState(false);
+  const [email, setEmail] = useState('');
 
   const signOut = useCallback(() => {
     try { sessionStorage.removeItem(TOKEN_KEY); } catch { /* ignore */ }
-    setToken(''); setStats(null);
+    setToken(''); setStats(null); setMe(null); setView('');
   }, []);
+  const authFail = useCallback((m) => { signOut(); setError(m || 'Session expired.'); }, [signOut]);
+  const api = useMemo(() => makeApi(token, authFail), [token, authFail]);
+
+  // who am I + what can I open
+  useEffect(() => {
+    if (!token) return;
+    api('me').then((d) => { setMe(d.admin); }).catch(() => {});
+  }, [token, api]);
+  const can = useCallback((k) => !!me && (me.owner || me.perms.includes(k)), [me]);
+
+  // red dot: things that need attention (new partner, payout request, reports, school trials)
+  const refreshAlerts = useCallback(() => { if (token) api('alerts').then(setAlerts).catch(() => {}); }, [token, api]);
+  useEffect(() => {
+    if (!token) return undefined;
+    refreshAlerts();
+    const t = setInterval(refreshAlerts, 60000);
+    return () => clearInterval(t);
+  }, [token, refreshAlerts]);
 
   const load = useCallback(async (tk, rg, f, t) => {
     setBusy(true); setError('');
@@ -55,13 +102,13 @@ export default function Admin() {
     finally { setBusy(false); }
   }, [signOut]);
 
-  useEffect(() => { if (token && range !== 'custom') load(token, range); }, [token, range, load]);
+  useEffect(() => { if (token && me && can('analytics') && range !== 'custom') load(token, range); }, [token, me, can, range, load]);
 
   const login = async (e) => {
     e.preventDefault();
     setBusy(true); setError('');
     try {
-      const r = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
+      const r = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(teamMode ? { email, password } : { password }) });
       const d = await r.json();
       if (!d.success) { setError(d.error || 'Login failed.'); return; }
       try { sessionStorage.setItem(TOKEN_KEY, d.token); } catch { /* ignore */ }
@@ -78,16 +125,20 @@ export default function Admin() {
       <div className="adm-wrap adm-login">
         <form className="adm-card adm-login-card" onSubmit={login}>
           <h1>EliteScholars Admin</h1>
-          <p>Private dashboard. Enter the admin password.</p>
-          <input type="password" autoComplete="current-password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} autoFocus />
+          <p>{teamMode ? 'Team sign-in. Use the email and password you were given.' : 'Private dashboard. Enter the admin password.'}</p>
+          {teamMode && <input type="email" autoComplete="username" placeholder="Your email" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus />}
+          <input type="password" autoComplete="current-password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} autoFocus={!teamMode} />
           {error && <div className="adm-error">{error}</div>}
-          <button type="submit" disabled={busy || !password}>{busy ? 'Checking…' : 'Sign in'}</button>
+          <button type="submit" disabled={busy || !password || (teamMode && !email)}>{busy ? 'Checking…' : 'Sign in'}</button>
+          <button type="button" className="adm-link" onClick={() => { setTeamMode(!teamMode); setError(''); }}>{teamMode ? 'Sign in as the owner' : 'Team member? Sign in with email'}</button>
         </form>
       </div>
     );
   }
 
   const s = stats;
+  const visibleTabs = me ? TABS.filter((t) => (t.owner ? me.owner : t.perms.some((p) => can(p)))) : [];
+  const cur = view && visibleTabs.some((t) => t.id === view) ? view : (visibleTabs[0] ? visibleTabs[0].id : '');
   const m = METRICS[metric];
   const premRate = s && s.totals.students ? ((s.totals.premiumActive / s.totals.students) * 100).toFixed(1) : '0.0';
   const convRate = s && s.funnel.quizStarted ? Math.round((s.funnel.quizCompleted / s.funnel.quizStarted) * 100) : 0;
@@ -99,25 +150,49 @@ export default function Admin() {
       <header className="adm-head">
         <div>
           <h1>EliteScholars Admin</h1>
-          {s && <span className="adm-updated">{s.range.label} · {s.range.from} → {s.range.to} · by {unit}</span>}
+          {me && !me.owner && <span className="adm-updated">Signed in as {me.name}</span>}
+          {s && cur === 'analytics' && <span className="adm-updated">{s.range.label} · {s.range.from} → {s.range.to} · by {unit}</span>}
         </div>
         <div className="adm-head-actions">
-          <button onClick={() => load(token, range, from, to)} disabled={busy}>{busy ? 'Loading…' : 'Refresh'}</button>
+          <div className="adm-bellwrap">
+            <button className="adm-ghost adm-bell" onClick={() => { setBell(!bell); refreshAlerts(); }} aria-label="Things needing attention">🔔{alerts.total > 0 && <i className="adm-dot">{alerts.total > 9 ? '9+' : alerts.total}</i>}</button>
+            {bell && (
+              <div className="adm-pop">
+                <b>Needs your attention</b>
+                {alerts.items.length ? alerts.items.map((it, i) => (
+                  <button key={i} className="adm-pop-row" onClick={() => { setView(it.tab); setBell(false); }}><span>{it.text}</span>{it.at && <small>{ago(it.at)}</small>}</button>
+                )) : <p className="adm-empty">All clear 🎉</p>}
+              </div>
+            )}
+          </div>
+          {cur === 'analytics' && <button onClick={() => load(token, range, from, to)} disabled={busy}>{busy ? 'Loading…' : 'Refresh'}</button>}
           <button className="adm-ghost" onClick={signOut}>Sign out</button>
         </div>
       </header>
 
-      <div className="adm-tabs adm-maintabs">
-        <button className={view === 'analytics' ? 'on' : ''} onClick={() => setView('analytics')}>Analytics</button>
-        <button className={view === 'partners' ? 'on' : ''} onClick={() => setView('partners')}>Affiliate partners</button>
-        <button className={view === 'access' ? 'on' : ''} onClick={() => setView('access')}>Access &amp; trials</button>
+      {!me && <div className="adm-card">Loading…</div>}
+      {me && (
+      <div className="adm-tabs adm-maintabs adm-scroll" role="tablist">
+        {visibleTabs.map((t) => {
+          const n = t.badge ? t.badge.reduce((a, k) => a + (alerts.counts[k] || 0), 0) : 0;
+          return <button key={t.id} role="tab" className={cur === t.id ? 'on' : ''} onClick={() => setView(t.id)}>{t.label}{n > 0 && <i className="adm-dot">{n > 9 ? '9+' : n}</i>}</button>;
+        })}
       </div>
+      )}
 
-      {view === 'access' && <AdminAccess token={token} onAuthFail={(m) => { signOut(); setError(m || 'Session expired.'); }} />}
+      {cur === 'students' && <AdminStudents token={token} onAuthFail={authFail} />}
+      {cur === 'activity' && <AdminActivity token={token} onAuthFail={authFail} />}
+      {cur === 'blog' && <AdminBlog token={token} onAuthFail={authFail} />}
+      {cur === 'schools' && <AdminSchools token={token} onAuthFail={authFail} />}
+      {cur === 'prices' && <AdminPrices token={token} onAuthFail={authFail} />}
+      {cur === 'ai' && <AdminAI token={token} onAuthFail={authFail} />}
+      {cur === 'team' && <AdminTeam token={token} onAuthFail={authFail} />}
+      {cur === 'access' && <AdminAccess token={token} onAuthFail={authFail} />}
+      {cur === 'reports' && <AdminReports token={token} onAuthFail={authFail} />}
+      {cur === 'mail' && <AdminMail token={token} onAuthFail={authFail} />}
+      {cur === 'partners' && <AdminPartners token={token} onAuthFail={authFail} />}
 
-      {view === 'partners' && <AdminPartners token={token} onAuthFail={(m) => { signOut(); setError(m || 'Session expired.'); }} />}
-
-      {view === 'analytics' && (<>
+      {cur === 'analytics' && (<>
       <section className="adm-controls">
         <div className="adm-pills">
           {RANGES.map(([k, l]) => <button key={k} className={range === k ? 'on' : ''} onClick={() => { setMonth(''); setRange(k); }}>{l}</button>)}

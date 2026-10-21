@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { initiatePayment } from '../utils/profileApi';
 import Icon, { EmojiIcon } from './Icon';
 
@@ -40,7 +41,7 @@ export default function PremiumModal({
         { icon: '⏱️', text: 'Unlimited sessions, no time limit' },
         { icon: '🚫', text: 'Zero cooldown, ever' },
         { icon: '🚫', text: 'Zero ads, completely' },
-        { icon: '📚', text: 'WAEC, NECO, JAMB, GST & POST-UTME' },
+        { icon: '📚', text: 'WAEC, NECO, JAMB & GST' },
         { icon: '🎮', text: 'All 6 arcade games unlocked' },
         { icon: '📤', text: 'Unlimited file uploads & study packs' },
         { icon: '⚔️', text: 'Unlimited challenges & squads' },
@@ -70,7 +71,9 @@ export default function PremiumModal({
     }
   };
 
-  return (
+  // Rendered into <body>: inside a transformed/animated screen, position:fixed is
+  // measured from that screen, which pushed the sheet below the visible area.
+  return createPortal(
     <div className="pm-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="pm-sheet">
         {/* Ambient glow blob */}
@@ -139,6 +142,7 @@ export default function PremiumModal({
 
         <div className="pm-trust"><EmojiIcon emoji="🔒" size="1.15em" /> Secured by Flutterwave · Cancel anytime · No hidden fees</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

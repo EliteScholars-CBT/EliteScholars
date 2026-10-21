@@ -4,6 +4,7 @@ import { requireUser } from "../_helpers/session.js";
 import { rateLimitOk } from "../_helpers/guard.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { norm, EXPIRY_MS } from "./challenges-util.js";
+import { pushToEmails } from "../_helpers/push.js";
 
 export default async function handler(req, res) {
   setCors(res);
@@ -45,6 +46,14 @@ export default async function handler(req, res) {
   };
   const { error } = await sb.from("challenges").insert(row);
   if (error) { console.error("[challenge create]", error.message); return sendErr(res, "Could not create challenge.", 500); }
+
+  // tell the opponent right away, even if the app is closed
+  const subj = row.subject ? row.subject.replace(/[_-]/g, " ") : "a quiz";
+  await pushToEmails([opponent], {
+    title: `⚔️ ${row.challenger_name} challenged you!`,
+    body: `${subj}${row.num_questions ? ` · ${row.num_questions} questions` : ""}. Tap to accept and play.`,
+    url: "/app", tag: `challenge-${id}`, type: "challenge",
+  });
 
   return sendOk(res, { challenge_id: id });
 }

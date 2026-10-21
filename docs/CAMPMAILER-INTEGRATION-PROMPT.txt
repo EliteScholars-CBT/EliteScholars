@@ -1,0 +1,203 @@
+================================================================================
+PROMPT FOR THE AI WORKING ON CAMPMAILER (CampMailer(TM))
+Paste everything below this line into the AI that maintains CampMailer.
+================================================================================
+
+You are working on CampMailer(TM), a bulk-email web app I (Michael J. Okpegboro,
+founder of EliteScholars) built. It is hosted on Vercel and sends one
+personalised email at a time from my own Gmail account. I now need CampMailer to
+become the email engine behind my other product, EliteScholars (elitescholars.site),
+so that everything about emailing in EliteScholars is handled by CampMailer.
+
+Do NOT rebuild CampMailer or remove anything it already does. Add an
+"integration API" on top of what already exists, reusing your existing sending,
+tracking, coupon and list logic.
+
+--------------------------------------------------------------------------------
+STEP 0 - AUDIT YOURSELF FIRST (do this before writing code)
+--------------------------------------------------------------------------------
+1. Read the whole CampMailer codebase and list, in plain words, EVERY feature it
+   has today (for example: campaigns, templates, personalisation/merge fields,
+   one-by-one Gmail sending, daily/hourly send limits and throttling, scheduling,
+   open tracking, click tracking, unsubscribe handling, bounce handling, coupon
+   creation and tracking, contact lists/segments, reports/analytics, retries,
+   logs, multi-sender, anything else).
+2. For EACH feature, tell me whether it can be driven through the integration
+   API described below, and if not, add it to the API. The goal is that every
+   CampMailer feature is usable from EliteScholars, not only the ones I listed
+   here. If you find a feature I did not mention, expose it too and document it.
+3. Reply to me with that feature list and the final API reference BEFORE or
+   together with the code, so I can paste it back to my EliteScholars developer.
+
+--------------------------------------------------------------------------------
+WHAT ELITESCHOLARS ALREADY SENDS YOU (fixed contract - implement exactly this)
+--------------------------------------------------------------------------------
+EliteScholars is a Nigerian exam-prep platform (JAMB, WAEC, NECO, GST) with
+students and affiliate partners. Its admin panel has an "Email" tab where I pick
+an audience (all students, premium students, free students, all/active/pending
+partners, or hand-picked people found via search) and write a subject + message.
+When I choose the CampMailer channel, EliteScholars calls CampMailer like this:
+
+  POST {CAMPMAILER_URL}/api/integrations/elitescholars/campaigns
+  Headers:
+    Authorization: Bearer <CAMPMAILER_API_KEY>
+    Content-Type: application/json
+    Idempotency-Key: <uuid>      (same key twice = return the first result,
+                                  never send twice)
+  Body:
+  {
+    "idempotency_key": "<uuid>",
+    "source": "elitescholars-admin",
+    "campaign": {
+      "name": "string (max 120)",
+      "subject": "string - may contain {{first_name}}, {{name}}, {{email}}",
+      "body": "plain text with line breaks and the same {{merge}} fields",
+      "kind": "students" | "partners",
+      "unsubscribe_url_template": "https://elitescholars.site/api/mail/unsubscribe?e={{email}}&t={{unsub_token}}"
+    },
+    "recipients": [
+      { "email": "a@b.com", "name": "Full Name", "first_name": "Full",
+        "type": "student" | "partner", "unsub_token": "32-char hex" }
+    ]
+  }
+  Up to 5,000 recipients per request.
+
+  Success response (HTTP 200):
+  { "success": true, "campaign_id": "<your id>", "accepted": 4980, "rejected": 20 }
+  Error response (HTTP 4xx/5xx):
+  { "success": false, "error": "human readable reason" }
+
+Rules for this endpoint:
+- Authenticate with a secret API key stored in an environment variable
+  (name it ELITESCHOLARS_INTEGRATION_KEY). Compare in constant time. Reject
+  everything else with 401. Never log the key.
+- Respond FAST. If the list is large, validate, store the campaign + recipients,
+  return 200 with campaign_id immediately, and send in the background / in
+  scheduled batches (a Vercel function is time-limited; use your existing queue
+  or cron approach). "accepted" = valid recipients queued.
+- Convert the plain-text body into a clean, branded HTML email (paragraphs,
+  purple #6D28D9 "EliteScholars" header, mobile friendly) AND keep a plain-text
+  alternative. Replace {{first_name}}, {{name}}, {{email}} per recipient. Escape
+  HTML in every merged value.
+- ALWAYS put an unsubscribe link in the footer by filling
+  unsubscribe_url_template for each recipient (replace {{email}} with the
+  URL-encoded email and {{unsub_token}} with that recipient's unsub_token), and
+  add the List-Unsubscribe header. Do not handle EliteScholars unsubscribes
+  yourself; the link points to EliteScholars, which keeps the master opt-out list.
+- De-duplicate emails, skip invalid addresses (count them in "rejected"), and
+  respect your Gmail sending limits: throttle, spread a big campaign over hours
+  or days if needed, and keep sending until finished. Tell me in the docs what the
+  daily limit is for a normal Gmail vs Google Workspace account.
+
+--------------------------------------------------------------------------------
+ENDPOINTS I ALSO WANT (so EliteScholars can use ALL CampMailer features)
+--------------------------------------------------------------------------------
+All under /api/integrations/elitescholars/, same Bearer key, JSON in/out,
+{ success, ... } envelope. Add whatever your features need; these are the minimum:
+
+1. GET  /campaigns                      list campaigns (status, counts, dates)
+2. GET  /campaigns/:id                  one campaign
+3. GET  /campaigns/:id/stats            queued, sent, delivered, failed, bounced,
+                                         unique opens, total opens, unique clicks,
+                                         top links, unsubscribes, complaints,
+                                         coupon redemptions and revenue if known
+4. GET  /campaigns/:id/recipients       per-recipient status (paged, filterable by
+                                         sent/opened/clicked/bounced/failed)
+5. POST /campaigns/:id/pause | /resume | /cancel
+6. POST /campaigns (extra optional fields) -
+     "schedule_at": ISO time (Africa/Lagos aware),
+     "send_rate": emails per hour override,
+     "track_opens": true/false, "track_clicks": true/false,
+     "reply_to": "email", "from_name": "string",
+     "template_id": "<your template>" (use your own template system if you have one),
+     "attachments": only if CampMailer already supports them,
+     "ab_test": subject/body variants if CampMailer already supports them,
+     "coupon": see below.
+7. COUPONS - expose everything CampMailer can do with coupons:
+     POST /coupons                create a coupon/campaign coupon set
+                                   (code pattern, one unique code per recipient or
+                                   one shared code, % or fixed value in NGN, expiry,
+                                   max uses, notes)
+     GET  /coupons, GET /coupons/:id/redemptions
+     POST /coupons/validate       { code, email } -> { valid, discount, reason }
+     POST /coupons/redeem         { code, email, order_ref, amount } -> redeemed
+     In emails, support merge fields {{coupon_code}}, {{coupon_value}},
+     {{coupon_expiry}} so each recipient can get their own tracked code.
+   EliteScholars will call validate/redeem when a student pays for Premium with a
+   coupon, so these must be fast and idempotent per order_ref.
+8. CONTACTS / LISTS / SEGMENTS (if CampMailer has them): create/update/list
+   contacts and tags; add/remove people; bulk upsert; suppression list
+   (bounced, complained, unsubscribed) with GET /suppressions and
+   POST /suppressions so EliteScholars can sync opt-outs both ways.
+9. TEMPLATES (if CampMailer has them): list/get/create/update, with a preview
+   endpoint that renders a template with sample merge data.
+10. POST /test-send  { to, subject, body } - send one test email through the same
+    rendering pipeline so I can preview before a campaign.
+11. GET  /account/limits  today's quota used/remaining and the connected sender
+    address, so the EliteScholars admin panel can show "you can send N more today".
+12. GET  /health  returns { success:true, version } with no auth, for monitoring.
+
+--------------------------------------------------------------------------------
+EVENTS BACK TO ELITESCHOLARS (webhooks)
+--------------------------------------------------------------------------------
+Add an optional outgoing webhook. Config via environment variables:
+  ELITESCHOLARS_WEBHOOK_URL    (I will give you the URL when EliteScholars has the
+                                receiver; skip silently if unset)
+  ELITESCHOLARS_WEBHOOK_SECRET
+Send POST JSON { event, campaign_id, email, timestamp, data } with header
+X-CampMailer-Signature: hex HMAC-SHA256 of the raw body using the secret.
+Events: campaign.started, campaign.completed, email.sent, email.delivered,
+email.failed, email.bounced, email.opened, email.clicked, email.unsubscribed,
+email.complained, coupon.redeemed. Retry failed deliveries with backoff (up to
+6 tries). Batch/aggregate "opened" and "clicked" if volume is high.
+
+--------------------------------------------------------------------------------
+SECURITY, RELIABILITY, QUALITY RULES
+--------------------------------------------------------------------------------
+- CORS: the integration endpoints are server-to-server. Do not open CORS to the
+  world; allow only my EliteScholars origin if you must.
+- Validate every field and size (subject <= 150 chars, body <= 8,000 chars,
+  recipients <= 5,000). Return clear JSON errors. Never return HTML or stack
+  traces; every error must be JSON.
+- Idempotency on campaign creation (see header above). Replays are common.
+- Rate-limit the integration key (e.g. 60 requests/minute) and log requests
+  without storing secrets or email bodies in logs.
+- Keep Gmail credentials/tokens exactly where CampMailer stores them now; do not
+  expose them through the API. Store the integration key only as an environment
+  variable.
+- Keep all existing CampMailer screens and behaviour working. Add a simple
+  "Integrations" or "EliteScholars" section in the CampMailer dashboard showing
+  campaigns that came from EliteScholars (source = elitescholars-admin).
+- Write tests or a short curl script for each endpoint, run them, and fix
+  failures before you tell me it is done.
+
+--------------------------------------------------------------------------------
+WHAT TO GIVE ME BACK
+--------------------------------------------------------------------------------
+1. The updated CampMailer project (complete, ready to deploy).
+2. The feature audit from STEP 0 (every CampMailer feature + how it is exposed).
+3. An API reference (endpoint, request, response, example curl) I can paste into
+   the EliteScholars project.
+4. The exact environment variables to set on CampMailer's Vercel project, and the
+   two values I must copy into EliteScholars' Vercel project:
+      CAMPMAILER_URL        e.g. https://campmailer-xyz.vercel.app
+      CAMPMAILER_API_KEY    same value as ELITESCHOLARS_INTEGRATION_KEY
+5. A short list of anything you could not do and why.
+
+================================================================================
+NOTES FOR ME (NOT PART OF THE PROMPT)
+================================================================================
+What EliteScholars already has now:
+- Admin > Email tab: audience picker (students / partners; all, filtered, or
+  search-and-select; paste emails), subject, message with {{first_name}},
+  channel switch Direct (Resend, up to 1,000) or CampMailer, history of sends.
+- Master unsubscribe list and public unsubscribe link (/api/mail/unsubscribe).
+- It calls the endpoint in this prompt once CAMPMAILER_URL and CAMPMAILER_API_KEY
+  are set in EliteScholars' Vercel environment variables.
+
+Still to build on the EliteScholars side after CampMailer is ready (tell me when):
+- Webhook receiver for the events above (open/click/bounce counts in the admin).
+- Show live campaign stats and Gmail quota in the Email tab (using /stats and
+  /account/limits).
+- Coupon box in the Premium payment screen calling validate/redeem.
+- Optional: scheduled sends and templates picker.

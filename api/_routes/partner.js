@@ -111,7 +111,7 @@ export default async function handler(req, res) {
       created = data;
     }
     if (!created) return sendErr(res, "Could not create account. Try again.", 500);
-    await notifyAdmin("New affiliate partner signup", `${name} (${email}, ${phone}) just signed up as a partner and is waiting for your approval in the admin dashboard.`);
+    await notifyAdmin("New partner waiting for your approval", "A new affiliate partner has signed up and is waiting for you to approve them.", { emoji: "🤝", heading: "New partner to approve", rows: [["Name", name], ["Email", email], ["Phone", phone || "—"]], cta: { label: "Review in admin", url: "https://elitescholars.site/admin" } });
     return sendOk(res, { message: "Account created. We will review and approve it shortly, and email you." });
   }
 
@@ -180,7 +180,7 @@ export default async function handler(req, res) {
       .in("id", earned.map((c) => c.id)).eq("status", "earned").select("amount");
     const locked2 = round2((locked || []).reduce((a, c) => a + Number(c.amount), 0));
     if (locked2 !== total) await sb.from("partner_payouts").update({ amount: locked2 || 0.01 }).eq("id", payout.id);
-    await notifyAdmin("Partner payout requested", `${p.full_name} (${p.email}) requested a payout of ₦${locked2.toLocaleString("en-NG")}. Review it under Payouts in the admin dashboard.`);
+    await notifyAdmin("Partner payout requested", "A partner has asked to be paid out.", { emoji: "💸", heading: "Payout request", rows: [["Partner", p.full_name], ["Email", p.email], ["Amount", `₦${locked2.toLocaleString("en-NG")}`]] });
     return sendOk(res, { amount: locked2 });
   }
   return sendErr(res, "Unknown op.");

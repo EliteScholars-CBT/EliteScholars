@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { SUBJ } from '../data/subjects';
-import { getFlashcardsForSubject } from '../data/flashcards';
+import { getSubjectMeta } from '../data/subjectMeta';
+import { getDeck } from '../utils/flashDeck';
 import { useTheme } from '../context/ThemeContext';
 import Icon, { EmojiIcon } from './Icon';
 
-export default function Flashcards({ subjectId, onBack }) {
+// Renders **bold** markers from the card text as real bold (no raw asterisks).
+const rich = (t) => String(t || '').split(/(\*\*[^*]+\*\*)/g).map((p, i) => (/^\*\*[^*]+\*\*$/.test(p) ? <strong key={i}>{p.slice(2, -2)}</strong> : p));
+
+export default function Flashcards({ subjectId, examType = 'jamb', onBack }) {
   const [cards, setCards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -13,31 +16,29 @@ export default function Flashcards({ subjectId, onBack }) {
   const [showResult, setShowResult] = useState(false);
   const { theme } = useTheme();
   
-  const meta = SUBJ[subjectId] || SUBJ.english;
+  const meta = (getSubjectMeta && getSubjectMeta(subjectId)) || { label: 'Subject', icon: '📚', color: '#7C3AED' };
   const currentCard = cards[currentIndex];
   const totalCards = cards.length;
-  const progress = ((currentIndex + 1) / totalCards) * 100;
+  const progress = totalCards ? ((currentIndex + 1) / totalCards) * 100 : 0;
 
   useEffect(() => {
-    const flashcards = getFlashcardsForSubject(subjectId);
+    const flashcards = getDeck(subjectId, examType);
     setCards(flashcards.map(card => ({ ...card, known: false })));
-  }, [subjectId]);
+  }, [subjectId, examType]);
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
   };
 
   const handleKnown = () => {
-    const updatedCards = [...cards];
-    updatedCards[currentIndex].known = true;
+    const updatedCards = cards.map((c, k) => (k === currentIndex ? { ...c, known: true } : c));
     setCards(updatedCards);
     setKnownCount(knownCount + 1);
     handleNext();
   };
 
   const handleUnknown = () => {
-    const updatedCards = [...cards];
-    updatedCards[currentIndex].known = false;
+    const updatedCards = cards.map((c, k) => (k === currentIndex ? { ...c, known: false } : c));
     setCards(updatedCards);
     setUnknownCount(unknownCount + 1);
     handleNext();
@@ -136,24 +137,24 @@ export default function Flashcards({ subjectId, onBack }) {
           {/* Front of card */}
           <div className="flashcards-card-front">
             <div className="flashcards-card-label"><EmojiIcon emoji="📖" size="1.15em" /> TERM</div>
-            <div className="flashcards-card-term">{currentCard.term}</div>
+            <div className="flashcards-card-term">{rich(currentCard.term)}</div>
             <div className="flashcards-card-tip">👆 Tap to flip</div>
           </div>
           
           {/* Back of card */}
           <div className="flashcards-card-back">
             <div className="flashcards-card-label"><EmojiIcon emoji="📝" size="1.15em" /> DEFINITION</div>
-            <div className="flashcards-card-definition">{currentCard.definition}</div>
+            <div className="flashcards-card-definition">{rich(currentCard.definition)}</div>
             {currentCard.example && (
               <>
                 <div className="flashcards-card-sub-label"><EmojiIcon emoji="💡" size="1.15em" /> EXAMPLE</div>
-                <div className="flashcards-card-example">{currentCard.example}</div>
+                <div className="flashcards-card-example">{rich(currentCard.example)}</div>
               </>
             )}
             {currentCard.tip && (
               <>
                 <div className="flashcards-card-sub-label"><EmojiIcon emoji="✨" size="1.15em" /> TIP</div>
-                <div className="flashcards-card-tip-text">{currentCard.tip}</div>
+                <div className="flashcards-card-tip-text">{rich(currentCard.tip)}</div>
               </>
             )}
           </div>

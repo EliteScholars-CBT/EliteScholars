@@ -2,6 +2,9 @@
   "functions": {
     "api/**/*.js": {
       "maxDuration": 10
+    },
+    "api/data.js": {
+      "maxDuration": 30
     }
   },
   "rewrites": [
@@ -94,12 +97,204 @@
       "destination": "/api/data?route=profile/guardian"
     },
     {
+      "source": "/api/status/post",
+      "destination": "/api/data?route=status/post"
+    },
+    {
+      "source": "/api/status/feed",
+      "destination": "/api/data?route=status/feed"
+    },
+    {
+      "source": "/api/status/delete",
+      "destination": "/api/data?route=status/delete"
+    },
+    {
+      "source": "/api/admin/mail-audience",
+      "destination": "/api/data?route=admin/mail-audience"
+    },
+    {
+      "source": "/api/admin/mail-history",
+      "destination": "/api/data?route=admin/mail-history"
+    },
+    {
+      "source": "/api/admin/mail-send",
+      "destination": "/api/data?route=admin/mail-send"
+    },
+    {
+      "source": "/api/mail/unsubscribe",
+      "destination": "/api/data?route=mail/unsubscribe"
+    },
+    {
+      "source": "/api/push/key",
+      "destination": "/api/data?route=push/key"
+    },
+    {
+      "source": "/api/push/subscribe",
+      "destination": "/api/data?route=push/subscribe"
+    },
+    {
+      "source": "/api/push/unsubscribe",
+      "destination": "/api/data?route=push/unsubscribe"
+    },
+    {
+      "source": "/api/school/classes",
+      "destination": "/api/data?route=school/classes"
+    },
+    {
+      "source": "/api/school/class-create",
+      "destination": "/api/data?route=school/class-create"
+    },
+    {
+      "source": "/api/school/class-join",
+      "destination": "/api/data?route=school/class-join"
+    },
+    {
+      "source": "/api/school/class-leave",
+      "destination": "/api/data?route=school/class-leave"
+    },
+    {
+      "source": "/api/school/class-delete",
+      "destination": "/api/data?route=school/class-delete"
+    },
+    {
+      "source": "/api/school/class-members",
+      "destination": "/api/data?route=school/class-members"
+    },
+    {
+      "source": "/api/school/class-remove",
+      "destination": "/api/data?route=school/class-remove"
+    },
+    {
+      "source": "/api/school/assign-create",
+      "destination": "/api/data?route=school/assign-create"
+    },
+    {
+      "source": "/api/school/assign-list",
+      "destination": "/api/data?route=school/assign-list"
+    },
+    {
+      "source": "/api/school/assign-get",
+      "destination": "/api/data?route=school/assign-get"
+    },
+    {
+      "source": "/api/school/assign-done",
+      "destination": "/api/data?route=school/assign-done"
+    },
+    {
+      "source": "/api/school/assign-delete",
+      "destination": "/api/data?route=school/assign-delete"
+    },
+    {
+      "source": "/api/report/submit",
+      "destination": "/api/data?route=report/submit"
+    },
+    {
+      "source": "/api/admin/reports",
+      "destination": "/api/data?route=admin/reports"
+    },
+    {
+      "source": "/api/admin/report-action",
+      "destination": "/api/data?route=admin/report-action"
+    },
+    {
+      "source": "/api/study/rewrite",
+      "destination": "/api/data?route=study/rewrite"
+    },
+    {
       "source": "/api/xp/add",
       "destination": "/api/data?route=xp/add"
     },
     {
       "source": "/api/events/track",
       "destination": "/api/data?route=events/track"
+    },
+    {
+      "source": "/api/squads/chat",
+      "destination": "/api/data?route=squads/chat"
+    },
+    {
+      "source": "/api/squads/chat-send",
+      "destination": "/api/data?route=squads/chat-send"
+    },
+    {
+      "source": "/api/squads/chat-delete",
+      "destination": "/api/data?route=squads/chat-delete"
+    },
+    {
+      "source": "/api/media/get",
+      "destination": "/api/data?route=media/get"
+    },
+    {
+      "source": "/api/admin/me",
+      "destination": "/api/data?route=admin/me"
+    },
+    {
+      "source": "/api/admin/alerts",
+      "destination": "/api/data?route=admin/alerts"
+    },
+    {
+      "source": "/api/admin/students",
+      "destination": "/api/data?route=admin/students"
+    },
+    {
+      "source": "/api/admin/student",
+      "destination": "/api/data?route=admin/student"
+    },
+    {
+      "source": "/api/admin/activity",
+      "destination": "/api/data?route=admin/activity"
+    },
+    {
+      "source": "/api/admin/blog",
+      "destination": "/api/data?route=admin/blog"
+    },
+    {
+      "source": "/api/admin/team",
+      "destination": "/api/data?route=admin/team"
+    },
+    {
+      "source": "/api/admin/team-save",
+      "destination": "/api/data?route=admin/team-save"
+    },
+    {
+      "source": "/api/admin/team-reset",
+      "destination": "/api/data?route=admin/team-reset"
+    },
+    {
+      "source": "/api/admin/team-delete",
+      "destination": "/api/data?route=admin/team-delete"
+    },
+    {
+      "source": "/api/admin/audit",
+      "destination": "/api/data?route=admin/audit"
+    },
+    {
+      "source": "/api/admin/prices",
+      "destination": "/api/data?route=admin/prices"
+    },
+    {
+      "source": "/api/admin/prices-save",
+      "destination": "/api/data?route=admin/prices-save"
+    },
+    {
+      "source": "/api/admin/school-plans",
+      "destination": "/api/data?route=admin/school-plans"
+    },
+    {
+      "source": "/api/admin/school-settings",
+      "destination": "/api/data?route=admin/school-settings"
+    },
+    {
+      "source": "/api/admin/school-account",
+      "destination": "/api/data?route=admin/school-account"
+    },
+    {
+      "source": "/api/admin/ai-status",
+      "destination": "/api/data?route=admin/ai-status"
+    },
+    {
+      "source": "/api/admin/ai-test",
+      "destination": "/api/data?route=admin/ai-test"
     },
     {
       "source": "/api/squads/create",
@@ -213,7 +408,7 @@
   "crons": [
     {
       "path": "/api/cron",
-      "schedule": "0 5 * * 0"
+      "schedule": "0 16 * * *"
     },
     {
       "path": "/api/cron",

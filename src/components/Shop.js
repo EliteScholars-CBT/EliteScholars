@@ -3,6 +3,7 @@ import { ACHIEVEMENTS } from '../utils/constants';
 import { loadAchievements, saveAchievements } from '../utils/storage';
 import { isPremium, getPremiumData, cancelPremium } from '../utils/premium';
 import { fetchShopData, fetchPremiumStatus } from '../utils/profileApi';
+import { initiatePayment } from '../utils/profileApi';
 import PremiumModal from './PremiumModal';
 import Icon, { EmojiIcon } from './Icon';
 
@@ -42,6 +43,24 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
   const [pricing, setPricing]                     = useState({});
   const [premData, setPremData]                   = useState(getPremiumData(userEmail));
   const [loadingShop, setLoadingShop]             = useState(true);
+  const [buying, setBuying]                       = useState('');
+  const [buyErr, setBuyErr]                       = useState('');
+
+  // Pay in-app (Flutterwave); fall back to the old external link if that fails.
+  const buyItem = async (item) => {
+    if (buying) return;
+    setBuyErr(''); setBuying(item.id);
+    try {
+      const r = await initiatePayment({ email: userEmail, name, item: item.id });
+      if (r && r.success && r.paymentLink) { window.location.href = r.paymentLink; return; }
+      if (item.link) { window.open(item.link, '_blank', 'noopener'); }
+      else setBuyErr((r && r.error) || 'Could not start payment. Try again.');
+    } catch {
+      if (item.link) window.open(item.link, '_blank', 'noopener');
+      else setBuyErr('Network error. Check your connection.');
+    }
+    setBuying('');
+  };
 
   const FMT = (n) => n?.toLocaleString('en-NG') ?? '0';
 
@@ -76,7 +95,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
   // ── Payment redirect check ─────────────────────────────────────────────────
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('payment') === 'success' && params.get('email') === userEmail) {
+    if (params.get('payment') === 'success' && params.get('plan') !== 'shop' && params.get('email') === userEmail) {
       const plan = params.get('plan') || 'annual';
       setLocalPremium(true);
       if (onPremiumActivated) onPremiumActivated({ plan });
@@ -126,7 +145,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
       price: annualPrice, originalPrice, period: '/yr',
       features: [
         'Unlimited topics, every exam', 'Unlimited sessions, no time limit', 'Zero cooldown, ever',
-        'Zero ads, completely', 'WAEC, NECO, JAMB, GST & POST-UTME', 'All 6 arcade games unlocked',
+        'Zero ads, completely', 'WAEC, NECO, JAMB & GST', 'All 6 arcade games unlocked',
         'Unlimited file uploads & study packs', 'Unlimited challenges & squads', 'Full offline access',
         'Priority support',
       ],
@@ -277,11 +296,12 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
                 {regularItems.filter((i) => i.category === cat).map((item) => {
                   const imgUrl = getImageUrl(item.image);
                   return (
-                    <a
+                    <div
                       key={item.id}
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => buyItem(item)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') buyItem(item); }}
                       className="shop-item-card"
                     >
                       {/* Image / placeholder */}
@@ -313,10 +333,10 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
                         <div className="shop-item-desc">{item.description}</div>
                         <div className="shop-item-footer">
                           <span className="shop-item-price">{item.price}</span>
-                          <span className="shop-item-buy">Buy →</span>
+                          <span className="shop-item-buy">{buying === item.id ? 'Opening…' : 'Buy →'}</span>
                         </div>
                       </div>
-                    </a>
+                    </div>
                   );
                 })}
               </div>
@@ -324,8 +344,9 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
           ))
         )}
 
+        {buyErr && <div className="shop-footer-note" style={{ color: '#f87171' }}>{buyErr}</div>}
         <div className="shop-footer-note">
-          🔒 All payments are secured by Flutterwave and Selar
+          🔒 All payments are secured by Flutterwave
         </div>
 
       </div>

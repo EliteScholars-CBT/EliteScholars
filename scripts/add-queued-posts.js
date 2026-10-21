@@ -1,7 +1,7 @@
 // Appends posts from scripts/blog-queue/*.js into public/blog/posts.js (idempotent by id).
 const fs = require('fs'), path = require('path');
 const file = path.join(__dirname, '..', 'public', 'blog', 'posts.js');
-const LABEL = { jamb: 'JAMB', 'study-tips': 'Study Tips', waec: 'WAEC', gst: 'GST', postutme: 'Post UTME' };
+const LABEL = { jamb: 'JAMB', 'study-tips': 'Study Tips', waec: 'WAEC', gst: 'GST' };
 let src = fs.readFileSync(file, 'utf8');
 const have = new Set([...src.matchAll(/^\s{4}id: "([^"]+)"/gm)].map(m => m[1]));
 const esc = s => s.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${');

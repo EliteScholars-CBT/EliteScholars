@@ -12,8 +12,8 @@ const BLOG_POSTS = [
     excerpt: "Over 2.2 million candidates wrote the 2026 UTME. Results are dropping in batches right now. Before you spiral into panic or pop champagne, read this — because your raw score is only half the story.",
     seo: {
       title: "JAMB 2026 Result: What Your UTME Score Really Means for University Admission",
-      description: "2026 JAMB UTME results are out. Find out exactly what your score means for admission, cut-off marks for all universities, Post-UTME strategy, and what to do whether you scored 150 or 320.",
-      keywords: "JAMB 2026 result, UTME score, JAMB cut off marks 2026, Post-UTME, university admission Nigeria, JAMB CAPS"
+      description: "2026 JAMB UTME results are out. Find out exactly what your score means for admission, cut-off marks for all universities, school screening, and what to do whether you scored 150 or 320.",
+      keywords: "JAMB 2026 result, UTME score, JAMB cut off marks 2026, university admission Nigeria, JAMB CAPS"
     },
     content: `
 <h2>The Results Are Dropping Right Now</h2>
@@ -31,22 +31,22 @@ const BLOG_POSTS = [
 <p>Every university and every department sets its own cut-off mark above this national minimum. And those departmental cut-offs are what actually matter for your specific dream. The University of Ibadan, for example, has already released its 2025/2026 cut-offs — with a general institutional minimum of 200, rising significantly for competitive programmes. Other top federal universities operate similarly. If you want Medicine, Law, or Engineering at UNILAG, UI, OAU, or UNIBEN, you are typically looking at scores between 250 and 290 or above.</p>
 
 <h2>What Your Score Range Actually Means</h2>
-<p>Let us be specific. If you scored 320 and above, you are in an elite category. You have realistic options for Medicine, Law, Computer Science, or any course at top federal universities. Your job now is to prepare intensively for Post-UTME because that is where admission is actually won or lost at most competitive schools.</p>
+<p>Let us be specific. If you scored 320 and above, you are in an elite category. You have realistic options for Medicine, Law, Computer Science, or any course at top federal universities. Your job now is to prepare intensively for school screening because that is where admission is actually won or lost at most competitive schools.</p>
 
-<p>If you scored between 250 and 319, you are in solid territory for most science, engineering, and social science programmes at federal universities. Certain highly competitive courses — particularly Medicine — may still be a stretch depending on the specific school, but you have genuine options. Prepare for Post-UTME like your life depends on it, because statistically, it does.</p>
+<p>If you scored between 250 and 319, you are in solid territory for most science, engineering, and social science programmes at federal universities. Certain highly competitive courses — particularly Medicine — may still be a stretch depending on the specific school, but you have genuine options. Prepare for school screening like your life depends on it, because statistically, it does.</p>
 
-<p>If you are between 200 and 249, you qualify for most programmes at state universities and many federal university departments that are not Medicine or Law. The aggregate system that many schools use — combining your JAMB score and Post-UTME score — means that a strong Post-UTME performance can still elevate you significantly. UI, for instance, uses an aggregate formula: JAMB score divided by 8, plus Post-UTME score divided by 2. A strong Post-UTME showing can compensate for a moderate JAMB score.</p>
+<p>If you are between 200 and 249, you qualify for most programmes at state universities and many federal university departments that are not Medicine or Law. The aggregate system that many schools use — combining your JAMB score and school screening score — means that a strong school screening performance can still elevate you significantly. UI, for instance, uses an aggregate formula: JAMB score divided by 8, plus school screening score divided by 2. A strong school screening showing can compensate for a moderate JAMB score.</p>
 
 <p>Between 150 and 199, your options are more targeted. Private universities with lower cut-offs, some state institutions, and less competitive programmes remain accessible. This is also the zone where your course and institution strategy needs to become very deliberate. Do not stubbornly cling to a programme that is statistically out of reach — explore alternatives that still align with your career goals.</p>
 
 <p>Below 150, you cannot be admitted into a university this cycle. But that does not mean waiting a full year in limbo. Polytechnics and colleges of education accept from 100. You can sit for Direct Entry if you acquire an OND or NCE. And the 2027 UTME is a real and honourable path — many students who retook the exam with better preparation ended up in better institutions than they originally aimed for.</p>
 
-<h2>The Post-UTME Is Where Admission Actually Happens</h2>
-<p>Here is the thing most students misunderstand. They see their JAMB score and immediately feel like the battle is won or lost. It is not. For most universities that conduct Post-UTME screening — which is the majority of competitive institutions — the final admission decision is based on an aggregate that blends both scores.</p>
+<h2>Your School's Screening Is Where Admission Is Decided</h2>
+<p>Here is the thing most students misunderstand. They see their JAMB score and immediately feel like the battle is won or lost. It is not. For most universities that conduct screening — which is the majority of competitive institutions — the final admission decision is based on an aggregate that blends both scores.</p>
 
-<p>Some schools weight them roughly equally. Some weigh Post-UTME more heavily. UI's published formula weights Post-UTME at 50 percent of the aggregate, compared to JAMB's 12.5 percent. That means a candidate who scored 220 in JAMB but demolishes the Post-UTME can actually outcompete someone who scored 270 in JAMB and coasted through Post-UTME without preparation.</p>
+<p>Some schools weight them roughly equally. Some weigh school screening more heavily. That means a candidate who scored 220 in JAMB but demolishes the school screening can actually outcompete someone who scored 270 in JAMB and coasted through school screening without preparation.</p>
 
-<p>Do not coast. The moment your result drops, your preparation for Post-UTME should begin. Find out whether your target school conducts Post-UTME, what format it uses — multiple choice, essay, or online — and what subjects it covers. Most school Post-UTMEs test Use of English and the three subjects from your JAMB combination. Treat it as seriously as you treated JAMB itself.</p>
+<p>Do not coast. The moment your result drops, your preparation for school screening should begin. Find out whether your target school conducts screening, what format it uses — multiple choice, essay, or online — and what subjects it covers. Most school screenings test Use of English and the three subjects from your JAMB combination. Treat it as seriously as you treated JAMB itself.</p>
 
 <h2>One Critical Warning About Result Manipulation</h2>
 <p>JAMB has already arrested two candidates and one parent for altering UTME result SMS messages using AI and electronic means. Let that sink in. Your actual score is stored on JAMB's servers and cannot be changed from outside. Any agent or individual promising to upgrade your score is lying to you, taking your money, and potentially exposing you to criminal prosecution. No upgrade is real. Every naira you pay someone promising to change your JAMB score is a naira wasted on fraud.</p>
@@ -54,14 +54,14 @@ const BLOG_POSTS = [
 <p>Your only real upgrade is the one you earn in the exam hall. And if your score is not where you need it this year, the path forward is preparation — not payment to fraudsters.</p>
 
 <h2>What Comes Next: The CAPS Timeline</h2>
-<p>After results are fully released and the Post-UTME season runs through May to August, JAMB will open the Central Admission Processing System — CAPS — through which all admissions in Nigeria are processed officially. Through CAPS at caps.jamb.gov.ng, you will be able to accept or reject offers, change your institution or course if needed, and track your admission status in real time.</p>
+<p>After results are fully released and the screening season runs through May to August, JAMB will open the Central Admission Processing System — CAPS — through which all admissions in Nigeria are processed officially. Through CAPS at caps.jamb.gov.ng, you will be able to accept or reject offers, change your institution or course if needed, and track your admission status in real time.</p>
 
 <p>Do not accept an admission offer through any other means. All legitimate university admissions flow through CAPS. If someone contacts you claiming to offer admission outside of this system, it is a scam.</p>
 
 <p>The official cut-off marks for the 2026/2027 session will be announced at JAMB's annual policy stakeholders' meeting, expected in June 2026. Departmental cut-offs from individual universities will follow in the weeks after. Keep monitoring the JAMB portal and your target schools' official admissions pages.</p>
 
 <h2>The Mindset You Need Right Now</h2>
-<p>Whether you scored 301 or 181, the next few weeks require the same mindset: strategic action, not passive waiting. Check your result. Understand where it positions you. Research the realistic schools and courses for your score range. Contact your target schools to understand their Post-UTME requirements. And then prepare intensively for Post-UTME while your JAMB score is still fresh in your mind.</p>
+<p>Whether you scored 301 or 181, the next few weeks require the same mindset: strategic action, not passive waiting. Check your result. Understand where it positions you. Research the realistic schools and courses for your score range. Contact your target schools to understand their school screening requirements. And then prepare intensively for school screening while your JAMB score is still fresh in your mind.</p>
 
 <p>The 2026 UTME cycle is not done — it is just entering its most critical phase. The students who end up in their dream schools are rarely the ones who scored highest in JAMB alone. They are the ones who understood the full process and executed every step with focus.</p>
 
@@ -284,33 +284,6 @@ const BLOG_POSTS = [
 
 <h2>A Common Mistake</h2>
 <p>Do not copy your friend's combination. Do not choose subjects you like over subjects the course needs. If you are unsure, list two or three schools you are targeting and choose the combination that satisfies all of them.</p>
-    `
-  },
-  {
-    id: "post-utme-what-universities-look-for",
-    title: "Post-UTME Screening: What Universities Actually Look For",
-    category: "postutme",
-    categoryLabel: "Post UTME",
-    author: "Michael Joseph",
-    authorAvatar: "avatar_1",
-    publishAt: "2026-10-23T06:00:00+01:00",
-    readTime: 2,
-    tags: ["Post-UTME","aggregate score","university screening","admission"],
-    excerpt: "Your JAMB score gets you in the queue. Post-UTME decides your position. Here is how schools compute aggregate scores.",
-    seo: {
-      title: "Post-UTME Screening: What Universities Actually Look For",
-      description: "Your JAMB score gets you in the queue. Post-UTME decides your position. Here is how schools compute aggregate scores.",
-      keywords: "Post-UTME, aggregate score, university screening, admission"
-    },
-    content: `
-<h2>How Admission Is Ranked</h2>
-<p>Most universities combine your UTME score, your O-level result and your Post-UTME performance into a single aggregate. Different schools weight these differently, so always read the screening notice of your target school.</p>
-
-<h2>What Post-UTME Looks Like</h2>
-<p>Some schools run a computer-based test of 30 to 50 questions across general knowledge and your subjects. Others screen only on results. Either way, a clean O-level result in the right subjects, with credits in English and Mathematics, is non-negotiable.</p>
-
-<h2>Prepare Before the Notice Drops</h2>
-<p>Post-UTME notices often give only two or three weeks. Keep your documents ready: birth certificate, state of origin letter, O-level result, passport photo and JAMB printout. Practise timed CBT in advance so that you only need to polish, not start from scratch.</p>
     `
   },
   {
@@ -719,33 +692,6 @@ const BLOG_POSTS = [
     `
   },
   {
-    id: "post-utme-practice-general-paper-tips",
-    title: "Post-UTME General Paper: How to Prepare for Current Affairs and Reasoning",
-    category: "postutme",
-    categoryLabel: "Post UTME",
-    author: "Michael Joseph",
-    authorAvatar: "avatar_2",
-    publishAt: "2026-11-08T06:00:00+01:00",
-    readTime: 2,
-    tags: ["Post-UTME","current affairs","aptitude test","reasoning"],
-    excerpt: "Some Post-UTME tests include general questions beyond your subjects. A short daily habit covers it.",
-    seo: {
-      title: "Post-UTME General Paper: How to Prepare for Current Affai...",
-      description: "Some Post-UTME tests include general questions beyond your subjects. A short daily habit covers it.",
-      keywords: "Post-UTME, current affairs, aptitude test, reasoning"
-    },
-    content: `
-<h2>What May Appear</h2>
-<p>Quantitative and verbal reasoning, basic Nigerian history and civics, current affairs and sometimes questions about the university itself.</p>
-
-<h2>Daily Habit</h2>
-<p>Read one reliable news summary each day and note three facts. Practise ten aptitude questions per day for two weeks before your screening.</p>
-
-<h2>Know the School</h2>
-<p>Learn the date of founding, the vice-chancellor, the motto and key facts about your target school. These are easy marks that many forget to prepare.</p>
-    `
-  },
-  {
     id: "how-to-write-waec-essay-answers-that-score-high",
     title: "How to Write WAEC Essay Answers That Score High Marks",
     category: "waec",
@@ -1051,19 +997,19 @@ const BLOG_POSTS = [
     authorAvatar: "avatar_2",
     publishAt: "2026-11-20T06:00:00+01:00",
     readTime: 2,
-    tags: ["admission process","JAMB CAPS","Post-UTME","matriculation"],
+    tags: ["admission process","JAMB CAPS","school screening","matriculation"],
     excerpt: "Admission has several stages and most confusion comes from not knowing the order. Here is the flow.",
     seo: {
       title: "The Nigerian Admission Process Step by Step: From UTME to...",
       description: "Admission has several stages and most confusion comes from not knowing the order. Here is the flow.",
-      keywords: "admission process, JAMB CAPS, Post-UTME, matriculation"
+      keywords: "admission process, JAMB CAPS, matriculation"
     },
     content: `
 <h2>The Flow</h2>
-<p>Write the UTME, receive your score, apply to your chosen institutions, take Post-UTME where required, wait for merit lists, then accept your admission on JAMB CAPS. After acceptance you pay fees, register and matriculate.</p>
+<p>Write the UTME, receive your score, apply to your chosen institutions, complete your school's screening where required, wait for merit lists, then accept your admission on JAMB CAPS. After acceptance you pay fees, register and matriculate.</p>
 
 <h2>Common Mistakes</h2>
-<p>Choosing an institution without checking the course cut-off, missing the Post-UTME deadline and ignoring the acceptance step on CAPS.</p>
+<p>Choosing an institution without checking the course cut-off, missing the screening deadline and ignoring the acceptance step on CAPS.</p>
 
 <h2>Stay Informed</h2>
 <p>Always use official channels for updates, and never pay anyone who claims to guarantee admission. Genuine admission comes only through the official process.</p>
@@ -1121,33 +1067,6 @@ const BLOG_POSTS = [
 
 <h2>Use Precise Terms</h2>
 <p>Biology marking schemes reward correct terms. Learn definitions word for word where required.</p>
-    `
-  },
-  {
-    id: "post-utme-documents-checklist-and-mistakes",
-    title: "Post-UTME Documents Checklist: Avoid These Costly Mistakes",
-    category: "postutme",
-    categoryLabel: "Post UTME",
-    author: "Michael Joseph",
-    authorAvatar: "avatar_2",
-    publishAt: "2026-11-23T06:00:00+01:00",
-    readTime: 2,
-    tags: ["Post-UTME documents","screening","admission","checklist"],
-    excerpt: "Many candidates are disqualified for paperwork errors. Keep this checklist ready.",
-    seo: {
-      title: "Post-UTME Documents Checklist: Avoid These Costly Mistakes",
-      description: "Many candidates are disqualified for paperwork errors. Keep this checklist ready.",
-      keywords: "Post-UTME documents, screening, admission, checklist"
-    },
-    content: `
-<h2>Documents to Prepare</h2>
-<p>Birth certificate or declaration of age, state of origin or local government letter, O-level results, JAMB result slip, passport photographs, and a valid email and phone number.</p>
-
-<h2>Common Errors</h2>
-<p>Names that do not match across documents, expired or unreadable scans and using a wrong JAMB registration number.</p>
-
-<h2>Fix Early</h2>
-<p>If your names differ across documents, correct them early with the relevant body. It can take weeks, so do not wait until deadlines.</p>
     `
   },
   {
@@ -1313,33 +1232,6 @@ const BLOG_POSTS = [
     `
   },
   {
-    id: "university-admission-plan-b-what-if-you-miss-your-course",
-    title: "Plan B for Admission: What to Do If You Miss Your First-Choice Course",
-    category: "postutme",
-    categoryLabel: "Post UTME",
-    author: "Michael Joseph",
-    authorAvatar: "avatar_3",
-    publishAt: "2026-11-30T06:00:00+01:00",
-    readTime: 2,
-    tags: ["change of course","admission plan B","JAMB","direct entry"],
-    excerpt: "Missing your first choice is not failure. Change of course, institution or pathway are all possible.",
-    seo: {
-      title: "Plan B for Admission: What to Do If You Miss Your First-C...",
-      description: "Missing your first choice is not failure. Change of course, institution or pathway are all possible.",
-      keywords: "change of course, admission plan B, JAMB, direct entry"
-    },
-    content: `
-<h2>Know Your Options</h2>
-<p>You may be offered an alternative course, apply for change of course or institution through the official process, or consider polytechnic, college of education or direct entry routes.</p>
-
-<h2>Think Long-Term</h2>
-<p>Some courses relate closely to your dream career and can lead you there through postgraduate study.</p>
-
-<h2>Act Quickly</h2>
-<p>Deadlines for change requests are short, so follow official announcements.</p>
-    `
-  },
-  {
     id: "december-study-plan-use-the-holidays-wisely",
     title: "December Holiday Study Plan: Use the Break to Get Ahead",
     category: "study-tips",
@@ -1448,33 +1340,6 @@ const BLOG_POSTS = [
     `
   },
   {
-    id: "how-to-prepare-for-direct-entry",
-    title: "Direct Entry: Who Qualifies and How to Prepare",
-    category: "postutme",
-    categoryLabel: "Post UTME",
-    author: "Michael Joseph",
-    authorAvatar: "avatar_2",
-    publishAt: "2026-12-05T06:00:00+01:00",
-    readTime: 2,
-    tags: ["Direct Entry","200 level","A-level","ND HND"],
-    excerpt: "Direct Entry lets qualified candidates join university in 200 level. Here is how it works.",
-    seo: {
-      title: "Direct Entry: Who Qualifies and How to Prepare",
-      description: "Direct Entry lets qualified candidates join university in 200 level. Here is how it works.",
-      keywords: "Direct Entry, 200 level, A-level, ND HND"
-    },
-    content: `
-<h2>Who Qualifies</h2>
-<p>Candidates with A-level results, NCE, ND or similar qualifications that meet the department requirement, along with the needed O-level credits.</p>
-
-<h2>What to Prepare</h2>
-<p>Your O-level credits, your previous qualification documents, and the subjects required for your target course.</p>
-
-<h2>Check Requirements</h2>
-<p>Entry requirements differ by course and institution, so always confirm on the official brochure and university website.</p>
-    `
-  },
-  {
     id: "how-to-use-mnemonics-to-remember-formulas-and-lists",
     title: "Mnemonics: Remember Formulas, Lists and Sequences Easily",
     category: "study-tips",
@@ -1526,33 +1391,6 @@ const BLOG_POSTS = [
 
 <h2>Study Approach</h2>
 <p>For Accounts, practise computation daily. For Commerce, use flashcards for definitions and functions.</p>
-    `
-  },
-  {
-    id: "how-to-prepare-for-aptitude-tests",
-    title: "Aptitude Tests Explained: Numerical, Verbal and Logical Reasoning",
-    category: "postutme",
-    categoryLabel: "Post UTME",
-    author: "Michael Joseph",
-    authorAvatar: "avatar_2",
-    publishAt: "2026-12-08T06:00:00+01:00",
-    readTime: 2,
-    tags: ["aptitude test","numerical reasoning","verbal reasoning","logical reasoning"],
-    excerpt: "Aptitude tests measure how you think, not what you memorised. Practice improves speed.",
-    seo: {
-      title: "Aptitude Tests Explained: Numerical, Verbal and Logical R...",
-      description: "Aptitude tests measure how you think, not what you memorised. Practice improves speed.",
-      keywords: "aptitude test, numerical reasoning, verbal reasoning, logical reasoning"
-    },
-    content: `
-<h2>Numerical</h2>
-<p>Practise percentages, ratios, number series and data interpretation under time pressure.</p>
-
-<h2>Verbal</h2>
-<p>Read widely and practise synonyms, analogies and short comprehension passages.</p>
-
-<h2>Logical</h2>
-<p>Solve patterns and puzzles daily. Speed comes from familiarity with question types.</p>
     `
   },
   {
@@ -1634,33 +1472,6 @@ const BLOG_POSTS = [
 
 <h2>Practicals</h2>
 <p>Practise common experiments such as the simple pendulum, Ohm's law and specific heat capacity, and know how to record and plot results.</p>
-    `
-  },
-  {
-    id: "how-to-write-an-impressive-statement-of-purpose-and-personal-statement",
-    title: "Writing a Personal Statement: A Simple Guide for Students",
-    category: "postutme",
-    categoryLabel: "Post UTME",
-    author: "Michael Joseph",
-    authorAvatar: "avatar_3",
-    publishAt: "2026-12-12T06:00:00+01:00",
-    readTime: 2,
-    tags: ["personal statement","scholarship essay","writing","applications"],
-    excerpt: "Some scholarships and programmes ask for a short essay about you. Here is how to write one that stands out.",
-    seo: {
-      title: "Writing a Personal Statement: A Simple Guide for Students",
-      description: "Some scholarships and programmes ask for a short essay about you. Here is how to write one that stands out.",
-      keywords: "personal statement, scholarship essay, writing, applications"
-    },
-    content: `
-<h2>Start With a Story</h2>
-<p>Open with a real moment that shows why you want the course or opportunity.</p>
-
-<h2>Be Specific</h2>
-<p>Name what you have done, such as projects, leadership roles or classes, and what you learned.</p>
-
-<h2>Close With Purpose</h2>
-<p>Explain what you want to do next and why this opportunity fits.</p>
     `
   },
   {
@@ -1934,33 +1745,6 @@ const BLOG_POSTS = [
     `
   },
   {
-    id: "post-utme-2027-how-to-prepare-early",
-    title: "Post-UTME 2027: How to Prepare Before the Notice Is Out",
-    category: "postutme",
-    categoryLabel: "Post UTME",
-    author: "Michael Joseph",
-    authorAvatar: "avatar_2",
-    publishAt: "2026-12-23T06:00:00+01:00",
-    readTime: 2,
-    tags: ["Post-UTME 2027","screening","university admission","early preparation"],
-    excerpt: "The best Post-UTME preparation starts before registration opens.",
-    seo: {
-      title: "Post-UTME 2027: How to Prepare Before the Notice Is Out",
-      description: "The best Post-UTME preparation starts before registration opens.",
-      keywords: "Post-UTME 2027, screening, university admission, early preparation"
-    },
-    content: `
-<h2>Pick Your Schools</h2>
-<p>Choose your first and second choice institutions and learn their admission requirements.</p>
-
-<h2>Know the Format</h2>
-<p>Look at previous Post-UTME formats and questions for those schools.</p>
-
-<h2>Prepare Documents</h2>
-<p>Gather and verify documents, and keep digital copies.</p>
-    `
-  },
-  {
     id: "how-to-deal-with-procrastination",
     title: "How to Beat Procrastination: A Practical Guide",
     category: "study-tips",
@@ -2065,7 +1849,7 @@ const BLOG_POSTS = [
 <p>Confirm that your result is correct and obtain a certificate or statement of result when required.</p>
 
 <h2>Plan Admission</h2>
-<p>Apply for admission using your result and prepare for UTME or Post-UTME as needed.</p>
+<p>Apply for admission using your result and prepare for UTME as needed.</p>
     `
   },
   {
@@ -2174,6 +1958,228 @@ const BLOG_POSTS = [
 
 <h2>Invite a Friend</h2>
 <p>Challenge a friend and compare progress at the end of the month.</p>
+    `
+  },
+  {
+    id: "jamb-cbt-mistakes-that-cost-marks",
+    title: "7 JAMB CBT Mistakes That Quietly Cost Candidates Marks",
+    category: "jamb",
+    categoryLabel: "JAMB",
+    author: "Michael Joseph",
+    authorAvatar: "avatar_3",
+    publishAt: "2026-10-23T06:00:00+01:00",
+    readTime: 2,
+    tags: ["JAMB CBT","UTME mistakes","exam technique","score improvement"],
+    excerpt: "Most lost marks come from habits, not ignorance. Fix these seven and your score moves without learning anything new.",
+    seo: {
+      title: "7 JAMB CBT Mistakes That Quietly Cost Candidates Marks",
+      description: "Most lost marks come from habits, not ignorance. Fix these seven and your score moves without learning anything new.",
+      keywords: "JAMB CBT, UTME mistakes, exam technique, score improvement"
+    },
+    content: `
+<h2>Mistake 1 and 2: Leaving Questions Blank and Poor Time Splits</h2>
+<p>JAMB has no negative marking, so a blank answer is a guaranteed zero while a guess has a one-in-four chance. Answer everything, even if you must guess in the last minute.</p>
+
+<p>Many candidates also spend half their time on the first subject. Divide your time by the number of questions and check the clock at fixed points.</p>
+
+<h2>Mistake 3 to 5: Reading, Calculating and Changing Answers</h2>
+<p>Rushed reading turns 'which is NOT' into 'which is'. Underline the key word mentally before you look at the options.</p>
+
+<p>In calculation questions, work out your own answer before you look at the options, because the options are designed to tempt you. Change an answer only when you can state exactly why the first one was wrong.</p>
+
+<h2>Mistake 6 and 7: Skipping Practice on a Computer and Ignoring Weak Topics</h2>
+<p>Typing, scrolling and navigating are skills. Practise on a screen so the interface never costs you seconds.</p>
+
+<p>Finally, track the topics you miss and revisit them every week. A weak topic you ignore will show up again in the real exam.</p>
+    `
+  },
+  {
+    id: "how-to-read-and-understand-past-question-explanations",
+    title: "How to Learn From a Wrong Answer in Five Minutes",
+    category: "study-tips",
+    categoryLabel: "Study Tips",
+    author: "Michael Joseph",
+    authorAvatar: "avatar_1",
+    publishAt: "2026-11-08T06:00:00+01:00",
+    readTime: 2,
+    tags: ["wrong answers","learning from mistakes","error log","study tips"],
+    excerpt: "A wrong answer is the most valuable thing in your study session, but only if you do something with it.",
+    seo: {
+      title: "How to Learn From a Wrong Answer in Five Minutes",
+      description: "A wrong answer is the most valuable thing in your study session, but only if you do something with it.",
+      keywords: "wrong answers, learning from mistakes, error log, study tips"
+    },
+    content: `
+<h2>Do Not Just Look at the Right Option</h2>
+<p>Seeing that the answer is C teaches almost nothing. Ask why C is right and why the option you chose is wrong. That second question reveals your misunderstanding.</p>
+
+<h2>The Five-Minute Routine</h2>
+<p>Read the explanation once. Close it and explain the idea aloud in your own words. Write one line in an error log: the topic, the mistake and the rule. Then try two similar questions.</p>
+
+<h2>Review the Log Weekly</h2>
+<p>Each weekend read the error log. After a month you will see the three or four mistakes you keep making, and fixing those is worth more than any new topic.</p>
+    `
+  },
+  {
+    id: "how-to-prepare-for-a-computer-based-test-in-university",
+    title: "Computer-Based Tests in University: How to Prepare and Stay Calm",
+    category: "gst",
+    categoryLabel: "GST",
+    author: "Michael Joseph",
+    authorAvatar: "avatar_2",
+    publishAt: "2026-11-23T06:00:00+01:00",
+    readTime: 2,
+    tags: ["computer-based test","CBT","university exams","GST"],
+    excerpt: "More Nigerian universities test GST courses on computers. Here is how to be ready for the format.",
+    seo: {
+      title: "Computer-Based Tests in University: How to Prepare and St...",
+      description: "More Nigerian universities test GST courses on computers. Here is how to be ready for the format.",
+      keywords: "computer-based test, CBT, university exams, GST"
+    },
+    content: `
+<h2>Know the Format</h2>
+<p>Find out the number of questions, the time limit and whether you can go back to earlier questions. Ask course mates who wrote the previous year's test.</p>
+
+<h2>Practise on a Screen</h2>
+<p>Do timed practice quizzes on a phone or computer for at least a week before the test so the interface feels familiar.</p>
+
+<h2>On the Day</h2>
+<p>Arrive early, test your login, read each question fully and manage the clock. If a question is difficult, flag it and move on.</p>
+    `
+  },
+  {
+    id: "how-to-study-effectively-in-a-noisy-environment",
+    title: "How to Study in a Noisy Home or Hostel",
+    category: "study-tips",
+    categoryLabel: "Study Tips",
+    author: "Michael Joseph",
+    authorAvatar: "avatar_3",
+    publishAt: "2026-11-30T06:00:00+01:00",
+    readTime: 2,
+    tags: ["noisy environment","focus","hostel","study habits"],
+    excerpt: "Not everyone has a quiet room. These habits help you focus when the environment will not cooperate.",
+    seo: {
+      title: "How to Study in a Noisy Home or Hostel",
+      description: "Not everyone has a quiet room. These habits help you focus when the environment will not cooperate.",
+      keywords: "noisy environment, focus, hostel, study habits"
+    },
+    content: `
+<h2>Choose Your Time, Not Just Your Place</h2>
+<p>Early morning and late night are often quieter. Move your hardest subject to the quietest hour.</p>
+
+<h2>Create Your Own Quiet</h2>
+<p>Earphones, even without music, reduce distractions. A simple routine such as the same seat and the same first task signals your brain to focus.</p>
+
+<h2>Use Short Sessions</h2>
+<p>In a noisy space, 25-minute focused sessions work better than long ones. Review quickly and test yourself with questions.</p>
+    `
+  },
+  {
+    id: "jamb-2027-how-to-pick-schools-and-courses",
+    title: "How to Choose Courses and Universities for JAMB 2027",
+    category: "jamb",
+    categoryLabel: "JAMB",
+    author: "Michael Joseph",
+    authorAvatar: "avatar_1",
+    publishAt: "2026-12-05T06:00:00+01:00",
+    readTime: 2,
+    tags: ["JAMB course choice","university choice","cut-off marks","admission"],
+    excerpt: "A smart choice of course and school can matter as much as your score. Here is how to decide.",
+    seo: {
+      title: "How to Choose Courses and Universities for JAMB 2027",
+      description: "A smart choice of course and school can matter as much as your score. Here is how to decide.",
+      keywords: "JAMB course choice, university choice, cut-off marks, admission"
+    },
+    content: `
+<h2>Start With the Course</h2>
+<p>Ask what you want to study and what career it leads to. Check the subject requirements so your subject combination is correct.</p>
+
+<h2>Research Realistic Schools</h2>
+<p>Compare the previous cut-off marks and the number of applicants. Choose one ambitious school, one realistic school and one safe option.</p>
+
+<h2>Consider Practical Things</h2>
+<p>Cost, location, accommodation and strike history matter too. Talk to students who have studied there.</p>
+    `
+  },
+  {
+    id: "how-to-revise-mathematics-fast-before-an-exam",
+    title: "Maths Revision in One Week: A Practical Plan for WAEC and NECO",
+    category: "waec",
+    categoryLabel: "WAEC",
+    author: "Michael Joseph",
+    authorAvatar: "avatar_2",
+    publishAt: "2026-12-08T06:00:00+01:00",
+    readTime: 2,
+    tags: ["WAEC Mathematics","NECO Mathematics","revision plan","quick revision"],
+    excerpt: "A week is enough to improve your maths if you focus on the right topics and practise daily.",
+    seo: {
+      title: "Maths Revision in One Week: A Practical Plan for WAEC and...",
+      description: "A week is enough to improve your maths if you focus on the right topics and practise daily.",
+      keywords: "WAEC Mathematics, NECO Mathematics, revision plan, quick revision"
+    },
+    content: `
+<h2>Days 1 to 3: High-Frequency Topics</h2>
+<p>Revise algebra, number bases, indices, logarithms, geometry and statistics. For each topic, read a short summary, then solve ten past questions.</p>
+
+<h2>Days 4 to 6: Mixed Practice</h2>
+<p>Do timed mixed papers. Mark them and write the corrections in a notebook. Redo the questions you missed.</p>
+
+<h2>Day 7: Rest and Light Review</h2>
+<p>Review your formula sheet and error notebook, sleep well and avoid starting new topics.</p>
+    `
+  },
+  {
+    id: "how-to-prepare-for-oral-english-and-lexis",
+    title: "Oral English for JAMB and WAEC: Stress, Vowels and Rhyme Made Simple",
+    category: "jamb",
+    categoryLabel: "JAMB",
+    author: "Michael Joseph",
+    authorAvatar: "avatar_3",
+    publishAt: "2026-12-12T06:00:00+01:00",
+    readTime: 2,
+    tags: ["Oral English","stress","vowels","JAMB English"],
+    excerpt: "Oral English scares many candidates because they cannot hear it on paper. A few rules cover most questions.",
+    seo: {
+      title: "Oral English for JAMB and WAEC: Stress, Vowels and Rhyme ...",
+      description: "Oral English scares many candidates because they cannot hear it on paper. A few rules cover most questions.",
+      keywords: "Oral English, stress, vowels, JAMB English"
+    },
+    content: `
+<h2>Learn the Sounds</h2>
+<p>Know the basic vowel and consonant sounds and a keyword for each. Practise by saying words aloud and comparing them with a dictionary's pronunciation.</p>
+
+<h2>Stress Patterns</h2>
+<p>Many two-syllable nouns stress the first syllable and many verbs the second, for example 'RE-cord' and 're-CORD'. Learn the common patterns.</p>
+
+<h2>Practise Daily</h2>
+<p>Do five oral English questions a day and always say the options aloud. Your ear improves quickly with repetition.</p>
+    `
+  },
+  {
+    id: "how-to-manage-money-as-a-student",
+    title: "Money Basics for Nigerian Students: Budget, Save and Avoid Scams",
+    category: "gst",
+    categoryLabel: "GST",
+    author: "Michael Joseph",
+    authorAvatar: "avatar_1",
+    publishAt: "2026-12-23T06:00:00+01:00",
+    readTime: 2,
+    tags: ["student budget","saving money","financial literacy","scams"],
+    excerpt: "Learning to manage small money early is a skill that lasts. Here are simple habits that work on a student budget.",
+    seo: {
+      title: "Money Basics for Nigerian Students: Budget, Save and Avoi...",
+      description: "Learning to manage small money early is a skill that lasts. Here are simple habits that work on a student budget.",
+      keywords: "student budget, saving money, financial literacy, scams"
+    },
+    content: `
+<h2>Make a Simple Budget</h2>
+<p>List your income and your essential costs: food, transport, data and school needs. Spend on needs first and decide in advance what is left for fun.</p>
+
+<h2>Save Something Small Regularly</h2>
+<p>Even a small amount saved weekly builds a cushion for emergencies. Keep it separate from your spending money.</p>
+
+<h2>Avoid Quick-Money Traps</h2>
+<p>Be cautious of schemes that promise fast returns, ask you to pay first or pressure you to recruit others. If it sounds too good to be true, it usually is.</p>
     `
   }
 ];

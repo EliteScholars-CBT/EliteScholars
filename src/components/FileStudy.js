@@ -8,7 +8,7 @@ import { SFX } from '../utils/sounds';
 import { buildScramble, buildScrambleDeck, buildMatchDeck, normalizeAnswer } from '../utils/gameEngine';
 import {
   extractTextFromFile,
-  buildStudyPack,
+  buildSmartPack,
   loadLibrary,
   saveToLibrary,
   updateInLibrary,
@@ -68,11 +68,10 @@ export default function FileStudyHub() {
       SFX.select?.();
       setBusy({ name: file.name, stage: 'Reading your file', pct: 0.05 });
       const { text } = await extractTextFromFile(file, (p) => setBusy((b) => (b ? { ...b, pct: 0.05 + p * 0.55 } : b)));
-      setBusy({ name: file.name, stage: 'Finding the key ideas', pct: 0.68 });
-      await new Promise((r) => setTimeout(r, 120));
-      const pack = buildStudyPack(text, file.name);
-      setBusy({ name: file.name, stage: 'Building flashcards and questions', pct: 0.92 });
-      await new Promise((r) => setTimeout(r, 260));
+      setBusy({ name: file.name, stage: 'Rewriting it in simple words', pct: 0.66 });
+      const { pack } = await buildSmartPack(text, file.name, (p) => setBusy((b) => (b ? { ...b, pct: 0.66 + p * 0.26 } : b)));
+      setBusy({ name: file.name, stage: 'Building flashcards and questions', pct: 0.95 });
+      await new Promise((r) => setTimeout(r, 200));
       const entry = { id: newFileId(), name: file.name, title: pack.title, size: file.size, addedAt: Date.now(), pack, best: {}, modes: ['learn', 'cards', 'cbt'] };
       setFiles(saveToLibrary(entry));
       setBusy(null);
@@ -103,7 +102,7 @@ export default function FileStudyHub() {
       <div className="fs-hub-head">
         <span className="fs-hub-badge"><Icon name="sparkles" size={14} /> NEW</span>
         <h2>Study from your own files</h2>
-        <p>Upload notes, a textbook chapter or handout. We turn it into lessons, flashcards and practice questions, on your phone. Nothing leaves your device.</p>
+        <p>Upload notes, a textbook chapter or handout. We rewrite it in simple words and turn it into lessons, flashcards and practice questions. The file itself stays on your phone; short text excerpts are sent securely to our AI service to rewrite them (not stored by us).</p>
       </div>
 
       <div

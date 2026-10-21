@@ -7,7 +7,8 @@ import { tokenOk } from "./admin.js";
 import {
   hashPartnerPassword, decryptText, getSettings, effectiveRate, sumCommissions, validCode, round2,
 } from "../_helpers/partners.js";
-import { sendMail } from "../_helpers/mail.js";
+import { sendMail, sendHtml } from "../_helpers/mail.js";
+import { partnerApprovedEmail, payoutPaidEmail } from "../_helpers/emailTemplates.js";
 
 const D = 86400000, H = 3600000;
 const lagosDay = (ms) => new Date(ms + H).toISOString().slice(0, 10);
@@ -116,7 +117,8 @@ export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   if (req.method === "OPTIONS") return res.status(200).end();
   const token = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
-  if (!tokenOk(token)) return sendErr(res, "Session expired. Please sign in again.", 401);
+  const permNeeded = ["payouts","payout-action","commission-action"].includes(String(req.query.op)) ? "payouts" : "partners";
+  if (!tokenOk(token, permNeeded)) return sendErr(res, "Session expired. Please sign in again.", 401);
   if (!supabaseEnabled()) return sendErr(res, "Supabase is not configured.", 503);
   const sb = getSupabase();
   const op = req.query.op;
@@ -183,9 +185,8 @@ export default async function handler(req, res) {
       if (action === "approve" || action === "activate") {
         await sb.from("partners").update({ status: "active", approved_at: p.approved_at || new Date().toISOString() }).eq("id", id);
         if (p.status === "pending") {
-          const link = `https://elitescholars.site/?ref=${p.referral_code}`;
-          await sendMail(p.email, "You're approved as an EliteScholars partner",
-            `Hi ${p.full_name.split(" ")[0]},\nYour partner account is now active. Sign in at https://elitescholars.site/partner to see your dashboard.\nYour personal link: ${link}\nShare it, and you earn a commission whenever someone who joined through it pays for Premium.`);
+          const settingsNow = await getSettings();
+          await sendHtml(p.email, "You're approved as an EliteScholars partner 🎉", partnerApprovedEmail({ name: p.full_name.split(" ")[0], code: p.referral_code, rate: effectiveRate(p, settingsNow) }));
         }
         return sendOk(res, {});
       }
@@ -243,7 +244,7 @@ export default async function handler(req, res) {
           .eq("id", po.id).eq("status", "requested").select("id");
         if (!flipped?.length) return sendErr(res, "This payout was already processed.");
         await sb.from("partner_commissions").update({ status: "paid", paid_at: now }).eq("payout_id", po.id).eq("status", "in_payout");
-        if (p) await sendMail(p.email, "Your EliteScholars payout has been sent", `Hi ${p.full_name.split(" ")[0]},\nWe have sent your payout of ₦${Number(po.amount).toLocaleString("en-NG")} to your bank account${b.reference ? ` (reference: ${b.reference})` : ""}. Thank you for partnering with us.`);
+        if (p) await sendHtml(p.email, "Your EliteScholars payout has been sent 💸", payoutPaidEmail({ name: p.full_name.split(" ")[0], amount: po.amount, reference: b.reference }));
         return sendOk(res, {});
       }
       if (b.action === "reject") {

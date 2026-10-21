@@ -5,6 +5,9 @@
 
 import { getUsersWithGuardians, getExpiringSubscriptions } from '../_helpers/queries.js';
 import { Resend }    from 'resend';
+import { getSupabase, supabaseEnabled } from '../_helpers/supabase.js';
+import { pushToEmails } from '../_helpers/push.js';
+import { lagosDay } from '../_helpers/access.js';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM   = process.env.FROM_EMAIL;
@@ -260,7 +263,7 @@ function buildReportEmail({
       <tr>
         <td style="background:#13132a;padding:20px 32px;text-align:center;border-top:1px solid #2a2a4a;">
           <p style="margin:0 0 4px;color:#5a5a7a;font-size:11px;">© 2026 EliteScholars · Built for Nigerian Students</p>
-          <p style="margin:0;color:#3a3a5a;font-size:10px;">JAMB · WAEC · NECO · POST UTME · GST</p>
+          <p style="margin:0;color:#3a3a5a;font-size:10px;">JAMB · WAEC · NECO · GST</p>
         </td>
       </tr>
 
@@ -331,7 +334,7 @@ function expiryReminderEmail({ firstName, plan, expiresAt }) {
       <tr>
         <td style="background:#13132a;padding:20px 40px;text-align:center;border-top:1px solid #2a2a4a;">
           <p style="margin:0 0 4px;color:#5a5a7a;font-size:11px;">© 2026 EliteScholars · Built for Nigerian Students</p>
-          <p style="margin:0;color:#3a3a5a;font-size:10px;">JAMB · WAEC · NECO · POST UTME · GST</p>
+          <p style="margin:0;color:#3a3a5a;font-size:10px;">JAMB · WAEC · NECO · GST</p>
         </td>
       </tr>
     </table>
@@ -410,7 +413,7 @@ function missYouEmail({ firstName }) {
       <tr>
         <td style="background:#13132a;padding:20px 40px;text-align:center;border-top:1px solid #2a2a4a;">
           <p style="margin:0 0 4px;color:#5a5a7a;font-size:11px;">© 2026 EliteScholars · Built for Nigerian Students</p>
-          <p style="margin:0;color:#3a3a5a;font-size:10px;">JAMB · WAEC · NECO · POST UTME · GST</p>
+          <p style="margin:0;color:#3a3a5a;font-size:10px;">JAMB · WAEC · NECO · GST</p>
         </td>
       </tr>
     </table>
@@ -540,6 +543,39 @@ console.log('Finished calling getExpiringSubscriptions ', result);
 }
 
 // ============================================================================
+// JOB: Daily streak push (16:00 UTC = 5pm Lagos)
+// Students with a live streak who have not practised today get a nudge.
+// ============================================================================
+
+async function runStreakPushes() {
+  if (!supabaseEnabled()) return { type: 'streak_push', skipped: 'no database' };
+  const sb = getSupabase();
+  const today = lagosDay();
+  const { data: subs } = await sb.from('push_subscriptions').select('email');
+  const emails = [...new Set((subs || []).map((r) => r.email))];
+  let streakers = 0, comeback = 0;
+  const totals = { sent: 0, removed: 0, failed: 0 };
+  const add = (r) => { totals.sent += r.sent; totals.removed += r.removed; totals.failed += r.failed; };
+  for (let i = 0; i < emails.length; i += 200) {
+    const { data: rows } = await sb.from('profiles').select('email,first_name,current_streak,last_active').in('email', emails.slice(i, i + 200));
+    for (const u of rows || []) {
+      const last = u.last_active ? lagosDay(new Date(u.last_active).getTime()) : null;
+      if (last === today) continue; // already practised today
+      const name = u.first_name || 'Scholar';
+      const idle = u.last_active ? Math.floor((Date.now() - new Date(u.last_active).getTime()) / 86400000) : 99;
+      if ((u.current_streak || 0) >= 1 && idle <= 1) {
+        streakers++;
+        add(await pushToEmails([u.email], { title: `🔥 ${u.current_streak}-day streak at risk`, body: `${name}, practise for 5 minutes tonight to keep your streak alive.`, url: '/app', tag: 'streak', type: 'streak' }));
+      } else if (idle >= 3 && idle <= 7 && idle % 2 === 1) {
+        comeback++;
+        add(await pushToEmails([u.email], { title: 'We saved your seat 📚', body: `${name}, one quick quiz gets you back on track.`, url: '/app', tag: 'comeback', type: 'comeback' }));
+      }
+    }
+  }
+  return { type: 'streak_push', subscribers: emails.length, streakers, comeback, ...totals };
+}
+
+// ============================================================================
 // MAIN HANDLER
 // ============================================================================
 
@@ -576,11 +612,15 @@ export default async function handler(req, res) {
       console.log('🧪 TEST MODE: Subscription Reminders');
       result = await runSubscriptionReminders(true); // test = send everything
     }
-    else if (day === 0 && hour === 5) {
-      result = await runGuardianReports();
-    } 
+    else if (req.query?.test === 'push') {
+      result = await runStreakPushes();
+    }
+    else if (hour === 16) {
+      result = await runStreakPushes();
+    }
     else if (hour === 7) {
       const isSunday = day === 0;
+      if (isSunday) { try { await runGuardianReports(); } catch (e) { console.error('Guardian reports failed:', e?.message); } }
       console.log(`📅 SCHEDULED: Subscription Reminders (Daily 7AM UTC) — isSunday: ${isSunday}`);
       result = await runSubscriptionReminders(isSunday);
     } 

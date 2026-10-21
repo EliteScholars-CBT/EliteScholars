@@ -27,6 +27,9 @@ export default async function handler(req, res) {
     const r = await finalizePayment(tx_ref, 'redirect');
     if (!r.ok) return res.redirect(`${APP_URL}/app?payment=failed`);
 
+    if (r.plan === 'shop') {
+      return res.redirect(`${APP_URL}/app?payment=success&plan=shop&item=${encodeURIComponent(r.item)}&email=${encodeURIComponent(r.email)}&name=${encodeURIComponent(r.firstName)}`);
+    }
     let expiresAt = r.expiresAt;
     if (!expiresAt) { // already processed (webhook got there first, or a page refresh)
       const st = await getPremiumStatus(r.email);

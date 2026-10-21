@@ -152,7 +152,7 @@ async function handler(req, res) {
                 © 2026 EliteScholars · Built for Nigerian Students
               </p>
               <p style="margin:0;color:#3a3a5a;font-size:10px;">
-                JAMB · WAEC · NECO · POST UTME · GST
+                JAMB · WAEC · NECO · GST
               </p>
             </td>
           </tr>
