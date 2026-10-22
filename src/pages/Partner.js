@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { fmtN, fmtNaira, TrendChart, Kpi } from '../components/AdminCharts';
+import { SOURCE_LABELS } from '../utils/trafficSource';
 import '../styles/admin.css';
 
 const TOKEN_KEY = 'es_partner_token';
 const dt = (s) => (s ? new Date(s).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' }) : '—');
 const copy = (t) => { try { navigator.clipboard?.writeText(t); } catch { /* ignore */ } };
 const PREMIUM_PRICE = 3000;
+const CHANNELS = [['whatsapp', 'WhatsApp'], ['facebook', 'Facebook'], ['instagram', 'Instagram'], ['tiktok', 'TikTok'], ['x', 'X (Twitter)'], ['telegram', 'Telegram'], ['youtube', 'YouTube']];
 
 async function call(path, { method = 'GET', token, body } = {}) {
   const r = await fetch(`/api/partner/${path}`, {
@@ -117,7 +119,7 @@ export default function Partner() {
   const whyNot = data.openPayout ? 'You already have a payout request waiting.'
     : !p.bank.saved ? 'Add your bank details in Account first.'
     : k.available < data.settings.minPayout ? `You need at least ${fmtNaira(data.settings.minPayout)} available (you have ${fmtNaira(k.available)}).` : '';
-  const shareText = `Prepare for WAEC, NECO, JAMB & GST free with EliteScholars: past questions, flashcards, games and challenges. Join with my link: ${link}`;
+  const shareText = `Prepare for WAEC, NECO, JAMB & GST free with EliteScholars: past questions, flashcards, games and challenges. Join with my link: ${link}&src=whatsapp`;
 
   return (
     <div className="adm-wrap">
@@ -146,6 +148,32 @@ export default function Partner() {
               <button className="adm-ghost" onClick={() => { copy(shareText); setInfo('Message copied.'); }}>Copy message</button>
             </div>
             <p className="adm-note">You earn <b>{p.rate}%</b> of every Premium payment from students who join through your link, about <b>{fmtNaira(perSale)}</b> on a {fmtNaira(PREMIUM_PRICE)} plan. Your code is <b>{p.code}</b>. The link remembers a visitor for 60 days.</p>
+          </section>
+
+          <section className="adm-card">
+            <h2>Links for each place you share</h2>
+            <p className="adm-note" style={{ marginTop: 0 }}>Use a different link for each place and the table below shows which one brings students.</p>
+            <div className="adm-list tight">
+              {CHANNELS.map(([k, label]) => (
+                <div className="adm-linkbox" key={k}><span><b>{label}</b></span><button className="adm-small" onClick={() => { copy(`${link}&src=${k}`); setInfo(`${label} link copied.`); }}>Copy</button></div>
+              ))}
+            </div>
+          </section>
+
+          <section className="adm-card">
+            <h2>Where your visitors come from (30 days)</h2>
+            {(data.sources || []).length ? (
+              <div className="adm-list tight">
+                {data.sources.map((x) => (
+                  <div className="adm-item" key={x.name}>
+                    <div className="adm-item-head static">
+                      <span className="adm-item-main"><b>{SOURCE_LABELS[x.name] || x.name}</b></span>
+                      <span className="adm-item-side"><b>{fmtN(x.visits)} visits</b><small>{fmtN(x.signups)} sign-ups</small></span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : <p className="adm-empty">No visits recorded yet. Share the links above and they will appear here.</p>}
           </section>
 
           <section className="adm-grid adm-stats">

@@ -5,12 +5,8 @@ import { WAEC_LEARN } from '../data/waec/learn/index';
 import { GST_LEARN } from '../data/gst/index';
 import { GST_SUBJECTS } from '../data/gst/index';
 import { NECO_SUBJECTS } from '../data/neco/index';
-import {
-  AD_EVERY_NTH_SUBHEADING,
-  MAX_ADS_PER_PAGE,
-  PUBLISHER_AD_ENABLED,
-} from '../utils/constants';
 import AdSection from './AdSection';
+import { useAdsConfig, adsOn } from '../utils/adsConfig';
 import { SFX, stopSpeech, getVoicesCached } from '../utils/sounds';
 import BackButton from './BackButton';
 import { mapToCharacterVoices, getVoiceForCharacter } from '../utils/voices';
@@ -18,7 +14,6 @@ import {
   startStudySession,
   endStudySession,
   trackTopicOpened,
-  trackLearnQuizComplete,
   trackTopicComplete,
 } from '../analytics/studyAnalytics';
 import Icon, { EmojiIcon } from './Icon';
@@ -49,13 +44,12 @@ function injectAds(html, adEvery, maxAds, topicIdx, adSequence) {
   return blocks;
 }
 
-function ContentBlock({ block, refreshTrigger, examType, email }) {
+function ContentBlock({ block, examType, email }) {
   if (block.type === 'ad')
     return (
       <AdSection
         slot={block.slot}
-        refreshTrigger={refreshTrigger}
-        showPublisher={PUBLISHER_AD_ENABLED}
+        placement="learn"
         examType={examType}
         email={email}
       />
@@ -193,7 +187,6 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
   const stoppedRef = useRef(true);
   const pauseTimerRef = useRef(null);
   const [adSequence, setAdSequence] = useState(() => Math.floor(Math.random() * 100));
-  const [adRefresh] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => setAdSequence((prev) => (prev + 1) % 100), 30000);
@@ -478,12 +471,16 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
     setShowNextTopicPrompt(false);
   };
 
+  const adsCfg = useAdsConfig();
+  const learnAds = adsOn(adsCfg, 'app') && adsCfg.app.learn && adsCfg.app.learn.enabled;
+  const learnAdEvery = learnAds ? adsCfg.app.learn.everySections : 0;
+  const learnAdMax = learnAds ? adsCfg.app.learn.max : 0;
   const topic = activeIdx !== null ? topics[activeIdx] : null;
   const contentBlocks = topic
     ? injectAds(
         topic.contentHTML || `<p class="learn-p">${topic.content || ''}</p>`,
-        AD_EVERY_NTH_SUBHEADING,
-        MAX_ADS_PER_PAGE,
+        learnAdEvery,
+        learnAdMax,
         activeIdx,
         adSequence
       )
@@ -825,7 +822,6 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
               <ContentBlock
                 key={bi}
                 block={block}
-                refreshTrigger={adRefresh}
                 examType={examType}
                 email={email}
               />

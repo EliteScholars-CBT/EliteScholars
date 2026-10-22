@@ -9,6 +9,9 @@ import AdminActivity from '../components/AdminActivity';
 import AdminBlog from '../components/AdminBlog';
 import AdminTeam from '../components/AdminTeam';
 import AdminAI from '../components/AdminAI';
+import AdminAds from '../components/AdminAds';
+import AdminShop from '../components/AdminShop';
+import AdminSources from '../components/AdminSources';
 import { AdminPrices, AdminSchools } from '../components/AdminPrices';
 import { makeApi, ago } from '../components/adminApi';
 import '../styles/admin.css';
@@ -33,6 +36,9 @@ const TABS = [
   { id: 'students', label: 'Students', perms: ['students'] },
   { id: 'activity', label: 'Activity', perms: ['students'] },
   { id: 'blog', label: 'Blog', perms: ['blog'] },
+  { id: 'sources', label: 'Sources', perms: ['analytics'] },
+  { id: 'ads', label: 'Ads', perms: ['ads'] },
+  { id: 'shop', label: 'Shop', perms: ['shop'] },
   { id: 'partners', label: 'Partners', perms: ['partners', 'payouts'], badge: ['partners', 'payouts'] },
   { id: 'schools', label: 'Schools', perms: ['schools'], badge: ['schools'] },
   { id: 'prices', label: 'Prices', perms: ['prices'] },
@@ -183,6 +189,9 @@ export default function Admin() {
       {cur === 'students' && <AdminStudents token={token} onAuthFail={authFail} />}
       {cur === 'activity' && <AdminActivity token={token} onAuthFail={authFail} />}
       {cur === 'blog' && <AdminBlog token={token} onAuthFail={authFail} />}
+      {cur === 'sources' && <AdminSources token={token} onAuthFail={authFail} />}
+      {cur === 'ads' && <AdminAds token={token} onAuthFail={authFail} />}
+      {cur === 'shop' && <AdminShop token={token} onAuthFail={authFail} />}
       {cur === 'schools' && <AdminSchools token={token} onAuthFail={authFail} />}
       {cur === 'prices' && <AdminPrices token={token} onAuthFail={authFail} />}
       {cur === 'ai' && <AdminAI token={token} onAuthFail={authFail} />}

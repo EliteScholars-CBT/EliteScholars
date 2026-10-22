@@ -30,7 +30,7 @@ function Bubble({ m, onDelete, canDelete }) {
   const sticker = m.kind === 'sticker';
   return (
     <div className={`sc-msg ${m.mine ? 'mine' : ''}`}>
-      {!m.mine && <div className="sc-who">{m.author}{m.elite && <EliteBadge size={13} />}</div>}
+      {!m.mine && <div className="sc-who">{m.author}{m.elite && <EliteBadge inline size={12} />}</div>}
       <div className={`sc-bub ${sticker ? 'stk' : ''} ${m.kind === 'image' ? 'img' : ''}`} onClick={() => canDelete && setOpen((o) => !o)}>
         {m.kind === 'image' && <Pic id={m.media_id} />}
         {sticker ? (isTag(m.text) ? <span className="sc-tag" style={{ background: tagColor(m.text) }}>{m.text}</span> : <span className="sc-big">{m.text}</span>) : (m.text ? <span className="sc-text">{m.text}</span> : null)}
@@ -41,7 +41,7 @@ function Bubble({ m, onDelete, canDelete }) {
   );
 }
 
-export default function SquadChat({ squadName, isOwner, onClose }) {
+export default function SquadChat({ squadId, squadName, isOwner, onClose }) {
   const [msgs, setMsgs] = useState([]);
   const [text, setText] = useState('');
   const [err, setErr] = useState('');
@@ -63,13 +63,13 @@ export default function SquadChat({ squadName, isOwner, onClose }) {
   }, []);
 
   const pull = useCallback(async (first) => {
-    const r = await call('squads/chat', first ? {} : { since: last.current });
+    const r = await call('squads/chat', first ? { squadId } : { squadId, since: last.current });
     if (!r.ok) { if (first) setErr(r.error); return; }
     setErr('');
     const list = r.data.messages || [];
     if (first) { setMsgs(list); last.current = list.length ? list[list.length - 1].created_at : r.data.now; }
     else merge(list);
-  }, [merge]);
+  }, [merge, squadId]);
 
   useEffect(() => {
     pull(true);
@@ -89,7 +89,7 @@ export default function SquadChat({ squadName, isOwner, onClose }) {
     const temp = { id: `t${Date.now()}`, temp: true, mine: true, author: 'You', created_at: new Date().toISOString(), ...optimistic };
     stick.current = true;
     setMsgs((c) => [...c, temp]);
-    const r = await call('squads/chat-send', payload);
+    const r = await call('squads/chat-send', { ...payload, squadId });
     setSending(false);
     if (!r.ok) { setMsgs((c) => c.filter((x) => x.id !== temp.id)); setErr(r.error); return false; }
     setMsgs((c) => c.map((x) => (x.id === temp.id ? { ...r.data.message } : x)));
@@ -107,12 +107,12 @@ export default function SquadChat({ squadName, isOwner, onClose }) {
 
   const del = async (id) => {
     setMsgs((c) => c.filter((x) => x.id !== id));
-    await call('squads/chat-delete', { id });
+    await call('squads/chat-delete', { id, squadId });
   };
 
   useEffect(() => { // mark everything read when leaving
-    return () => { try { localStorage.setItem(chatSeenKey('any'), String(Date.now())); } catch { /* ignore */ } };
-  }, []);
+    return () => { try { localStorage.setItem(chatSeenKey(squadId || 'any'), String(Date.now())); } catch { /* ignore */ } };
+  }, [squadId]);
 
   return createPortal(
     <div className="sc-wrap" role="dialog" aria-label="Squad chat">

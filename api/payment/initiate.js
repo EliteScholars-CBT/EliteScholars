@@ -9,7 +9,7 @@ import { requireUser } from '../_helpers/session.js';
 import { rateLimitOk } from '../_helpers/guard.js';
 import { getFirstName } from '../_helpers/premium.js';
 import { getPricing } from '../_helpers/pricing.js';
-import { SHOP_ITEMS } from '../_helpers/constants/shop.js';
+import { findShopItem } from '../_helpers/shopItems.js';
 
 const FLW_SECRET_KEY = process.env.FLW_SECRET_KEY;
 
@@ -29,7 +29,7 @@ async function run(req, res) {
   if (!(await rateLimitOk(req, res, 'payinit', 10, 3600, email))) return;
   const { plan, item } = req.body || {};
   const pricing = await getPricing();
-  const shopItem = typeof item === 'string' ? SHOP_ITEMS.find((i) => i.id === item && !i.isPremium) : null;
+  const shopItem = typeof item === 'string' ? await findShopItem(item) : null;
   if (item && !shopItem) return sendErr(res, 'That item is not available.');
   if (!shopItem && (typeof plan !== 'string' || plan !== 'annual')) return sendErr(res, 'Invalid plan.');
   const name = await getFirstName(email);
@@ -40,7 +40,7 @@ async function run(req, res) {
     return sendErr(res, 'Payment service is not configured. Please contact support.');
   }
 
-  const amount      = shopItem ? pricing.items[shopItem.id] : pricing.premiumAnnual;
+  const amount      = shopItem ? shopItem.priceNGN : pricing.premiumAnnual;
   const kind        = shopItem ? 'shop' : plan;
   const txRef       = `ES-${kind.toUpperCase()}-${Date.now()}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
   const redirectUrl = `https://elitescholars.site/api/payment/verify?tx_ref=${txRef}`;

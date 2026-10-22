@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/**/*.js": {
-      "maxDuration": 10
+      "maxDuration": 30
     }
   },
   "rewrites": [
@@ -106,6 +106,22 @@
       "destination": "/api/data?route=status/delete"
     },
     {
+      "source": "/api/status/react",
+      "destination": "/api/data?route=status/react"
+    },
+    {
+      "source": "/api/status/reply",
+      "destination": "/api/data?route=status/reply"
+    },
+    {
+      "source": "/api/status/reshare",
+      "destination": "/api/data?route=status/reshare"
+    },
+    {
+      "source": "/api/status/insights",
+      "destination": "/api/data?route=status/insights"
+    },
+    {
       "source": "/api/admin/mail-audience",
       "destination": "/api/data?route=admin/mail-audience"
     },
@@ -200,6 +216,74 @@
     {
       "source": "/api/xp/add",
       "destination": "/api/data?route=xp/add"
+    },
+    {
+      "source": "/api/site/school-info",
+      "destination": "/api/data?route=site/school-info"
+    },
+    {
+      "source": "/api/site/school-demo",
+      "destination": "/api/data?route=site/school-demo"
+    },
+    {
+      "source": "/api/site/config",
+      "destination": "/api/data?route=site/config"
+    },
+    {
+      "source": "/api/admin/sources",
+      "destination": "/api/data?route=admin/sources"
+    },
+    {
+      "source": "/api/admin/ads",
+      "destination": "/api/data?route=admin/ads"
+    },
+    {
+      "source": "/api/admin/ads-save",
+      "destination": "/api/data?route=admin/ads-save"
+    },
+    {
+      "source": "/api/admin/ads-stats",
+      "destination": "/api/data?route=admin/ads-stats"
+    },
+    {
+      "source": "/api/admin/shop-list",
+      "destination": "/api/data?route=admin/shop-list"
+    },
+    {
+      "source": "/api/admin/shop-save",
+      "destination": "/api/data?route=admin/shop-save"
+    },
+    {
+      "source": "/api/admin/shop-delete",
+      "destination": "/api/data?route=admin/shop-delete"
+    },
+    {
+      "source": "/api/admin/shop-flags",
+      "destination": "/api/data?route=admin/shop-flags"
+    },
+    {
+      "source": "/api/site/shop",
+      "destination": "/api/data?route=site/shop"
+    },
+    {
+      "source": "/api/site/media",
+      "destination": "/api/data?route=site/media"
+    },
+    {
+      "source": "/api/admin/blog-covers",
+      "destination": "/api/data?route=admin/blog-covers"
+    },
+    {
+      "source": "/api/admin/blog-cover-save",
+      "destination": "/api/data?route=admin/blog-cover-save"
+    },
+    {
+      "source": "/api/admin/blog-cover-clear",
+      "destination": "/api/data?route=admin/blog-cover-clear"
+    },
+    {
+      "source": "/api/site/blog-covers",
+      "destination": "/api/data?route=site/blog-covers"
     },
     {
       "source": "/api/events/track",

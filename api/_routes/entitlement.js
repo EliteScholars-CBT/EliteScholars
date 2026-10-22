@@ -38,7 +38,7 @@ export default async function handler(req, res) {
 
   if (op === "get") {
     if (req.method !== "GET") return sendMethodNotAllowed(res);
-    return sendOk(res, { entitlement: ent, limits: cfg.limits, usage: ent.unlimited ? null : await usageFor(sb, email, cfg), day: lagosDay() });
+    return sendOk(res, { entitlement: ent, limits: cfg.limits, session: { minutes: cfg.sessionMinutes, cooldownMinutes: cfg.cooldownMinutes }, usage: ent.unlimited ? null : await usageFor(sb, email, cfg), day: lagosDay() });
   }
 
   if (op === "use") {

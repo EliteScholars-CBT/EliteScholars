@@ -2,10 +2,9 @@
 // premium.js — Premium subscription state management
 // ============================================================================
 
+import { getFreeSessionConfig } from './entitlement';
 import {
   FREE_TOPICS_PER_DAY,
-  FREE_SESSION_MINUTES,
-  FREE_COOLDOWN_HOURS,
   XP_REWARDS,
 } from './constants';
 
@@ -147,14 +146,15 @@ export function isSessionExpired(email) {
   if (isPremium(email)) return false;
   // Check if in cooldown
   if (isInCooldown(email)) return true;
-  return getSessionMinutesUsed(email) >= FREE_SESSION_MINUTES;
+  const { minutes } = getFreeSessionConfig(email);
+  return minutes > 0 && getSessionMinutesUsed(email) >= minutes;
 }
 
 export function startCooldown(email) {
   if (!email) return;
   try {
-    const cooldownEnd = Date.now() + FREE_COOLDOWN_HOURS * 60 * 60 * 1000;
-    localStorage.setItem(KEY_COOLDOWN_END(email), String(cooldownEnd));
+    const { cooldownMinutes } = getFreeSessionConfig(email);
+    if (cooldownMinutes > 0) localStorage.setItem(KEY_COOLDOWN_END(email), String(Date.now() + cooldownMinutes * 60 * 1000));
     localStorage.removeItem(KEY_SESSION_START(email));
   } catch {}
 }

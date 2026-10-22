@@ -53,7 +53,7 @@ export async function refreshEntitlement(email) {
     if (!res.ok) return getCachedEntitlement(email);
     const j = await res.json();
     if (!j?.success) return getCachedEntitlement(email);
-    writeCache(email, { entitlement: j.entitlement, limits: j.limits, usage: j.usage, usageDay: j.day, fetchedAt: Date.now() });
+    writeCache(email, { entitlement: j.entitlement, limits: j.limits, session: j.session, usage: j.usage, usageDay: j.day, fetchedAt: Date.now() });
     return { ...j.entitlement, unlimited: stillUnlimited(j.entitlement) };
   } catch {
     return getCachedEntitlement(email);
@@ -77,6 +77,14 @@ function localUse(email, kind, ref, limit) {
 function limitFor(email, kind) {
   const c = readCache(email);
   return (c?.limits && c.limits[KIND_KEY[kind]]) ?? DEFAULT_LIMITS[KIND_KEY[kind]];
+}
+
+// Free-session rules set by the admin: { minutes, cooldownMinutes } (0 = off).
+// Falls back to the built-in constants until the server answers.
+export function getFreeSessionConfig(email) {
+  const c = email ? readCache(email) : null;
+  if (c && c.session) return { minutes: Number(c.session.minutes) || 0, cooldownMinutes: Number(c.session.cooldownMinutes) || 0 };
+  return { minutes: 0, cooldownMinutes: 0 };
 }
 
 // How many uses are left right now (best effort, from the cache). Infinity if unlimited.

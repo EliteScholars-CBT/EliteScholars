@@ -872,7 +872,9 @@ html[data-guard] input, html[data-guard] textarea, html[data-guard] select, html
 
 /* Elite (paid Premium) badge — bottom-right of an avatar */
 .elite-wrap { position: relative; display: inline-flex; flex: 0 0 auto; }
-.elite-badge { position: absolute; right: -3px; bottom: -3px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, #FFE8A3, #FFC53D); border: 2px solid #fff; box-shadow: 0 2px 8px rgba(46,16,101,.35); z-index: 2; }
+.elite-badge { position: absolute; right: -6px; bottom: -6px; border-radius: 9px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 2px 1px 1px; box-sizing: border-box; background: linear-gradient(160deg, #FFE8A3, #FFC53D); border: 1.5px solid #fff; box-shadow: 0 2px 8px rgba(46,16,101,.38); z-index: 2; line-height: 1; }
+.elite-badge-txt { font-weight: 900; letter-spacing: .4px; color: #2E1065; line-height: 1; margin-top: -1px; }
+.elite-badge.inline { position: static; display: inline-flex; vertical-align: middle; margin-left: 5px; border-radius: 7px; }
 
 /* Data Saver mode: calm the UI, drop heavy effects */
 html.data-saver *, html.data-saver *::before, html.data-saver *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }

@@ -11,6 +11,9 @@ export const DEFAULT_CONFIG = {
   trialEnabled: false,
   trialDays: 14,
   limits: { topics: 3, cbt: 3, games: 3, fileStudy: 2 },
+  // Free session: after `sessionMinutes` of use the student must rest `cooldownMinutes`. 0 = off.
+  sessionMinutes: 0,
+  cooldownMinutes: 0,
   global: { active: false, forever: false, until: null, note: "" },
 };
 
@@ -32,6 +35,8 @@ export async function getAccessConfig() {
   return {
     trialEnabled: !!v.trialEnabled,
     trialDays: clampInt(v.trialDays, 1, 90, DEFAULT_CONFIG.trialDays),
+    sessionMinutes: clampInt(v.sessionMinutes, 0, 600, DEFAULT_CONFIG.sessionMinutes),
+    cooldownMinutes: clampInt(v.cooldownMinutes, 0, 4320, DEFAULT_CONFIG.cooldownMinutes),
     limits: {
       topics: clampInt(v.limits?.topics, 0, 100, DEFAULT_CONFIG.limits.topics),
       cbt: clampInt(v.limits?.cbt, 0, 100, DEFAULT_CONFIG.limits.cbt),

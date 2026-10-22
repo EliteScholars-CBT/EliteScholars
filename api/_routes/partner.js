@@ -34,12 +34,20 @@ async function dashboard(p) {
   const now = Date.now();
   const since = now - 29 * D - ((now + H) % D); // Lagos midnight 29 days ago
 
-  const [students, comms, payouts, clicks] = await Promise.all([
+  const [students, comms, payouts, clicks, srcEv] = await Promise.all([
     sb.from("profiles").select("email,first_name,created_at,is_premium").eq("referrer_partner_id", p.id).order("created_at", { ascending: false }).limit(1000),
     sb.from("partner_commissions").select("*").eq("partner_id", p.id).order("created_at", { ascending: false }).limit(1000),
     sb.from("partner_payouts").select("id,amount,status,reference,note,requested_at,processed_at").eq("partner_id", p.id).order("requested_at", { ascending: false }).limit(100),
     sb.from("events").select("created_at").eq("type", "referral_link_opened").eq("payload->>referral_code", p.referral_code).limit(5000),
+    sb.from("events").select("type,payload").in("type", ["visit_source", "signup_source"]).eq("payload->>ref", p.referral_code).gte("created_at", new Date(since).toISOString()).limit(5000),
   ]);
+  const bySrc = {};
+  for (const e of srcEv.data || []) {
+    const k = String((e.payload && e.payload.source) || "direct").slice(0, 40);
+    const o = (bySrc[k] = bySrc[k] || { visits: 0, signups: 0 });
+    if (e.type === "visit_source") o.visits++; else o.signups++;
+  }
+  const sources = Object.entries(bySrc).map(([name, v]) => ({ name, ...v })).sort((a, b) => b.visits + b.signups - (a.visits + a.signups));
   const st = students.data || [], cm = comms.data || [], po = payouts.data || [], ck = clicks.data || [];
 
   const paidBy = {};
@@ -67,6 +75,7 @@ async function dashboard(p) {
       ...totals,
     },
     openPayout: open || null,
+    sources,
     series: { labels: days.map((d) => d.slice(5)), ...series },
     referrals: st.slice(0, 300).map((s) => ({
       name: s.first_name || "Student", email: maskEmail(s.email), joined: s.created_at,

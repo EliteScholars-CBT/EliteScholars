@@ -3,6 +3,7 @@
 // ============================================================================
 
 import { addLog } from './debugStore';
+import { trackSignupSource } from './trafficSource';
 
 // Auth traffic is never written to the console.
 const devLog = () => {};
@@ -137,6 +138,7 @@ export async function registerProfile(payload) {
 
   devLog('📋 Register result:', result);
   console.groupEnd();
+  if (result && result.success) trackSignupSource();
   return result;
 }
 

@@ -294,7 +294,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
               <div className="shop-category-label"><Icon name={CATEGORY_ICON[cat] || 'shop'} size={15} /> {cat}</div>
               <div className="shop-grid">
                 {regularItems.filter((i) => i.category === cat).map((item) => {
-                  const imgUrl = getImageUrl(item.image);
+                  const imgUrl = (typeof item.imageUrl === 'string' && item.imageUrl.startsWith('/api/site/media?id=')) ? item.imageUrl : getImageUrl(item.image);
                   return (
                     <div
                       key={item.id}

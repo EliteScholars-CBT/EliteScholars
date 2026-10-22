@@ -18,6 +18,7 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const Fig = require('./blog-figures.js');
 
 const ROOT = path.join(__dirname, '..');
 const BLOG = path.join(ROOT, 'public', 'blog');
@@ -36,12 +37,31 @@ function sandbox(extra) {
 }
 const base = sandbox({});
 vm.runInContext(read('posts.js') + '\n;this.BLOG_POSTS = BLOG_POSTS;', base);
+// Extra posts and rewrites live in content/blog/*.js as  BLOG_POSTS.push({...}, {...});
+// A post with the same id as an earlier one REPLACES it (this is how old posts get expanded).
+const CONTENT_DIR = path.join(ROOT, 'content', 'blog');
+if (fs.existsSync(CONTENT_DIR)) {
+  for (const f of fs.readdirSync(CONTENT_DIR).filter((x) => x.endsWith('.js')).sort()) {
+    try { vm.runInContext(fs.readFileSync(path.join(CONTENT_DIR, f), 'utf8'), base, { filename: f }); }
+    catch (e) { throw new Error(`content/blog/${f}: ${e.message}`); }
+  }
+  const byId = new Map();
+  for (const p of base.BLOG_POSTS) byId.set(p.id, p); // later wins
+  base.BLOG_POSTS.splice(0, base.BLOG_POSTS.length, ...byId.values());
+}
 vm.runInContext(read('_blog-engine.js'), base);
 const POSTS = base.BLOG_POSTS;
 const Engine = base.BlogEngine;
 Engine.isLive = (p) => new Date(p.publishAt) <= NOW; // honour the build clock
 
 const live = POSTS.filter(Engine.isLive).sort((a, b) => new Date(b.publishAt) - new Date(a.publishAt));
+// Turn shortcodes into designed illustrations, add a table of contents and the FAQ block.
+for (const p of POSTS) {
+  if (typeof p.content !== 'string') continue;
+  try { p.content = Fig.addToc(Fig.expandShortcodes(p.content, p.category)); } catch (e) { throw new Error(`Post ${p.id}: ${e.message}`); }
+  p.faqHtml = Fig.faqHtml(p.faq);
+  p.coverUrl = `covers/${p.id}.svg`;
+}
 const seen = new Set();
 for (const p of POSTS) {
   if (!p.id || !p.category || !p.content) throw new Error(`Post missing id/category/content: ${p.id}`);
@@ -154,6 +174,7 @@ function postPage(post) {
   <link rel="stylesheet" href="../blog-style.css" />
   <script type="application/ld+json">${JSON.stringify(ld)}</script>
   <script type="application/ld+json">${JSON.stringify(crumbs)}</script>
+  ${Fig.faqLd(post.faq) ? `<script type="application/ld+json">${JSON.stringify(Fig.faqLd(post.faq))}</script>` : ''}
 </head>
 <body>
 <div id="blog-progress-bar"></div>
@@ -185,7 +206,7 @@ function indexPage() {
   const cards = live.map((post) => {
     const cs = Engine.getCategoryStyle(post.category);
     return `<a href="${post.category}/${post.id}.html" class="blog-card">
-<div class="blog-card-img">${cardSvg(post.category)}</div>
+<div class="blog-card-img"><img src="covers/${post.id}.svg" data-cover-for="${post.id}" alt="" width="1200" height="630" loading="lazy" decoding="async" /></div>
 <div class="blog-card-body">
 <span class="blog-card-cat" style="background:${cs.bg};color:${cs.color}">${esc(cs.label)}</span>
 <h2 class="blog-card-title">${esc(post.title)}</h2>
@@ -280,15 +301,24 @@ for (const c of cats) {
 for (const p of live) fs.writeFileSync(path.join(BLOG, p.category, `${p.id}.html`), postPage(p));
 fs.writeFileSync(path.join(BLOG, 'index.html'), indexPage());
 
+// Cover images (designed SVGs). Rebuilt every time so they always match the post.
+const COVERS = path.join(BLOG, 'covers');
+fs.mkdirSync(COVERS, { recursive: true });
+for (const f of fs.readdirSync(COVERS)) if (f.endsWith('.svg')) fs.unlinkSync(path.join(COVERS, f));
+for (const p of POSTS) fs.writeFileSync(path.join(COVERS, `${p.id}.svg`), Fig.coverSvg(p));
+// List for Admin → Blog (cover uploads): every post, live or scheduled.
+fs.writeFileSync(path.join(BLOG, 'posts-index.json'), JSON.stringify(POSTS.map((p) => ({ id: p.id, title: p.title, category: p.category, publishAt: p.publishAt, live: Engine.isLive(p) }))));
+
 // Small feed for the landing page's blog cards (latest 5).
 fs.writeFileSync(path.join(BLOG, 'latest.json'), JSON.stringify(live.slice(0, 5).map((p) => ({
-  title: p.title, excerpt: p.excerpt, category: p.category, readTime: p.readTime, url: `/blog/${p.category}/${p.id}.html`,
+  id: p.id, title: p.title, excerpt: p.excerpt, category: p.category, readTime: p.readTime, cover: `/blog/covers/${p.id}.svg`, url: `/blog/${p.category}/${p.id}.html`,
 }))));
 
 const day = (d) => new Date(d).toISOString().slice(0, 10);
 const urls = [
   { loc: `${SITE}/`, lastmod: day(NOW), pr: '1.0' },
   { loc: `${SITE}/about`, lastmod: day(NOW), pr: '0.7' },
+  { loc: `${SITE}/school`, lastmod: day(NOW), pr: '0.8' },
   { loc: `${SITE}/terms`, lastmod: day(NOW), pr: '0.3' },
   { loc: `${SITE}/privacy`, lastmod: day(NOW), pr: '0.3' },
   { loc: `${SITE}/blog/`, lastmod: live[0] ? day(live[0].publishAt) : day(NOW), pr: '0.9' },

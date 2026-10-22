@@ -8,6 +8,7 @@ import About from './pages/About';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import NotFound from './pages/NotFound';
+import SchoolLanding from './pages/SchoolLanding';
 import { installSessionFetch } from './utils/sessionFetch';
 import { installLoginPersistence } from './utils/persistLogin';
 import { installContentGuard } from './utils/contentGuard';
@@ -53,6 +54,8 @@ root.render(
           <Route path="/about" element={<About />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+
+          <Route path="/school" element={<SchoolLanding />} />
 
           {/* Anything else */}
           <Route path="*" element={<NotFound />} />

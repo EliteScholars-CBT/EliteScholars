@@ -228,3 +228,18 @@
 .land-blog-card p { margin: 0; font-size: 13.5px; line-height: 1.55; opacity: .72; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .land-blog-meta { margin-top: auto; font-size: 12.5px; font-weight: 700; color: #A78BFA; white-space: nowrap; }
 .land-blog-all { display: block; width: fit-content; margin: 22px auto 0; padding: 12px 22px; border-radius: 99px; border: 1px solid rgba(139, 92, 246, .5); color: inherit; text-decoration: none; font-weight: 800; font-size: 14px; white-space: nowrap; }
+
+/* ── Shop section ── */
+.land-shop { max-width: 1072px; margin: 64px auto 0; padding: 0 20px; }
+.land-shop-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.land-shop-card { display: flex; flex-direction: column; overflow: hidden; border-radius: 20px; text-decoration: none; color: inherit; background: #fff; border: 1px solid rgba(139, 92, 246, .18); box-shadow: 0 10px 26px rgba(46, 16, 101, .06); transition: transform .2s, box-shadow .2s; }
+.land-shop-card:hover { transform: translateY(-4px); box-shadow: 0 16px 34px rgba(46, 16, 101, .14); }
+.land-shop-img { position: relative; aspect-ratio: 4 / 3; display: grid; place-items: center; background: linear-gradient(135deg, #EDE9FE, #FDE68A); font-size: 42px; }
+.land-shop-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.land-shop-badge { position: absolute; top: 10px; left: 10px; z-index: 1; padding: 4px 10px; border-radius: 99px; background: #FFC53D; color: #3B1A00; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.land-shop-body { display: flex; flex-direction: column; gap: 4px; padding: 14px; flex: 1; }
+.land-shop-body small { font-size: 11px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; color: #7C3AED; }
+.land-shop-body h3 { margin: 0; font-size: 15.5px; line-height: 1.3; }
+.land-shop-body p { margin: 0; font-size: 13px; line-height: 1.5; opacity: .72; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.land-shop-price { margin-top: auto; padding-top: 8px; font-weight: 900; font-size: 17px; color: #5B21B6; white-space: nowrap; }
+.land-blog-cover { display: block; width: calc(100% + 36px); margin: -18px -18px 4px; aspect-ratio: 1200 / 630; object-fit: cover; border-radius: 20px 20px 0 0; }

@@ -1,4 +1,4 @@
-const CACHE_NAME  = 'elitescholars-v8';
+const CACHE_NAME  = 'elitescholars-v10';
 const STATIC_ASSETS = ['/', '/app', '/index.html', '/manifest.json'];
 
 let _reminderTids = [];

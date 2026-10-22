@@ -48,9 +48,9 @@
 /* ── Marquee ────────────────────────────────────────────────────────────── */
 .l2-marquee { overflow: hidden; padding: 18px 0; border-block: 1px solid rgba(124,58,237,.1); background: #fff;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
-.l2-marquee-track { display: flex; width: max-content; animation: l2Marq 32s linear infinite; }
-.l2-marquee-row { display: flex; gap: 14px; padding-right: 14px; }
-.l2-marquee-row span { padding: 8px 20px; border-radius: 99px; font-weight: 700; font-size: 14px; color: var(--l-violet); background: rgba(124,58,237,.07); white-space: nowrap; }
+.l2-marquee-track { display: flex; flex-wrap: nowrap; width: max-content; will-change: transform; animation: l2Marq 32s linear infinite; }
+.l2-marquee-row { display: flex; flex: none; flex-wrap: nowrap; }
+.l2-marquee-row span { flex: none; display: block; margin-right: 14px; padding: 8px 20px; line-height: 1.3; letter-spacing: 0; position: static; border-radius: 99px; font-weight: 700; font-size: 14px; color: var(--l-violet); background: rgba(124,58,237,.07); white-space: nowrap; }
 @keyframes l2Marq { to { transform: translateX(-50%); } }
 
 /* ── Stats ──────────────────────────────────────────────────────────────── */

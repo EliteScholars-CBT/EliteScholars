@@ -55,6 +55,7 @@ export default function SiteShell({ eyebrow, title, intro, updated, children }) 
             <span>EliteScholars</span>
           </a>
           <div className="land-footer-links">
+            <a href="/school">For schools</a>
             <a href="/blog/">Blog</a>
             <a href="/app/about">About</a>
             <a href="/app/terms">Terms</a>

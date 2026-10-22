@@ -1,6 +1,7 @@
 import PremiumModal from './PremiumModal';
 import { getPremiumData, cancelPremium } from '../utils/premium';
 import EliteBadge from './EliteBadge';
+import ShareSheet from './ShareSheet';
 import { pushStatus, enablePush, disablePush } from '../utils/push';
 import { isDataSaver, setDataSaver } from '../utils/dataSaver';
 import React, { useState, useEffect, useRef } from 'react';
@@ -32,6 +33,7 @@ export default function Profile({
 }) {
   const [activeTab, setActiveTab]                   = useState('stats');
   const [achievements, setAchievements]             = useState([]);
+  const [shareAch, setShareAch]                       = useState(null);
   const [allAchievements, setAllAchievements]       = useState([]);
   const [subjectPerformance, setSubjectPerformance] = useState({});
   const [performanceData, setPerformanceData]       = useState([]);
@@ -165,6 +167,14 @@ export default function Profile({
 
   return (
     <>
+      {shareAch && (
+        <ShareSheet
+          card={{ kind: 'badge', icon: shareAch.icon, big: shareAch.name, headline: 'Achievement unlocked', sub: shareAch.desc, name: username || name }}
+          text={`${shareAch.icon} I unlocked "${shareAch.name}" on EliteScholars!`}
+          link={refLink}
+          onClose={() => setShareAch(null)}
+        />
+      )}
       <div className="scr fd profile-page">
         <div
           className="profile-header"
@@ -306,7 +316,14 @@ export default function Profile({
               {allAchievements.length > 0 ? (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                   {allAchievements.map((a) => (
-                    <div key={a.id} className={`achievement-card${a.earned ? '' : ' locked'}`}>
+                    <div
+                      key={a.id}
+                      className={`achievement-card${a.earned ? '' : ' locked'}${a.earned ? ' shareable' : ''}`}
+                      role={a.earned ? 'button' : undefined}
+                      tabIndex={a.earned ? 0 : undefined}
+                      onClick={a.earned ? () => setShareAch(a) : undefined}
+                      onKeyDown={a.earned ? (e) => { if (e.key === 'Enter') setShareAch(a); } : undefined}
+                    >
                       <div style={{ fontSize: 28, marginBottom: 6 }}>
                         {a.earned ? a.icon : '🔒'}
                       </div>
@@ -316,6 +333,7 @@ export default function Profile({
                       <div className="achievement-card-desc">
                         {a.earned ? a.desc : a.desc}
                       </div>
+                      {a.earned && <div className="achievement-card-share">📤 Tap to share</div>}
                     </div>
                   ))}
                 </div>

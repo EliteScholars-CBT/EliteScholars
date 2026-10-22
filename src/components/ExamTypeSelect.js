@@ -3,13 +3,16 @@ import { EXAM_TYPES } from '../utils/constants';
 import { GOLD } from '../utils/colors';
 import Icon, { EmojiIcon } from './Icon';
 import FileStudyHub from './FileStudy';
+import StatusBar from './StatusBar';
+import SquadShortcut from './SquadShortcut';
+import { getSessionToken } from '../utils/sessionFetch';
 
 // ============================================================================
 // ExamTypeSelect — Compact grid layout (3 cols / 2 cols alternating)
 // Icon + label only, keyboard navigable
 // ============================================================================
 
-export default function ExamTypeSelect({ onSelectExam }) {
+export default function ExamTypeSelect({ onSelectExam, email = '', onOpenSquad }) {
   // Keyboard navigation
   const handleKeyDown = (e, id) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -28,6 +31,10 @@ export default function ExamTypeSelect({ onSelectExam }) {
           </h1>
         </div>
       </div>
+
+      {/* Statuses are visible as soon as the app opens, plus a one-tap way into your squads */}
+      {getSessionToken() ? <StatusBar /> : null}
+      {getSessionToken() && onOpenSquad ? <SquadShortcut email={email} onOpen={onOpenSquad} /> : null}
 
       {/* Compact grid — 3 columns, wraps to 2 for even items */}
       <div className="exam-type-compact-grid">

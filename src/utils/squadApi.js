@@ -24,6 +24,8 @@ async function callSquadApi(path, payload, retry = true) {
   }
 }
 
+export const MAX_SQUADS = 5;
+
 export const createSquad = (name, email, username) =>
   callSquadApi('create', { name, email, username });
 

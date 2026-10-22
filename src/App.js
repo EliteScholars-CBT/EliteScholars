@@ -15,6 +15,8 @@ import PWAInstallBanner from './components/PWAInstallBanner';
 import OfflineBanner from './components/OfflineBanner';
 import ReferralModal from './components/ReferralModal';
 import { captureReferralFromURL, shouldShowReferralPrompt, markReferralPromptShown } from './utils/referral';
+import { captureTrafficSource } from './utils/trafficSource';
+import useSocialBar from './utils/useSocialBar';
 
 import AuthScreen from './components/AuthScreen';
 
@@ -34,6 +36,7 @@ import Leaderboard from './components/Leaderboard';
 import Challenges from './components/Challenges';
 import ScreenGuard from './components/ErrorBoundary';
 import TipsHost from './components/TipsHost';
+import GuideHost from './components/GuideHost';
 
 import Shop from './components/Shop';
 
@@ -82,7 +85,7 @@ import {
 } from './utils/premium';
 
 import { registerSW, requestNotificationPermission, scheduleDailyReminder, listenForSWMessages } from './utils/notifications';
-import { markOpenChat, wantsChat, captureChatParam } from './utils/chatLink';
+import { markOpenChat, markOpenSquad, wantsChat, captureChatParam, captureSchoolParam, wantsSchool, clearSchoolWish, wantsShop, clearShopWish } from './utils/chatLink';
 
 import { applySecurityMeasures } from './utils/security';
 
@@ -419,6 +422,7 @@ export default function App() {
     applySecurityMeasures();
 
     captureReferralFromURL();
+    captureTrafficSource();
 
 
 
@@ -653,7 +657,10 @@ export default function App() {
         loadUserData(u);
 
         captureChatParam();
-        setScreen(wantsChat() ? 'leaderboard' : 'examType');
+        captureSchoolParam();
+        if (wantsSchool()) { clearSchoolWish(); setScreen('school'); }
+        else if (wantsShop()) { clearShopWish(); setScreen('shop'); }
+        else setScreen(wantsChat() ? 'leaderboard' : 'examType');
 
 
 
@@ -906,7 +913,7 @@ export default function App() {
 
 
 
-    setScreen('examType');
+    if (wantsSchool()) { clearSchoolWish(); setScreen('school'); } else if (wantsShop()) { clearShopWish(); setScreen('shop'); } else setScreen('examType');
 
   };
 
@@ -1272,6 +1279,20 @@ export default function App() {
 
 
 
+  const openSquad = () => { markOpenSquad(); setScreen('leaderboard'); };
+
+  // presence heartbeat: squadmates see you as "online" while the app is open and visible
+  useEffect(() => {
+    if (!email || !name) return undefined;
+    const ping = () => {
+      if (document.hidden || !getSessionToken()) return;
+      fetch('/api/squads/get', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ping: true }) }).catch(() => {});
+    };
+    ping();
+    const t = setInterval(ping, 60000);
+    return () => clearInterval(t);
+  }, [email, name]);
+
   const handleNavigate = (newScreen) => {
 
     if (SHOW_ADS) triggerAdRefresh();
@@ -1328,6 +1349,7 @@ export default function App() {
 
   ]);
 
+  useSocialBar({ screen, hidden: !email || premiumUser });
   const showBottomNav = name && email && NAV_SCREENS.has(screen);
 
 
@@ -1360,6 +1382,10 @@ export default function App() {
 
                   onSelectExam={handleExamTypeSelect}
 
+                  email={email}
+
+                  onOpenSquad={openSquad}
+
                   onBack={() => {
 
                     if (window.confirm('Log out of EliteScholars?')) {
@@ -1391,6 +1417,8 @@ export default function App() {
                 <Subjects
 
                   onOpenSchool={() => setScreen('school')}
+
+                  onOpenSquad={openSquad}
 
                   name={name}
 
@@ -1804,7 +1832,8 @@ export default function App() {
 
       )}
 
-      {showBottomNav && <TipsHost screen={screen} />}
+      {showBottomNav && <GuideHost screen={screen} email={email} premium={premiumUser} onOpenShop={() => setScreen('shop')} />}
+      {showBottomNav && <TipsHost screen={screen} email={email} />}
 
 
 

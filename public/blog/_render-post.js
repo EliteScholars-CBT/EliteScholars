@@ -68,12 +68,15 @@
       '</div>' +
     '</div>' +
 
+    '<div class="blog-container blog-cover-wrap"><img class="blog-cover" data-cover-for="' + post.id + '" src="../covers/' + post.id + '.svg" alt="' + post.title.replace(/"/g, '&quot;') + '" width="1200" height="630" fetchpriority="high" decoding="async" /></div>' +
     '<div class="blog-container es-top">' + BlogEngine.adSlot('top') + '</div>' +
 
     '<div class="blog-page-layout">' +
       '<div>' +
         '<div class="blog-body">' +
           '<div class="blog-content">' + contentWithAds + '</div>' +
+          (post.faqHtml || '') +
+          '<div id="es-shop-slot"></div>' +
           BlogEngine.adSlot('end', 'whatsapp') +
           '<p class="es-disclosure">Disclosure: EliteScholars shows advertising and some sponsored or partner links to keep the app free. See our <a href="/app/privacy#ads">advertising policy</a>.</p>' +
           '<div class="blog-tags">' + post.tags.map(function(t){ return '<span class="blog-tag">' + t + '</span>'; }).join('') + '</div>' +

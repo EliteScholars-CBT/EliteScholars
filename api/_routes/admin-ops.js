@@ -3,12 +3,16 @@
 //   students, student               perm: students
 //   activity                        perm: students
 //   blog                            perm: blog
+//   sources                         perm: analytics (traffic sources, optional ?ref=PARTNERCODE)
 //   team, team-save, team-reset, team-delete   owner only (sub-admins and their permissions)
 //   prices, prices-save, school-plans, school-settings, school-account   perm: prices / schools
 //   audit                           owner only
 import crypto from "crypto";
 import { sendOk, sendErr, sendMethodNotAllowed, setCors, readBody } from "../_helpers/response.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
+import { getAdsConfig, sanitizeAds, bustAdsCache } from "../_helpers/adsConfig.js";
+import { getShopCatalog } from "../_helpers/shopItems.js";
+import { saveMedia } from "../_helpers/media.js";
 import { adminFromToken, ADMIN_PERMS, ROLE_TEMPLATES } from "./admin.js";
 import { hashPasswordStrong } from "../_helpers/hash.js";
 import { sendHtml } from "../_helpers/mail.js";
@@ -114,6 +118,54 @@ async function fetchPages(sb, table, cols, apply, maxPages = 30) {
 
 const top = (obj, n = 8) => Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, n).map(([name, count]) => ({ name, count }));
 const hostOf = (r) => { if (!r || r === "direct") return "Direct"; try { return new URL(r).hostname.replace(/^www\./, ""); } catch { return String(r).slice(0, 40); } };
+
+// Traffic sources: visits (visit_source) and sign-ups (signup_source) by channel, optionally for one partner code.
+async function sourceStats(sb, days, ref) {
+  const since = new Date(Date.now() - days * D).toISOString();
+  const rows = await fetchPages(sb, "events", "type,payload,created_at", (q) => {
+    let x = q.in("type", ["visit_source", "signup_source"]).gte("created_at", since);
+    if (ref) x = x.eq("payload->>ref", ref);
+    return x;
+  }, 40);
+  const by = {}, byPage = {}, byRef = {}, perDay = {};
+  const bump = (o, k, f) => { (o[k] = o[k] || { visits: 0, signups: 0 })[f]++; };
+  const dayKey = (iso) => new Date(new Date(iso).getTime() + 3600000).toISOString().slice(0, 10);
+  let visits = 0, signups = 0;
+  for (const r of rows) {
+    const p = r.payload || {};
+    const src = String(p.source || "direct").slice(0, 40);
+    const f = r.type === "visit_source" ? "visits" : "signups";
+    if (f === "visits") visits++; else signups++;
+    bump(by, src, f);
+    if (f === "visits") byPage[p.page || "page"] = (byPage[p.page || "page"] || 0) + 1;
+    if (p.ref) bump(byRef, String(p.ref), f);
+    const d = dayKey(r.created_at); perDay[d] = (perDay[d] || 0) + (f === "visits" ? 1 : 0);
+  }
+  const list = (o) => Object.entries(o).map(([name, v]) => ({ name, visits: v.visits, signups: v.signups, rate: v.visits ? Math.round((v.signups / v.visits) * 1000) / 10 : 0 })).sort((a, b) => b.visits + b.signups - (a.visits + a.signups));
+  const labels = [], values = [];
+  for (let i = days - 1; i >= 0; i--) { const d = dayKey(new Date(Date.now() - i * D).toISOString()); labels.push(d.slice(5)); values.push(perDay[d] || 0); }
+  return { days, ref: ref || "", visits, signups, sources: list(by), partners: list(byRef).slice(0, 25), pages: Object.entries(byPage).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count), series: { labels, values }, truncated: rows.length >= 40000 };
+}
+
+// Ad analytics from our own events. (Adsterra's earnings are only in their dashboard.)
+async function adStats(sb, days) {
+  const since = new Date(Date.now() - days * D).toISOString();
+  const rows = await fetchPages(sb, "events", "type,payload,created_at", (q) => q.in("type", ["ad_impression", "ad_click", "blog_ad_view", "blog_ad_click"]).gte("created_at", since), 40);
+  const dayKey = (iso) => new Date(new Date(iso).getTime() + 3600000).toISOString().slice(0, 10);
+  const place = {}, perDay = {};
+  const bump = (name, surface, kind, f) => { const o = (place[`${surface}|${name}|${kind}`] = place[`${surface}|${name}|${kind}`] || { surface, name, kind, views: 0, clicks: 0 }); o[f]++; };
+  let appViews = 0, blogViews = 0, clicks = 0;
+  for (const r of rows) {
+    const p = r.payload || {};
+    const d = dayKey(r.created_at);
+    if (r.type === "ad_impression") { appViews++; bump(String(p.adId || "app"), "App", String(p.adType || "ad"), "views"); (perDay[d] = perDay[d] || { app: 0, blog: 0 }).app++; }
+    else if (r.type === "blog_ad_view") { blogViews++; bump(String(p.slot || "slot"), "Blog", String(p.kind === "adsterra" ? "Adsterra" : "Own ad"), "views"); (perDay[d] = perDay[d] || { app: 0, blog: 0 }).blog++; }
+    else { clicks++; bump(String(p.adId || p.slot || p.ad || "ad"), r.type === "ad_click" ? "App" : "Blog", String(p.adType || p.kind || "ad"), "clicks"); }
+  }
+  const labels = [], app = [], blog = [];
+  for (let i = days - 1; i >= 0; i--) { const d = dayKey(new Date(Date.now() - i * D).toISOString()); labels.push(d.slice(5)); app.push((perDay[d] || {}).app || 0); blog.push((perDay[d] || {}).blog || 0); }
+  return { days, appViews, blogViews, clicks, placements: Object.values(place).sort((a, b) => b.views - a.views), series: { labels, app, blog }, truncated: rows.length >= 40000 };
+}
 
 async function blogStats(sb, days) {
   const since = new Date(Date.now() - days * D).toISOString();
@@ -306,6 +358,129 @@ export default async function handler(req, res) {
     if (op === "blog") {
       if (!need("blog")) return deny();
       return sendOk(res, { blog: await blogStats(sb, [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 30) });
+    }
+
+    // ── blog cover images ──
+    if (op === "blog-covers") {
+      if (!need("blog")) return deny();
+      const { data } = await sb.from("settings").select("value").eq("key", "blog_covers").maybeSingle();
+      const map = (data && data.value) || {};
+      return sendOk(res, { covers: Object.fromEntries(Object.entries(map).map(([k, v]) => [k, `/api/site/media?id=${encodeURIComponent(v)}`])) });
+    }
+    if (op === "blog-cover-save" || op === "blog-cover-clear") {
+      if (!need("blog")) return deny();
+      const postId = String(b.postId || "");
+      if (!/^[a-z0-9-]{3,140}$/.test(postId)) return sendErr(res, "Unknown post.");
+      const { data: cur } = await sb.from("settings").select("value").eq("key", "blog_covers").maybeSingle();
+      const map = { ...((cur && cur.value) || {}) };
+      if (op === "blog-cover-clear") delete map[postId];
+      else {
+        const m = await saveMedia(sb, "blog-admin", b.image);
+        if (m.error) return sendErr(res, m.error);
+        map[postId] = m.id;
+      }
+      await sb.from("settings").upsert({ key: "blog_covers", value: map, updated_at: new Date().toISOString() }, { onConflict: "key" });
+      await audit(sb, who, op === "blog-cover-clear" ? "blog.cover.clear" : "blog.cover.save", postId);
+      return sendOk(res, {});
+    }
+
+    // ── shop items ──
+    if (op === "shop-list") {
+      if (!need("shop")) return deny();
+      return sendOk(res, { items: await getShopCatalog({ includeHidden: true }) });
+    }
+    if (op === "shop-save") {
+      if (!need("shop")) return deny();
+      const title = String(b.title || "").replace(/\s+/g, " ").trim().slice(0, 90);
+      const description = String(b.description || "").trim().slice(0, 400);
+      const price = Math.floor(Number(b.price));
+      const category = String(b.category || "Notes").trim().slice(0, 30) || "Notes";
+      const badge = String(b.badge || "").trim().slice(0, 20) || null;
+      const link = String(b.link || "").trim();
+      if (title.length < 3) return sendErr(res, "Give the item a title.");
+      if (!(price >= 100 && price <= 500000)) return sendErr(res, "Price must be between ₦100 and ₦500,000.");
+      if (link && !/^https:\/\/[^\s]{4,500}$/.test(link)) return sendErr(res, "The delivery link must start with https://");
+      const row = { title, description, price_ngn: price, category, badge, link: link || null, show_app: !!b.showApp, show_blog: !!b.showBlog, show_landing: !!b.showLanding, active: b.active !== false, sort: Math.max(0, Math.min(999, Math.floor(Number(b.sort)) || 0)) };
+      if (b.image) {
+        const m = await saveMedia(sb, "shop-admin", b.image);
+        if (m.error) return sendErr(res, m.error);
+        row.image_id = m.id;
+      }
+      let id = String(b.id || "");
+      if (id) {
+        if (!id.startsWith("custom_")) {
+          // built-in item: store the edits (and price) beside its visibility flags
+          const base = SHOP_ITEMS.find((x) => x.id === id && !x.isPremium);
+          if (!base) return sendErr(res, "Item not found.", 404);
+          const { data: cur } = await sb.from("settings").select("value").eq("key", "shop_flags").maybeSingle();
+          const all = { ...((cur && cur.value) || {}) };
+          const prev = all[id] || {};
+          all[id] = { ...prev, app: !!b.showApp, blog: !!b.showBlog, landing: !!b.showLanding, active: b.active !== false, title, description, category, badge: badge || "" };
+          if (row.image_id) all[id].imageId = row.image_id;
+          await sb.from("settings").upsert({ key: "shop_flags", value: all, updated_at: new Date().toISOString() }, { onConflict: "key" });
+          const { data: pc } = await sb.from("settings").select("value").eq("key", "prices").maybeSingle();
+          const prices = { ...((pc && pc.value) || {}) };
+          prices.items = { ...(prices.items || {}), [id]: price };
+          await sb.from("settings").upsert({ key: "prices", value: prices, updated_at: new Date().toISOString() }, { onConflict: "key" });
+          bustPricingCache();
+          await audit(sb, who, "shop.save", `${title} (built-in, ₦${price})`);
+          return sendOk(res, { id });
+        }
+        const { data, error } = await sb.from("shop_items").update(row).eq("id", id).select("id");
+        if (error) return sendErr(res, error.message);
+        if (!(data && data.length)) return sendErr(res, "Item not found.", 404);
+      } else {
+        if (!row.image_id) return sendErr(res, "Add a picture for the item.");
+        id = `custom_${crypto.randomBytes(5).toString("hex")}`;
+        const { error } = await sb.from("shop_items").insert({ id, ...row });
+        if (error) return sendErr(res, error.message);
+      }
+      await audit(sb, who, "shop.save", `${title} (₦${price})`);
+      return sendOk(res, { id });
+    }
+    if (op === "shop-delete") {
+      if (!need("shop")) return deny();
+      const id = String(b.id || "");
+      if (!id.startsWith("custom_")) return sendErr(res, "Only items you added can be deleted. Built-in items can be hidden.");
+      await sb.from("shop_items").delete().eq("id", id);
+      await audit(sb, who, "shop.delete", id);
+      return sendOk(res, {});
+    }
+    if (op === "shop-flags") {
+      if (!need("shop")) return deny();
+      const id = String(b.id || "");
+      if (!id || id.startsWith("custom_")) return sendErr(res, "Not a built-in item.");
+      const { data: cur } = await sb.from("settings").select("value").eq("key", "shop_flags").maybeSingle();
+      const all = (cur && cur.value) || {};
+      all[id] = { ...(all[id] || {}), app: !!b.showApp, blog: !!b.showBlog, landing: !!b.showLanding, active: b.active !== false };
+      await sb.from("settings").upsert({ key: "shop_flags", value: all, updated_at: new Date().toISOString() }, { onConflict: "key" });
+      await audit(sb, who, "shop.flags", id);
+      return sendOk(res, {});
+    }
+
+    // ── ads ──
+    if (op === "ads") {
+      if (!need("ads")) return deny();
+      bustAdsCache();
+      return sendOk(res, { ads: await getAdsConfig() });
+    }
+    if (op === "ads-save") {
+      if (!need("ads")) return deny();
+      const next = sanitizeAds(b.ads || {});
+      await sb.from("settings").upsert({ key: "ads", value: next, updated_at: new Date().toISOString() }, { onConflict: "key" });
+      bustAdsCache();
+      await audit(sb, who, "ads.save", `master ${next.master ? "on" : "off"}, blog ${next.blog.enabled ? "on" : "off"}, app ${next.app.enabled ? "on" : "off"}`);
+      return sendOk(res, { ads: next });
+    }
+    if (op === "ads-stats") {
+      if (!need("ads")) return deny();
+      return sendOk(res, { stats: await adStats(sb, [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 30) });
+    }
+
+    if (op === "sources") {
+      if (!need("analytics")) return deny();
+      const ref = String(q.ref || "").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 32);
+      return sendOk(res, { sources: await sourceStats(sb, [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 30, ref) });
     }
 
     // ── team (owner only) ──

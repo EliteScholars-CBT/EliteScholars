@@ -10,6 +10,7 @@
   var UNITS = AS.units || {};
   var CONSENT_KEY = 'es_consent_v1';
   var HOUSE = (CFG.houseAds || []).filter(function (a) { return a && a.link && a.title; });
+  var REMOTE = { show: true, house: true, slots: {} };
   var houseIdx = 0, nativeUsed = false, socialDone = false, popDone = false, stickyDone = false;
 
   function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
@@ -36,17 +37,116 @@
   function absUrl(u) { return /^\/\//.test(u) ? 'https:' + u : u; }
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text) n.textContent = text; return n; }
 
+
+  // ── Where did this reader come from? (same rules as the app) ──────────────
+  var SRC_ALIAS = { wa: 'whatsapp', whatsapp: 'whatsapp', 'wa.me': 'whatsapp', 'api.whatsapp.com': 'whatsapp', 'web.whatsapp.com': 'whatsapp', fb: 'facebook', facebook: 'facebook', 'l.facebook.com': 'facebook', 'm.facebook.com': 'facebook', 'lm.facebook.com': 'facebook', ig: 'instagram', instagram: 'instagram', 'l.instagram.com': 'instagram', tw: 'x', twitter: 'x', x: 'x', 't.co': 'x', 'x.com': 'x', tiktok: 'tiktok', 'vm.tiktok.com': 'tiktok', tg: 'telegram', telegram: 'telegram', 't.me': 'telegram', youtube: 'youtube', yt: 'youtube', 'youtu.be': 'youtube', 'm.youtube.com': 'youtube', google: 'google', bing: 'bing', linkedin: 'linkedin', 'lnkd.in': 'linkedin', email: 'email', sms: 'sms' };
+  function sourceTrack() {
+    try {
+      if (sessionStorage.getItem('es_source_sent')) return;
+      var q = {}, parts = (location.search || '').replace(/^\?/, '').split('&'), i;
+      for (i = 0; i < parts.length; i++) { var kv = parts[i].split('='); if (kv[0]) q[decodeURIComponent(kv[0])] = decodeURIComponent((kv[1] || '').replace(/\+/g, ' ')); }
+      var clean = function (v) { return String(v || '').toLowerCase().replace(/^www\./, '').replace(/[^a-z0-9.\-_]/g, '').slice(0, 40); };
+      var utm = clean(q.utm_source), tag = utm || clean(q.src || q.source), source = '';
+      if (tag && SRC_ALIAS[tag]) source = SRC_ALIAS[tag]; else if (utm) source = utm;
+      if (!source) {
+        var host = '';
+        try { host = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '').toLowerCase() : ''; } catch (e) { host = ''; }
+        if (host && host === location.hostname.replace(/^www\./, '')) return;
+        source = !host ? 'direct' : SRC_ALIAS[host] ? SRC_ALIAS[host] : /google\./.test(host) ? 'google' : /facebook\./.test(host) ? 'facebook' : /instagram\./.test(host) ? 'instagram' : 'other';
+      }
+      sessionStorage.setItem('es_source_sent', '1');
+      var ref = String(q.ref || '').trim().toUpperCase().slice(0, 32);
+      var first = null; try { first = JSON.parse(localStorage.getItem('es_first_source') || 'null'); } catch (e) { first = null; }
+      var fresh = !first || (Date.now() - first.at) / 86400000 > 60 || (ref && !first.ref);
+      if (fresh) localStorage.setItem('es_first_source', JSON.stringify({ source: source, ref: ref, at: Date.now() }));
+      if (ref) localStorage.setItem('es_referral_attribution', JSON.stringify({ code: ref, capturedAt: Date.now() }));
+      track('visit_source', { source: source, ref: ref, page: 'blog', returning: !fresh });
+    } catch (e) { /* never break the page */ }
+  }
+
+
+  // ── Settings from Admin → Ads (so no redeploy is needed) ──────────────────
+  function applyRemote(c) {
+    if (!c) return;
+    var b = c.blog || {};
+    REMOTE.show = !!(c.master && b.enabled);
+    REMOTE.house = b.house !== false;
+    REMOTE.slots = b.slots || {};
+    AS.enabled = REMOTE.show;
+    var u = c.units || {};
+    if (u.native && u.native.enabled && u.native.src) UNITS.native = { src: u.native.src, containerId: u.native.containerId }; else UNITS.native = {};
+    if (u.socialBar && u.socialBar.enabled && u.socialBar.src && b.socialBar) UNITS.socialBar = { src: u.socialBar.src }; else UNITS.socialBar = {};
+    CFG.consentRequired = false;
+    AS.units = UNITS;
+  }
+  function loadRemote(done) {
+    var finished = false;
+    function fin() { if (!finished) { finished = true; done(); } }
+    var timer = setTimeout(fin, 2200);
+    try {
+      fetch('/api/site/config').then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+        if (j && j.success && j.ads) applyRemote(j.ads);
+        clearTimeout(timer); fin();
+      }).catch(function () { clearTimeout(timer); fin(); });
+    } catch (e) { clearTimeout(timer); fin(); }
+  }
+
+
+  // ── Admin-uploaded cover images replace the generated ones ────────────────
+  function applyCovers() {
+    try {
+      fetch('/api/site/blog-covers').then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+        if (!j || !j.covers) return;
+        var imgs = document.querySelectorAll('img[data-cover-for]');
+        for (var i = 0; i < imgs.length; i++) { var u = j.covers[imgs[i].getAttribute('data-cover-for')]; if (u) imgs[i].src = u; }
+      }).catch(function () {});
+    } catch (e) { /* cosmetic only */ }
+  }
+  // ── Shop items the admin chose to show on the blog ────────────────────────
+  function applyShop() {
+    var slot = document.getElementById('es-shop-slot');
+    if (!slot) return;
+    try {
+      fetch('/api/site/shop?where=blog').then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+        if (!j || !j.items || !j.items.length) return;
+        var wrap = el('section', 'es-shop'); wrap.appendChild(el('h3', '', 'Study materials from the EliteScholars shop'));
+        var grid = el('div', 'es-shop-grid');
+        j.items.slice(0, 4).forEach(function (it) {
+          var a = el('a', 'es-shop-card'); a.href = '/app?src=blog-shop'; a.addEventListener('click', function () { try { sessionStorage.setItem('es_open_shop', '1'); } catch (e) {} });
+          var src = it.imageUrl || (it.image ? '/shop/' + it.image : '');
+          if (src) { var im = document.createElement('img'); im.src = src; im.alt = ''; im.loading = 'lazy'; a.appendChild(im); }
+          var d = el('div'); d.appendChild(el('b', '', String(it.title || '').replace(/^[^A-Za-z0-9]+/, ''))); d.appendChild(el('span', '', it.price || '')); a.appendChild(d);
+          grid.appendChild(a);
+        });
+        wrap.appendChild(grid); slot.appendChild(wrap);
+        track('blog_shop_view', { items: j.items.length });
+      }).catch(function () {});
+    } catch (e) { /* optional block */ }
+  }
+
   // ── Which Adsterra unit does a slot use? ──────────────────────────────────
+  function bannerReady(name) { var u = UNITS[name]; return !!(u && u.key && u.src); }
+  function nativeReady() { var u = UNITS.native; return !!(u && u.src && u.containerId); }
   function unitFor(slot) {
-    var wide = window.innerWidth >= 768;
+    var wide = window.innerWidth >= 768, pick = null;
     switch (slot) {
-      case 'top': return wide ? ['leaderboard728x90', 728, 90] : ['mobile320x50', 320, 50];
-      case 'inline-1': case 'end': case 'side-1': return ['rect300x250', 300, 250];
-      case 'side-4': return [UNITS.rect300x250b && UNITS.rect300x250b.src ? 'rect300x250b' : 'rect300x250', 300, 250];
-      case 'inline-3': return ['native', 0, 0];
-      case 'feed': return ['native', 0, 0];
+      case 'top': pick = wide ? ['leaderboard728x90', 728, 90] : ['mobile320x50', 320, 50]; break;
+      case 'inline-1': case 'end': case 'side-1': pick = ['rect300x250', 300, 250]; break;
+      case 'side-4': pick = [bannerReady('rect300x250b') ? 'rect300x250b' : 'rect300x250', 300, 250]; break;
+      case 'inline-3': case 'feed': return ['native', 0, 0];
       default: return null; // inline-2, side-2, side-3 → always our own ads
     }
+    // No banner unit set up? Use the native unit instead (never at the very top, so the title stays clear).
+    if (!bannerReady(pick[0]) && nativeReady() && slot !== 'top') return ['native', 0, 0];
+    return pick;
+  }
+  function slotGroup(slot) {
+    if (slot === 'top') return 'top';
+    if (/^inline/.test(slot)) return 'inline';
+    if (slot === 'end') return 'end';
+    if (/^side/.test(slot)) return 'sidebar';
+    if (slot === 'feed') return 'feed';
+    return 'inline';
   }
 
   // ── Our own ads ──────────────────────────────────────────────────────────
@@ -103,17 +203,23 @@
   }
   function renderNative(box, slot) {
     var u = UNITS.native;
-    if (nativeUsed || !u || !u.src || !u.containerId) return false;
-    nativeUsed = true;
+    if (!u || !u.src || !u.containerId) return false;
+    var cid = String(u.containerId).replace(/[^A-Za-z0-9_-]/g, '');
     var label = el('p', 'es-ad-label', 'Advertisement');
-    var holder = el('div', 'es-native');
-    var s = document.createElement('script');
-    s.async = true; s.setAttribute('data-cfasync', 'false'); s.src = absUrl(u.src);
-    var c = document.createElement('div'); c.id = String(u.containerId).replace(/[^A-Za-z0-9_-]/g, '');
-    holder.appendChild(s); holder.appendChild(c);
-    box.innerHTML = ''; box.appendChild(label); box.appendChild(holder);
+    // Its own little page, so the same container id can be used in several spots.
+    var frame = document.createElement('iframe');
+    frame.setAttribute('title', 'Advertisement'); frame.setAttribute('scrolling', 'no'); frame.setAttribute('frameborder', '0');
+    frame.className = 'es-ad-frame'; frame.style.width = '100%'; frame.style.height = '160px';
+    frame.srcdoc = '<!doctype html><html><head><meta charset="utf-8"><base target="_blank"><style>html,body{margin:0;background:transparent;font-family:system-ui,sans-serif}</style></head><body>' +
+      '<script async="async" data-cfasync="false" src="' + absUrl(u.src).replace(/"/g, '') + '"><\/script><div id="' + cid + '"></div></body></html>';
+    box.innerHTML = ''; box.appendChild(label); box.appendChild(frame);
     box.style.minHeight = '120px';
     box.setAttribute('data-kind', 'adsterra');
+    var n = 0, t = setInterval(function () {
+      n++;
+      try { var d = frame.contentDocument, c = d && d.getElementById(cid); if (c && c.scrollHeight > 40) frame.style.height = Math.min(420, Math.max(120, c.scrollHeight + 8)) + 'px'; } catch (e) { /* keep default */ }
+      if (n > 24) clearInterval(t);
+    }, 500);
     track('blog_ad_view', { slot: slot, kind: 'adsterra', unit: 'native' });
     return true;
   }
@@ -121,12 +227,16 @@
   function fillSlot(box) {
     var slot = box.getAttribute('data-slot') || 'x';
     var want = box.getAttribute('data-house') || '';
+    // Admin → Ads can switch ads off for the whole blog or for one kind of spot.
+    if (!REMOTE.show || REMOTE.slots[slotGroup(slot)] === false) { box.style.display = 'none'; box.setAttribute('data-filled', '1'); return; }
     var ok = false;
     if (thirdPartyAllowed()) {
       var u = unitFor(slot);
       if (u) ok = u[0] === 'native' ? renderNative(box, slot) : renderBanner(box, slot, u[0], u[1], u[2]);
     }
-    if (!ok) renderHouse(box, slot, want);
+    if (!ok) {
+      if (REMOTE.house === false) { box.style.display = 'none'; } else renderHouse(box, slot, want);
+    }
     box.setAttribute('data-filled', '1');
   }
 
@@ -204,6 +314,10 @@
   });
 
   function start() {
+    sourceTrack(); applyCovers(); applyShop();
+    loadRemote(boot);
+  }
+  function boot() {
     observeSlots(); pageLevel();
     if (CFG.consentRequired !== false) {
       var fl = document.querySelector('.blog-footer-links');

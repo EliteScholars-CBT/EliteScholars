@@ -18,6 +18,7 @@ export default function AdminAccess({ token, onAuthFail }) {
   const [msg, setMsg] = useState('');
   const [err, setErr] = useState('');
 
+  const [sess, setSess] = useState({ minutes: '0', cooldown: '0' });
   const [limits, setLimits] = useState({ topics: '3', cbt: '3', games: '3', fileStudy: '2' });
   const [trialOn, setTrialOn] = useState(false);
   const [trialDays, setTrialDays] = useState('14');
@@ -59,6 +60,7 @@ export default function AdminAccess({ token, onAuthFail }) {
   useEffect(() => {
     if (!data) return;
     const c = data.config;
+    setSess({ minutes: String(c.sessionMinutes || 0), cooldown: String(c.cooldownMinutes || 0) });
     setLimits({ topics: String(c.limits.topics), cbt: String(c.limits.cbt), games: String(c.limits.games), fileStudy: String(c.limits.fileStudy) });
     setTrialOn(c.trialEnabled);
     setTrialDays(String(c.trialDays));
@@ -96,11 +98,15 @@ export default function AdminAccess({ token, onAuthFail }) {
             <input type="number" min="0" max="100" value={limits.games} onChange={(e) => setLimits({ ...limits, games: e.target.value })} /></label>
           <label>Free study-from-file uploads (lifetime)
             <input type="number" min="0" max="100" value={limits.fileStudy} onChange={(e) => setLimits({ ...limits, fileStudy: e.target.value })} /></label>
+          <label>Free session length (minutes, 0 = no limit)
+            <input type="number" min="0" max="600" value={sess.minutes} onChange={(e) => setSess({ ...sess, minutes: e.target.value })} /></label>
+          <label>Cooldown after a session (minutes, 0 = none)
+            <input type="number" min="0" max="4320" value={sess.cooldown} onChange={(e) => setSess({ ...sess, cooldown: e.target.value })} /></label>
           <label className="adm-check"><input type="checkbox" checked={trialOn} onChange={(e) => setTrialOn(e.target.checked)} /> Give every NEW student a free trial</label>
           <label>Trial length (days)
             <input type="number" min="1" max="90" value={trialDays} onChange={(e) => setTrialDays(e.target.value)} /></label>
           <button disabled={busy} onClick={() => act({
-            action: 'set-config', trialEnabled: trialOn, trialDays: Number(trialDays),
+            action: 'set-config', sessionMinutes: Number(sess.minutes), cooldownMinutes: Number(sess.cooldown), trialEnabled: trialOn, trialDays: Number(trialDays),
             limits: { topics: Number(limits.topics), cbt: Number(limits.cbt), games: Number(limits.games), fileStudy: Number(limits.fileStudy) },
           }, 'Saved.')}>Save limits and trial</button>
         </div>

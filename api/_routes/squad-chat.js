@@ -37,7 +37,10 @@ export default async function handler(req, res) {
     return sendOk(res, { image: data.data });
   }
 
-  const { data: mem } = await sb.from("squad_members").select("squad_id,display_name").eq("email", email).limit(1).maybeSingle();
+  // students can be in several squads: the app says which one it means
+  let memQ = sb.from("squad_members").select("squad_id,display_name").eq("email", email);
+  if (UUID.test(String(b.squadId || ""))) memQ = memQ.eq("squad_id", String(b.squadId));
+  const { data: mem } = await memQ.limit(1).maybeSingle();
   if (!mem) return sendErr(res, "Join a squad to use chat.", 403);
   const squadId = mem.squad_id;
   const nowIso = new Date().toISOString();

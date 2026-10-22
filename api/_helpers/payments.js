@@ -5,7 +5,7 @@
 import { Resend } from 'resend';
 import { getFirstName, activatePremiumAndLog, logShopPurchase } from './premium.js';
 import { getPricing } from './pricing.js';
-import { SHOP_ITEMS } from './constants/shop.js';
+import { findShopItem } from './shopItems.js';
 
 const APP_URL = 'https://elitescholars.site';
 const PLAN_AMOUNT = { annual: 3000, pro: 3000, shop: 1 }; // real prices come from admin settings (see getPricing)
@@ -103,9 +103,9 @@ export async function verifyWithFlutterwave(txRef) {
     let item = null;
     let need;
     if (plan === 'shop') {
-      item = SHOP_ITEMS.find((i) => i.id === t.meta?.item && !i.isPremium);
+      item = await findShopItem(t.meta?.item, true); // paid already: honour it even if hidden since
       if (!item) return null;
-      need = Number(t.meta?.expected) || pr.items[item.id];
+      need = Number(t.meta?.expected) || item.priceNGN;
     } else {
       need = Number(t.meta?.expected) || (plan === 'pro' ? pr.pro : pr.premiumAnnual);
     }

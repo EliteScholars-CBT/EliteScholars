@@ -14,6 +14,7 @@ import {
 } from './_helpers/constants/premium.js';
 
 import { getPricing, fmtNaira } from './_helpers/pricing.js';
+import { getShopCatalog, publicItem } from './_helpers/shopItems.js';
 import { safeHandler } from "./_helpers/safe.js";
 async function handler(req, res) {
   setCors(res);
@@ -22,9 +23,13 @@ async function handler(req, res) {
 
   let pr = null;
   try { pr = await getPricing(); } catch { /* defaults */ }
-  const items = SHOP_ITEMS.map((it) => (it.isPremium
-    ? { ...it, price: `${fmtNaira(pr ? pr.premiumAnnual : PREMIUM_ANNUAL_PRICE)}/yr` }
-    : { ...it, priceNGN: pr ? pr.items[it.id] : undefined, price: pr && pr.items[it.id] ? fmtNaira(pr.items[it.id]) : it.price }));
+  let extra = [];
+  try { extra = (await getShopCatalog()).filter((i) => i.show.app); } catch { /* fall back to built-ins */ }
+  const shown = new Set(extra.map((i) => i.id));
+  const items = [
+    ...SHOP_ITEMS.filter((it) => it.isPremium).map((it) => ({ ...it, price: `${fmtNaira(pr ? pr.premiumAnnual : PREMIUM_ANNUAL_PRICE)}/yr` })),
+    ...(extra.length ? extra.map(publicItem) : SHOP_ITEMS.filter((it) => !it.isPremium && !shown.has(it.id)).map((it) => ({ ...it, priceNGN: pr ? pr.items[it.id] : undefined, price: pr && pr.items[it.id] ? fmtNaira(pr.items[it.id]) : it.price }))),
+  ];
   return sendOk(res, {
     items,
     pricing: {

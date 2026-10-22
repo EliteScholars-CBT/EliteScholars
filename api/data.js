@@ -6,6 +6,7 @@
 // ============================================================================
 import xpAdd from "./_routes/xp-add.js";
 import eventsTrack from "./_routes/events-track.js";
+import sitePublic from "./_routes/site-public.js";
 import squadsCreate from "./_routes/squads-create.js";
 import squadsJoin from "./_routes/squads-join.js";
 import squadsGet from "./_routes/squads-get.js";
@@ -42,6 +43,12 @@ function withOp(fn, op) {
 const ROUTES = {
   "xp/add": xpAdd,
   "events/track": eventsTrack,
+  "site/school-info": withOp(sitePublic, "school-info"),
+  "site/school-demo": withOp(sitePublic, "school-demo"),
+  "site/config": withOp(sitePublic, "config"),
+  "site/shop": withOp(sitePublic, "shop"),
+  "site/media": withOp(sitePublic, "media"),
+  "site/blog-covers": withOp(sitePublic, "blog-covers"),
   "squads/create": squadsCreate,
   "squads/join": squadsJoin,
   "squads/get": squadsGet,
@@ -84,6 +91,10 @@ const ROUTES = {
   "status/post": withOp(status, "post"),
   "status/feed": withOp(status, "feed"),
   "status/delete": withOp(status, "delete"),
+  "status/react": withOp(status, "react"),
+  "status/reply": withOp(status, "reply"),
+  "status/reshare": withOp(status, "reshare"),
+  "status/insights": withOp(status, "insights"),
   "partner/signup": withOp(partner, "signup"),
   "partner/login": withOp(partner, "login"),
   "partner/me": withOp(partner, "me"),
@@ -103,6 +114,17 @@ const ROUTES = {
   "admin/student": withOp(adminOps, "student"),
   "admin/activity": withOp(adminOps, "activity"),
   "admin/blog": withOp(adminOps, "blog"),
+  "admin/blog-covers": withOp(adminOps, "blog-covers"),
+  "admin/blog-cover-save": withOp(adminOps, "blog-cover-save"),
+  "admin/blog-cover-clear": withOp(adminOps, "blog-cover-clear"),
+  "admin/sources": withOp(adminOps, "sources"),
+  "admin/ads": withOp(adminOps, "ads"),
+  "admin/ads-save": withOp(adminOps, "ads-save"),
+  "admin/ads-stats": withOp(adminOps, "ads-stats"),
+  "admin/shop-list": withOp(adminOps, "shop-list"),
+  "admin/shop-save": withOp(adminOps, "shop-save"),
+  "admin/shop-delete": withOp(adminOps, "shop-delete"),
+  "admin/shop-flags": withOp(adminOps, "shop-flags"),
   "admin/team": withOp(adminOps, "team"),
   "admin/team-save": withOp(adminOps, "team-save"),
   "admin/team-reset": withOp(adminOps, "team-reset"),

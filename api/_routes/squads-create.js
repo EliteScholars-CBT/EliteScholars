@@ -1,7 +1,7 @@
 import { sendOk, sendErr, sendMethodNotAllowed, setCors, readBody } from "../_helpers/response.js";
 import { requireUser } from "../_helpers/session.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
-import { makeCode, loadSquadById, loadSquadFor } from "./squads-util.js";
+import { makeCode, loadSquadById, loadSquadsFor, MAX_SQUADS } from "./squads-util.js";
 
 export default async function handler(req, res) {
   setCors(res);
@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   if (!email || !name) return sendErr(res, "Squad name and email required.");
 
   const sb = getSupabase();
-  if (await loadSquadFor(email)) return sendErr(res, "You are already in a squad. Leave it first.");
+  if ((await loadSquadsFor(email)).length >= MAX_SQUADS) return sendErr(res, `You can be in up to ${MAX_SQUADS} squads. Leave one to add another.`);
 
   let squad = null;
   for (let i = 0; i < 5 && !squad; i++) {

@@ -1,7 +1,7 @@
 import { sendOk, sendErr, sendMethodNotAllowed, setCors, readBody } from "../_helpers/response.js";
 import { requireUser } from "../_helpers/session.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
-import { loadSquadById, loadSquadFor } from "./squads-util.js";
+import { loadSquadById, loadSquadsFor, MAX_SQUADS } from "./squads-util.js";
 
 export default async function handler(req, res) {
   setCors(res);
@@ -19,8 +19,9 @@ export default async function handler(req, res) {
   const { data: squad } = await sb.from("squads").select("id").eq("code", code).maybeSingle();
   if (!squad) return sendErr(res, "No squad found with that code.");
 
-  const existing = await loadSquadFor(email);
-  if (existing && existing.id !== squad.id) return sendErr(res, "You are already in another squad. Leave it first.");
+  const mine = await loadSquadsFor(email);
+  const existing = mine.find((q) => q.id === squad.id);
+  if (!existing && mine.length >= MAX_SQUADS) return sendErr(res, `You can be in up to ${MAX_SQUADS} squads. Leave one to join another.`);
 
   const { count } = await sb.from("squad_members").select("id", { count: "exact", head: true }).eq("squad_id", squad.id);
   if ((count || 0) >= 20 && !existing) return sendErr(res, "This squad is full.");

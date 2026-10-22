@@ -135,7 +135,7 @@
 .scramble-tile:nth-child(n+7) { animation-delay: .18s; }
 @keyframes gmTileIn { 0% { opacity: 0; transform: translateY(14px) scale(.7) rotate(-8deg); } 100% { opacity: 1; transform: none; } }
 .scramble-tile:not(:disabled):active { transform: scale(.88); }
-.scramble-tile.used { opacity: 0; transform: scale(.5); pointer-events: none; }
+.scramble-tile.used { animation: none !important; opacity: .35 !important; transform: scale(.92) !important; filter: grayscale(1); box-shadow: none; text-decoration: line-through; pointer-events: none; cursor: not-allowed; }
 .scramble-undo {
   display: flex; align-items: center; justify-content: center; gap: 6px; margin: 16px auto 0;
   padding: 10px 18px; border-radius: 99px; border: 1px solid rgba(255, 255, 255, .25);

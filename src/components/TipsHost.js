@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { guidesPending } from './GuideHost';
 import '../styles/tips.css';
 
 // Little "did you know" pop-ups. One at a time, spaced out and in random order, so students learn the app
@@ -27,7 +28,7 @@ const load = () => { try { return JSON.parse(localStorage.getItem(KEY) || '{}');
 const save = (o) => { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch { /* ignore */ } };
 const standalone = () => { try { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone; } catch { return false; } };
 
-export default function TipsHost({ screen }) {
+export default function TipsHost({ screen, email }) {
   const [tip, setTip] = useState(null);
   const shownThisSession = useRef(false);
   const timer = useRef(null);
@@ -35,6 +36,7 @@ export default function TipsHost({ screen }) {
   useEffect(() => {
     clearTimeout(timer.current);
     if (shownThisSession.current || !SHOW_ON.includes(screen)) return undefined;
+    if (guidesPending(email)) return undefined; // how-to guides go first; small tips follow later
     const st = load();
     const now = Date.now();
     if (st.nextAt && now < st.nextAt) return undefined; // not time yet
@@ -50,7 +52,7 @@ export default function TipsHost({ screen }) {
       setTip(pick);
     }, wait);
     return () => clearTimeout(timer.current);
-  }, [screen]);
+  }, [screen, email]);
 
   // leaving the main screens hides it without counting as dismissed
   useEffect(() => { if (tip && !SHOW_ON.includes(screen)) setTip(null); }, [screen, tip]);

@@ -487,3 +487,53 @@ create table if not exists school_accounts (
   created_at       timestamptz not null default now()
 );
 alter table school_accounts enable row level security;
+
+-- ----------------------------------------------------------- shop_items --
+-- Items you add in Admin → Shop (images live in `media`, email = 'shop-admin').
+create table if not exists shop_items (
+  id          text primary key,
+  title       text not null,
+  description text not null default '',
+  price_ngn   integer not null check (price_ngn > 0),
+  category    text not null default 'Notes',
+  badge       text,
+  link        text,
+  image_id    uuid,
+  show_app     boolean not null default true,
+  show_blog    boolean not null default false,
+  show_landing boolean not null default true,
+  active      boolean not null default true,
+  sort        integer not null default 0,
+  created_at  timestamptz not null default now()
+);
+alter table shop_items enable row level security;
+
+
+-- ----------------------------------------------- status reactions / replies --
+-- Safe to re-run. Reshared statuses show "Reshared from <name>".
+alter table statuses add column if not exists reshared_from text;
+alter table statuses add column if not exists reshared_id   uuid;
+create index if not exists idx_statuses_reshared on statuses (email, reshared_id);
+create table if not exists status_reactions (
+  status_id    uuid not null references statuses(id) on delete cascade,
+  email        text not null,
+  display_name text not null default '',
+  kind         text not null default 'like',
+  created_at   timestamptz not null default now(),
+  primary key (status_id, email)
+);
+alter table status_reactions enable row level security;
+create table if not exists status_replies (
+  id           uuid primary key default gen_random_uuid(),
+  status_id    uuid not null references statuses(id) on delete cascade,
+  email        text not null,
+  display_name text not null default '',
+  text         text not null,
+  created_at   timestamptz not null default now()
+);
+create index if not exists idx_status_replies_status on status_replies (status_id, created_at desc);
+alter table status_replies enable row level security;
+
+-- ------------------------------------------------------------------ presence --
+-- "Online now" dots in squads. Safe to re-run.
+alter table profiles add column if not exists last_seen timestamptz;

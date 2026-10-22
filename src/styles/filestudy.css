@@ -380,7 +380,7 @@
 }
 @keyframes fsTileIn { 0% { opacity: 0; transform: translateY(12px) scale(.7) rotate(-8deg); } 100% { opacity: 1; transform: none; } }
 .fs-scramble-tile:not(:disabled):active { transform: scale(.88); }
-.fs-scramble-tile.used { opacity: 0; transform: scale(.5); pointer-events: none; }
+.fs-scramble-tile.used { animation: none !important; opacity: .35 !important; transform: scale(.92) !important; filter: grayscale(1); box-shadow: none; text-decoration: line-through; pointer-events: none; cursor: not-allowed; }
 
 .fs-match-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .fs-match-card { aspect-ratio: 3/4; perspective: 900px; border: none; background: none; padding: 0; }

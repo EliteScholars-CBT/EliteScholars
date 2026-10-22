@@ -3,11 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { getLeaderboard, getUserRank } from '../utils/leaderboardApi';
 import XPBar from './XPBar';
 import Icon, { EmojiIcon } from './Icon';
-import { wantsChat } from '../utils/chatLink';
+import { wantsChat, wantsSquad, clearOpenSquad } from '../utils/chatLink';
 import StudySquads from './StudySquads';
 
 export default function Leaderboard({ userEmail, userName }) {
-  const [view, setView] = useState(() => (wantsChat() ? 'squad' : 'global')); // global | squad
+  const [view, setView] = useState(() => { const go = wantsChat() || wantsSquad(); clearOpenSquad(); return go ? 'squad' : 'global'; }); // global | squad
   const [activeTimeframe, setActiveTimeframe] = useState('alltime');
   const [activeExam, setActiveExam] = useState('all');
   const [leaderboard, setLeaderboard] = useState([]);

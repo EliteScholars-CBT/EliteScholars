@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Icon from '../components/Icon';
 import logo from '../assets/elite-scholars-logo.png';
 import { captureReferralFromURL } from '../utils/referral';
+import { captureTrafficSource } from '../utils/trafficSource';
 import { WA_CHANNEL } from '../utils/constants';
 import '../styles/landing.css';
 import '../styles/landing2.css';
@@ -218,10 +219,21 @@ function TryIt({ onStart }) {
 export default function Landing() {
   const navigate = useNavigate();
   const heroRef = useRef(null);
+  const [shopItems, setShopItems] = useState([]);
+  useEffect(() => {
+    let off = false;
+    fetch('/api/site/shop?where=landing').then((r) => (r.ok ? r.json() : null)).then((j) => { if (!off && j && Array.isArray(j.items)) setShopItems(j.items.slice(0, 8)); }).catch(() => {});
+    return () => { off = true; };
+  }, []);
   const [blogPosts, setBlogPosts] = useState([]);
   useEffect(() => {
     let off = false;
-    fetch('/blog/latest.json').then((r) => (r.ok ? r.json() : [])).then((j) => { if (!off && Array.isArray(j)) setBlogPosts(j.slice(0, 5)); }).catch(() => {});
+    fetch('/blog/latest.json').then((r) => (r.ok ? r.json() : [])).then(async (j) => {
+      if (off || !Array.isArray(j)) return;
+      let covers = {};
+      try { const c = await fetch('/api/site/blog-covers').then((r) => (r.ok ? r.json() : null)); covers = (c && c.covers) || {}; } catch { /* generated covers are used */ }
+      if (!off) setBlogPosts(j.slice(0, 5).map((p) => ({ ...p, cover: covers[p.id] || p.cover })));
+    }).catch(() => {});
     return () => { off = true; };
   }, []);
   const [scrollY, setScrollY] = useState(0);
@@ -234,6 +246,7 @@ export default function Landing() {
 
   useEffect(() => {
     captureReferralFromURL();
+    captureTrafficSource();
     if (isStandalone()) { navigate('/app', { replace: true }); return undefined; }
 
     let ticking = false;
@@ -579,6 +592,32 @@ export default function Landing() {
         </Reveal>
       </section>
 
+      {/* ── Shop ────────────────────────────────────────────────────────── */}
+      {shopItems.length > 0 && (
+        <section className="land-shop" id="shop" aria-labelledby="land-shop-h">
+          <Reveal className="land-blog-head">
+            <h2 id="land-shop-h">Study materials from the shop</h2>
+            <p>Notes, formula sheets and guides made for Nigerian exams. Pay securely in the app.</p>
+          </Reveal>
+          <div className="land-shop-grid">
+            {shopItems.map((it, i) => (
+              <Reveal as="a" key={it.id} delay={i * 50} className="land-shop-card" href="/app?src=landing-shop" onClick={() => { try { sessionStorage.setItem('es_open_shop', '1'); } catch { /* ignore */ } }}>
+                <div className="land-shop-img">
+                  {it.badge && <span className="land-shop-badge">{it.badge}</span>}
+                  {it.imageUrl ? <img src={it.imageUrl} alt={it.title} loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <span aria-hidden="true">📚</span>}
+                </div>
+                <div className="land-shop-body">
+                  <small>{it.category}</small>
+                  <h3>{String(it.title).replace(/^[^\w]+/, '')}</h3>
+                  <p>{it.description}</p>
+                  <span className="land-shop-price">{it.price}</span>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* ── Latest from the blog ────────────────────────────────────────── */}
       {blogPosts.length > 0 && (
         <section className="land-blog" aria-labelledby="land-blog-h">
@@ -589,6 +628,7 @@ export default function Landing() {
           <div className="land-blog-grid">
             {blogPosts.map((p, i) => (
               <Reveal as="a" key={p.url} delay={i * 60} className="land-blog-card" href={p.url}>
+                {p.cover && <img className="land-blog-cover" src={p.cover} alt="" width="1200" height="630" loading="lazy" />}
                 <span className="land-blog-cat">{String(p.category || '').replace(/-/g, ' ')}</span>
                 <h3>{p.title}</h3>
                 <p>{p.excerpt}</p>
@@ -608,6 +648,7 @@ export default function Landing() {
             <span>EliteScholars</span>
           </div>
           <div className="land-footer-links">
+            <a href="/school">For schools</a>
             <a href="/blog/">Blog</a>
             <a href="/app/about">About</a>
             <a href="/app/terms">Terms</a>

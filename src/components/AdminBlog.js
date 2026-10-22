@@ -1,8 +1,58 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { makeApi } from './adminApi';
 import { fmtN, TrendChart, Donut, Bars, ColumnChart } from './AdminCharts';
+import { compressPhoto } from '../utils/media';
 
 const mins = (s) => (s >= 60 ? `${Math.floor(s / 60)}m ${s % 60}s` : `${s}s`);
+
+function CoverManager({ api }) {
+  const [posts, setPosts] = useState([]);
+  const [covers, setCovers] = useState({});
+  const [q, setQ] = useState('');
+  const [busy, setBusy] = useState('');
+  const [err, setErr] = useState('');
+  const load = () => api('blog-covers').then((d) => setCovers(d.covers || {})).catch((e) => e.message !== 'auth' && setErr(e.message));
+  useEffect(() => {
+    fetch('/blog/posts-index.json').then((r) => r.json()).then((j) => setPosts(Array.isArray(j) ? j : [])).catch(() => {});
+    load();
+  }, []);
+  const upload = async (p, file) => {
+    if (!file) return;
+    setBusy(p.id); setErr('');
+    try {
+      const image = await compressPhoto(file, 1200, 210);
+      await api('blog-cover-save', { method: 'POST', body: { postId: p.id, image } });
+      await load();
+    } catch (e) { if (e.message !== 'auth') setErr(e.message || 'Could not upload that picture.'); }
+    setBusy('');
+  };
+  const clear = async (p) => { setBusy(p.id); try { await api('blog-cover-clear', { method: 'POST', body: { postId: p.id } }); await load(); } catch (e) { if (e.message !== 'auth') setErr(e.message); } setBusy(''); };
+  const shown = posts.filter((p) => !q || p.title.toLowerCase().includes(q.toLowerCase()) || p.category.includes(q.toLowerCase())).slice(0, 60);
+  return (
+    <section className="adm-card">
+      <h2>Cover pictures</h2>
+      <p className="adm-note" style={{ marginTop: 0 }}>Every post already has a designed cover. Upload your own picture (about 1200 × 630, landscape) to replace it. It shows within a minute, no redeploy needed.</p>
+      {err && <div className="adm-error">{err}</div>}
+      <input className="adm-search" placeholder="Search posts…" value={q} onChange={(e) => setQ(e.target.value)} style={{ marginBottom: 10, width: '100%', boxSizing: 'border-box' }} />
+      <div className="adm-list tight">
+        {shown.map((p) => (
+          <div className="adm-item" key={p.id}>
+            <div className="adm-item-head static">
+              <img className="adm-thumb" style={{ width: 84, height: 44 }} src={covers[p.id] || `/blog/covers/${p.id}.svg`} alt="" loading="lazy" />
+              <span className="adm-item-main"><b>{p.title}</b><small>{p.category} · {p.live ? 'live' : 'scheduled'}{covers[p.id] ? ' · your picture' : ''}</small></span>
+            </div>
+            <div className="adm-inline pad">
+              <label className="adm-small" style={{ cursor: 'pointer' }}>{busy === p.id ? 'Uploading…' : (covers[p.id] ? 'Change picture' : 'Upload picture')}
+                <input type="file" accept="image/*" hidden disabled={busy === p.id} onChange={(e) => { upload(p, e.target.files && e.target.files[0]); e.target.value = ''; }} /></label>
+              {covers[p.id] && <button className="adm-small" disabled={busy === p.id} onClick={() => clear(p)}>Use designed cover</button>}
+            </div>
+          </div>
+        ))}
+        {!shown.length && <p className="adm-empty">No posts found.</p>}
+      </div>
+    </section>
+  );
+}
 
 export default function AdminBlog({ token, onAuthFail }) {
   const api = useMemo(() => makeApi(token, onAuthFail), [token, onAuthFail]);
@@ -70,6 +120,7 @@ export default function AdminBlog({ token, onAuthFail }) {
           </section>
         </div>
       )}
+      <CoverManager api={api} />
     </div>
   );
 }

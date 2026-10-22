@@ -80,6 +80,12 @@ export default async function handler(req, res) {
           if (!Number.isFinite(d) || d < 1 || d > 90) return sendErr(res, "Trial length must be 1 to 90 days.");
           cfg.trialDays = d;
         }
+        for (const [k, hi, label] of [["sessionMinutes", 600, "Session length (minutes)"], ["cooldownMinutes", 4320, "Cooldown (minutes)"]]) {
+          if (b[k] === undefined) continue;
+          const n = Math.floor(Number(b[k]));
+          if (!Number.isFinite(n) || n < 0 || n > hi) return sendErr(res, `${label} must be 0 to ${hi}.`);
+          cfg[k] = n;
+        }
         if (b.limits && typeof b.limits === "object") {
           for (const k of ["topics", "cbt", "games", "fileStudy"]) {
             if (b.limits[k] === undefined) continue;

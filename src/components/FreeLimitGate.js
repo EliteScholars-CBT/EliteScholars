@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FREE_COOLDOWN_HOURS } from '../utils/constants';
+import { getFreeSessionConfig } from '../utils/entitlement';
 import { getCooldownSecondsLeft } from '../utils/premium';
 import PremiumModal from './PremiumModal';
 import { EmojiIcon } from './Icon';
@@ -16,6 +16,8 @@ function fmtTime(secs) {
   if (h > 0) return `${h}h ${m.toString().padStart(2, '0')}m`;
   return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
+
+const fmtBreak = (m) => (m >= 120 && m % 60 === 0 ? `${m / 60} hours` : m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m} minutes`);
 
 export default function FreeLimitGate({ email, name, reason = 'session', onClose, onPremiumActivated }) {
   const [secsLeft, setSecsLeft]         = useState(() => getCooldownSecondsLeft(email));
@@ -55,7 +57,7 @@ export default function FreeLimitGate({ email, name, reason = 'session', onClose
           <div className="limit-gate-msg">
             {daily
               ? daily.msg
-              : `Your free session (${30}-min) has ended. Take a break and come back in ${FREE_COOLDOWN_HOURS} hours, or upgrade now.`
+              : `Your free session has ended. Take a break and come back in ${fmtBreak(getFreeSessionConfig(email).cooldownMinutes)}, or upgrade now.`
             }
           </div>
 

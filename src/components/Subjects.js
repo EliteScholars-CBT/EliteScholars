@@ -5,6 +5,7 @@ import { NECO_SUBJECTS, NECO_QB, NECO_LEARN } from '../data/neco/index';
 import { GST_SUBJECTS, GST_QB, GST_LEARN } from '../data/gst/index';
 import { getDeck } from '../utils/flashDeck';
 import StatusBar from './StatusBar';
+import SquadShortcut from './SquadShortcut';
 import AssignmentBanner from './AssignmentBanner';
 import { getSessionToken } from '../utils/sessionFetch';
 import { SUBJ } from '../data/subjects';
@@ -47,6 +48,7 @@ export default function Subjects({
   examType = 'jamb',
   email = '',
   premiumUser = false,
+  onOpenSquad,
   refreshTrigger,
   onStartCBT,
   onStartLearn,
@@ -192,6 +194,7 @@ export default function Subjects({
 
       {/* ── Status updates (signed-in students) ── */}
       {getSessionToken() ? <StatusBar /> : null}
+      {getSessionToken() && onOpenSquad ? <SquadShortcut email={email} onOpen={onOpenSquad} /> : null}
 
       {/* ── Mode toggle ── */}
       <div className="subjects-mode-toggle-wrap">

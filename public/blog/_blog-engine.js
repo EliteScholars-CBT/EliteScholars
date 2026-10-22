@@ -10,6 +10,8 @@
     'study-tips': { bg: '#DBEAFE', color: '#1D4ED8', label: 'Study Tips' },
     waec: { bg: '#DCFCE7', color: '#065F46', label: 'WAEC' },
     gst: { bg: '#FEE2E2', color: '#DC2626', label: 'GST' },
+    neco: { bg: '#FFEDD5', color: '#C2410C', label: 'NECO' },
+    lessons: { bg: '#CCFBF1', color: '#0F766E', label: 'Lessons' },
   };
 
   window.BlogEngine = {

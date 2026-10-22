@@ -2,12 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import '../styles/status.css';
 import { renderCard, nativeShare, downloadBlob } from '../utils/shareCard';
+import { postStatusFromBlob } from '../utils/statusPost';
+import { getSessionToken } from '../utils/sessionFetch';
 
 // Bottom sheet: preview of the picture + share anywhere / WhatsApp / download / copy link.
 export default function ShareSheet({ card, text, link, onClose }) {
   const [blob, setBlob] = useState(null);
   const [url, setUrl] = useState('');
   const [note, setNote] = useState('');
+  const [priv, setPriv] = useState('squad');
+  const [posting, setPosting] = useState(false);
+  const [posted, setPosted] = useState(false);
 
   useEffect(() => {
     let off = false, u = '';
@@ -20,8 +25,15 @@ export default function ShareSheet({ card, text, link, onClose }) {
     try { if (!(await nativeShare(blob, text, link))) { downloadBlob(blob); setNote('Saved. Share the picture from your gallery.'); } }
     catch { /* cancelled */ }
   };
+  const toStatus = async () => {
+    if (!blob || posting || posted) return;
+    setPosting(true); setNote('');
+    const r = await postStatusFromBlob(blob, { text, privacy: priv });
+    setPosting(false);
+    if (r.ok) { setPosted(true); setNote(`Added to your status. ${priv === 'public' ? 'Everyone' : 'Your squads'} can see it for 24 hours.`); } else setNote(r.error);
+  };
   const wa = () => window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-  const copy = () => navigator.clipboard?.writeText(msg).then(() => setNote('Link copied.')).catch(() => setNote('Could not copy.'));
+  const copy = () => navigator.clipboard?.writeText(msg).then(() => setNote('Link copied!')).catch(() => setNote('Could not copy.'));
 
   return createPortal(
     <div className="st-modal" style={{ zIndex: 9500 }} onClick={onClose}>
@@ -31,6 +43,19 @@ export default function ShareSheet({ card, text, link, onClose }) {
           {url ? <img src={url} alt="Share card" style={{ width: '100%', maxWidth: 280, borderRadius: 16, boxShadow: '0 10px 30px rgba(46,16,101,.3)' }} /> : <div style={{ padding: 60 }}>Making your card…</div>}
         </div>
         <div style={{ display: 'grid', gap: 8, marginTop: 14 }}>
+          {getSessionToken() && (
+            <div style={{ display: 'grid', gap: 6 }}>
+              <button className="st-post" style={{ marginTop: 0, background: posted ? '#16A34A' : 'linear-gradient(135deg, #F59E0B, #D97706)' }} disabled={!blob || posting || posted} onClick={toStatus}>
+                {posted ? '✓ Added to your status' : posting ? 'Posting…' : '⭐ Add to my status'}
+              </button>
+              {!posted && (
+                <div className="st-priv" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
+                  <button className={priv === 'squad' ? 'on' : ''} onClick={() => setPriv('squad')}><span>👥</span>My squads</button>
+                  <button className={priv === 'public' ? 'on' : ''} onClick={() => setPriv('public')}><span>🌍</span>Everyone</button>
+                </div>
+              )}
+            </div>
+          )}
           <button className="st-post" style={{ marginTop: 0 }} disabled={!blob} onClick={any}>📤 Share anywhere</button>
           <button className="st-post" style={{ marginTop: 0, background: '#16A34A' }} onClick={wa}>WhatsApp</button>
           <div style={{ display: 'flex', gap: 8 }}>
