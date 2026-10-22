@@ -122,6 +122,26 @@
       "destination": "/api/data?route=status/insights"
     },
     {
+      "source": "/api/admin/status-list",
+      "destination": "/api/data?route=admin/status-list"
+    },
+    {
+      "source": "/api/admin/status-media",
+      "destination": "/api/data?route=admin/status-media"
+    },
+    {
+      "source": "/api/admin/status-action",
+      "destination": "/api/data?route=admin/status-action"
+    },
+    {
+      "source": "/api/admin/status-suspend",
+      "destination": "/api/data?route=admin/status-suspend"
+    },
+    {
+      "source": "/api/status/report",
+      "destination": "/api/data?route=status/report"
+    },
+    {
       "source": "/api/admin/mail-audience",
       "destination": "/api/data?route=admin/mail-audience"
     },

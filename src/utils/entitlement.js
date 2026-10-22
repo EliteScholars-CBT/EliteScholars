@@ -1,7 +1,7 @@
 // entitlement.js — what this student may do, and the free-tier usage meter.
 //
 // Free students get a few uses of each thing per day (topics, CBT sessions,
-// games) and a lifetime allowance for "study from your files". The server keeps
+// games and files uploaded to study from) each day. The server keeps
 // the count (so clearing the browser doesn't reset it). If the server can't be
 // reached the app falls back to a local counter so offline study isn't blocked.
 import { FREE_TOPICS_PER_DAY } from './constants';
@@ -9,7 +9,7 @@ import { FREE_TOPICS_PER_DAY } from './constants';
 const CACHE_KEY = (e) => `ep_ent_${e}`;
 const DEFAULT_LIMITS = { topics: FREE_TOPICS_PER_DAY, cbt: 3, games: 3, fileStudy: 2 };
 const KIND_KEY = { topic: 'topics', cbt: 'cbt', game: 'games', file_study: 'fileStudy' };
-const DAILY = { topic: true, cbt: true, game: true, file_study: false };
+const DAILY = { topic: true, cbt: true, game: true, file_study: true };
 
 let mem = {};
 

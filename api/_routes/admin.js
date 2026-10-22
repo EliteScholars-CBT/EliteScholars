@@ -17,10 +17,10 @@ const safeEq = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(Str
 export const ADMIN_PERMS = {
   analytics: "Analytics & overview", students: "Students & activity", blog: "Blog analytics", partners: "Affiliate partners",
   payouts: "Partner payouts & commissions", mail: "Send emails", reports: "Question reports", access: "Access & free trials",
-  prices: "Prices & school plans", schools: "Schools", ai: "AI keys", ads: "Ads", shop: "Shop items",
+  prices: "Prices & school plans", schools: "Schools", ai: "AI keys", ads: "Ads", shop: "Shop items", status: "Status monitoring",
 };
 export const ROLE_TEMPLATES = {
-  support: { label: "Support", perms: ["students", "reports", "access"] },
+  support: { label: "Support", perms: ["students", "reports", "access", "status"] },
   marketing: { label: "Marketing", perms: ["analytics", "blog", "mail", "partners", "ads", "shop"] },
   finance: { label: "Finance", perms: ["analytics", "partners", "payouts", "prices"] },
   content: { label: "Content", perms: ["reports", "blog"] },

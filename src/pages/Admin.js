@@ -6,6 +6,7 @@ import AdminMail from '../components/AdminMail';
 import AdminReports from '../components/AdminReports';
 import AdminStudents from '../components/AdminStudents';
 import AdminActivity from '../components/AdminActivity';
+import AdminStatus from '../components/AdminStatus';
 import AdminBlog from '../components/AdminBlog';
 import AdminTeam from '../components/AdminTeam';
 import AdminAI from '../components/AdminAI';
@@ -35,6 +36,7 @@ const TABS = [
   { id: 'analytics', label: 'Analytics', perms: ['analytics'] },
   { id: 'students', label: 'Students', perms: ['students'] },
   { id: 'activity', label: 'Activity', perms: ['students'] },
+  { id: 'status', label: 'Status', perms: ['status'], badge: ['status'] },
   { id: 'blog', label: 'Blog', perms: ['blog'] },
   { id: 'sources', label: 'Sources', perms: ['analytics'] },
   { id: 'ads', label: 'Ads', perms: ['ads'] },
@@ -188,6 +190,7 @@ export default function Admin() {
 
       {cur === 'students' && <AdminStudents token={token} onAuthFail={authFail} />}
       {cur === 'activity' && <AdminActivity token={token} onAuthFail={authFail} />}
+      {cur === 'status' && <AdminStatus token={token} onAuthFail={authFail} />}
       {cur === 'blog' && <AdminBlog token={token} onAuthFail={authFail} />}
       {cur === 'sources' && <AdminSources token={token} onAuthFail={authFail} />}
       {cur === 'ads' && <AdminAds token={token} onAuthFail={authFail} />}

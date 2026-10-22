@@ -96,7 +96,7 @@ export default function AdminAccess({ token, onAuthFail }) {
             <input type="number" min="0" max="100" value={limits.cbt} onChange={(e) => setLimits({ ...limits, cbt: e.target.value })} /></label>
           <label>Free games per day
             <input type="number" min="0" max="100" value={limits.games} onChange={(e) => setLimits({ ...limits, games: e.target.value })} /></label>
-          <label>Free study-from-file uploads (lifetime)
+          <label>Free study-from-file uploads (per day)
             <input type="number" min="0" max="100" value={limits.fileStudy} onChange={(e) => setLimits({ ...limits, fileStudy: e.target.value })} /></label>
           <label>Free session length (minutes, 0 = no limit)
             <input type="number" min="0" max="600" value={sess.minutes} onChange={(e) => setSess({ ...sess, minutes: e.target.value })} /></label>

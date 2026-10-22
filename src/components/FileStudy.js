@@ -3,7 +3,7 @@ import Icon from './Icon';
 import Confetti from './Confetti';
 import PremiumModal from './PremiumModal';
 import { loadUser } from '../utils/storage';
-import { reserve, refreshEntitlement } from '../utils/entitlement';
+import { reserve, refreshEntitlement, remaining } from '../utils/entitlement';
 import { SFX } from '../utils/sounds';
 import { buildScramble, buildScrambleDeck, buildMatchDeck, normalizeAnswer } from '../utils/gameEngine';
 import {
@@ -14,7 +14,6 @@ import {
   updateInLibrary,
   removeFromLibrary,
   newFileId,
-  SUPPORTED_HINT,
 } from '../utils/studyEngine';
 import '../styles/filestudy.css';
 
@@ -55,15 +54,19 @@ export default function FileStudyHub() {
   const [confirmDel, setConfirmDel] = useState(null);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const inputRef = useRef(null);
+  const [left, setLeft] = useState(() => remaining(loadUser().email, 'file_study')); // uploads left today (Infinity = unlimited)
+  const syncLeft = useCallback(() => setLeft(remaining(loadUser().email, 'file_study')), []);
+  useEffect(() => { refreshEntitlement(loadUser().email).then(syncLeft); }, [syncLeft]);
 
   const handleFile = useCallback(async (file) => {
     if (!file) return;
     setError('');
     if (file.size > MAX_BYTES) { setError('That file is over 25 MB. Try a smaller one.'); return; }
-    // Free students get 2 files for life; Premium (and trial / free-access) is unlimited.
+    // Free students get a few uploads per day (set in Admin); Premium (and trial / free-access) is unlimited.
     const me = loadUser();
     const slot = await reserve(me.email, 'file_study', `${file.name}:${file.size}`);
-    if (!slot.allowed) { setShowUpgrade(true); return; }
+    syncLeft();
+    if (!slot.allowed) { setLeft(0); setShowUpgrade(true); return; }
     try {
       SFX.select?.();
       setBusy({ name: file.name, stage: 'Reading your file', pct: 0.05 });
@@ -82,7 +85,7 @@ export default function FileStudyHub() {
       setError(e?.message || 'Something went wrong reading that file.');
       SFX.wrong?.();
     }
-  }, []);
+  }, [syncLeft]);
 
   const onDrop = (e) => {
     e.preventDefault();
@@ -100,9 +103,14 @@ export default function FileStudyHub() {
   return (
     <section className="fs-hub">
       <div className="fs-hub-head">
-        <span className="fs-hub-badge"><Icon name="sparkles" size={14} /> NEW</span>
         <h2>Study from your own files</h2>
-        <p>Upload notes, a textbook chapter or handout. We rewrite it in simple words and turn it into lessons, flashcards and practice questions. The file itself stays on your phone; short text excerpts are sent securely to our AI service to rewrite them (not stored by us).</p>
+        {left !== Infinity && (
+          <div className={`fs-left${left === 0 ? ' out' : ''}`}>
+            {left > 0
+              ? `${left} file${left === 1 ? '' : 's'} left to upload today`
+              : <>No uploads left today. <button onClick={() => setShowUpgrade(true)}>Upgrade to Pro for unlimited</button></>}
+          </div>
+        )}
       </div>
 
       <div
@@ -134,7 +142,6 @@ export default function FileStudyHub() {
           <>
             <div className="fs-drop-icon"><Icon name="upload" size={28} /></div>
             <div className="fs-drop-title">Upload a file</div>
-            <div className="fs-drop-sub">{SUPPORTED_HINT} · up to 25 MB</div>
             <span className="fs-drop-btn"><Icon name="plus" size={16} /> Choose file</span>
           </>
         )}

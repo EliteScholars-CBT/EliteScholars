@@ -395,3 +395,9 @@
 .fs-match-front { transform: rotateY(180deg); color: #2E1065; }
 .fs-match-front.a { background: linear-gradient(160deg, #EDE9FE, #C4B5FD); }
 .fs-match-front.b { background: linear-gradient(160deg, #FFE8A3, #FFC53D); }
+
+.fs-hub-head { margin: 4px 0 10px; }
+.fs-hub-head h2 { margin: 0 0 4px; }
+.fs-left { display: inline-block; padding: 5px 12px; border-radius: 99px; background: rgba(255,255,255,.12); color: #fff; font-size: 12px; font-weight: 800; }
+.fs-left.out { background: rgba(251,191,36,.18); color: #FDE68A; }
+.fs-left button { border: 0; background: none; color: #FBBF24; font: inherit; font-weight: 900; text-decoration: underline; cursor: pointer; padding: 0; }

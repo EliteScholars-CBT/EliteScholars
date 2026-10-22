@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { QB, JAMB_LEARN } from '../data/jamb';
 import { WAEC_SUBJECTS, WAEC_QB, WAEC_LEARN } from '../data/waec/index';
 import { NECO_SUBJECTS, NECO_QB, NECO_LEARN } from '../data/neco/index';
@@ -60,8 +60,8 @@ export default function Subjects({
 }) {
   const { theme, toggleTheme } = useTheme();
 
-  const [mode, setMode] = useState(() => localStorage.getItem('learn') || 'cbt');
-  useEffect(() => { localStorage.setItem('learn', mode); }, [mode]);
+  // Learn is the default every time a subject list opens; the student can switch to CBT, Flash or Game.
+  const [mode, setMode] = useState('learn');
 
   // ── Subject metadata, QB, and learn bank ─────────────────────────────────
   const getSubjectsAndQB = () => {

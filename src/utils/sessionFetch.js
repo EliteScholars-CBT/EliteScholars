@@ -30,8 +30,26 @@ export function installSessionFetch() {
       try { return (typeof input === 'string' ? input : (input && input.url) || '').indexOf('/api/') !== -1; } catch { return false; }
     })();
     const p = orig(input, init);
-    return isApi ? p.then(makeJsonSafe) : p;
+    return isApi ? p.then(makeJsonSafe).then(checkSuspended) : p;
   };
+}
+
+// A suspended account is signed out once, with the reason on screen.
+let suspendedShown = false;
+function checkSuspended(res) {
+  try {
+    if (res.status === 403 && !suspendedShown && getSessionToken()) {
+      res.clone().json().then((j) => {
+        if (j && j.code === 'SUSPENDED' && !suspendedShown) {
+          suspendedShown = true;
+          try { localStorage.removeItem('ep_user'); } catch { /* ignore */ }
+          try { window.alert(j.error); } catch { /* ignore */ }
+          window.location.href = '/';
+        }
+      }).catch(() => {});
+    }
+  } catch { /* ignore */ }
+  return res;
 }
 
 // If the server (or a proxy, or a captive Wi-Fi page) answers with HTML or plain

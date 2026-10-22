@@ -1382,10 +1382,6 @@ export default function App() {
 
                   onSelectExam={handleExamTypeSelect}
 
-                  email={email}
-
-                  onOpenSquad={openSquad}
-
                   onBack={() => {
 
                     if (window.confirm('Log out of EliteScholars?')) {

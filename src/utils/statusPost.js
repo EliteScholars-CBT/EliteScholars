@@ -12,7 +12,7 @@ export async function postStatusFromBlob(blob, { text = '', privacy = 'squad' } 
     c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
     URL.revokeObjectURL(url);
     const image = canvasToDataUrl(c, 190);
-    const r = await fetch('/api/status/post', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: String(text).slice(0, 140), image, privacy }) });
+    const r = await fetch('/api/status/post', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: String(text).slice(0, 140), image, privacy, scan: 'clean' /* app-made card, not a camera photo */ }) });
     const j = await r.json().catch(() => null);
     if (!r.ok || !j || j.success === false) return { ok: false, error: (j && j.error) || 'Could not post your status.' };
     return { ok: true };

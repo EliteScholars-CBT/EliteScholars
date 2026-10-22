@@ -73,7 +73,7 @@ const studentRow = (p) => ({
 // Plain-English one-liners for the activity timeline
 const EVENT_LABEL = {
   quiz_start: "Started a quiz", quiz_complete: "Finished a quiz", signup: "Signed up", login: "Logged in", premium_modal_open: "Looked at Premium",
-  learn_open: "Opened a Learn topic", game_start: "Started a game", game_over: "Finished a game", share: "Shared something", pwa_installed: "Installed the app",
+  learn_open: "Opened a Learn topic", status_post: "Posted a status", status_blocked: "Tried to post a blocked status", game_start: "Started a game", game_over: "Finished a game", share: "Shared something", pwa_installed: "Installed the app",
 };
 const labelEvent = (e) => {
   const p = e.payload || {};
@@ -269,6 +269,12 @@ export default async function handler(req, res) {
         counts.schools = soon.length;
         if (soon.length) items.push({ kind: "school", text: `${soon.length} school${soon.length === 1 ? "" : "s"} with a trial ending or ended`, at: null, tab: "schools" });
       }
+      if (need("status")) {
+        let n = 0;
+        try { const r = await sb.from("statuses").select("id", { count: "exact", head: true }).eq("reviewed", false).gt("reports", 0); n = r.count || 0; } catch { n = 0; }
+        counts.status = n;
+        if (n) items.push({ kind: "status", text: `${n} reported status${n === 1 ? "" : "es"} to review`, at: null, tab: "status" });
+      }
       return sendOk(res, { counts, total: Object.values(counts).reduce((a, n) => a + n, 0), items });
     }
 
@@ -456,6 +462,79 @@ export default async function handler(req, res) {
       await sb.from("settings").upsert({ key: "shop_flags", value: all, updated_at: new Date().toISOString() }, { onConflict: "key" });
       await audit(sb, who, "shop.flags", id);
       return sendOk(res, {});
+    }
+
+    // ── status monitoring ──
+    if (op === "status-list") {
+      if (!need("status")) return deny();
+      const filter = ["all", "reported", "photos", "unscanned"].includes(q.filter) ? q.filter : "all";
+      const before = iso(q.before);
+      const needle = safeRegex(q.q);
+      const cols = "id,email,display_name,text,privacy,media_id,created_at,expires_at,reshared_from";
+      const full = cols + ",reports,flag,scan,reviewed";
+      const build = (c) => {
+        let st = sb.from("statuses").select(c).order("created_at", { ascending: false }).limit(30);
+        if (before) st = st.lt("created_at", before);
+        if (needle) st = st.or(`text.ilike.%${needle}%,display_name.ilike.%${needle}%,email.ilike.%${needle}%`);
+        if (filter === "photos") st = st.not("media_id", "is", null);
+        return st;
+      };
+      let { data, error } = await build(full);
+      let moderation = true;
+      if (error) { moderation = false; ({ data, error } = await build(cols)); } // moderation SQL not run yet
+      if (error) { console.error("[admin status-list]", error.message); return sendErr(res, "Could not load statuses.", 500); }
+      let rows = data || [];
+      if (moderation && filter === "reported") rows = rows.filter((r) => (r.reports || 0) > 0 || r.flag);
+      if (moderation && filter === "unscanned") rows = rows.filter((r) => r.media_id && r.scan !== "clean");
+      const emails = [...new Set(rows.map((r) => r.email))];
+      const susp = new Set();
+      if (emails.length) { try { const { data: ps } = await sb.from("profiles").select("email,suspended").in("email", emails); (ps || []).forEach((p) => { if (p.suspended) susp.add(p.email); }); } catch { /* column missing */ } }
+      return sendOk(res, {
+        moderation,
+        items: rows.map((r) => ({
+          id: r.id, email: r.email, name: r.display_name, text: r.text || "", privacy: r.privacy, mediaId: r.media_id || null, at: r.created_at, expiresAt: r.expires_at,
+          resharedFrom: r.reshared_from || null, reports: r.reports || 0, flag: r.flag || null, scan: r.scan || null, reviewed: !!r.reviewed, suspended: susp.has(r.email),
+        })),
+        next: rows.length >= 30 ? rows[rows.length - 1].created_at : null,
+      });
+    }
+    if (op === "status-media") {
+      if (!need("status")) return deny();
+      const id = String(q.id || "");
+      if (!/^[\w-]{6,64}$/.test(id)) return sendErr(res, "Invalid image.");
+      const { data } = await sb.from("media").select("data").eq("id", id).maybeSingle();
+      if (!data) return sendErr(res, "Image not found.", 404);
+      return sendOk(res, { image: data.data });
+    }
+    if (op === "status-action") {
+      if (!need("status")) return deny();
+      if (req.method !== "POST") return sendMethodNotAllowed(res);
+      const id = String(b.id || "");
+      if (!/^[\w-]{6,64}$/.test(id)) return sendErr(res, "Invalid status.");
+      if (b.action === "delete") {
+        const { data: row } = await sb.from("statuses").select("email,text").eq("id", id).maybeSingle();
+        await sb.from("statuses").delete().eq("id", id);
+        await audit(sb, who, "status.delete", `${row ? row.email : id}: ${String((row && row.text) || "(photo)").slice(0, 60)}`);
+        return sendOk(res, { deleted: true });
+      }
+      if (b.action === "dismiss") {
+        await sb.from("statuses").update({ reviewed: true }).eq("id", id);
+        return sendOk(res, { dismissed: true });
+      }
+      return sendErr(res, "Unknown action.");
+    }
+    if (op === "status-suspend") {
+      if (!need("status")) return deny();
+      if (req.method !== "POST") return sendMethodNotAllowed(res);
+      const email = String(b.email || "").toLowerCase().trim();
+      if (!EMAIL_RE.test(email)) return sendErr(res, "Invalid student.");
+      const on = b.suspended !== false;
+      const reason = String(b.reason || "").trim().slice(0, 200) || null;
+      const { error } = await sb.from("profiles").update({ suspended: on, suspended_reason: on ? reason : null }).eq("email", email);
+      if (error) return sendErr(res, "Could not update the account. Run the moderation SQL in supabase/schema.sql first.", 500);
+      if (on) await sb.from("statuses").delete().eq("email", email); // take their statuses down too
+      await audit(sb, who, on ? "student.suspend" : "student.unsuspend", `${email}${reason ? ` — ${reason}` : ""}`);
+      return sendOk(res, { suspended: on });
     }
 
     // ── ads ──

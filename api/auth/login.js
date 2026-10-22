@@ -64,6 +64,9 @@ async function handler(req, res) {
       return res.status(401).json(FAIL);
     }
 
+    if (row.suspended) {
+      return res.status(403).json({ success: false, stage: "suspended", message: "Your account has been suspended. Contact elitescholars.site@gmail.com if you think this is a mistake." });
+    }
     await clearRateLimit(key);
     return res.status(200).json({ success: true, stage: "login_success", profile: profileOut(row) });
   } catch (err) {

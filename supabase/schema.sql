@@ -537,3 +537,20 @@ alter table status_replies enable row level security;
 -- ------------------------------------------------------------------ presence --
 -- "Online now" dots in squads. Safe to re-run.
 alter table profiles add column if not exists last_seen timestamptz;
+
+-- ----------------------------------------------------- status moderation --
+-- Safe to re-run. Reports from students, photo-scan result, admin review, account suspension.
+alter table statuses add column if not exists flag     text;
+alter table statuses add column if not exists scan     text;
+alter table statuses add column if not exists reports  int not null default 0;
+alter table statuses add column if not exists reviewed boolean not null default false;
+alter table profiles add column if not exists suspended boolean not null default false;
+alter table profiles add column if not exists suspended_reason text;
+create table if not exists status_reports (
+  status_id  uuid not null references statuses(id) on delete cascade,
+  email      text not null,
+  reason     text not null default '',
+  created_at timestamptz not null default now(),
+  primary key (status_id, email)
+);
+alter table status_reports enable row level security;

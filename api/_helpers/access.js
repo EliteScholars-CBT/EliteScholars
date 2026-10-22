@@ -22,7 +22,7 @@ export const KINDS = {
   topic: { key: "topics", daily: true },
   cbt: { key: "cbt", daily: true },
   game: { key: "games", daily: true },
-  file_study: { key: "fileStudy", daily: false },
+  file_study: { key: "fileStudy", daily: true },
 };
 
 const H = 3600000;

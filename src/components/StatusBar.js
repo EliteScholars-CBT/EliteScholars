@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import EliteBadge from './EliteBadge';
 import StickerStudio from './StickerStudio';
 import { fetchMedia } from '../utils/media';
+import { scanImage } from '../utils/imageGuard';
 import '../styles/status.css';
 
 // 24-hour status updates: share a short message with only yourself, your squad or everyone.
@@ -88,6 +89,11 @@ export default function StatusBar() {
     const r = await call('reshare', { id: st.id, privacy });
     setResharing(null);
     if (r.ok) { flash('Reshared to your status 🔁'); refresh(); } else flash(r.error);
+  };
+  const reportStatus = async (st) => {
+    if (!window.confirm('Report this status to EliteScholars? We will review it.')) return;
+    const r = await call('report', { id: st.id, reason: 'reported' });
+    flash(r.ok ? 'Thanks. We will review it.' : r.error);
   };
   const openInsights = async (st) => {
     setPaused(true);
@@ -191,6 +197,7 @@ export default function StatusBar() {
                     onFocus={() => setPaused(true)} onBlur={() => { if (!reply) setPaused(false); }}
                     onChange={(e) => setReply(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') sendReply(cur); }} />
                   {reply.trim() ? <button className="st-send" onClick={() => sendReply(cur)} aria-label="Send reply">➤</button> : null}
+                  {!reply.trim() ? <button className="st-send alt" onClick={() => reportStatus(cur)} aria-label="Report this status" title="Report">🚩</button> : null}
                   {cur.can_reshare && !reply.trim() ? <button className="st-send alt" onClick={() => { setPaused(true); setResharing(cur); }} aria-label="Reshare">🔁</button> : null}
                 </div>
               </div>
@@ -244,11 +251,19 @@ function Composer({ onClose, onPosted }) {
   const [err, setErr] = useState('');
   const [image, setImage] = useState('');
   const [studio, setStudio] = useState(false);
+  const [busyText, setBusyText] = useState('');
 
   const post = async () => {
     if ((!text.trim() && !image) || busy) return;
     setBusy(true); setErr('');
-    const r = await call('post', { text, bg, privacy, image: image || undefined });
+    let scan;
+    if (image) {
+      setBusyText('Checking your photo…');
+      scan = await scanImage(image);
+      setBusyText('');
+      if (scan === 'flagged') { setBusy(false); setErr("That photo can't be posted. Please choose a different one."); return; }
+    }
+    const r = await call('post', { text, bg, privacy, image: image || undefined, scan });
     setBusy(false);
     if (!r.ok) { setErr(r.error); return; }
     onPosted();
@@ -281,7 +296,7 @@ function Composer({ onClose, onPosted }) {
           {PRIVACY.map(([id, label, ic]) => <button key={id} className={privacy === id ? 'on' : ''} onClick={() => setPrivacy(id)}><span>{ic}</span>{label}</button>)}
         </div>
         {err && <div className="st-err">{err}</div>}
-        <button className="st-post" disabled={(!text.trim() && !image) || busy} onClick={post}>{busy ? 'Posting…' : 'Post status'}</button>
+        <button className="st-post" disabled={(!text.trim() && !image) || busy} onClick={post}>{busy ? (busyText || 'Posting…') : 'Post status'}</button>
       </div>
     </div>
       {studio && <StickerStudio aspect={9 / 16} title="Status studio" cta="Done" onClose={() => setStudio(false)} onDone={(u) => { setImage(u); setStudio(false); }} />}

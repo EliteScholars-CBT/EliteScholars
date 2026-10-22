@@ -1,0 +1,8 @@
+Files in this zip (copy each over the same path in your project). Nothing else changed.
+
+NEW:    api/_helpers/contentGuard.js, src/components/AdminStatus.js, src/utils/imageGuard.js
+EDITED: everything else listed by the zip.
+
+New routes (already registered in api/data.js and vercel.json): admin/status-list, admin/status-media, admin/status-action, admin/status-suspend, status/report
+New env vars: none. New npm packages: none (the photo check loads TensorFlow.js + NSFWJS from jsDelivr on demand).
+Run once in Supabase SQL editor: the last block of supabase/schema.sql ("status moderation"). Safe to re-run.

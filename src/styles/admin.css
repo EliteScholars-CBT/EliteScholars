@@ -228,3 +228,14 @@ body:has(.adm-wrap){background:#0f0b1f}
 .adm-form.two { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
 .adm-thumb { width: 56px; height: 56px; border-radius: 12px; object-fit: cover; flex: none; background: rgba(139, 92, 246, .15); }
 .adm-form textarea { width: 100%; box-sizing: border-box; padding: 10px; border-radius: 10px; font: inherit; }
+
+/* main tabs: show every tab at once (wrapped, compact) instead of a hidden sideways scroll */
+.adm-maintabs.adm-scroll{flex-wrap:wrap!important;overflow:visible;gap:5px;padding-bottom:0}
+.adm-maintabs button{padding:5px 10px;font-size:.72rem;line-height:1.2}
+/* status monitor */
+.adm-status.alert{border-color:#f59e0b}
+.adm-status-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:8px}
+.adm-status-head small{color:var(--mut)}
+.adm-status-img{display:block;max-width:100%;max-height:340px;border-radius:12px;margin:6px 0;object-fit:contain;background:#0b0b12}
+.adm-status-img.wait{height:120px;display:grid;place-items:center;color:var(--mut);font-size:.8rem}
+.adm-status-text{margin:6px 0 10px;white-space:pre-wrap;word-break:break-word}

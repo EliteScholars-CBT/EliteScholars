@@ -55,8 +55,16 @@ export async function requireUser(req, res) {
   if (parsed) {
     const sb = getSupabase();
     if (sb) {
-      const { data } = await sb.from("profiles").select("email,password_hash").eq("email", parsed.email).maybeSingle();
-      if (data && fingerprint(data.password_hash) === parsed.fp) return data.email;
+      // "suspended" needs the moderation SQL; if that column does not exist yet, fall back to the plain lookup
+      let { data, error } = await sb.from("profiles").select("email,password_hash,suspended,suspended_reason").eq("email", parsed.email).maybeSingle();
+      if (error) ({ data } = await sb.from("profiles").select("email,password_hash").eq("email", parsed.email).maybeSingle());
+      if (data && fingerprint(data.password_hash) === parsed.fp) {
+        if (data.suspended) {
+          res.status(403).json({ success: false, code: "SUSPENDED", error: "Your account has been suspended. Contact elitescholars.site@gmail.com if you think this is a mistake." });
+          return null;
+        }
+        return data.email;
+      }
     }
   }
   res.status(401).json({ success: false, error: "Please sign in again.", code: "AUTH" });

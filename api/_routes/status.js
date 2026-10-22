@@ -6,6 +6,7 @@
 //   POST /api/status/reply   { id, text }                private reply: only the status owner sees it
 //   POST /api/status/reshare { id, privacy }             copies a public status to your own, marked "Reshared from …"
 //   POST /api/status/insights{ id }                      owner only: who reacted and replied
+//   POST /api/status/report  { id, reason }              anyone who can see a status can report it to the admin
 // Emails are never sent to other users: the feed shows display names only.
 import { sendOk, sendErr, sendMethodNotAllowed, setCors, readBody } from "../_helpers/response.js";
 import { requireUser } from "../_helpers/session.js";
@@ -14,6 +15,7 @@ import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { eliteEmails } from "../_helpers/elite.js";
 import { saveMedia } from "../_helpers/media.js";
 import { pushToEmails } from "../_helpers/push.js";
+import { checkText } from "../_helpers/contentGuard.js";
 
 const HOURS = 24;
 const PRIVACY = ["me", "squad", "public"];
@@ -64,6 +66,13 @@ export default async function handler(req, res) {
   if (op === "post") {
     const text = cleanText(b.text);
     if (text.length < 1 && !b.image) return sendErr(res, "Write something first.");
+    const guard = checkText(text);
+    if (!guard.ok) {
+      sb.from("events").insert({ type: "status_blocked", email, payload: { flag: guard.flag } }).then(() => {}, () => {});
+      return sendErr(res, guard.message);
+    }
+    if (b.scan === "flagged") return sendErr(res, "That photo can't be posted. Please choose a different one.");
+    const scan = b.image ? (b.scan === "clean" ? "clean" : "skipped") : null;
     const privacy = PRIVACY.includes(b.privacy) ? b.privacy : "me";
     const bg = BGS.includes(b.bg) ? b.bg : "violet";
     const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
@@ -77,8 +86,12 @@ export default async function handler(req, res) {
     }
     const display = await nameOf(sb, email);
     const expires = new Date(Date.now() + HOURS * 3600 * 1000).toISOString();
-    const { data, error } = await sb.from("statuses").insert({ email, display_name: display, text, bg, privacy, media_id: mediaId, expires_at: expires }).select("id,created_at,expires_at").single();
+    const base = { email, display_name: display, text, bg, privacy, media_id: mediaId, expires_at: expires };
+    // "scan" records whether the phone checked the photo; it needs the moderation SQL, so fall back if that is not run yet
+    let { data, error } = await sb.from("statuses").insert({ ...base, scan }).select("id,created_at,expires_at").single();
+    if (error) ({ data, error } = await sb.from("statuses").insert(base).select("id,created_at,expires_at").single());
     if (error) { console.error("[status] insert", error.message); return sendErr(res, "Could not post your status.", 500); }
+    sb.from("events").insert({ type: "status_post", email, payload: { privacy, photo: !!mediaId, scan: scan || undefined, statusId: data.id } }).then(() => {}, () => {});
     // housekeeping: drop statuses that expired more than a day ago
     sb.from("statuses").delete().lt("expires_at", new Date(Date.now() - 24 * 3600 * 1000).toISOString()).then(() => {}, () => {});
     sb.from("media").delete().lt("created_at", new Date(Date.now() - 31 * 86400000).toISOString()).then(() => {}, () => {});
@@ -183,6 +196,18 @@ export default async function handler(req, res) {
       pushToEmails([row.email], { title: `🔁 ${display} reshared your status`, body: "Your status is reaching more students.", url: "/app", tag: `status-reshare-${row.id}`, type: "status" }).catch(() => {});
     }
     return sendOk(res, { id: data.id, reshared_from: original });
+  }
+
+  if (op === "report") {
+    const row = await visibleStatus(sb, email, b.id);
+    if (!row) return sendErr(res, "This status is no longer available.", 404);
+    if (row.email === email) return sendErr(res, "That is your own status.");
+    const reason = cleanText(b.reason).slice(0, 80) || "reported";
+    const { error } = await sb.from("status_reports").upsert({ status_id: row.id, email, reason }, { onConflict: "status_id,email" });
+    if (error) { console.error("[status] report", error.message); return sendErr(res, "Could not send your report. Try again later.", 500); }
+    const { count } = await sb.from("status_reports").select("email", { count: "exact", head: true }).eq("status_id", row.id);
+    await sb.from("statuses").update({ reports: count || 1, reviewed: false }).eq("id", row.id);
+    return sendOk(res, { reported: true });
   }
 
   if (op === "insights") {
