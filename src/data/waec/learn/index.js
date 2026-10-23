@@ -77,7 +77,7 @@ import { WAEC_AGRIC_SCIENCE_LEARN_SS1 } from './ss1/agric_science';
 // import { WAEC_AGRIC_SCIENCE_LEARN_SS3 } from './ss3/agric_science';
 
 import { WAEC_CITIZENSHIP_LEARN_SS1 } from './ss1/citizenship';
-// import { WAEC_CITIZENSHIP_LEARN_SS2 } from './ss2/citizenship';
+import { WAEC_CITIZENSHIP_LEARN_SS2 } from './ss2/citizenship';
 // import { WAEC_CITIZENSHIP_LEARN_SS3 } from './ss3/citizenship';
 
 // Merged learn content keyed by subject ID
@@ -163,8 +163,9 @@ export const WAEC_LEARN = {
     // ...WAEC_AGRIC_SCIENCE_LEARN_SS3,
   ],
   citizenship: [
+    ...WAEC_CIVIC_LEARN_SS1, ...WAEC_CIVIC_LEARN_SS2, ...WAEC_CIVIC_LEARN_SS3,
     ...WAEC_CITIZENSHIP_LEARN_SS1,
-    // ...WAEC_CITIZENSHIP_LEARN_SS2,
+    ...WAEC_CITIZENSHIP_LEARN_SS2,
     // ...WAEC_CITIZENSHIP_LEARN_SS3,
   ],
 };
@@ -191,7 +192,7 @@ export const WAEC_LEARN_BY_LEVEL = {
     marketing: WAEC_MARKETING_LEARN_SS1,
     digital_tech: WAEC_DIGITAL_TECH_LEARN_SS1,
     agric_science: WAEC_AGRIC_SCIENCE_LEARN_SS1,
-    citizenship: WAEC_CITIZENSHIP_LEARN_SS1,
+    citizenship: [...WAEC_CIVIC_LEARN_SS1, ...WAEC_CITIZENSHIP_LEARN_SS1],
   },
   ss2: {
     english: WAEC_ENGLISH_LEARN_SS2,
@@ -214,7 +215,7 @@ export const WAEC_LEARN_BY_LEVEL = {
     marketing: [],
     digital_tech: [],
     agric_science: [],
-    citizenship: [],
+    citizenship: [...WAEC_CIVIC_LEARN_SS2, ...WAEC_CITIZENSHIP_LEARN_SS2],
   },
   ss3: {
     english: WAEC_ENGLISH_LEARN_SS3,
@@ -237,6 +238,6 @@ export const WAEC_LEARN_BY_LEVEL = {
     marketing: [],
     digital_tech: [],
     agric_science: [],
-    citizenship: [],
+    citizenship: [...WAEC_CIVIC_LEARN_SS3],
   },
 };

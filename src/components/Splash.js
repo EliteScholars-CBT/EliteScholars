@@ -20,17 +20,17 @@ const EXAMS = [
 const DURATION = 3200;
 
 export default function Splash({ onDone }) {
-  const sparks = useMemo(() => Array.from({ length: 26 }, (_, i) => ({
+  const sparks = useMemo(() => Array.from({ length: 9 }, (_, i) => ({
     id: i,
     left: Math.random() * 100,
     top: Math.random() * 100,
-    size: 8 + Math.random() * 16,
+    size: 6 + Math.random() * 7,
     delay: Math.random() * 2.4,
     dur: 1.6 + Math.random() * 1.8,
     gold: Math.random() > 0.45,
   })), []);
 
-  const dust = useMemo(() => Array.from({ length: 22 }, (_, i) => ({
+  const dust = useMemo(() => Array.from({ length: 10 }, (_, i) => ({
     id: i,
     left: Math.random() * 100,
     size: 2 + Math.random() * 4,

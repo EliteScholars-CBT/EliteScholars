@@ -554,3 +554,27 @@ create table if not exists status_reports (
   primary key (status_id, email)
 );
 alter table status_reports enable row level security;
+
+-- ------------------------------------------------------------ group plans --
+-- One payer buys a 50 or 100 seat plan for a year, then adds members by email.
+create table if not exists group_plans (
+  id          uuid primary key default gen_random_uuid(),
+  owner_email text not null,
+  seats       int  not null,
+  plan        text not null default '',
+  tx_ref      text unique,
+  amount      numeric not null default 0,
+  expires_at  timestamptz not null,
+  created_at  timestamptz not null default now()
+);
+create index if not exists idx_group_plans_owner on group_plans (owner_email);
+create table if not exists group_members (
+  id         bigint generated always as identity primary key,
+  group_id   uuid not null references group_plans(id) on delete cascade,
+  email      text not null,
+  created_at timestamptz not null default now(),
+  unique (group_id, email)
+);
+create index if not exists idx_group_members_email on group_members (email);
+alter table group_plans   enable row level security;
+alter table group_members enable row level security;

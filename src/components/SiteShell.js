@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/elite-scholars-logo.png';
 import { WA_CHANNEL } from '../utils/constants';
 import '../styles/landing.css';
@@ -10,6 +10,7 @@ import '../styles/sitepages.css';
 // same sticky nav, same footer, same type. No "back" button — the nav is enough.
 export default function SiteShell({ eyebrow, title, intro, updated, children }) {
   const navigate = useNavigate();
+  const fromApp = !!useLocation().state?.fromApp;
   useEffect(() => {
     const id = (window.location.hash || '').slice(1);
     if (!id) { window.scrollTo(0, 0); return; }
@@ -18,6 +19,7 @@ export default function SiteShell({ eyebrow, title, intro, updated, children }) 
   }, []);
   return (
     <div className="land sp">
+      {fromApp && <button type="button" onClick={() => navigate('/app?src=settings')} style={{ position: 'sticky', top: 0, zIndex: 50, width: '100%', border: 0, padding: '12px 16px', background: '#5B21B6', color: '#fff', fontWeight: 800, fontSize: 15, textAlign: 'left', cursor: 'pointer' }}>← Back to the app</button>}
       <nav className="land-nav">
         <div className="land-nav-inner">
           <a className="land-brand" href="/">

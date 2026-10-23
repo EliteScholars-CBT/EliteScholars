@@ -77,12 +77,12 @@ export default async function handler(req, res) {
   try {
     let parsed = null;
     await generate(
-      { system: SYSTEM, user: `Document: ${str(b.title, 80) || "Study file"}\n\nPassage:\n${text}`, maxTokens: 2000 },
+      { system: SYSTEM, user: `Document: ${str(b.title, 80) || "Study file"}\n\nPassage:\n${text}`, maxTokens: 5000 },
       (t) => { parsed = sanitize(parseJson(t)); return !!parsed; }
     );
     return sendOk(res, parsed);
   } catch (e) {
-    console.error("[study-rewrite]", e?.message);
-    return res.status(502).json({ success: false, code: "AI_FAIL", error: "The rewrite service is busy. Using the quick version instead." });
+    console.error("[study-rewrite]", e?.message, e?.detail || "");
+    return res.status(502).json({ success: false, code: "AI_FAIL", status: e?.status || 0, error: "The rewrite service is busy. Using the quick version instead." });
   }
 }

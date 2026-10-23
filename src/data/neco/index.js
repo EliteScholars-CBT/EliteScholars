@@ -56,7 +56,6 @@ export const NECO_SUBJECTS = [
   { id: 'marketing', label: 'Marketing', icon: '📢', color: '#C2410C', bg: '#FFEDD5' },
 
   // ── Future subjects (ready for content upload) ───────────────────────────
-  { id: 'digital_tech', label: 'Digital Technology', icon: '💻', color: '#1D4ED8', bg: '#DBEAFE' },
   {
     id: 'agric_science',
     label: 'Agricultural Science',

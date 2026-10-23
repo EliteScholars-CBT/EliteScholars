@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import Icon from './Icon';
 import { createPortal } from 'react-dom';
 import { TEMPLATES, EMOJI, TAGS, TEXT_COLORS, tagColor } from '../utils/stickers';
 import { loadImageFromFile, canvasToDataUrl } from '../utils/media';
@@ -193,8 +194,8 @@ export default function StickerStudio({ aspect = 9 / 16, initialFile = null, tit
         )}
         {tab === 'photo' && (
           <div className="ss-row">
-            <label className="ss-add">🖼 Gallery<input type="file" accept="image/*" hidden onChange={(e) => { setPhotoFromFile(e.target.files && e.target.files[0]); e.target.value = ''; }} /></label>
-            <label className="ss-add">📷 Camera<input type="file" accept="image/*" capture="environment" hidden onChange={(e) => { setPhotoFromFile(e.target.files && e.target.files[0]); e.target.value = ''; }} /></label>
+            <label className="ss-add"><Icon name="image" size={15} /> Gallery<input type="file" accept="image/*" hidden onChange={(e) => { setPhotoFromFile(e.target.files && e.target.files[0]); e.target.value = ''; }} /></label>
+            <label className="ss-add"><Icon name="camera" size={15} /> Camera<input type="file" accept="image/*" capture="environment" hidden onChange={(e) => { setPhotoFromFile(e.target.files && e.target.files[0]); e.target.value = ''; }} /></label>
             {photo && <button className="ss-add" onClick={() => setPhoto(null)}>Remove photo</button>}
           </div>
         )}

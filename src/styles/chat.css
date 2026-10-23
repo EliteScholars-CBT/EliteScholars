@@ -27,7 +27,7 @@
 .sc-tray .sc-big { font-size: 30px; } .sc-tray .sc-tag { font-size: 13px; padding: 6px 12px; transform: none; }
 .sc-tray .sc-studio { background: linear-gradient(135deg, #7C3AED, #A78BFA); color: #fff; font-weight: 800; padding: 10px 14px; font-size: 13px; }
 .sc-bar { display: flex; align-items: center; gap: 8px; padding: 10px 10px calc(10px + env(safe-area-inset-bottom)); background: var(--card-bg, #fff); border-top: 1px solid rgba(124,58,237,.12); }
-.sc-ic { width: 40px; height: 40px; flex: 0 0 auto; border: 0; border-radius: 50%; background: rgba(124,58,237,.1); font-size: 19px; display: grid; place-items: center; cursor: pointer; }
+.sc-ic { color: #7C3AED; width: 40px; height: 40px; flex: 0 0 auto; border: 0; border-radius: 50%; background: rgba(124,58,237,.1); font-size: 19px; display: grid; place-items: center; cursor: pointer; }
 .sc-in { flex: 1; min-width: 0; border: 1.5px solid rgba(124,58,237,.2); background: transparent; color: inherit; border-radius: 99px; padding: 11px 14px; font-family: inherit; font-size: 15px; outline: 0; }
 .sc-send { width: 42px; height: 42px; flex: 0 0 auto; border: 0; border-radius: 50%; background: linear-gradient(135deg, #6D28D9, #8B5CF6); color: #fff; font-size: 17px; cursor: pointer; }
 .sc-send:disabled { opacity: .45; }

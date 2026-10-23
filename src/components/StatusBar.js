@@ -115,6 +115,13 @@ export default function StatusBar() {
     return () => clearTimeout(timer.current);
   }, [view && view.i, view && view.stories.length, paused]); // eslint-disable-line
 
+  useEffect(() => {
+    if (!view) return undefined;
+    const onKey = (e) => { if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return; if (e.key === 'Escape') close(); else if (e.key === 'ArrowRight') step(1); else if (e.key === 'ArrowLeft') step(-1); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }); // eslint-disable-line
+
   const step = (d) => setView((v) => {
     if (!v || paused) return v;
     const n = v.i + d;
@@ -157,7 +164,8 @@ export default function StatusBar() {
         const cur = view.stories[view.i];
         const total = Object.values(cur.reactions || {}).reduce((a, n) => a + n, 0);
         return createPortal(
-          <div className="st-view" style={{ background: grad(cur.bg) }} onClick={(e) => { const x = e.clientX / window.innerWidth; if (paused) { setPaused(false); setInsights(null); return; } step(x < 0.35 ? -1 : 1); }}>
+          <div className="st-view" onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
+          <div className="st-frame" style={{ background: grad(cur.bg) }} onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width; if (paused) { setPaused(false); setInsights(null); return; } step(x < 0.35 ? -1 : 1); }}>
             <div className={`st-prog ${paused ? 'paused' : ''}`}>
               {view.stories.map((s, k) => (
                 <i key={s.id}><b className={k < view.i ? 'full' : k === view.i ? 'run' : ''} style={k === view.i ? { animationDuration: `${DUR}ms` } : undefined} /></i>
@@ -213,6 +221,7 @@ export default function StatusBar() {
               </div>
             )}
             {toast && <div className="st-toast" role="status">{toast}</div>}
+          </div>
           </div>
         , document.body);
       })()}
@@ -293,7 +302,7 @@ function Composer({ onClose, onPosted }) {
         </div>
         <div className="st-priv-label">Who can see it?</div>
         <div className="st-priv">
-          {PRIVACY.map(([id, label, ic]) => <button key={id} className={privacy === id ? 'on' : ''} onClick={() => setPrivacy(id)}><span>{ic}</span>{label}</button>)}
+          {PRIVACY.filter(([id]) => id !== 'me').map(([id, label, ic]) => <button key={id} className={privacy === id ? 'on' : ''} onClick={() => setPrivacy(id)}><span>{ic}</span>{label}</button>)}
         </div>
         {err && <div className="st-err">{err}</div>}
         <button className="st-post" disabled={(!text.trim() && !image) || busy} onClick={post}>{busy ? (busyText || 'Posting…') : 'Post status'}</button>

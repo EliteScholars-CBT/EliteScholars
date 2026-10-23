@@ -16,6 +16,10 @@ export const DEFAULT_SCHOOL = {
   period: "term",
 };
 
+// Group plans: one payer, one year, up to `seats` members. Prices are editable in Admin → Prices.
+export const GROUP_DEFAULTS = { group50: 145000, group100: 285000 };
+export const GROUP_SEATS = { group50: 50, group100: 100 };
+
 export const parseNaira = (s) => Number(String(s || "").replace(/[^\d]/g, "")) || 0;
 export const fmtNaira = (n) => `₦${Number(n || 0).toLocaleString("en-NG")}`;
 
@@ -49,6 +53,8 @@ export async function getPricing() {
     premiumAnnual: Number(p.premiumAnnual) > 0 ? Number(p.premiumAnnual) : PREMIUM_ANNUAL_PRICE,
     premiumAnnualOriginal: Number(p.premiumAnnualOriginal) > 0 ? Number(p.premiumAnnualOriginal) : PREMIUM_ANNUAL_ORIGINAL_PRICE,
     pro: Number(p.pro) > 0 ? Number(p.pro) : PRO_MONTHLY_PRICE,
+    group50: Number(p.group50) > 0 ? Number(p.group50) : GROUP_DEFAULTS.group50,
+    group100: Number(p.group100) > 0 ? Number(p.group100) : GROUP_DEFAULTS.group100,
     items, school,
   };
   cache = { at: Date.now(), v };

@@ -711,3 +711,39 @@ body.dark-mode .shop-plans-trust {
   border-top-color: var(--border-color);
   color: var(--text-secondary);
 }
+/* grid fills the row: cards stretch (auto-fit), and a lone last card on a 2-column phone grid spans the row */
+.shop-grid { grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); }
+@media (max-width: 420px) {
+  .shop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .shop-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+@media (max-width: 340px) { .shop-grid { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); } .shop-grid > :last-child:nth-child(odd) { grid-column: auto; } }
+
+/* ── Group plans ── */
+.grp { margin: 18px 0 8px; }
+.grp-head { margin-bottom: 12px; }
+.grp-title { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 900; }
+.grp-sub { font-size: 13px; opacity: .72; margin-top: 3px; line-height: 1.45; }
+.grp-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.grp-card { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 16px 14px 14px; border-radius: 20px; background: var(--card-bg, #fff); border: 2px solid color-mix(in srgb, var(--hue) 45%, transparent); box-shadow: 0 10px 26px color-mix(in srgb, var(--hue) 16%, transparent); }
+.grp-card.best { border-color: var(--hue); }
+.grp-flag { position: absolute; top: -10px; right: 12px; background: var(--hue); color: #fff; font-size: 10.5px; font-weight: 900; padding: 3px 10px; border-radius: 999px; }
+.grp-seats { font-size: 38px; font-weight: 900; line-height: 1; color: var(--hue); } .grp-seats small { font-size: 13px; font-weight: 800; margin-left: 5px; opacity: .8; }
+.grp-term { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; opacity: .6; }
+.grp-price { font-size: 24px; font-weight: 900; margin-top: 6px; } .grp-price span { font-size: 15px; margin-right: 2px; }
+.grp-per { font-size: 11.5px; opacity: .65; margin-bottom: 6px; }
+.grp-card ul { margin: 4px 0 10px; padding: 0; list-style: none; font-size: 12.5px; line-height: 1.5; display: grid; gap: 4px; }
+.grp-card li::before { content: '✓ '; color: var(--hue); font-weight: 900; }
+.grp-buy { margin-top: auto; border: 0; border-radius: 14px; padding: 11px 10px; font-weight: 900; font-size: 13.5px; color: #fff; background: var(--hue); cursor: pointer; font-family: inherit; }
+.grp-buy:disabled { opacity: .6; }
+.grp-err { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(239,68,68,.12); color: #DC2626; font-size: 13px; font-weight: 700; }
+.grp-mine { margin-top: 14px; padding: 14px; border-radius: 18px; background: rgba(139,92,246,.08); border: 1px solid rgba(139,92,246,.22); }
+.grp-mine-top { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 14px; } .grp-mine-top span { font-size: 12px; opacity: .7; }
+.grp-add { display: flex; gap: 8px; margin: 10px 0; } .grp-add input { flex: 1; min-width: 0; padding: 11px 12px; border-radius: 12px; border: 1.5px solid rgba(139,92,246,.3); background: var(--card-bg, #fff); color: inherit; font: inherit; font-size: 14px; }
+.grp-add button { border: 0; border-radius: 12px; padding: 0 18px; font-weight: 900; color: #fff; background: #7C3AED; cursor: pointer; } .grp-add button:disabled { opacity: .5; }
+.grp-note { font-size: 12.5px; color: #16A34A; font-weight: 700; margin-bottom: 6px; }
+.grp-members { display: grid; gap: 6px; max-height: 280px; overflow-y: auto; }
+.grp-member { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border-radius: 12px; background: var(--card-bg, #fff); }
+.grp-member span { display: grid; min-width: 0; } .grp-member b { font-size: 13.5px; } .grp-member small { font-size: 11.5px; opacity: .6; overflow: hidden; text-overflow: ellipsis; }
+.grp-member button { border: 0; background: rgba(239,68,68,.12); color: #DC2626; border-radius: 10px; padding: 6px 10px; font-weight: 800; font-size: 12px; cursor: pointer; }
+.grp-empty { font-size: 12.5px; opacity: .65; }

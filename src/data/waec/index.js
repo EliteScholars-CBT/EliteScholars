@@ -51,7 +51,6 @@ export const WAEC_SUBJECTS = [
   { id: 'accounting',      label: 'Financial Accounting',  icon: '💰', color: '#064E3B', bg: '#ECFDF5' },
   { id: 'geography',       label: 'Geography',             icon: '🌍', color: '#0C4A6E', bg: '#E0F2FE' },
   { id: 'commerce',        label: 'Commerce',              icon: '🏪', color: '#0F766E', bg: '#CCFBF1' },
-  { id: 'civic',           label: 'Civic Education',       icon: '🗳️', color: '#1D4ED8', bg: '#DBEAFE' },
 
   // ── New subjects ──────────────────────────────────────────────────────────
   { id: 'further_maths',   label: 'Further Mathematics',   icon: '➗', color: '#1E40AF', bg: '#E0E7FF' },
@@ -61,9 +60,9 @@ export const WAEC_SUBJECTS = [
   { id: 'marketing',       label: 'Marketing',              icon: '📢', color: '#C2410C', bg: '#FFEDD5' },
 
   // ── Future subjects (ready for content upload) ───────────────────────────
-  { id: 'digital_tech',    label: 'Digital Technology',     icon: '💻', color: '#1D4ED8', bg: '#DBEAFE' },
+  // Digital Technology hidden until there is content for it
   { id: 'agric_science',   label: 'Agricultural Science',   icon: '🌱', color: '#15803D', bg: '#DCFCE7' },
-  { id: 'citizenship',     label: 'Citizenship',            icon: '🪪', color: '#4338CA', bg: '#E0E7FF' },
+  { id: 'citizenship',     label: 'Citizenship & Civic Education', icon: '🪪', color: '#4338CA', bg: '#E0E7FF' },
 ];
 
 // QB object keyed by subject ID
@@ -91,7 +90,8 @@ export const WAEC_QB = {
   // Future subjects
   digital_tech: WAEC_DIGITAL_TECH,
   agric_science: WAEC_AGRIC_SCIENCE,
-  citizenship: WAEC_CITIZENSHIP,
+  // Civic Education and Citizenship are one subject: the civic questions live under citizenship
+  citizenship: [...WAEC_CITIZENSHIP, ...WAEC_CIVIC],
 };
 
 // Re-export learn objects

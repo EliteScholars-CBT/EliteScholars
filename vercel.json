@@ -262,6 +262,10 @@
       "destination": "/api/data?route=admin/ads-save"
     },
     {
+      "source": "/api/admin/ads-adsterra",
+      "destination": "/api/data?route=admin/ads-adsterra"
+    },
+    {
       "source": "/api/admin/ads-stats",
       "destination": "/api/data?route=admin/ads-stats"
     },
@@ -408,6 +412,18 @@
     {
       "source": "/api/squads/get",
       "destination": "/api/data?route=squads/get"
+    },
+    {
+      "source": "/api/group/get",
+      "destination": "/api/data?route=group/get"
+    },
+    {
+      "source": "/api/group/add",
+      "destination": "/api/data?route=group/add"
+    },
+    {
+      "source": "/api/group/remove",
+      "destination": "/api/data?route=group/remove"
     },
     {
       "source": "/api/squads/leave",

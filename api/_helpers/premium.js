@@ -42,6 +42,31 @@ export async function activatePremiumAndLog({ email, plan, txRef, expiresAt, amo
   }
 }
 
+// A group plan: the payer gets Premium for the year AND a group they can add members to
+// (50 or 100 seats). Idempotent per transaction like activatePremiumAndLog.
+export async function activateGroupAndLog({ email, plan, txRef, expiresAt, amount }) {
+  if (!supabaseEnabled()) return { activated: false };
+  const sb = getSupabase();
+  try {
+    const claim = await sb.from("payments").insert({ tx_ref: txRef, email, plan, amount: Number(amount) || 0, status: "successful" });
+    if (claim.error) {
+      if (claim.error.code === "23505" || /duplicate/i.test(claim.error.message || "")) return { activated: false, duplicate: true };
+      throw claim.error;
+    }
+    const seats = plan === "group100" ? 100 : 50;
+    const g = await sb.from("group_plans").insert({ owner_email: email, seats, plan, tx_ref: txRef, expires_at: expiresAt, amount: Number(amount) || 0 });
+    if (g.error) throw g.error;
+    await sb.from("profiles").update({
+      is_premium: true, subscription_plan: "annual", subscribed_at: new Date().toISOString(), expires_at: expiresAt, subscription_tx_ref: txRef,
+    }).eq("email", email);
+    await recordCommission({ email, txRef, amount });
+    return { activated: true };
+  } catch (e) {
+    console.error("[premium] group write failed:", e?.message);
+    return { activated: false, error: true };
+  }
+}
+
 // { isPremium, plan, expiresAt, expiresStr }
 export async function getPremiumStatus(email) {
   const none = { success: true, isPremium: false, plan: null, expiresAt: null, expiresStr: null };

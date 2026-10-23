@@ -71,13 +71,18 @@ async function post(url, headers, body, timeoutMs) {
   const t = setTimeout(() => ctl.abort(), timeoutMs);
   try {
     const r = await fetch(url, { method: "POST", signal: ctl.signal, headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(body) });
-    if (!r.ok) { const err = new Error(`status ${r.status}`); err.status = r.status; throw err; }
+    if (!r.ok) {
+      const err = new Error(`status ${r.status}`); err.status = r.status;
+      try { err.detail = String(await r.text()).replace(/\s+/g, " ").slice(0, 300); } catch { /* ignore */ }
+      throw err;
+    }
     return await r.json();
   } finally { clearTimeout(t); }
 }
 
 export async function callKey(k, { system, user, maxTokens }) {
-  const max = Math.min(k.maxTokens, maxTokens || k.maxTokens);
+  // the caller's need wins over the key's default cap (a study rewrite needs ~4000 tokens of JSON), up to 8000
+  const max = Math.min(Math.max(k.maxTokens, maxTokens || 0), 8000);
   if (k.provider === "anthropic") {
     const j = await post(`${k.baseUrl || "https://api.anthropic.com"}/v1/messages`, { "x-api-key": k.key, "anthropic-version": "2023-06-01" },
       { model: k.model, max_tokens: max, temperature: k.temperature, system, messages: [{ role: "user", content: user }] }, k.timeoutMs);
@@ -91,9 +96,18 @@ export async function callKey(k, { system, user, maxTokens }) {
     return j?.choices?.[0]?.message?.content || "";
   }
   // gemini
-  const j = await post(`${k.baseUrl || "https://generativelanguage.googleapis.com"}/v1beta/models/${encodeURIComponent(k.model)}:generateContent`, { "x-goog-api-key": k.key },
-    { systemInstruction: { parts: [{ text: system }] }, contents: [{ role: "user", parts: [{ text: user }] }], generationConfig: { maxOutputTokens: max, temperature: k.temperature, responseMimeType: "application/json" } }, k.timeoutMs);
-  return (j?.candidates?.[0]?.content?.parts || []).map((p) => p.text || "").join("");
+  const url = `${k.baseUrl || "https://generativelanguage.googleapis.com"}/v1beta/models/${encodeURIComponent(k.model)}:generateContent`;
+  const gen = { maxOutputTokens: max, temperature: k.temperature, responseMimeType: "application/json" };
+  const body = (g) => ({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: "user", parts: [{ text: user }] }], generationConfig: g });
+  const read = (j) => (j?.candidates?.[0]?.content?.parts || []).filter((p) => !p.thought).map((p) => p.text || "").join("");
+  // Gemini 2.5+ "thinking" tokens count against maxOutputTokens and can leave the JSON cut off, so keep thinking small.
+  try {
+    const j = await post(url, { "x-goog-api-key": k.key }, body({ ...gen, thinkingConfig: { thinkingBudget: 0 } }), k.timeoutMs);
+    return read(j);
+  } catch (e) {
+    if (e.status !== 400) throw e; // this model does not accept the thinking setting: ask again without it
+    return read(await post(url, { "x-goog-api-key": k.key }, body(gen), k.timeoutMs));
+  }
 }
 
 function log(name, ok, ms, status) {
@@ -122,7 +136,7 @@ export async function generate(args, accept) {
       // rate-limited / out of credit / bad key: rest this key for a while; transient: short rest
       cooling.set(k.name, Date.now() + (st === 429 || st === 402 || st === 401 || st === 403 ? 10 * 60000 : 30000));
       log(k.name, false, Date.now() - t0, st);
-      console.error("[ai] key failed:", k.name, k.provider, st || e?.message);
+      console.error("[ai] key failed:", k.name, k.provider, k.model, st || e?.message, e?.detail || "");
     }
   }
   throw last || new Error("ai failed");

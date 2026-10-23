@@ -5,6 +5,7 @@ import { isPremium, getPremiumData, cancelPremium } from '../utils/premium';
 import { fetchShopData, fetchPremiumStatus } from '../utils/profileApi';
 import { initiatePayment } from '../utils/profileApi';
 import PremiumModal from './PremiumModal';
+import GroupPlans from './GroupPlans';
 import Icon, { EmojiIcon } from './Icon';
 
 const CATEGORY_ICON = {
@@ -136,11 +137,6 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
 
   const COMPARE_PLANS = [
     {
-      id: 'free', label: 'Free', icon: '🎓', tag: null,
-      features: ['Limited topics', 'Limited sessions', 'Has cooldown', 'Ads shown', 'All exam types'],
-      highlight: false, ctaDisabled: true,
-    },
-    {
       id: 'premium', label: 'Premium', icon: '👑', tag: `${annualDiscountPct}% OFF`,
       price: annualPrice, originalPrice, period: '/yr',
       features: [
@@ -215,8 +211,8 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
 
               {/* Header row */}
               <div className="shop-plans-card-header">
-                <div className="shop-plans-card-title">Compare Plans</div>
-                <div className="shop-plans-card-sub">One plan, one price: Premium for the full year.</div>
+                <div className="shop-plans-card-title">Premium</div>
+                <div className="shop-plans-card-sub">Everything unlocked for a full year.</div>
               </div>
 
               {/* Plans grid */}
@@ -281,6 +277,8 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
             </div>
           </div>
         )}
+
+        <GroupPlans userEmail={userEmail} name={name} pricing={pricing} />
 
         {/* ── Shop items ── */}
         {loadingShop ? (

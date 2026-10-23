@@ -307,6 +307,20 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
     speakNextSentence();
   };
 
+  // Start reading the moment a topic opens (the tap that opened it counts as the user gesture phones need).
+  const speakRef = useRef(null);
+  speakRef.current = speakContent;
+  useEffect(() => {
+    if (activeIdx === null) return undefined;
+    let tries = 0;
+    const tryStart = () => {
+      if (document.querySelector('.learn-content-html')) speakRef.current && speakRef.current();
+      else if (tries++ < 12) timer = setTimeout(tryStart, 60);
+    };
+    let timer = setTimeout(tryStart, 30);
+    return () => clearTimeout(timer);
+  }, [activeIdx]); // eslint-disable-line
+
   const handlePause = () => {
     if (paused) {
       window.speechSynthesis.resume();

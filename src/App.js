@@ -971,6 +971,35 @@ export default function App() {
 
   };
 
+  // ── Back button (installed app / phone back) ────────────────────────────────
+  // The app keeps its screens in state, so without this the phone's back button leaves the app for
+  // whatever page was open before. We keep a sentinel history entry so back is always ours to handle.
+  const backRef = React.useRef({});
+  backRef.current = { screen, goHome, showToast };
+  useEffect(() => {
+    try { window.history.pushState({ es: 1 }, ''); } catch { /* ignore */ }
+    let lastRootBack = 0;
+    const onPop = () => {
+      const { screen: sc, goHome: home, showToast: toastIt } = backRef.current;
+      const root = ['splash', 'onboard', 'examType'];
+      if (!root.includes(sc)) {
+        try { window.history.pushState({ es: 1 }, ''); } catch { /* ignore */ }
+        if (sc === 'quiz' || sc === 'ready' || sc === 'adgate' || sc === 'sharegate') { toastIt('Use the Quit button to leave this screen', 'info'); return; }
+        if (sc === 'result' || sc === 'game') { home(); return; }
+        if (['flashcards', 'learn', 'leaderboard', 'challenges', 'shop', 'profile', 'school'].includes(sc)) { home(); return; }
+        setScreen('examType');
+        return;
+      }
+      const now = Date.now();
+      if (now - lastRootBack < 2200) { window.removeEventListener('popstate', onPop); window.history.go(-2); return; }
+      lastRootBack = now;
+      try { window.history.pushState({ es: 1 }, ''); } catch { /* ignore */ }
+      toastIt('Press back again to exit', 'info');
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []); // eslint-disable-line
+
 
 
   const handleExamTypeSelect = (type) => {

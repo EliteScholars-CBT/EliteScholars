@@ -2,7 +2,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import EliteBadge from './EliteBadge';
 import StickerStudio from './StickerStudio';
-import { CHAT_STICKERS, tagColor, TAGS } from '../utils/stickers';
+import { tagColor, TAGS } from '../utils/stickers';
+import { isStickerMsg } from '../utils/stickerArt';
+import StickerPicker, { StickerArt, saveMine } from './StickerPicker';
+import Icon from './Icon';
 import { fetchMedia } from '../utils/media';
 import '../styles/chat.css';
 
@@ -28,12 +31,13 @@ function Pic({ id }) {
 function Bubble({ m, onDelete, canDelete }) {
   const [open, setOpen] = useState(false);
   const sticker = m.kind === 'sticker';
+  const art = sticker && isStickerMsg(m.text);
   return (
     <div className={`sc-msg ${m.mine ? 'mine' : ''}`}>
       {!m.mine && <div className="sc-who">{m.author}{m.elite && <EliteBadge inline size={12} />}</div>}
       <div className={`sc-bub ${sticker ? 'stk' : ''} ${m.kind === 'image' ? 'img' : ''}`} onClick={() => canDelete && setOpen((o) => !o)}>
         {m.kind === 'image' && <Pic id={m.media_id} />}
-        {sticker ? (isTag(m.text) ? <span className="sc-tag" style={{ background: tagColor(m.text) }}>{m.text}</span> : <span className="sc-big">{m.text}</span>) : (m.text ? <span className="sc-text">{m.text}</span> : null)}
+        {art ? <StickerArt id={m.text.slice(3)} className="sc-stkmsg" /> : sticker ? (isTag(m.text) ? <span className="sc-tag" style={{ background: tagColor(m.text) }}>{m.text}</span> : <span className="sc-big">{m.text}</span>) : (m.text ? <span className="sc-text">{m.text}</span> : null)}
         <small>{hhmm(m.created_at)}</small>
       </div>
       {open && canDelete && <button className="sc-del" onClick={() => onDelete(m.id)}>Delete message</button>}
@@ -103,7 +107,7 @@ export default function SquadChat({ squadId, squadName, isOwner, onClose }) {
     if (!(await send({ text: t }, { kind: 'text', text: t }))) setText(t);
   };
   const sendSticker = (s) => { setTray(false); send({ sticker: s }, { kind: 'sticker', text: s }); };
-  const sendImage = (url) => { setStudio(null); send({ image: url }, { kind: 'image', text: '', media_id: null, _local: url }); };
+  const sendImage = (url) => { if (studio && studio.blank) saveMine(url); setStudio(null); send({ image: url }, { kind: 'image', text: '', media_id: null, _local: url }); };
 
   const del = async (id) => {
     setMsgs((c) => c.filter((x) => x.id !== id));
@@ -128,17 +132,13 @@ export default function SquadChat({ squadId, squadName, isOwner, onClose }) {
         ))}
       </div>
       {err && <div className="sc-err">{err}</div>}
-      {tray && (
-        <div className="sc-tray">
-          {CHAT_STICKERS.map((s) => <button key={s} onClick={() => sendSticker(s)}>{isTag(s) ? <span className="sc-tag" style={{ background: tagColor(s) }}>{s}</span> : s.length <= 2 && /\p{Extended_Pictographic}/u.test(s) ? <span className="sc-big">{s}</span> : <span className="sc-tag" style={{ background: '#7C3AED' }}>{s}</span>}</button>)}
-          <button className="sc-studio" onClick={() => { setTray(false); setStudio({ blank: true }); }}>🎨 Make a sticker card</button>
-        </div>
-      )}
+      {tray && <StickerPicker mode={tray} onSticker={sendSticker} onEmoji={(e) => setText((t) => (t + e).slice(0, 600))} onMine={(u) => { setTray(false); send({ image: u }, { kind: 'image', text: '', media_id: null, _local: u }); }} onCreate={() => { setTray(false); setStudio({ blank: true, mine: true }); }} />}
       <div className="sc-bar">
-        <button className="sc-ic" onClick={() => setTray((t) => !t)} aria-label="Stickers">😎</button>
-        <label className="sc-ic" aria-label="Send a photo">📷<input type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) setStudio({ file: f }); }} /></label>
+        <button className="sc-ic" onClick={() => setTray((t) => (t === 'emoji' ? false : 'emoji'))} aria-label="Emoji"><Icon name="smile" size={21} /></button>
+        <button className="sc-ic" onClick={() => setTray((t) => (t === 'stickers' ? false : 'stickers'))} aria-label="Stickers"><Icon name="sticker" size={21} /></button>
+        <label className="sc-ic" aria-label="Send a photo"><Icon name="camera" size={21} /><input type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) setStudio({ file: f }); }} /></label>
         <input className="allow-copy sc-in" value={text} maxLength={600} placeholder="Message your squad…" onChange={(e) => setText(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') sendText(); }} />
-        <button className="sc-send" disabled={!text.trim() || sending} onClick={sendText} aria-label="Send">➤</button>
+        <button className="sc-send" disabled={!text.trim() || sending} onClick={sendText} aria-label="Send"><Icon name="send" size={19} /></button>
       </div>
       {studio && <StickerStudio aspect={studio.file ? 4 / 5 : 1} initialFile={studio.file || null} title="Sticker studio" cta="Send" onClose={() => setStudio(null)} onDone={sendImage} />}
     </div>,

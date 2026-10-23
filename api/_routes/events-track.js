@@ -2,7 +2,7 @@
 // happen before login) but rate limited and size capped. The email is only trusted
 // when it comes from a valid session.
 import { sendOk, sendErr, sendMethodNotAllowed, setCors, readBody } from "../_helpers/response.js";
-import { insertRow, supabaseEnabled } from "../_helpers/supabase.js";
+import { insertRow, supabaseEnabled, getSupabase } from "../_helpers/supabase.js";
 import { parseSessionToken, tokenFromRequest } from "../_helpers/session.js";
 import { rateLimitOk, jsonSize } from "../_helpers/guard.js";
 
@@ -19,6 +19,14 @@ export default async function handler(req, res) {
   if (jsonSize(payload) > 4000) return sendErr(res, "Payload too large.");
 
   const em = parseSessionToken(tokenFromRequest(req))?.email || null;
+  // study-from-file uploads: number each student's uploads so the admin activity feed can show "#3"
+  if (type === "file_upload" && em && supabaseEnabled()) {
+    try {
+      const { count } = await getSupabase().from("events").select("id", { count: "exact", head: true }).eq("type", "file_upload").eq("email", em);
+      payload.n = (count || 0) + 1;
+    } catch { /* count is cosmetic */ }
+    payload.fileName = String(payload.fileName || "").slice(0, 80);
+  }
   if (supabaseEnabled()) await insertRow("events", { type, email: em, payload });
   return sendOk(res, {});
 }

@@ -97,7 +97,7 @@ export default async function handler(req, res) {
       if (targets.length) {
         const { data: squad } = await sb.from("squads").select("name").eq("id", squadId).maybeSingle();
         const who = mem.display_name || "A squadmate";
-        const preview = kind === "image" ? "sent a photo 📷" : kind === "sticker" ? `sent ${body}` : body.length > 80 ? body.slice(0, 77) + "…" : body;
+        const preview = kind === "image" ? "sent a photo 📷" : kind === "sticker" ? (body.startsWith("st:") ? "sent a sticker" : `sent ${body}`) : body.length > 80 ? body.slice(0, 77) + "…" : body;
         await pushToEmails(targets, { title: `💬 ${(squad && squad.name) || "Your squad"}`, body: kind === "text" ? `${who}: ${preview}` : `${who} ${preview}`, url: "/app?squadchat=1", tag: `squad-chat-${squadId}`, type: "squad-chat" });
       }
     } catch (e) { console.warn("[chat] push", e?.message); }

@@ -11,6 +11,7 @@ import squadsCreate from "./_routes/squads-create.js";
 import squadsJoin from "./_routes/squads-join.js";
 import squadsGet from "./_routes/squads-get.js";
 import squadsLeave from "./_routes/squads-leave.js";
+import groupPlan from "./_routes/group.js";
 import chCreate from "./_routes/challenges-create.js";
 import chAccept from "./_routes/challenges-accept.js";
 import chDecline from "./_routes/challenges-decline.js";
@@ -53,6 +54,9 @@ const ROUTES = {
   "squads/join": squadsJoin,
   "squads/get": squadsGet,
   "squads/leave": squadsLeave,
+  "group/get": withOp(groupPlan, "get"),
+  "group/add": withOp(groupPlan, "add"),
+  "group/remove": withOp(groupPlan, "remove"),
   "challenges/create": chCreate,
   "challenges/accept": chAccept,
   "challenges/decline": chDecline,
@@ -122,6 +126,7 @@ const ROUTES = {
   "admin/ads": withOp(adminOps, "ads"),
   "admin/ads-save": withOp(adminOps, "ads-save"),
   "admin/ads-stats": withOp(adminOps, "ads-stats"),
+  "admin/ads-adsterra": withOp(adminOps, "ads-adsterra"),
   "admin/shop-list": withOp(adminOps, "shop-list"),
   "admin/shop-save": withOp(adminOps, "shop-save"),
   "admin/shop-delete": withOp(adminOps, "shop-delete"),

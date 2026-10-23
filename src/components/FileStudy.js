@@ -77,6 +77,8 @@ export default function FileStudyHub() {
       await new Promise((r) => setTimeout(r, 200));
       const entry = { id: newFileId(), name: file.name, title: pack.title, size: file.size, addedAt: Date.now(), pack, best: {}, modes: ['learn', 'cards', 'cbt'] };
       setFiles(saveToLibrary(entry));
+      // logged for the admin activity feed (server numbers each student's uploads)
+      fetch('/api/events/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'file_upload', fileName: file.name.slice(0, 80), sizeKB: Math.round(file.size / 1024), engine: pack.engine || 'local' }) }).catch(() => {});
       setBusy(null);
       SFX.roundComplete?.();
       setSetup(entry);

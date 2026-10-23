@@ -5,6 +5,7 @@ import ShareSheet from './ShareSheet';
 import { pushStatus, enablePush, disablePush } from '../utils/push';
 import { isDataSaver, setDataSaver } from '../utils/dataSaver';
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
   BarChart, Bar, CartesianGrid,
@@ -45,6 +46,7 @@ export default function Profile({
   const [showPremiumModal, setShowPremiumModal]     = useState(false);
   const [localPremium, setLocalPremium]             = useState(premiumUser);
   const premData = getPremiumData(email);
+  const navigate = useNavigate();
   const [pushState, setPushState] = useState('off');
   const [saver, setSaver] = useState(isDataSaver());
   useEffect(() => { pushStatus().then(setPushState); }, []);
@@ -333,7 +335,7 @@ export default function Profile({
                       <div className="achievement-card-desc">
                         {a.earned ? a.desc : a.desc}
                       </div>
-                      {a.earned && <div className="achievement-card-share">📤 Tap to share</div>}
+                      {a.earned && <div className="achievement-card-share">Share</div>}
                     </div>
                   ))}
                 </div>
@@ -503,7 +505,7 @@ export default function Profile({
                 ℹ️ Information
               </div>
 
-              <div className="settings-card about-settings-card" style={{ cursor: 'pointer' }}>
+              <div className="settings-card about-settings-card" role="link" tabIndex={0} onClick={() => navigate('/app/about', { state: { fromApp: true } })} style={{ cursor: 'pointer' }}>
                 <div className="settings-item">
                   <div className="settings-icon"><EmojiIcon emoji="🎓" size="1.1em" /></div>
                   <div className="settings-info">
@@ -514,7 +516,7 @@ export default function Profile({
                 </div>
               </div>
 
-              <div className="settings-card terms-settings-card" style={{ cursor: 'pointer' }}>
+              <div className="settings-card terms-settings-card" role="link" tabIndex={0} onClick={() => navigate('/app/terms', { state: { fromApp: true } })} style={{ cursor: 'pointer' }}>
                 <div className="settings-item">
                   <div className="settings-icon">📜</div>
                   <div className="settings-info">
@@ -525,7 +527,7 @@ export default function Profile({
                 </div>
               </div>
 
-              <div className="settings-card privacy-settings-card" style={{ cursor: 'pointer' }}>
+              <div className="settings-card privacy-settings-card" role="link" tabIndex={0} onClick={() => navigate('/app/privacy', { state: { fromApp: true } })} style={{ cursor: 'pointer' }}>
                 <div className="settings-item">
                   <div className="settings-icon"><EmojiIcon emoji="🔒" size="1.1em" /></div>
                   <div className="settings-info">

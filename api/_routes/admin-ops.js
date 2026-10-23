@@ -77,6 +77,7 @@ const EVENT_LABEL = {
 };
 const labelEvent = (e) => {
   const p = e.payload || {};
+  if (e.type === "file_upload") return `Uploaded a file to study${p.n ? ` (upload #${p.n})` : ""}${p.fileName ? ` — ${p.fileName}` : ""}${p.engine ? ` · ${p.engine === "ai" ? "AI" : "quick"} rewrite` : ""}`;
   const base = EVENT_LABEL[e.type] || String(e.type).replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
   const extra = [p.subject, p.exam, p.topic, p.score !== undefined ? `score ${p.score}` : "", p.postTitle].filter(Boolean).join(" · ");
   return extra ? `${base} — ${extra}` : base;
@@ -556,6 +557,31 @@ export default async function handler(req, res) {
       return sendOk(res, { stats: await adStats(sb, [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 30) });
     }
 
+    if (op === "ads-adsterra") {
+      if (!need("ads")) return deny();
+      const key = process.env.ADSTERRA_API_KEY;
+      if (!key) return sendOk(res, { adsterra: { configured: false, message: "ADSTERRA_API_KEY is not set in Vercel." } });
+      const days = [1, 7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 30;
+      const gb = ["date", "country", "placement", "domain", "device_type"].includes(String(q.group_by)) ? String(q.group_by) : "date";
+      const ck = `${days}:${gb}`;
+      globalThis.__adsterraCache = globalThis.__adsterraCache || new Map();
+      const hit = globalThis.__adsterraCache.get(ck);
+      if (hit && Date.now() - hit.t < 5 * 60000) return sendOk(res, { adsterra: hit.v });
+      const day = (t) => new Date(t).toISOString().slice(0, 10);
+      const url = `https://api3.adsterratools.com/publisher/stats.json?start_date=${day(Date.now() - (days - 1) * 86400000)}&finish_date=${day(Date.now())}&group_by=${gb}`;
+      try {
+        const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 15000);
+        const r = await fetch(url, { headers: { "X-API-Key": key, Accept: "application/json" }, signal: ctl.signal }); clearTimeout(tm);
+        const txt = await r.text(); let j = {}; try { j = JSON.parse(txt); } catch { /* not json */ }
+        if (!r.ok) return sendOk(res, { adsterra: { configured: true, error: r.status === 401 || r.status === 403 ? "Adsterra rejected the API key (check ADSTERRA_API_KEY)." : `Adsterra answered ${r.status}: ${String(j.message || txt).slice(0, 160)}` } });
+        const items = (Array.isArray(j.items) ? j.items : []).map((x) => ({ label: String(x.date || x.country || x.placement || x.domain || x.device_type || x.name || "—"), impressions: Number(x.impression ?? x.impressions ?? 0), clicks: Number(x.clicks || 0), ctr: Number(x.ctr || 0), cpm: Number(x.cpm || 0), revenue: Number(x.revenue || 0) }));
+        const t = items.reduce((a, x) => ({ impressions: a.impressions + x.impressions, clicks: a.clicks + x.clicks, revenue: a.revenue + x.revenue }), { impressions: 0, clicks: 0, revenue: 0 });
+        const v = { configured: true, days, groupBy: gb, items, totals: { ...t, ctr: t.impressions ? (t.clicks / t.impressions) * 100 : 0, cpm: t.impressions ? (t.revenue / t.impressions) * 1000 : 0 } };
+        globalThis.__adsterraCache.set(ck, { t: Date.now(), v });
+        return sendOk(res, { adsterra: v });
+      } catch (e) { return sendOk(res, { adsterra: { configured: true, error: "Could not reach Adsterra right now. Try again in a minute." } }); }
+    }
+
     if (op === "sources") {
       if (!need("analytics")) return deny();
       const ref = String(q.ref || "").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 32);
@@ -632,7 +658,7 @@ export default async function handler(req, res) {
         const out = await callKey(k, { system: "Reply with a JSON object only.", user: 'Reply with {"ok":true}', maxTokens: 50 });
         return sendOk(res, { ok: String(out).trim().length > 0, ms: Date.now() - t0 });
       } catch (e) {
-        return sendOk(res, { ok: false, ms: Date.now() - t0, status: e.status || 0, error: e.status === 401 || e.status === 403 ? "The provider rejected this key." : e.status === 429 ? "Rate limited or out of credit." : e.name === "AbortError" ? "Timed out." : "Could not reach the provider or the model name is wrong." });
+        return sendOk(res, { ok: false, ms: Date.now() - t0, status: e.status || 0, error: e.status === 401 || e.status === 403 ? "The provider rejected this key." : e.status === 429 ? "Rate limited or out of credit." : e.name === "AbortError" ? "Timed out." : "Could not reach the provider or the model name is wrong.", detail: e.detail || "" });
       }
     }
 
@@ -641,7 +667,7 @@ export default async function handler(req, res) {
       if (!need("prices")) return deny();
       const pr = await getPricing();
       return sendOk(res, {
-        prices: { premiumAnnual: pr.premiumAnnual, premiumAnnualOriginal: pr.premiumAnnualOriginal, pro: pr.pro },
+        prices: { premiumAnnual: pr.premiumAnnual, premiumAnnualOriginal: pr.premiumAnnualOriginal, pro: pr.pro, group50: pr.group50, group100: pr.group100 },
         items: SHOP_ITEMS.filter((i) => !i.isPremium).map((i) => ({ id: i.id, title: i.title, category: i.category, price: pr.items[i.id] })),
         school: pr.school,
       });
@@ -652,7 +678,7 @@ export default async function handler(req, res) {
       const num = (v) => { const n = Math.round(Number(v)); return Number.isFinite(n) && n > 0 && n <= 10000000 ? n : null; };
       const { data: cur } = await sb.from("settings").select("value").eq("key", "prices").maybeSingle();
       const next = { ...(cur && cur.value) };
-      for (const k of ["premiumAnnual", "premiumAnnualOriginal", "pro"]) if (b[k] !== undefined) { const n = num(b[k]); if (!n) return sendErr(res, "Prices must be whole naira amounts above 0."); next[k] = n; }
+      for (const k of ["premiumAnnual", "premiumAnnualOriginal", "pro", "group50", "group100"]) if (b[k] !== undefined) { const n = num(b[k]); if (!n) return sendErr(res, "Prices must be whole naira amounts above 0."); next[k] = n; }
       if (b.items && typeof b.items === "object") {
         next.items = { ...(next.items || {}) };
         for (const it of SHOP_ITEMS) if (b.items[it.id] !== undefined) { const n = num(b.items[it.id]); if (!n) return sendErr(res, `Invalid price for ${it.title}.`); next.items[it.id] = n; }

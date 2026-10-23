@@ -603,6 +603,13 @@ export async function buildSmartPack(rawText, fileName, onProgress) {
       onProgress && onProgress(done / chunks.length);
     }
   };
+  // Try the first part alone: if the AI is not working, use the on-device engine straight away
+  // instead of sending (and failing) three requests at once.
+  const first = next++;
+  try { results[first] = await rewriteChunk(chunks[first], local.title); }
+  catch { return { pack: local, engine: 'local' }; }
+  done++;
+  onProgress && onProgress(done / chunks.length);
   await Promise.all([worker(), worker(), worker()]);
 
   const ok = results.filter(Boolean);

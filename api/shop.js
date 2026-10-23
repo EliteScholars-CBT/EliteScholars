@@ -36,6 +36,8 @@ async function handler(req, res) {
       premiumAnnual:         pr ? pr.premiumAnnual : PREMIUM_ANNUAL_PRICE,
       premiumAnnualOriginal: pr ? pr.premiumAnnualOriginal : PREMIUM_ANNUAL_ORIGINAL_PRICE,
       pro:                   pr ? pr.pro : PRO_MONTHLY_PRICE,
+      group50:               pr ? pr.group50 : 145000,
+      group100:              pr ? pr.group100 : 285000,
       urls: {
         annual: PAYMENT_URL_ANNUAL,
         pro:    PAYMENT_URL_PRO,

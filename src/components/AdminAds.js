@@ -17,6 +17,9 @@ export default function AdminAds({ token, onAuthFail }) {
   const [msg, setMsg] = useState('');
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
+  const [view, setView] = useState('own');
+  const [ast, setAst] = useState(null);
+  const [agb, setAgb] = useState('date');
 
   const load = useCallback(async () => {
     try { const d = await api('ads'); setAds(d.ads); setErr(''); } catch (e) { if (e.message !== 'auth') setErr(e.message); }
@@ -27,6 +30,13 @@ export default function AdminAds({ token, onAuthFail }) {
     api('ads-stats', { query: { days } }).then((d) => on && setStats(d.stats)).catch((e) => e.message !== 'auth' && on && setErr(e.message));
     return () => { on = false; };
   }, [api, days]);
+
+  useEffect(() => {
+    if (view !== 'adsterra') return undefined;
+    let on = true; setAst(null);
+    api('ads-adsterra', { query: { days, group_by: agb } }).then((d) => on && setAst(d.adsterra)).catch((e) => e.message !== 'auth' && on && setAst({ error: e.message }));
+    return () => { on = false; };
+  }, [api, days, agb, view]);
 
   const set = (path, val) => setAds((a) => {
     const n = JSON.parse(JSON.stringify(a)); let o = n; const k = path.split('.');
@@ -101,8 +111,42 @@ export default function AdminAds({ token, onAuthFail }) {
 
       <div className="adm-savebar"><button disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save ad settings'}</button></div>
 
-      <section className="adm-controls"><div className="adm-pills">{[7, 30, 90].map((d) => <button key={d} className={days === d ? 'on' : ''} onClick={() => setDays(d)}>{d} days</button>)}</div></section>
-      {stats && (
+      <section className="adm-controls">
+        <div className="adm-pills">{[['own', 'Our views'], ['adsterra', 'Adsterra earnings']].map(([k, l]) => <button key={k} className={view === k ? 'on' : ''} onClick={() => setView(k)}>{l}</button>)}</div>
+        <div className="adm-pills">{[7, 30, 90].map((d) => <button key={d} className={days === d ? 'on' : ''} onClick={() => setDays(d)}>{d} days</button>)}</div>
+      </section>
+      {view === 'adsterra' && (
+        <>
+          <section className="adm-controls"><div className="adm-pills">{[['date', 'By day'], ['country', 'Country'], ['placement', 'Placement'], ['domain', 'Domain'], ['device_type', 'Device']].map(([k, l]) => <button key={k} className={agb === k ? 'on' : ''} onClick={() => setAgb(k)}>{l}</button>)}</div></section>
+          {!ast && <div className="adm-card">Loading Adsterra…</div>}
+          {ast && ast.configured === false && <div className="adm-error">{ast.message}</div>}
+          {ast && ast.error && <div className="adm-error">{ast.error}</div>}
+          {ast && ast.totals && (
+            <>
+              <section className="adm-grid adm-stats">
+                <div className="adm-stat"><div className="adm-stat-val">${ast.totals.revenue.toFixed(2)}</div><div className="adm-stat-label">Earned</div></div>
+                <div className="adm-stat"><div className="adm-stat-val">{fmtN(ast.totals.impressions)}</div><div className="adm-stat-label">Impressions</div></div>
+                <div className="adm-stat"><div className="adm-stat-val">{fmtN(ast.totals.clicks)}</div><div className="adm-stat-label">Clicks · {ast.totals.ctr.toFixed(2)}% CTR</div></div>
+                <div className="adm-stat"><div className="adm-stat-val">${ast.totals.cpm.toFixed(2)}</div><div className="adm-stat-label">Average CPM</div></div>
+              </section>
+              {ast.groupBy === 'date' && ast.items.length > 1 && <section className="adm-card"><h2>Earnings per day ($)</h2><TrendChart labels={ast.items.map((x) => x.label.slice(5))} values={ast.items.map((x) => x.revenue)} fmt={(v) => `$${Number(v).toFixed(2)}`} /></section>}
+              <section className="adm-card">
+                <h2>Breakdown</h2>
+                <div className="adm-list tight">
+                  {[...ast.items].sort((a, b) => (ast.groupBy === 'date' ? 0 : b.revenue - a.revenue)).slice(0, 60).map((x) => (
+                    <div className="adm-item" key={x.label}><div className="adm-item-head static">
+                      <span className="adm-item-main"><b>{x.label}</b><small>{fmtN(x.impressions)} impressions · {fmtN(x.clicks)} clicks</small></span>
+                      <span className="adm-item-side"><b>${x.revenue.toFixed(2)}</b><small>CPM ${x.cpm.toFixed(2)}</small></span>
+                    </div></div>
+                  ))}
+                </div>
+                {!ast.items.length && <p className="adm-empty">Adsterra has no data for this period yet.</p>}
+              </section>
+            </>
+          )}
+        </>
+      )}
+      {view === 'own' && stats && (
         <>
           <section className="adm-grid adm-stats">
             <div className="adm-stat"><div className="adm-stat-val">{fmtN(stats.appViews)}</div><div className="adm-stat-label">App ad views</div></div>
@@ -128,7 +172,7 @@ export default function AdminAds({ token, onAuthFail }) {
           </section>
         </>
       )}
-      {stats && stats.truncated && <div className="adm-error">Very high traffic: figures may be slightly understated. Try a shorter range.</div>}
+      {view === 'own' && stats && stats.truncated && <div className="adm-error">Very high traffic: figures may be slightly understated. Try a shorter range.</div>}
     </div>
   );
 }

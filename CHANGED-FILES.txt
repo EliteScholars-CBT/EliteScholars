@@ -1,8 +1,9 @@
-Files in this zip (copy each over the same path in your project). Nothing else changed.
+EliteScholars update — copy each file to the same path in your project.
 
-NEW:    api/_helpers/contentGuard.js, src/components/AdminStatus.js, src/utils/imageGuard.js
-EDITED: everything else listed by the zip.
+NEW FILES: api/_routes/group.js, src/components/GroupPlans.js, src/components/StickerPicker.js, src/styles/stickers.css
+(stickers.css is imported by StickerPicker.js; no other import changes needed)
 
-New routes (already registered in api/data.js and vercel.json): admin/status-list, admin/status-media, admin/status-action, admin/status-suspend, status/report
-New env vars: none. New npm packages: none (the photo check loads TensorFlow.js + NSFWJS from jsDelivr on demand).
-Run once in Supabase SQL editor: the last block of supabase/schema.sql ("status moderation"). Safe to re-run.
+ROUTES ADDED (already wired in api/data.js + vercel.json; still 12 functions): /api/group/get, /api/group/add, /api/group/remove
+ENV: ADSTERRA_API_KEY (you already set it). Nothing else new.
+SQL: run the new "group plans" block at the end of supabase/schema.sql (tables group_plans, group_members).
+Also still needed from earlier rounds if not yet run: the status / presence / moderation SQL blocks in schema.sql.

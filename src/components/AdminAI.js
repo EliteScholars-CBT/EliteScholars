@@ -53,7 +53,7 @@ export default function AdminAI({ token, onAuthFail }) {
               </div>
               <div className="adm-inline pad">
                 <button className="adm-small" disabled={busy === k.name} onClick={() => test(k.name)}>{busy === k.name ? 'Testing…' : 'Test this key'}</button>
-                {res[k.name] && (res[k.name].ok ? <span className="adm-chip active">Works · {(res[k.name].ms / 1000).toFixed(1)}s</span> : <span className="adm-chip ended">{res[k.name].error}</span>)}
+                {res[k.name] && (res[k.name].ok ? <span className="adm-chip active">Works · {(res[k.name].ms / 1000).toFixed(1)}s</span> : <span className="adm-chip ended" title={res[k.name].detail || ''}>{res[k.name].error}{res[k.name].detail ? ` (${res[k.name].detail.slice(0, 140)})` : ''}</span>)}
               </div>
             </div>
           ))}

@@ -18,7 +18,7 @@ export function AdminPrices({ token, onAuthFail }) {
   const load = useCallback(async () => {
     try {
       const r = await api('prices');
-      setD(r); setP({ premiumAnnual: String(r.prices.premiumAnnual), premiumAnnualOriginal: String(r.prices.premiumAnnualOriginal), pro: String(r.prices.pro) });
+      setD(r); setP({ premiumAnnual: String(r.prices.premiumAnnual), premiumAnnualOriginal: String(r.prices.premiumAnnualOriginal), pro: String(r.prices.pro), group50: String(r.prices.group50), group100: String(r.prices.group100) });
       setItems(Object.fromEntries(r.items.map((i) => [i.id, String(i.price)])));
       setSchool({ trialDays: String(r.school.trialDays), period: r.school.period, tiers: r.school.tiers.map((t) => ({ ...t, min: String(t.min), price: String(t.price) })) });
     } catch (e) { if (e.message !== 'auth') setErr(e.message); }
@@ -43,6 +43,16 @@ export function AdminPrices({ token, onAuthFail }) {
           <label>"Was" price (crossed out)<input inputMode="numeric" value={p.premiumAnnualOriginal} onChange={(e) => setP({ ...p, premiumAnnualOriginal: num(e.target.value) })} /></label>
         </div>
         <button disabled={busy} onClick={() => save(() => api('prices-save', { method: 'POST', body: { premiumAnnual: p.premiumAnnual, premiumAnnualOriginal: p.premiumAnnualOriginal } }), 'Premium prices saved.')}>Save premium prices</button>
+      </section>
+
+      <section className="adm-card">
+        <h2>Group plan prices (1 year)</h2>
+        <p className="adm-note" style={{ marginTop: 0 }}>Sold in the shop. One payer, Premium for up to 50 or 100 members they add themselves.</p>
+        <div className="adm-fields">
+          <label>Group of 50 (₦)<input inputMode="numeric" value={p.group50 || ''} onChange={(e) => setP({ ...p, group50: num(e.target.value) })} /></label>
+          <label>Group of 100 (₦)<input inputMode="numeric" value={p.group100 || ''} onChange={(e) => setP({ ...p, group100: num(e.target.value) })} /></label>
+        </div>
+        <button disabled={busy} onClick={() => save(() => api('prices-save', { method: 'POST', body: { group50: p.group50, group100: p.group100 } }), 'Group prices saved.')}>Save group prices</button>
       </section>
 
       <section className="adm-card">

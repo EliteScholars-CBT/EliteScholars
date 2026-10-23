@@ -7,7 +7,6 @@ const TOKEN_KEY = 'es_partner_token';
 const dt = (s) => (s ? new Date(s).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' }) : '—');
 const copy = (t) => { try { navigator.clipboard?.writeText(t); } catch { /* ignore */ } };
 const PREMIUM_PRICE = 3000;
-const CHANNELS = [['whatsapp', 'WhatsApp'], ['facebook', 'Facebook'], ['instagram', 'Instagram'], ['tiktok', 'TikTok'], ['x', 'X (Twitter)'], ['telegram', 'Telegram'], ['youtube', 'YouTube']];
 
 async function call(path, { method = 'GET', token, body } = {}) {
   const r = await fetch(`/api/partner/${path}`, {
@@ -151,29 +150,29 @@ export default function Partner() {
           </section>
 
           <section className="adm-card">
-            <h2>Links for each place you share</h2>
-            <p className="adm-note" style={{ marginTop: 0 }}>Use a different link for each place and the table below shows which one brings students.</p>
-            <div className="adm-list tight">
-              {CHANNELS.map(([k, label]) => (
-                <div className="adm-linkbox" key={k}><span><b>{label}</b></span><button className="adm-small" onClick={() => { copy(`${link}&src=${k}`); setInfo(`${label} link copied.`); }}>Copy</button></div>
-              ))}
-            </div>
-          </section>
-
-          <section className="adm-card">
-            <h2>Where your visitors come from (30 days)</h2>
-            {(data.sources || []).length ? (
-              <div className="adm-list tight">
-                {data.sources.map((x) => (
-                  <div className="adm-item" key={x.name}>
-                    <div className="adm-item-head static">
-                      <span className="adm-item-main"><b>{SOURCE_LABELS[x.name] || x.name}</b></span>
-                      <span className="adm-item-side"><b>{fmtN(x.visits)} visits</b><small>{fmtN(x.signups)} sign-ups</small></span>
-                    </div>
+            <h2>Where your clicks come from (30 days)</h2>
+            {(() => {
+              const src = data.sources || [];
+              const tv = src.reduce((a, x) => a + x.visits, 0), ts = src.reduce((a, x) => a + x.signups, 0);
+              if (!src.length) return <p className="adm-empty">No visits recorded yet. Share your link and sources will appear here.</p>;
+              const top = Math.max(1, ...src.map((x) => x.visits));
+              return (
+                <>
+                  <p className="adm-note" style={{ marginTop: 0 }}><b>{fmtN(tv)}</b> visits · <b>{fmtN(ts)}</b> sign-ups · best source: <b>{SOURCE_LABELS[src[0].name] || src[0].name}</b></p>
+                  <div className="adm-list tight">
+                    {src.map((x) => (
+                      <div className="adm-item" key={x.name}>
+                        <div className="adm-item-head static" style={{ flexWrap: 'wrap' }}>
+                          <span className="adm-item-main"><b>{SOURCE_LABELS[x.name] || x.name}</b><small> {tv ? Math.round((x.visits / tv) * 100) : 0}% of visits</small></span>
+                          <span className="adm-item-side"><b>{fmtN(x.visits)} clicks</b><small>{fmtN(x.signups)} sign-ups{x.visits ? ` · ${Math.round((x.signups / x.visits) * 100)}% convert` : ''}</small></span>
+                          <div style={{ flexBasis: '100%', height: 6, borderRadius: 4, background: 'rgba(139,92,246,.18)', marginTop: 6 }}><div style={{ width: `${Math.max(4, (x.visits / top) * 100)}%`, height: '100%', borderRadius: 4, background: '#8b5cf6' }} /></div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : <p className="adm-empty">No visits recorded yet. Share the links above and they will appear here.</p>}
+                </>
+              );
+            })()}
           </section>
 
           <section className="adm-grid adm-stats">
