@@ -373,6 +373,11 @@ export default function Profile({
                     <Icon name={refCopied ? 'check' : 'share'} size={14} /> {refCopied ? 'Copied' : 'Copy link'}
                   </button>
                 </div>
+                <div className="referral-msg">
+                  <small>Your ready message</small>
+                  <p>{refShareText}</p>
+                  <button onClick={() => { navigator.clipboard?.writeText(refShareText).catch(() => {}); setRefCopied(true); setTimeout(() => setRefCopied(false), 1800); }}>Copy message</button>
+                </div>
                 <button
                   className="referral-whatsapp-btn"
                   onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(refShareText)}`, '_blank')}

@@ -1,9 +1,24 @@
-EliteScholars update — copy each file to the same path in your project.
+ELITESCHOLARS — ONE COMBINED UPDATE (everything changed since the first zip + latest changes)
+Upload every file here keeping the same folder paths (replace existing). Then redeploy.
 
-NEW FILES: api/_routes/group.js, src/components/GroupPlans.js, src/components/StickerPicker.js, src/styles/stickers.css
-(stickers.css is imported by StickerPicker.js; no other import changes needed)
+DELETE FROM YOUR PROJECT (zips cannot delete):
+  public/OneSignalSDKWorker.js   (OneSignal is removed; its script is gone from public/index.html)
 
-ROUTES ADDED (already wired in api/data.js + vercel.json; still 12 functions): /api/group/get, /api/group/add, /api/group/remove
-ENV: ADSTERRA_API_KEY (you already set it). Nothing else new.
-SQL: run the new "group plans" block at the end of supabase/schema.sql (tables group_plans, group_members).
-Also still needed from earlier rounds if not yet run: the status / presence / moderation SQL blocks in schema.sql.
+NEW FILES
+  api/_helpers/imageGuard.js, api/_routes/group.js, api/_helpers/{pricing,premium,payments}.js (if new), api/shop.js,
+  src/components/{NotificationPrompt,GroupPlans,Shop,AdminPrices,ImageViewer,EmojiPicker}.js, src/utils/emojiData.js, src/styles/shop.css
+
+LATEST CHANGES (this round)
+  - Admin → Students → tap a student: shows WHO referred them (partner name, code, email, phone). api/_routes/admin-ops.js, src/components/AdminStudents.js, admin.css
+  - Activity now logs: "Opened a partner link (CODE)", "Signed up via partner NAME (CODE)". api/auth/register.js, admin-ops.js, AuthScreen.js, utils/referral.js
+    (a student already logged in who opens a partner link is logged too, via events/track)
+  - OneSignal removed: public/index.html
+  - Custom notification pop-up with reasons (Yes turn on / Not now, asks again after 3 days, max 3 times): NotificationPrompt.js, App.js, base.css; sw.js cache v14
+  - Badge share: only "Add to my status", then "Share to WhatsApp" with caption + your referral link + code: ShareSheet.js
+  - Me tab: your own referral code, link and a ready message to copy: Profile.js, base.css
+
+ROUTES: already registered in api/data.js + vercel.json (squads/chat-typing|react|pin|edit, status/thread, group routes). No new function files (12-function limit kept).
+ENV VARS: none new. (ADSTERRA_API_KEY and AI_KEYS as before; photo scanning needs an AI key with vision.)
+SQL: run these blocks from supabase/schema.sql in Supabase SQL editor if not yet run (all safe to re-run):
+  shop_items, status reactions/replies, presence, status moderation, group plans,
+  "chat: reactions, pins, edits, typing", "status reply threads".

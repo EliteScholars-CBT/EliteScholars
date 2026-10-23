@@ -578,3 +578,17 @@ create table if not exists group_members (
 create index if not exists idx_group_members_email on group_members (email);
 alter table group_plans   enable row level security;
 alter table group_members enable row level security;
+
+-- ------------------------------------------------- chat: reactions, pins, edits, typing --
+alter table squad_messages add column if not exists updated_at timestamptz not null default now();
+alter table squad_messages add column if not exists edited_at  timestamptz;
+alter table squad_messages add column if not exists reactions  jsonb not null default '{}'::jsonb;
+alter table squad_messages add column if not exists pinned_at  timestamptz;
+create index if not exists idx_squad_messages_updated on squad_messages (squad_id, updated_at);
+alter table squad_chat_reads add column if not exists typing_at timestamptz;
+
+-- ------------------------------------------------------ status reply threads --
+-- The author can answer a reply; only the author and that student see the thread.
+alter table status_replies add column if not exists to_email  text;
+alter table status_replies add column if not exists parent_id uuid;
+create index if not exists idx_status_replies_to on status_replies (status_id, to_email);

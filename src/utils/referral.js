@@ -69,6 +69,10 @@ export function getReferralAttribution() {
   }
 }
 
+export function getReferralClickedAt() {
+  try { return JSON.parse(localStorage.getItem(ATTR_KEY) || '{}').capturedAt || 0; } catch { return 0; }
+}
+
 export function clearReferralAttribution() {
   try { localStorage.removeItem(ATTR_KEY); } catch { /* ignore */ }
 }

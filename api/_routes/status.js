@@ -3,7 +3,8 @@
 //   POST /api/status/feed    {}                          -> statuses the caller may see
 //   POST /api/status/delete  { id }
 //   POST /api/status/react   { id, kind }                kind: like|love|fire|clap|wow, or "" to remove
-//   POST /api/status/reply   { id, text }                private reply: only the status owner sees it
+//   POST /api/status/reply   { id, text, to? }           private reply to the author; the author answers with `to` = a reply id (a thread only the two can see)
+//   POST /api/status/thread  { id }                      the conversation(s) under a status
 //   POST /api/status/reshare { id, privacy }             copies a public status to your own, marked "Reshared from …"
 //   POST /api/status/insights{ id }                      owner only: who reacted and replied
 //   POST /api/status/report  { id, reason }              anyone who can see a status can report it to the admin
@@ -16,6 +17,7 @@ import { eliteEmails } from "../_helpers/elite.js";
 import { saveMedia } from "../_helpers/media.js";
 import { pushToEmails } from "../_helpers/push.js";
 import { checkText } from "../_helpers/contentGuard.js";
+import { moderateImage } from "../_helpers/imageGuard.js";
 
 const HOURS = 24;
 const PRIVACY = ["me", "squad", "public"];
@@ -72,7 +74,19 @@ export default async function handler(req, res) {
       return sendErr(res, guard.message);
     }
     if (b.scan === "flagged") return sendErr(res, "That photo can't be posted. Please choose a different one.");
-    const scan = b.image ? (b.scan === "clean" ? "clean" : "skipped") : null;
+    // Every photo is checked on the server (nudity, sexual content, scam text, gore). If that check cannot run,
+    // the phone's own scan must have passed — otherwise the photo is not posted.
+    let scan = null;
+    if (b.image) {
+      const mod = await moderateImage(b.image);
+      if (mod.checked && !mod.ok) {
+        sb.from("events").insert({ type: "status_blocked", email, payload: { flag: `photo:${mod.reason}`, photo: true } }).then(() => {}, () => {});
+        return sendErr(res, mod.reason === "scam" ? "That photo looks like a money or scam offer. It can't be posted." : "That photo can't be posted on EliteScholars. Please choose a different one.");
+      }
+      if (mod.checked) scan = "ai";
+      else if (b.scan === "clean") scan = "clean";
+      else return sendErr(res, "We couldn't check that photo right now, so it wasn't posted. Please try again in a moment.");
+    }
     const privacy = PRIVACY.includes(b.privacy) ? b.privacy : "me";
     const bg = BGS.includes(b.bg) ? b.bg : "violet";
     const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
@@ -91,7 +105,7 @@ export default async function handler(req, res) {
     let { data, error } = await sb.from("statuses").insert({ ...base, scan }).select("id,created_at,expires_at").single();
     if (error) ({ data, error } = await sb.from("statuses").insert(base).select("id,created_at,expires_at").single());
     if (error) { console.error("[status] insert", error.message); return sendErr(res, "Could not post your status.", 500); }
-    sb.from("events").insert({ type: "status_post", email, payload: { privacy, photo: !!mediaId, scan: scan || undefined, statusId: data.id } }).then(() => {}, () => {});
+    sb.from("events").insert({ type: "status_post", email, payload: { privacy, photo: !!mediaId, scan: scan || undefined, statusId: data.id, preview: text.slice(0, 80) } }).then(() => {}, () => {});
     // housekeeping: drop statuses that expired more than a day ago
     sb.from("statuses").delete().lt("expires_at", new Date(Date.now() - 24 * 3600 * 1000).toISOString()).then(() => {}, () => {});
     sb.from("media").delete().lt("created_at", new Date(Date.now() - 31 * 86400000).toISOString()).then(() => {}, () => {});
@@ -108,7 +122,7 @@ export default async function handler(req, res) {
     const rows = (data || []).filter((r) => r.email === email || r.privacy === "public" || (r.privacy === "squad" && mateSet.has(r.email)));
     const shown = rows.slice(0, 100);
     const ids = shown.map((r) => r.id);
-    const counts = {}, mine = {}, replyCount = {};
+    const counts = {}, mine = {}, replyCount = {}, threadCount = {};
     if (ids.length) {
       const { data: rx } = await sb.from("status_reactions").select("status_id,email,kind").in("status_id", ids).limit(5000);
       (rx || []).forEach((x) => {
@@ -116,6 +130,11 @@ export default async function handler(req, res) {
         c[x.kind] = (c[x.kind] || 0) + 1;
         if (x.email === email) mine[x.status_id] = x.kind;
       });
+      const theirs = shown.filter((r) => r.email !== email).map((r) => r.id);
+      if (theirs.length) { // how many times the author has answered me (needs the threading SQL)
+        const { data: tr, error: te } = await sb.from("status_replies").select("status_id").in("status_id", theirs).eq("to_email", email).limit(2000);
+        if (!te) (tr || []).forEach((x) => { threadCount[x.status_id] = (threadCount[x.status_id] || 0) + 1; });
+      }
       const own = shown.filter((r) => r.email === email).map((r) => r.id);
       if (own.length) {
         const { data: rp } = await sb.from("status_replies").select("status_id").in("status_id", own).limit(5000);
@@ -127,7 +146,7 @@ export default async function handler(req, res) {
         id: r.id, media_id: r.media_id || null, text: r.text, bg: r.bg, privacy: r.privacy, created_at: r.created_at, expires_at: r.expires_at,
         author: r.email === email ? "You" : r.display_name, mine: r.email === email, elite: elite.has(r.email),
         reshared_from: r.reshared_from || null,
-        reactions: counts[r.id] || {}, my_reaction: mine[r.id] || "", replies: replyCount[r.id] || 0,
+        reactions: counts[r.id] || {}, my_reaction: mine[r.id] || "", replies: replyCount[r.id] || 0, answered: threadCount[r.id] || 0,
         can_reshare: r.email !== email && r.privacy === "public",
         // stable per-author key so the app can group stories without exposing emails
         key: r.email === email ? "me" : `${r.display_name}`,
@@ -164,15 +183,45 @@ export default async function handler(req, res) {
   if (op === "reply") {
     const row = await visibleStatus(sb, email, b.id);
     if (!row) return sendErr(res, "This status is no longer available.", 404);
-    if (row.email === email) return sendErr(res, "You can't reply to your own status.");
     const text = cleanText(b.text).slice(0, 200);
     if (!text) return sendErr(res, "Write a reply first.");
-    if (!(await rateLimitOk(req, res, "status-reply", 8, 60, email))) return;
+    const guard = checkText(text);
+    if (!guard.ok) return sendErr(res, guard.message);
+    if (!(await rateLimitOk(req, res, "status-reply", 12, 60, email))) return;
     const display = await nameOf(sb, email);
-    const { error } = await sb.from("status_replies").insert({ status_id: row.id, email, display_name: display, text });
-    if (error) { console.error("[status] reply", error.message); return sendErr(res, "Could not send your reply.", 500); }
-    pushToEmails([row.email], { title: `💬 ${display} replied to your status`, body: text.length > 80 ? text.slice(0, 77) + "…" : text, url: "/app", tag: `status-reply-${row.id}`, type: "status" }).catch(() => {});
+    const owner = row.email === email;
+    let toEmail = row.email, parent = null;
+    if (owner) {
+      // the author answering one of the replies: thread it under that reply
+      const { data: target } = await sb.from("status_replies").select("id,email,status_id").eq("id", String(b.to || "")).eq("status_id", row.id).maybeSingle();
+      if (!target || target.email === email) return sendErr(res, "Pick a reply to answer.");
+      toEmail = target.email; parent = target.id;
+    }
+    let ins = await sb.from("status_replies").insert({ status_id: row.id, email, display_name: display, text, to_email: toEmail, parent_id: parent });
+    if (ins.error) ins = await sb.from("status_replies").insert({ status_id: row.id, email, display_name: display, text }); // threading SQL not run yet
+    if (ins.error) { console.error("[status] reply", ins.error.message); return sendErr(res, "Could not send your reply.", 500); }
+    sb.from("events").insert({ type: owner ? "status_reply_back" : "status_reply", email, payload: { statusId: row.id, to: owner ? undefined : row.display_name, preview: text.slice(0, 80) } }).then(() => {}, () => {});
+    pushToEmails([toEmail], { title: owner ? `💬 ${display} replied to you` : `💬 ${display} replied to your status`, body: text.length > 80 ? text.slice(0, 77) + "…" : text, url: "/app", tag: `status-reply-${row.id}`, type: "status" }).catch(() => {});
     return sendOk(res, { sent: true });
+  }
+
+  if (op === "thread") {
+    // the author sees every conversation under the status; anyone else sees only their own with the author
+    const row = await visibleStatus(sb, email, b.id);
+    if (!row) return sendErr(res, "This status is no longer available.", 404);
+    let q = sb.from("status_replies").select("id,email,display_name,text,created_at,to_email").eq("status_id", row.id).order("created_at", { ascending: true }).limit(300);
+    if (row.email !== email) q = q.or(`email.eq.${email},to_email.eq.${email}`);
+    let { data, error } = await q;
+    if (error) { ({ data } = await sb.from("status_replies").select("id,email,display_name,text,created_at").eq("status_id", row.id).eq("email", email).order("created_at", { ascending: true }).limit(100)); }
+    const ownerView = row.email === email;
+    const key = (r) => (r.email === row.email ? r.to_email : r.email) || r.email;
+    const hash = (e) => { let h = 0; for (const c of String(e)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h.toString(36); };
+    return sendOk(res, { replies: (data || []).map((r) => ({
+      id: r.id, text: r.text, created_at: r.created_at,
+      mine: r.email === email, from_author: r.email === row.email,
+      name: r.email === row.email ? (ownerView ? "You" : row.display_name) : r.display_name,
+      thread: ownerView ? hash(key(r)) : "me",
+    })) });
   }
 
   if (op === "reshare") {
@@ -217,9 +266,9 @@ export default async function handler(req, res) {
     if (!row) return sendErr(res, "Not your status.", 403);
     const [{ data: rx }, { data: rp }] = await Promise.all([
       sb.from("status_reactions").select("display_name,kind,created_at").eq("status_id", id).order("created_at", { ascending: false }).limit(100),
-      sb.from("status_replies").select("display_name,text,created_at").eq("status_id", id).order("created_at", { ascending: false }).limit(100),
+      sb.from("status_replies").select("id,display_name,text,created_at,email").eq("status_id", id).order("created_at", { ascending: false }).limit(100),
     ]);
-    return sendOk(res, { reactions: rx || [], replies: rp || [] });
+    return sendOk(res, { reactions: rx || [], replies: (rp || []).filter((r) => r.email !== email).map((r) => ({ id: r.id, display_name: r.display_name, text: r.text, created_at: r.created_at })) });
   }
 
   return sendErr(res, "Unknown action.", 404);

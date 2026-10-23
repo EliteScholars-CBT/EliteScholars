@@ -38,6 +38,9 @@ export default function StatusBar() {
   const [toast, setToast] = useState('');
   const [insights, setInsights] = useState(null); // { reactions, replies } for your own status
   const [resharing, setResharing] = useState(null); // the status being reshared
+  const [thread, setThread] = useState(null); // { st, replies } conversation panel
+  const [tText, setTText] = useState('');
+  const [tOpen, setTOpen] = useState(''); // owner: which conversation is open for answering
   const timer = useRef(null);
 
   const refresh = useCallback(async () => {
@@ -63,7 +66,7 @@ export default function StatusBar() {
   const others = groups.filter((g) => !g.mine);
 
   const open = (g) => setView({ stories: g.items, i: 0, mine: g.mine });
-  const close = () => { clearTimeout(timer.current); setView(null); setPaused(false); setReply(''); setInsights(null); };
+  const close = () => { clearTimeout(timer.current); setView(null); setPaused(false); setReply(''); setInsights(null); setThread(null); };
   const flash = (t) => { setToast(t); setTimeout(() => setToast(''), 2200); };
   const patch = (id, p) => {
     setList((l) => l.map((x) => (x.id === id ? { ...x, ...p } : x)));
@@ -97,8 +100,31 @@ export default function StatusBar() {
   };
   const openInsights = async (st) => {
     setPaused(true);
-    const r = await call('insights', { id: st.id });
+    const [r, t] = await Promise.all([call('insights', { id: st.id }), call('thread', { id: st.id })]);
     setInsights(r.ok ? r.data : { reactions: [], replies: [] });
+    setThread({ st, replies: t.ok ? t.data.replies : [] });
+    setTOpen('');
+  };
+  const openThread = async (st) => {
+    setPaused(true); setInsights(null);
+    const t = await call('thread', { id: st.id });
+    setThread({ st, replies: t.ok ? t.data.replies : [] });
+    setTText('');
+  };
+  const closeThread = () => { setThread(null); setInsights(null); setPaused(false); setTText(''); setTOpen(''); };
+  const sendThread = async (to) => {
+    const text = tText.trim();
+    if (!text || !thread) return;
+    const r = await call('reply', { id: thread.st.id, text, ...(to ? { to } : {}) });
+    if (!r.ok) { flash(r.error); return; }
+    setTText('');
+    const t = await call('thread', { id: thread.st.id });
+    if (t.ok) setThread((c) => (c ? { ...c, replies: t.data.replies } : c));
+    flash('Sent');
+  };
+  const tryReshare = (st) => {
+    if (!st.can_reshare) { flash('Only public statuses can be reshared.'); return; }
+    setPaused(true); setResharing(st);
   };
 
   // auto-advance + mark seen
@@ -165,7 +191,7 @@ export default function StatusBar() {
         const total = Object.values(cur.reactions || {}).reduce((a, n) => a + n, 0);
         return createPortal(
           <div className="st-view" onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
-          <div className="st-frame" style={{ background: grad(cur.bg) }} onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width; if (paused) { setPaused(false); setInsights(null); return; } step(x < 0.35 ? -1 : 1); }}>
+          <div className="st-frame" style={{ background: grad(cur.bg) }} onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width; if (paused) { setPaused(false); setInsights(null); setThread(null); return; } step(x < 0.35 ? -1 : 1); }}>
             <div className={`st-prog ${paused ? 'paused' : ''}`}>
               {view.stories.map((s, k) => (
                 <i key={s.id}><b className={k < view.i ? 'full' : k === view.i ? 'run' : ''} style={k === view.i ? { animationDuration: `${DUR}ms` } : undefined} /></i>
@@ -204,20 +230,43 @@ export default function StatusBar() {
                   <input className="allow-copy" value={reply} maxLength={200} placeholder={`Reply to ${cur.author}…`}
                     onFocus={() => setPaused(true)} onBlur={() => { if (!reply) setPaused(false); }}
                     onChange={(e) => setReply(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') sendReply(cur); }} />
-                  {reply.trim() ? <button className="st-send" onClick={() => sendReply(cur)} aria-label="Send reply">➤</button> : null}
-                  {!reply.trim() ? <button className="st-send alt" onClick={() => reportStatus(cur)} aria-label="Report this status" title="Report">🚩</button> : null}
-                  {cur.can_reshare && !reply.trim() ? <button className="st-send alt" onClick={() => { setPaused(true); setResharing(cur); }} aria-label="Reshare">🔁</button> : null}
+                  <button className="st-send" disabled={!reply.trim()} onClick={() => sendReply(cur)} aria-label="Send reply">➤</button>
+                </div>
+                <div className="st-tools">
+                  <button onClick={() => tryReshare(cur)}>🔁 Reshare</button>
+                  <button onClick={() => openThread(cur)}>💬 Conversation{cur.answered > 0 ? ` (${cur.answered} new)` : ''}</button>
+                  <button onClick={() => reportStatus(cur)}>🚩 Report</button>
                 </div>
               </div>
             )}
 
             {insights && cur.mine && (
               <div className="st-insights" onClick={(e) => e.stopPropagation()}>
-                <div className="st-ins-top"><b>Who reacted</b><button onClick={() => { setInsights(null); setPaused(false); }} aria-label="Close">✕</button></div>
-                {!insights.reactions.length && !insights.replies.length && <p>Nobody yet. Check back soon.</p>}
+                <div className="st-ins-top"><b>Who reacted</b><button onClick={closeThread} aria-label="Close">✕</button></div>
+                {!insights.reactions.length && !(thread && thread.replies.length) && <p>Nobody yet. Check back soon.</p>}
                 {insights.reactions.map((r, i) => <div className="st-ins-row" key={`r${i}`}><span>{EMOJI[r.kind] || '👍'}</span><b>{r.display_name || 'A student'}</b></div>)}
-                {insights.replies.length > 0 && <div className="st-ins-h">Replies (only you see these)</div>}
-                {insights.replies.map((r, i) => <div className="st-ins-row" key={`p${i}`}><span>💬</span><div><b>{r.display_name || 'A student'}</b><p>{r.text}</p></div></div>)}
+                {thread && thread.replies.length > 0 && <div className="st-ins-h">Replies (only you and each student see their conversation)</div>}
+                {thread && Object.entries(thread.replies.reduce((m, x) => { (m[x.thread] = m[x.thread] || []).push(x); return m; }, {})).map(([k, msgs]) => {
+                  const lastIn = [...msgs].reverse().find((x) => !x.from_author);
+                  return (
+                    <div className="st-conv" key={k}>
+                      {msgs.map((m) => <div key={m.id} className={`st-bub ${m.from_author ? 'me' : ''}`}><b>{m.from_author ? 'You' : m.name}</b><span>{m.text}</span></div>)}
+                      {tOpen === k ? (
+                        <div className="st-replyrow"><input className="allow-copy" autoFocus value={tText} maxLength={200} placeholder={`Answer ${lastIn ? lastIn.name : ''}…`} onChange={(e) => setTText(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && lastIn) sendThread(lastIn.id); }} />
+                          <button className="st-send" disabled={!tText.trim()} onClick={() => lastIn && sendThread(lastIn.id)} aria-label="Send">➤</button></div>
+                      ) : <button className="st-answer" onClick={() => { setTOpen(k); setTText(''); }}>↩ Reply</button>}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {thread && !cur.mine && (
+              <div className="st-insights" onClick={(e) => e.stopPropagation()}>
+                <div className="st-ins-top"><b>Your conversation with {cur.author}</b><button onClick={closeThread} aria-label="Close">✕</button></div>
+                {!thread.replies.length && <p>No messages yet. Use the reply box to start.</p>}
+                {thread.replies.map((m) => <div key={m.id} className={`st-bub ${m.mine ? 'me' : ''}`}><b>{m.mine ? 'You' : m.name}</b><span>{m.text}</span></div>)}
+                <div className="st-replyrow"><input className="allow-copy" value={tText} maxLength={200} placeholder="Write a message…" onChange={(e) => setTText(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') sendThread(); }} />
+                  <button className="st-send" disabled={!tText.trim()} onClick={() => sendThread()} aria-label="Send">➤</button></div>
               </div>
             )}
             {toast && <div className="st-toast" role="status">{toast}</div>}

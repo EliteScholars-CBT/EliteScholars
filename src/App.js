@@ -84,7 +84,8 @@ import {
 
 } from './utils/premium';
 
-import { registerSW, requestNotificationPermission, scheduleDailyReminder, listenForSWMessages } from './utils/notifications';
+import { registerSW, scheduleDailyReminder, listenForSWMessages } from './utils/notifications';
+import NotificationPrompt from './components/NotificationPrompt';
 import { markOpenChat, markOpenSquad, wantsChat, captureChatParam, captureSchoolParam, wantsSchool, clearSchoolWish, wantsShop, clearShopWish } from './utils/chatLink';
 
 import { applySecurityMeasures } from './utils/security';
@@ -464,17 +465,14 @@ export default function App() {
 
       if (reg) {
 
-        requestNotificationPermission().then((perm) => {
+        // permission is asked later by <NotificationPrompt> with an explanation; here we only restore reminders if already allowed
+        if ('Notification' in window && Notification.permission === 'granted') {
 
-          if (perm === 'granted') {
+          const u = loadUser();
 
-            const u = loadUser();
+          if (u.name) scheduleDailyReminder(REMINDER_TIMES, u.name);
 
-            if (u.name) scheduleDailyReminder(REMINDER_TIMES, u.name);
-
-          }
-
-        });
+        }
 
       }
 
@@ -1859,6 +1857,7 @@ export default function App() {
 
       {showBottomNav && <GuideHost screen={screen} email={email} premium={premiumUser} onOpenShop={() => setScreen('shop')} />}
       {showBottomNav && <TipsHost screen={screen} email={email} />}
+      <NotificationPrompt active={!!(name && email && ['examType', 'subjects', 'leaderboard', 'challenges', 'shop', 'profile'].includes(screen))} name={name} reminderTimes={REMINDER_TIMES} />
 
 
 

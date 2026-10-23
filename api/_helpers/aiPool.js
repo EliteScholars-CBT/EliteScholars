@@ -80,17 +80,18 @@ async function post(url, headers, body, timeoutMs) {
   } finally { clearTimeout(t); }
 }
 
-export async function callKey(k, { system, user, maxTokens }) {
+export async function callKey(k, { system, user, maxTokens, image }) {
+  const img = image && image.b64 ? image : null; // optional picture for the model to look at
   // the caller's need wins over the key's default cap (a study rewrite needs ~4000 tokens of JSON), up to 8000
   const max = Math.min(Math.max(k.maxTokens, maxTokens || 0), 8000);
   if (k.provider === "anthropic") {
     const j = await post(`${k.baseUrl || "https://api.anthropic.com"}/v1/messages`, { "x-api-key": k.key, "anthropic-version": "2023-06-01" },
-      { model: k.model, max_tokens: max, temperature: k.temperature, system, messages: [{ role: "user", content: user }] }, k.timeoutMs);
+      { model: k.model, max_tokens: max, temperature: k.temperature, system, messages: [{ role: "user", content: img ? [{ type: "image", source: { type: "base64", media_type: img.mime, data: img.b64 } }, { type: "text", text: user }] : user }] }, k.timeoutMs);
     return (j?.content || []).map((c) => c.text || "").join("");
   }
   if (k.provider === "openai") {
     const newer = /^(o\d|gpt-5)/.test(k.model);
-    const body = { model: k.model, messages: [{ role: "system", content: system }, { role: "user", content: user }], response_format: { type: "json_object" } };
+    const body = { model: k.model, messages: [{ role: "system", content: system }, { role: "user", content: img ? [{ type: "text", text: user }, { type: "image_url", image_url: { url: `data:${img.mime};base64,${img.b64}` } }] : user }], response_format: { type: "json_object" } };
     if (newer) body.max_completion_tokens = max; else { body.max_tokens = max; body.temperature = k.temperature; }
     const j = await post(`${k.baseUrl || "https://api.openai.com"}/v1/chat/completions`, { authorization: `Bearer ${k.key}` }, body, k.timeoutMs);
     return j?.choices?.[0]?.message?.content || "";
@@ -98,7 +99,7 @@ export async function callKey(k, { system, user, maxTokens }) {
   // gemini
   const url = `${k.baseUrl || "https://generativelanguage.googleapis.com"}/v1beta/models/${encodeURIComponent(k.model)}:generateContent`;
   const gen = { maxOutputTokens: max, temperature: k.temperature, responseMimeType: "application/json" };
-  const body = (g) => ({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: "user", parts: [{ text: user }] }], generationConfig: g });
+  const body = (g) => ({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: "user", parts: img ? [{ inlineData: { mimeType: img.mime, data: img.b64 } }, { text: user }] : [{ text: user }] }], generationConfig: g });
   const read = (j) => (j?.candidates?.[0]?.content?.parts || []).filter((p) => !p.thought).map((p) => p.text || "").join("");
   // Gemini 2.5+ "thinking" tokens count against maxOutputTokens and can leave the JSON cut off, so keep thinking small.
   try {

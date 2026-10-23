@@ -264,6 +264,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
     const utter = new SpeechSynthesisUtterance(spoken);
     const voice = getVoiceForCharacter(selectedCharId, characterVoices);
     if (voice) utter.voice = voice;
+    utter.lang = (voice && voice.lang) || 'en-GB'; // always an English voice: stops phones reading English topics with another language's sounds
     utter.rate = 0.8;
     utter.pitch = 1.0;
     let gotBoundary = false;

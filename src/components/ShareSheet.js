@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import '../styles/status.css';
-import { renderCard, nativeShare, downloadBlob } from '../utils/shareCard';
+import { renderCard } from '../utils/shareCard';
+import { loadUser } from '../utils/storage';
+import { buildReferralCode, referralLink } from '../utils/referral';
 import { postStatusFromBlob } from '../utils/statusPost';
 import { getSessionToken } from '../utils/sessionFetch';
 
@@ -20,11 +22,11 @@ export default function ShareSheet({ card, text, link, onClose }) {
     return () => { off = true; if (u) URL.revokeObjectURL(u); };
   }, []); // eslint-disable-line
 
-  const msg = `${text}\n\nJoin me on EliteScholars (free to start): ${link}`;
-  const any = async () => {
-    try { if (!(await nativeShare(blob, text, link))) { downloadBlob(blob); setNote('Saved. Share the picture from your gallery.'); } }
-    catch { /* cancelled */ }
-  };
+  const u = loadUser() || {};
+  const myCode = u.email || u.username || u.name ? buildReferralCode(u.username || u.name, u.email) : '';
+  const myLink = myCode ? referralLink(myCode) : link;
+  // one message: the caption + the student's own referral code and link
+  const msg = `${text}\n\nJoin me on EliteScholars (free to start): ${myLink}${myCode ? `\nUse my referral code: ${myCode}` : ''}`;
   const toStatus = async () => {
     if (!blob || posting || posted) return;
     setPosting(true); setNote('');
@@ -33,7 +35,6 @@ export default function ShareSheet({ card, text, link, onClose }) {
     if (r.ok) { setPosted(true); setNote(`Added to your status. ${priv === 'public' ? 'Everyone' : 'Your squads'} can see it for 24 hours.`); } else setNote(r.error);
   };
   const wa = () => window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-  const copy = () => navigator.clipboard?.writeText(msg).then(() => setNote('Link copied!')).catch(() => setNote('Could not copy.'));
 
   return createPortal(
     <div className="st-modal" style={{ zIndex: 9500 }} onClick={onClose}>
@@ -56,12 +57,7 @@ export default function ShareSheet({ card, text, link, onClose }) {
               )}
             </div>
           )}
-          <button className="st-post" style={{ marginTop: 0 }} disabled={!blob} onClick={any}>📤 Share anywhere</button>
-          <button className="st-post" style={{ marginTop: 0, background: '#16A34A' }} onClick={wa}>WhatsApp</button>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button className="st-post" style={{ marginTop: 0, background: 'rgba(124,58,237,.12)', color: '#6D28D9' }} disabled={!blob} onClick={() => { downloadBlob(blob); setNote('Picture saved.'); }}>⬇ Download</button>
-            <button className="st-post" style={{ marginTop: 0, background: 'rgba(124,58,237,.12)', color: '#6D28D9' }} onClick={copy}>🔗 Copy link</button>
-          </div>
+          {(posted || !getSessionToken()) && <button className="st-post" style={{ marginTop: 0, background: '#16A34A' }} onClick={wa}>Share to WhatsApp</button>}
         </div>
         {note && <div className="st-count" style={{ textAlign: 'center' }}>{note}</div>}
       </div>

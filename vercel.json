@@ -110,6 +110,10 @@
       "destination": "/api/data?route=status/react"
     },
     {
+      "source": "/api/status/thread",
+      "destination": "/api/data?route=status/thread"
+    },
+    {
       "source": "/api/status/reply",
       "destination": "/api/data?route=status/reply"
     },
@@ -320,6 +324,22 @@
     {
       "source": "/api/squads/chat-send",
       "destination": "/api/data?route=squads/chat-send"
+    },
+    {
+      "source": "/api/squads/chat-typing",
+      "destination": "/api/data?route=squads/chat-typing"
+    },
+    {
+      "source": "/api/squads/chat-react",
+      "destination": "/api/data?route=squads/chat-react"
+    },
+    {
+      "source": "/api/squads/chat-pin",
+      "destination": "/api/data?route=squads/chat-pin"
+    },
+    {
+      "source": "/api/squads/chat-edit",
+      "destination": "/api/data?route=squads/chat-edit"
     },
     {
       "source": "/api/squads/chat-delete",

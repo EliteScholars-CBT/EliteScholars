@@ -73,12 +73,18 @@ const studentRow = (p) => ({
 // Plain-English one-liners for the activity timeline
 const EVENT_LABEL = {
   quiz_start: "Started a quiz", quiz_complete: "Finished a quiz", signup: "Signed up", login: "Logged in", premium_modal_open: "Looked at Premium",
-  learn_open: "Opened a Learn topic", status_post: "Posted a status", status_blocked: "Tried to post a blocked status", game_start: "Started a game", game_over: "Finished a game", share: "Shared something", pwa_installed: "Installed the app",
+  learn_open: "Opened a Learn topic", status_post: "Posted a status", status_reply: "Replied to a status", status_reply_back: "Answered a reply on their status", status_blocked: "Tried to post a blocked status", game_start: "Started a game", game_over: "Finished a game", share: "Shared something", pwa_installed: "Installed the app",
 };
 const labelEvent = (e) => {
   const p = e.payload || {};
   if (e.type === "file_upload") return `Uploaded a file to study${p.n ? ` (upload #${p.n})` : ""}${p.fileName ? ` — ${p.fileName}` : ""}${p.engine ? ` · ${p.engine === "ai" ? "AI" : "quick"} rewrite` : ""}`;
   const base = EVENT_LABEL[e.type] || String(e.type).replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
+  if (e.type === "referral_link_opened") return `Opened a partner link${p.code || p.referral_code ? ` (${p.code || p.referral_code})` : ""}${p.partner ? ` — ${p.partner}` : ""}`;
+  if (e.type === "register") return `Signed up${p.code ? ` via partner ${p.partner ? p.partner + " " : ""}(${p.code})` : ""}`;
+  if (e.type === "referral_signup") return `Signed up through a partner link${p.referred_by ? ` (${p.referred_by})` : ""}`;
+  if (e.type === "status_post") return `Posted a status (${p.privacy || "squad"}${p.photo ? ", with photo" : ""})${p.preview ? ` — "${p.preview}"` : ""}`;
+  if (e.type === "status_reply" || e.type === "status_reply_back") return `${EVENT_LABEL[e.type]}${p.to ? ` by ${p.to}` : ""}${p.preview ? ` — "${p.preview}"` : ""}`;
+  if (e.type === "status_blocked") return `Tried to post a blocked status (${p.flag || "flagged"})`;
   const extra = [p.subject, p.exam, p.topic, p.score !== undefined ? `score ${p.score}` : "", p.postTitle].filter(Boolean).join(" · ");
   return extra ? `${base} — ${extra}` : base;
 };
@@ -309,6 +315,12 @@ export default async function handler(req, res) {
         sb.from("payments").select("plan,amount,status,created_at").eq("email", email).order("created_at", { ascending: false }).limit(10),
         timeline(sb, email, 120),
       ]);
+      let referrer = null;
+      if (p.referrer_partner_id || p.referred_by_code) {
+        let pr = null;
+        if (p.referrer_partner_id) pr = (await sb.from("partners").select("id,full_name,email,phone,referral_code,status").eq("id", p.referrer_partner_id).maybeSingle()).data;
+        referrer = { code: p.referred_by_code || pr?.referral_code || "", partnerId: pr?.id || null, name: pr?.full_name || "", email: pr?.email || "", phone: pr?.phone || "", status: pr?.status || "" };
+      }
       let squad = null;
       if (sm) { const { data: s } = await sb.from("squads").select("name,code").eq("id", sm.squad_id).maybeSingle(); if (s) squad = { name: s.name, code: s.code, xp: sm.xp_contributed }; }
       let classes = [];
@@ -320,7 +332,7 @@ export default async function handler(req, res) {
           totalCorrect: p.total_correct, totalQuestions: p.total_questions, perfectRounds: p.perfect_rounds, challengesWon: p.challenges_won, challengesLost: p.challenges_lost,
           achievements: (p.achievements || []).length, subjects, referredBy: p.referred_by_code || "",
         },
-        squad, classes, teaching: tc || [], payments: pay || [], activity,
+        referrer, squad, classes, teaching: tc || [], payments: pay || [], activity,
       });
     }
 

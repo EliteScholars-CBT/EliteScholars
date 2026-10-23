@@ -15,7 +15,7 @@ import {
 
 import { logSessionToSheet } from '../utils/auth';
 import { saveUser } from '../utils/storage';
-import { getReferralAttribution, sendReferralSignup, clearReferralAttribution } from '../utils/referral';
+import { getReferralAttribution, getReferralClickedAt, sendReferralSignup, clearReferralAttribution } from '../utils/referral';
 
 // Auth traffic is never written to the console.
 const devLog = () => {};
@@ -276,6 +276,7 @@ export default function AuthScreen({ onDone }) {
       selectedExams,
       username: username.trim(),
       referredBy: getReferralAttribution() || '',
+      referralClickedAt: getReferralClickedAt(),
     };
     devLog('📤 Sending payload to registerProfile:', { ...payload, password: '[REDACTED]' });
 

@@ -29,7 +29,10 @@ function Detail({ api, email }) {
         <div><span>Challenges W / L</span><b>{s.challengesWon} / {s.challengesLost}</b></div>
         <div><span>Plan</span><b>{s.premium ? `${s.plan} until ${fmtDT(s.expiresAt)}` : 'Free'}</b></div>
         {s.guardianEmail && <div><span>Parent email</span><b>{s.guardianEmail}</b></div>}
-        {s.referredBy && <div><span>Referred by code</span><b>{s.referredBy}</b></div>}
+        {d.referrer ? (
+          <div className="adm-ref"><span>Referred by</span><b>{d.referrer.name || 'Partner (not found)'}{d.referrer.code ? ` · ${d.referrer.code}` : ''}</b>
+            {(d.referrer.email || d.referrer.phone) && <small>{[d.referrer.email, d.referrer.phone].filter(Boolean).join(' · ')}</small>}</div>
+        ) : s.referredBy ? <div><span>Referred by code</span><b>{s.referredBy}</b></div> : null}
         {d.squad && <div><span>Squad</span><b>{d.squad.name} ({fmtN(d.squad.xp)} XP)</b></div>}
         {d.classes.length > 0 && <div><span>Classes</span><b>{d.classes.map((c) => c.name).join(', ')}</b></div>}
         {d.teaching.length > 0 && <div><span>Teaches</span><b>{d.teaching.map((c) => c.name).join(', ')}</b></div>}

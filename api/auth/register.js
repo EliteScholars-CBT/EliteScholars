@@ -77,8 +77,13 @@ async function handler(req, res) {
     return sendErr(res, 'Registration failed. The email or username may already be in use.');
   }
 
+  if (refCode) {
+    const ck = Number(req.body?.referralClickedAt || 0);
+    const clickedAt = ck > Date.now() - 61 * 86400000 && ck <= Date.now() ? new Date(ck).toISOString() : null;
+    if (clickedAt) await insertRow('events', { type: 'referral_link_opened', email: emailLower, created_at: clickedAt, payload: { code: refCode, partner: partner ? partner.full_name || '' : '' } });
+  }
   if (refCode) await insertRow('referrals', { code: refCode, referred_email: emailLower, partner_id: partner ? partner.id : null });
-  await insertRow('events', { type: 'register', email: emailLower, payload: { username: usernameTrimmed } });
+  await insertRow('events', { type: 'register', email: emailLower, payload: { username: usernameTrimmed, ...(refCode ? { code: refCode, partner: partner ? partner.full_name || '' : '' } : {}) } });
 
   await startTrialIfEnabled(emailLower);
   const row = (await selectOne('profiles', { email: emailLower })).row;

@@ -45,3 +45,11 @@
 .stp-hint { grid-column: 1 / -1; font-size: 12px; opacity: .6; padding: 4px 2px; }
 .sc-stkmsg { width: 132px; height: 142px; display: block; }
 .sc-stkmsg-small { width: 38px; height: 41px; }
+
+/* emoji keyboard */
+.emo { height: min(44vh, 340px); }
+.emo-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); gap: 2px; padding: 8px 8px 4px; align-content: start; }
+.emo-grid button { border: 0; background: transparent; font-size: 26px; padding: 4px 0; cursor: pointer; border-radius: 10px; line-height: 1.2; } .emo-grid button:active { background: rgba(124,58,237,.14); }
+.emo-tabs { display: flex; gap: 2px; padding: 4px 6px calc(4px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(124,58,237,.12); overflow-x: auto; flex: 0 0 auto; scrollbar-width: none; }
+.emo-tabs button { flex: 1 0 auto; border: 0; background: transparent; font-size: 20px; padding: 6px 8px; border-radius: 10px; cursor: pointer; opacity: .6; }
+.emo-tabs button.on { opacity: 1; background: rgba(124,58,237,.14); }
