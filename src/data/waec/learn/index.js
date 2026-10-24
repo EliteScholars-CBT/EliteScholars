@@ -48,24 +48,24 @@ import { WAEC_CIVIC_LEARN_SS3 } from './ss3/civic';
 
 // ── New subjects — SS1 only for now ──────────────────────────────────────
 import { WAEC_FURTHER_MATHS_LEARN_SS1 } from './ss1/further_maths';
-// import { WAEC_FURTHER_MATHS_LEARN_SS2 } from './ss2/further_maths';
-// import { WAEC_FURTHER_MATHS_LEARN_SS3 } from './ss3/further_maths';
+import { WAEC_FURTHER_MATHEMATICS_LEARN_SS2 as WAEC_FURTHER_MATHS_LEARN_SS2 } from './ss2/further_maths';
+import { WAEC_FURTHER_MATHEMATICS_LEARN_SS3 as WAEC_FURTHER_MATHS_LEARN_SS3 } from './ss3/further_maths';
 
 import { WAEC_CRS_LEARN_SS1 } from './ss1/crs';
-// import { WAEC_CRS_LEARN_SS2 } from './ss2/crs';
-// import { WAEC_CRS_LEARN_SS3 } from './ss3/crs';
+import { WAEC_CRS_LEARN_SS2 } from './ss2/crs';
+import { WAEC_CRS_LEARN_SS3 } from './ss3/crs';
 
 import { WAEC_VISUAL_ARTS_LEARN_SS1 } from './ss1/visual_arts';
-// import { WAEC_VISUAL_ARTS_LEARN_SS2 } from './ss2/visual_arts';
-// import { WAEC_VISUAL_ARTS_LEARN_SS3 } from './ss3/visual_arts';
+import { WAEC_VISUAL_ARTS_LEARN_SS2 } from './ss2/visual_arts';
+import { WAEC_VISUAL_ARTS_LEARN_SS3 } from './ss3/visual_arts';
 
 import { WAEC_FOOD_NUTRITION_LEARN_SS1 } from './ss1/food_nutrition';
-// import { WAEC_FOOD_NUTRITION_LEARN_SS2 } from './ss2/food_nutrition';
-// import { WAEC_FOOD_NUTRITION_LEARN_SS3 } from './ss3/food_nutrition';
+import { WAEC_FOODNUTRITION_LEARN_SS2 as WAEC_FOOD_NUTRITION_LEARN_SS2 } from './ss2/food_nutrition';
+import { WAEC_FOOD_NUTRITION_LEARN_SS3 } from './ss3/food_nutrition';
 
 import { WAEC_MARKETING_LEARN_SS1 } from './ss1/marketing';
-// import { WAEC_MARKETING_LEARN_SS2 } from './ss2/marketing';
-// import { WAEC_MARKETING_LEARN_SS3 } from './ss3/marketing';
+import { WAEC_MARKETING_LEARN_SS2 } from './ss2/marketing';
+import { WAEC_MARKETING_LEARN_SS3 } from './ss3/marketing';
 
 // ── Future subjects — SS1 only for now ───────────────────────────────────
 import { WAEC_DIGITAL_TECH_LEARN_SS1 } from './ss1/digital_tech';
@@ -73,12 +73,12 @@ import { WAEC_DIGITAL_TECH_LEARN_SS1 } from './ss1/digital_tech';
 // import { WAEC_DIGITAL_TECH_LEARN_SS3 } from './ss3/digital_tech';
 
 import { WAEC_AGRIC_SCIENCE_LEARN_SS1 } from './ss1/agric_science';
-// import { WAEC_AGRIC_SCIENCE_LEARN_SS2 } from './ss2/agric_science';
-// import { WAEC_AGRIC_SCIENCE_LEARN_SS3 } from './ss3/agric_science';
+import { WAEC_AGRIC_LEARN_SS2 as WAEC_AGRIC_SCIENCE_LEARN_SS2 } from './ss2/agric_science';
+import { WAEC_AGRICULTURE_LEARN_SS3 as WAEC_AGRIC_SCIENCE_LEARN_SS3 } from './ss3/agric_science';
 
 import { WAEC_CITIZENSHIP_LEARN_SS1 } from './ss1/citizenship';
 import { WAEC_CITIZENSHIP_LEARN_SS2 } from './ss2/citizenship';
-// import { WAEC_CITIZENSHIP_LEARN_SS3 } from './ss3/citizenship';
+import { WAEC_CITIZENSHIP_LEARN_SS3 } from './ss3/citizenship';
 
 // Merged learn content keyed by subject ID
 export const WAEC_LEARN = {
@@ -123,32 +123,32 @@ export const WAEC_LEARN = {
   commerce: [...WAEC_COMMERCE_LEARN_SS1, ...WAEC_COMMERCE_LEARN_SS2, ...WAEC_COMMERCE_LEARN_SS3],
   civic: [...WAEC_CIVIC_LEARN_SS1, ...WAEC_CIVIC_LEARN_SS2, ...WAEC_CIVIC_LEARN_SS3],
 
-  // ── New subjects — SS1 only for now; uncomment SS2/SS3 spreads below
-  // once those files exist (and uncomment the matching imports above) ──────
+  // ── New subjects — SS1, SS2 and SS3 are all connected
+  // ────────────────────────────────────────────────────────────────
   further_maths: [
     ...WAEC_FURTHER_MATHS_LEARN_SS1,
-    // ...WAEC_FURTHER_MATHS_LEARN_SS2,
-    // ...WAEC_FURTHER_MATHS_LEARN_SS3,
+    ...WAEC_FURTHER_MATHS_LEARN_SS2,
+    ...WAEC_FURTHER_MATHS_LEARN_SS3,
   ],
   crs: [
     ...WAEC_CRS_LEARN_SS1,
-    // ...WAEC_CRS_LEARN_SS2,
-    // ...WAEC_CRS_LEARN_SS3,
+    ...WAEC_CRS_LEARN_SS2,
+    ...WAEC_CRS_LEARN_SS3,
   ],
   visual_arts: [
     ...WAEC_VISUAL_ARTS_LEARN_SS1,
-    // ...WAEC_VISUAL_ARTS_LEARN_SS2,
-    // ...WAEC_VISUAL_ARTS_LEARN_SS3,
+    ...WAEC_VISUAL_ARTS_LEARN_SS2,
+    ...WAEC_VISUAL_ARTS_LEARN_SS3,
   ],
   food_nutrition: [
     ...WAEC_FOOD_NUTRITION_LEARN_SS1,
-    // ...WAEC_FOOD_NUTRITION_LEARN_SS2,
-    // ...WAEC_FOOD_NUTRITION_LEARN_SS3,
+    ...WAEC_FOOD_NUTRITION_LEARN_SS2,
+    ...WAEC_FOOD_NUTRITION_LEARN_SS3,
   ],
   marketing: [
     ...WAEC_MARKETING_LEARN_SS1,
-    // ...WAEC_MARKETING_LEARN_SS2,
-    // ...WAEC_MARKETING_LEARN_SS3,
+    ...WAEC_MARKETING_LEARN_SS2,
+    ...WAEC_MARKETING_LEARN_SS3,
   ],
 
   // ── Future subjects — SS1 only for now ───────────────────────────────────
@@ -159,14 +159,14 @@ export const WAEC_LEARN = {
   ],
   agric_science: [
     ...WAEC_AGRIC_SCIENCE_LEARN_SS1,
-    // ...WAEC_AGRIC_SCIENCE_LEARN_SS2,
-    // ...WAEC_AGRIC_SCIENCE_LEARN_SS3,
+    ...WAEC_AGRIC_SCIENCE_LEARN_SS2,
+    ...WAEC_AGRIC_SCIENCE_LEARN_SS3,
   ],
   citizenship: [
     ...WAEC_CIVIC_LEARN_SS1, ...WAEC_CIVIC_LEARN_SS2, ...WAEC_CIVIC_LEARN_SS3,
     ...WAEC_CITIZENSHIP_LEARN_SS1,
     ...WAEC_CITIZENSHIP_LEARN_SS2,
-    // ...WAEC_CITIZENSHIP_LEARN_SS3,
+    ...WAEC_CITIZENSHIP_LEARN_SS3,
   ],
 };
 
@@ -207,14 +207,13 @@ export const WAEC_LEARN_BY_LEVEL = {
     geography: WAEC_GEOGRAPHY_LEARN_SS2,
     commerce: WAEC_COMMERCE_LEARN_SS2,
     civic: WAEC_CIVIC_LEARN_SS2,
-    // New/future subjects have no SS2 file yet — left empty
-    further_maths: [],
-    crs: [],
-    visual_arts: [],
-    food_nutrition: [],
-    marketing: [],
+    further_maths: WAEC_FURTHER_MATHS_LEARN_SS2,
+    crs: WAEC_CRS_LEARN_SS2,
+    visual_arts: WAEC_VISUAL_ARTS_LEARN_SS2,
+    food_nutrition: WAEC_FOOD_NUTRITION_LEARN_SS2,
+    marketing: WAEC_MARKETING_LEARN_SS2,
     digital_tech: [],
-    agric_science: [],
+    agric_science: WAEC_AGRIC_SCIENCE_LEARN_SS2,
     citizenship: [...WAEC_CIVIC_LEARN_SS2, ...WAEC_CITIZENSHIP_LEARN_SS2],
   },
   ss3: {
@@ -230,14 +229,13 @@ export const WAEC_LEARN_BY_LEVEL = {
     geography: WAEC_GEOGRAPHY_LEARN_SS3,
     commerce: WAEC_COMMERCE_LEARN_SS3,
     civic: WAEC_CIVIC_LEARN_SS3,
-    // New/future subjects have no SS3 file yet — left empty
-    further_maths: [],
-    crs: [],
-    visual_arts: [],
-    food_nutrition: [],
-    marketing: [],
+    further_maths: WAEC_FURTHER_MATHS_LEARN_SS3,
+    crs: WAEC_CRS_LEARN_SS3,
+    visual_arts: WAEC_VISUAL_ARTS_LEARN_SS3,
+    food_nutrition: WAEC_FOOD_NUTRITION_LEARN_SS3,
+    marketing: WAEC_MARKETING_LEARN_SS3,
     digital_tech: [],
-    agric_science: [],
-    citizenship: [...WAEC_CIVIC_LEARN_SS3],
+    agric_science: WAEC_AGRIC_SCIENCE_LEARN_SS3,
+    citizenship: [...WAEC_CIVIC_LEARN_SS3, ...WAEC_CITIZENSHIP_LEARN_SS3],
   },
 };

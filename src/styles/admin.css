@@ -240,3 +240,5 @@ body:has(.adm-wrap){background:#0f0b1f}
 .adm-status-img.wait{height:120px;display:grid;place-items:center;color:var(--mut);font-size:.8rem}
 .adm-status-text{margin:6px 0 10px;white-space:pre-wrap;word-break:break-word}
 .adm-ref{grid-column:1/-1;display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:12px;background:rgba(124,58,237,.1)}.adm-ref small{opacity:.7;font-size:.75rem}
+.adm-linkbox{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(124,58,237,.08)}
+.adm-linkbox code{font-size:.78rem;word-break:break-all;flex:1}

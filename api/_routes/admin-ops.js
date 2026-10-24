@@ -134,7 +134,7 @@ async function sourceStats(sb, days, ref) {
     if (ref) x = x.eq("payload->>ref", ref);
     return x;
   }, 40);
-  const by = {}, byPage = {}, byRef = {}, perDay = {};
+  const by = {}, byPage = {}, byRef = {}, perDay = {}, byCamp = {};
   const bump = (o, k, f) => { (o[k] = o[k] || { visits: 0, signups: 0 })[f]++; };
   const dayKey = (iso) => new Date(new Date(iso).getTime() + 3600000).toISOString().slice(0, 10);
   let visits = 0, signups = 0;
@@ -146,12 +146,13 @@ async function sourceStats(sb, days, ref) {
     bump(by, src, f);
     if (f === "visits") byPage[p.page || "page"] = (byPage[p.page || "page"] || 0) + 1;
     if (p.ref) bump(byRef, String(p.ref), f);
+    if (p.campaign) bump(byCamp, `${src} · ${String(p.campaign).slice(0, 40)}`, f);
     const d = dayKey(r.created_at); perDay[d] = (perDay[d] || 0) + (f === "visits" ? 1 : 0);
   }
   const list = (o) => Object.entries(o).map(([name, v]) => ({ name, visits: v.visits, signups: v.signups, rate: v.visits ? Math.round((v.signups / v.visits) * 1000) / 10 : 0 })).sort((a, b) => b.visits + b.signups - (a.visits + a.signups));
   const labels = [], values = [];
   for (let i = days - 1; i >= 0; i--) { const d = dayKey(new Date(Date.now() - i * D).toISOString()); labels.push(d.slice(5)); values.push(perDay[d] || 0); }
-  return { days, ref: ref || "", visits, signups, sources: list(by), partners: list(byRef).slice(0, 25), pages: Object.entries(byPage).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count), series: { labels, values }, truncated: rows.length >= 40000 };
+  return { days, ref: ref || "", visits, signups, sources: list(by), partners: list(byRef).slice(0, 25), campaigns: list(byCamp).slice(0, 40), pages: Object.entries(byPage).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count), series: { labels, values }, truncated: rows.length >= 40000 };
 }
 
 // Ad analytics from our own events. (Adsterra's earnings are only in their dashboard.)
@@ -571,8 +572,8 @@ export default async function handler(req, res) {
 
     if (op === "ads-adsterra") {
       if (!need("ads")) return deny();
-      const key = process.env.ADSTERRA_API_KEY;
-      if (!key) return sendOk(res, { adsterra: { configured: false, message: "ADSTERRA_API_KEY is not set in Vercel." } });
+      const key = (process.env.ADSTERRA_API || process.env.ADSTERRA_API_KEY || "").trim();
+      if (!key) return sendOk(res, { adsterra: { configured: false, message: "ADSTERRA_API is not set in Vercel (Settings → Environment Variables). Add it, then redeploy." } });
       const days = [1, 7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 30;
       const gb = ["date", "country", "placement", "domain", "device_type"].includes(String(q.group_by)) ? String(q.group_by) : "date";
       const ck = `${days}:${gb}`;
@@ -585,7 +586,7 @@ export default async function handler(req, res) {
         const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 15000);
         const r = await fetch(url, { headers: { "X-API-Key": key, Accept: "application/json" }, signal: ctl.signal }); clearTimeout(tm);
         const txt = await r.text(); let j = {}; try { j = JSON.parse(txt); } catch { /* not json */ }
-        if (!r.ok) return sendOk(res, { adsterra: { configured: true, error: r.status === 401 || r.status === 403 ? "Adsterra rejected the API key (check ADSTERRA_API_KEY)." : `Adsterra answered ${r.status}: ${String(j.message || txt).slice(0, 160)}` } });
+        if (!r.ok) return sendOk(res, { adsterra: { configured: true, error: r.status === 401 || r.status === 403 ? "Adsterra rejected the API key (check the ADSTERRA_API value)." : `Adsterra answered ${r.status}: ${String(j.message || txt).slice(0, 160)}` } });
         const items = (Array.isArray(j.items) ? j.items : []).map((x) => ({ label: String(x.date || x.country || x.placement || x.domain || x.device_type || x.name || "—"), impressions: Number(x.impression ?? x.impressions ?? 0), clicks: Number(x.clicks || 0), ctr: Number(x.ctr || 0), cpm: Number(x.cpm || 0), revenue: Number(x.revenue || 0) }));
         const t = items.reduce((a, x) => ({ impressions: a.impressions + x.impressions, clicks: a.clicks + x.clicks, revenue: a.revenue + x.revenue }), { impressions: 0, clicks: 0, revenue: 0 });
         const v = { configured: true, days, groupBy: gb, items, totals: { ...t, ctr: t.impressions ? (t.clicks / t.impressions) * 100 : 0, cpm: t.impressions ? (t.revenue / t.impressions) * 1000 : 0 } };

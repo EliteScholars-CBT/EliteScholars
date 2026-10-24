@@ -13,7 +13,8 @@ import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { pushToEmails } from "../_helpers/push.js";
 import { saveMedia } from "../_helpers/media.js";
 import { eliteEmails } from "../_helpers/elite.js";
-import { moderateImage } from "../_helpers/imageGuard.js";
+import { judgePhoto } from "../_helpers/imageGuard.js";
+import { checkText } from "../_helpers/contentGuard.js";
 
 const clean = (v, n) => String(v || "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").replace(/\n{3,}/g, "\n\n").trim().slice(0, n);
 const UUID = /^[\w-]{6,64}$/;
@@ -151,6 +152,7 @@ export default async function handler(req, res) {
     if (Date.now() - new Date(msg.created_at).getTime() > EDIT_MS) return sendErr(res, "You can only edit a message within 15 minutes of sending it.");
     const text = clean(b.text, 600);
     if (!text) return sendErr(res, "A message can't be empty.");
+    { const g = checkText(text, { mode: "chat" }); if (!g.ok) return sendErr(res, g.message); }
     const { error } = await sb.from("squad_messages").update({ text, edited_at: nowIso, updated_at: nowIso }).eq("id", id);
     if (error) return sendErr(res, "Could not edit.", 500);
     return sendOk(res, { message: shape({ ...msg, text, edited_at: nowIso, updated_at: nowIso }, elite) });
@@ -159,11 +161,12 @@ export default async function handler(req, res) {
   if (op === "send") {
     const text = clean(b.text, 600);
     const sticker = clean(b.sticker, 40);
+    if (text) { const g = checkText(text, { mode: "chat" }); if (!g.ok) return sendErr(res, g.message); }
     let kind = "text", mediaId = null;
     if (b.image) {
-      // photos are checked for nudity / scam text; if the checker is unavailable the (private, squad-only) chat lets it through
-      const mod = await moderateImage(b.image);
-      if (mod.checked && !mod.ok) return sendErr(res, "That photo can't be shared on EliteScholars.");
+      // photos are checked on the sender's phone (no AI); the words read from the picture are checked here too
+      const j = judgePhoto(b);
+      if (!j.ok) return sendErr(res, j.error);
       const m = await saveMedia(sb, email, b.image);
       if (m.error) return sendErr(res, m.error);
       kind = "image"; mediaId = m.id;

@@ -42,7 +42,7 @@ export default function PremiumModal({
         { icon: '🚫', text: 'Zero cooldown, ever' },
         { icon: '🚫', text: 'Zero ads, completely' },
         { icon: '📚', text: 'WAEC, NECO, JAMB & GST' },
-        { icon: '🎮', text: 'All 6 arcade games unlocked' },
+        { icon: '🎮', text: 'All games unlocked' },
         { icon: '📤', text: 'Unlimited file uploads & study packs' },
         { icon: '⚔️', text: 'Unlimited challenges & squads' },
         { icon: '📶', text: 'Full offline access' },

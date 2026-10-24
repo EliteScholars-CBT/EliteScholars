@@ -1,24 +1,29 @@
-ELITESCHOLARS — ONE COMBINED UPDATE (everything changed since the first zip + latest changes)
-Upload every file here keeping the same folder paths (replace existing). Then redeploy.
-
-DELETE FROM YOUR PROJECT (zips cannot delete):
-  public/OneSignalSDKWorker.js   (OneSignal is removed; its script is gone from public/index.html)
+ELITESCHOLARS — UPDATE 3 (only files changed since the last zip). Upload keeping the same folder paths, then redeploy.
 
 NEW FILES
-  api/_helpers/imageGuard.js, api/_routes/group.js, api/_helpers/{pricing,premium,payments}.js (if new), api/shop.js,
-  src/components/{NotificationPrompt,GroupPlans,Shop,AdminPrices,ImageViewer,EmojiPicker}.js, src/utils/emojiData.js, src/styles/shop.css
+  src/components/LandingGamePreview.js   (animated game showcase on the landing page)
+  src/data/gkBankPlus.js                 (~420 more game questions, medium + hard)
+  src/utils/textGuard.js                 (word filter used on the phone for words read from photos; same rules as the server)
+  public/shop/jamb-key-points.jpg        (new quality image; the old file's name began with a space, so it never loaded)
+  src/data/waec/learn/ss3/*.js           (18 SS3 subject files REPLACE the old one-topic stubs)
 
-LATEST CHANGES (this round)
-  - Admin → Students → tap a student: shows WHO referred them (partner name, code, email, phone). api/_routes/admin-ops.js, src/components/AdminStudents.js, admin.css
-  - Activity now logs: "Opened a partner link (CODE)", "Signed up via partner NAME (CODE)". api/auth/register.js, admin-ops.js, AuthScreen.js, utils/referral.js
-    (a student already logged in who opens a partner link is logged too, via events/track)
-  - OneSignal removed: public/index.html
-  - Custom notification pop-up with reasons (Yes turn on / Not now, asks again after 3 days, max 3 times): NotificationPrompt.js, App.js, base.css; sw.js cache v14
-  - Badge share: only "Add to my status", then "Share to WhatsApp" with caption + your referral link + code: ShareSheet.js
-  - Me tab: your own referral code, link and a ready message to copy: Profile.js, base.css
+DELETE FROM YOUR PROJECT (optional clean-up)
+  public/ jamb-key-points.jpg   (the old file whose name starts with a space)
 
-ROUTES: already registered in api/data.js + vercel.json (squads/chat-typing|react|pin|edit, status/thread, group routes). No new function files (12-function limit kept).
-ENV VARS: none new. (ADSTERRA_API_KEY and AI_KEYS as before; photo scanning needs an AI key with vision.)
-SQL: run these blocks from supabase/schema.sql in Supabase SQL editor if not yet run (all safe to re-run):
-  shop_items, status reactions/replies, presence, status moderation, group plans,
-  "chat: reactions, pins, edits, typing", "status reply threads".
+WHAT CHANGED
+  Learn: page now glides after the word being read; tap any sentence and the voice continues from there (Learn.js, ttsHighlight.js)
+  Status viewer: Reshare / Conversation / Report show icons only (StatusBar.js, status.css)
+  SS3: all 18 subjects wired in. Also connected the SS2 files for Further Maths, CRS, Visual Arts, Food, Marketing and Agric, which existed but were never switched on (waec/learn/index.js)
+  Games: many more questions and a real hard tier (harder words, close-number Higher/Lower, tougher Speed Maths); "arcade" wording removed (gkBank.js, numberFacts.js, GameMode.js, GameMore.js, PremiumModal.js, Shop.js)
+  Landing: "11 games" everywhere; marquee rebuilt (no overlap, includes new subjects); partner banner with live commission rate (40% by default);
+           shop with one item is small and centred; "Every win is shareable" removed; game slide plays 5 mini-games (1 s each) after the real screen;
+           blog shows 8 latest cards (4 per row, 2 on tablet, 3 stacked on phones); (Landing.js, landing2.css, site-public.js, scripts/build-blog.js)
+  Admin: new "Adsterra earnings" tab (also still under Ads); now reads env ADSTERRA_API (ADSTERRA_API_KEY still works as a fallback)
+  Admin → Sources: SMS tracking. Make a tracked link (source SMS + campaign name); visits/sign-ups per campaign are listed (AdminSources.js, trafficSource.js, admin-ops.js)
+  Photo scanning with NO AI: skin check + NSFWJS + Tesseract OCR on the phone; words read from photos go through the word filter (src/utils/imageGuard.js, api/_helpers/imageGuard.js, status.js, squad-chat.js, StatusBar.js, SquadChat.js)
+  Word scanning with NO AI: handles capitals, accents, look-alike letters, numbers for letters, stretched letters, spaces/dots between letters, digits spelled as words, Nigerian scam/exam-leak/betting phrases (api/_helpers/contentGuard.js). Also now applied to squad chat messages and edits.
+
+ENV VARS: ADSTERRA_API (you already have it). AI_KEYS no longer used for photo checks.
+SQL: nothing new.
+ROUTES: nothing new (no new function files).
+BLOG: run the blog build (it runs on every deploy) so /blog/latest.json lists 8 posts.

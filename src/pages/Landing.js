@@ -5,6 +5,7 @@ import logo from '../assets/elite-scholars-logo.png';
 import { captureReferralFromURL } from '../utils/referral';
 import { captureTrafficSource } from '../utils/trafficSource';
 import { WA_CHANNEL } from '../utils/constants';
+import LandingGamePreview from '../components/LandingGamePreview';
 import '../styles/landing.css';
 import '../styles/landing2.css';
 
@@ -46,11 +47,13 @@ function Reveal({ as: Tag = 'div', className = '', delay = 0, children, ...rest 
 
 const STEPS = [
   { n: '01', title: 'Pick your exam', desc: "WAEC, NECO, JAMB or GST — choose what you're preparing for." },
-  { n: '02', title: 'Study your way', desc: 'CBT drills, bite-sized lessons, flashcards, arcade games, or upload your own notes.' },
+  { n: '02', title: 'Study your way', desc: 'CBT drills, bite-sized lessons, flashcards, games, or upload your own notes.' },
   { n: '03', title: 'Track your progress', desc: 'Watch your XP, streak and scores climb, and see exactly where you still need work.' },
 ];
 
 const EXAMS = ['WAEC', 'NECO', 'JAMB', 'GST'];
+
+const MARQUEE_WORDS = ['English', 'Mathematics', 'Biology', 'Chemistry', 'Physics', 'Economics', 'Government', 'Literature', 'Accounting', 'Geography', 'Commerce', 'Further Maths', 'CRS', 'Visual Arts', 'Food & Nutrition', 'Marketing', 'Agric Science', 'Citizenship', 'GST'];
 
 const ROTATE_WORDS = ['WAEC', 'NECO', 'JAMB', 'GST'];
 
@@ -58,7 +61,7 @@ const SHOTS = [
   { key: 'subjects', img: '/landing/m-subjects.webp', icon: 'clipboard', title: 'CBT Practice', desc: 'Real exam-style questions for WAEC, NECO, JAMB and GST — timed like the real thing, with instant explanations.' },
   { key: 'quiz', img: '/landing/m-quiz.webp', icon: 'target', title: 'Instant Answers', desc: 'Tap, submit, learn. Every question comes with a quick take that explains why — so you never repeat a mistake.' },
   { key: 'lesson', img: '/landing/m-lesson.webp', icon: 'bookOpen', title: 'Bite-sized Lessons', desc: 'Topics broken into clear notes, tables and tips. Tap Read and a voice reads the lesson to you, word by word.' },
-  { key: 'games', img: '/landing/m-games.webp', icon: 'gamepad', title: '6 Arcade Games', desc: 'Word Scramble, Memory Match, Picture Round, Colour Memory, Word Slice and Sort Rush. Learning that feels like play.' },
+  { key: 'games', img: '/landing/m-games.webp', icon: 'gamepad', title: '11 Games', desc: 'Word Scramble, Memory Match, Picture Round, Colour Memory, Word Slice, Sort Rush, True or False, Hangman, Higher or Lower, Odd One Out and Speed Maths. Learning that feels like play.' },
   { key: 'flash', img: '/landing/m-flash.webp', icon: 'cards', title: 'Flashcards', desc: 'Flip, mark what you know, and revise only what you need. Fast, focused and perfect for the night before.' },
   { key: 'status', img: '/landing/m-status.webp', icon: 'chat', title: 'Status & Squads', desc: 'Post a 24-hour status for just yourself, your squad or everyone, and see what your classmates are up to.' },
   { key: 'share', img: '/landing/m-share.webp', icon: 'share', title: 'Share Your Wins', desc: 'Every score and badge becomes a ready-made picture you can share anywhere or download, with your invite link on it.' },
@@ -225,6 +228,10 @@ export default function Landing() {
     fetch('/api/site/shop?where=landing').then((r) => (r.ok ? r.json() : null)).then((j) => { if (!off && j && Array.isArray(j.items)) setShopItems(j.items.slice(0, 8)); }).catch(() => {});
     return () => { off = true; };
   }, []);
+  const [partnerRate, setPartnerRate] = useState(40);
+  useEffect(() => {
+    fetch('/api/site/config').then((r) => (r.ok ? r.json() : null)).then((j) => { const n = Number(j && j.partnerRate); if (n > 0 && n <= 90) setPartnerRate(n); }).catch(() => {});
+  }, []);
   const [blogPosts, setBlogPosts] = useState([]);
   useEffect(() => {
     let off = false;
@@ -232,7 +239,7 @@ export default function Landing() {
       if (off || !Array.isArray(j)) return;
       let covers = {};
       try { const c = await fetch('/api/site/blog-covers').then((r) => (r.ok ? r.json() : null)); covers = (c && c.covers) || {}; } catch { /* generated covers are used */ }
-      if (!off) setBlogPosts(j.slice(0, 5).map((p) => ({ ...p, cover: covers[p.id] || p.cover })));
+      if (!off) setBlogPosts(j.slice(0, 8).map((p) => ({ ...p, cover: covers[p.id] || p.cover })));
     }).catch(() => {});
     return () => { off = true; };
   }, []);
@@ -269,9 +276,9 @@ export default function Landing() {
   // Feature tour auto-advances until the visitor takes over
   useEffect(() => {
     if (!auto) return undefined;
-    const t = setInterval(() => setTab((v) => (v + 1) % SHOTS.length), 4800);
-    return () => clearInterval(t);
-  }, [auto]);
+    const t = setTimeout(() => setTab((v) => (v + 1) % SHOTS.length), SHOTS[tab].key === 'games' ? 9200 : 4800);
+    return () => clearTimeout(t);
+  }, [auto, tab]);
 
   const onHeroMove = (e) => {
     const rect = heroRef.current?.getBoundingClientRect();
@@ -325,7 +332,7 @@ export default function Landing() {
         </div>
 
         <div className="land-hero-content">
-          <span className="land-pill"><Icon name="sparkles" size={13} /> 6 arcade games · offline mode · study from your own notes</span>
+          <span className="land-pill"><Icon name="sparkles" size={13} /> 11 games · offline mode · study from your own notes</span>
           <h1>
             Ace <RotatingWord /> <br />
             <span className="land-gold">the fun way</span>
@@ -362,21 +369,17 @@ export default function Landing() {
       </header>
 
       {/* ── Marquee ─────────────────────────────────────────────────────── */}
-      <div className="l2-marquee" aria-hidden="true">
-        <div className="l2-marquee-track">
-          {[0, 1].map((r) => (
-            <div className="l2-marquee-row" key={r}>
-              {['English', 'Mathematics', 'Biology', 'Chemistry', 'Physics', 'Economics', 'Government', 'Literature', 'Accounting', 'Geography', 'Commerce', 'GST'].map((w) => <span key={w + r}>{w}</span>)}
-            </div>
-          ))}
-        </div>
+      <div className="l4-mq" aria-hidden="true">
+        <ul className="l4-mq-track">
+          {[0, 1].map((r) => MARQUEE_WORDS.map((w) => <li key={`${w}${r}`}>{w}</li>))}
+        </ul>
       </div>
 
       {/* ── Stats ───────────────────────────────────────────────────────── */}
       <section className="l2-stats">
         <Stat value={50000} suffix="+" label="practice questions" />
         <Stat value={5} label="major exams covered" />
-        <Stat value={6} label="arcade games" />
+        <Stat value={11} label="brain games" />
         <Stat value={0} suffix=" data" label="needed once loaded" />
       </section>
 
@@ -399,7 +402,7 @@ export default function Landing() {
               >
                 <span className="l2-tour-ico"><Icon name={f.icon} size={20} /></span>
                 <span className="l2-tour-txt"><b>{f.title}</b><em>{f.desc}</em></span>
-                {i === tab && auto && <i className="l2-tour-bar" />}
+                {i === tab && auto && <i key={tab} className="l2-tour-bar" style={f.key === 'games' ? { animationDuration: '9.2s' } : undefined} />}
               </button>
             ))}
           </div>
@@ -409,8 +412,9 @@ export default function Landing() {
               <i className="l2-phone-btn" />
               <div className="l2-phone-screen">
                 <span className="l2-phone-notch" />
-                {SHOTS.map((f, i) => (
-                  <img key={f.key} className={i === tab ? 'on' : ''} src={f.img} alt={f.title} loading="lazy" draggable="false" />
+                {SHOTS.map((f, i) => (f.key === 'games'
+                  ? <div key={f.key} className={`l5-gp-wrap ${i === tab ? 'on' : ''}`}><LandingGamePreview active={i === tab} base={f.img} /></div>
+                  : <img key={f.key} className={i === tab ? 'on' : ''} src={f.img} alt={f.title} loading="lazy" draggable="false" />
                 ))}
               </div>
             </div>
@@ -437,6 +441,24 @@ export default function Landing() {
             <div className="l2-laptop-base"><i /></div>
           </div>
           <PhoneFrame className="l2-laptop-phone" src="/landing/m-shop.webp" alt="EliteScholars on a phone" />
+        </Reveal>
+      </section>
+
+      {/* ── Partner banner ───────────────────────────────────────────────── */}
+      <section className="l5-partner" id="partner" aria-labelledby="l5-partner-h">
+        <Reveal className="l5-partner-card">
+          <div className="l5-partner-pct" aria-hidden="true"><b>{partnerRate}%</b><span>commission</span></div>
+          <div className="l5-partner-text">
+            <span className="land-eyebrow">Partner programme</span>
+            <h2 id="l5-partner-h">Advertise EliteScholars and earn {partnerRate}% on every Premium</h2>
+            <p>Run a page, a school, a WhatsApp group or a business with students? Become a partner, share your own link and get {partnerRate}% commission each time a student you bring goes Premium. Track clicks, sign-ups and earnings from your own dashboard and request your payout.</p>
+            <ul className="l5-partner-points">
+              <li><Icon name="checkCircle" size={16} /> Free to join</li>
+              <li><Icon name="checkCircle" size={16} /> Your own link and code</li>
+              <li><Icon name="checkCircle" size={16} /> Live earnings dashboard</li>
+            </ul>
+            <a className="land-btn-primary" href="/partner?src=landing-banner">Become a partner <Icon name="arrowRight" size={17} /></a>
+          </div>
         </Reveal>
       </section>
 
@@ -525,13 +547,6 @@ export default function Landing() {
             </Reveal>
           ))}
         </div>
-        <Reveal className="l3-share">
-          <div className="l3-share-text">
-            <h3>Every win is shareable</h3>
-            <p>Great score? New badge? One tap makes a picture with your invite link, ready for WhatsApp or the gallery. Friends who join help you earn rewards.</p>
-          </div>
-          <img src="/landing/share-card.webp" alt="Share card showing a 92% Biology score" loading="lazy" />
-        </Reveal>
       </section>
 
       {/* ── How it works ────────────────────────────────────────────────── */}
@@ -599,7 +614,7 @@ export default function Landing() {
             <h2 id="land-shop-h">Study materials from the shop</h2>
             <p>Notes, formula sheets and guides made for Nigerian exams. Pay securely in the app.</p>
           </Reveal>
-          <div className="land-shop-grid">
+          <div className={`land-shop-grid ${shopItems.length === 1 ? 'single' : ''}`}>
             {shopItems.map((it, i) => (
               <Reveal as="a" key={it.id} delay={i * 50} className="land-shop-card" href="/app?src=landing-shop" onClick={() => { try { sessionStorage.setItem('es_open_shop', '1'); } catch { /* ignore */ } }}>
                 <div className="land-shop-img">

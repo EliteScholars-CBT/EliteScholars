@@ -57,14 +57,15 @@ export function captureTrafficSource() {
     const params = new URLSearchParams(search);
     const ref = (params.get('ref') || '').trim().toUpperCase().slice(0, 32) || '';
     let source = classifySource(document.referrer, search, window.location.hostname);
+    const campaign = String(params.get('utm_campaign') || params.get('campaign') || params.get('c') || '').toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 40);
     if (source === 'internal') return; // moving around our own site is not a new visit
     sessionStorage.setItem(SENT_KEY, '1');
     const storedRaw = localStorage.getItem(FIRST_KEY);
     let first = null;
     try { first = storedRaw ? JSON.parse(storedRaw) : null; } catch { first = null; }
     const fresh = !first || (Date.now() - first.at) / 86400000 > DAYS || (ref && !first.ref);
-    if (fresh) localStorage.setItem(FIRST_KEY, JSON.stringify({ source, ref, at: Date.now() }));
-    post('visit_source', { source, ref, page: pageKind(window.location.pathname), returning: !fresh });
+    if (fresh) localStorage.setItem(FIRST_KEY, JSON.stringify({ source, ref, campaign, at: Date.now() }));
+    post('visit_source', { source, ref, campaign, page: pageKind(window.location.pathname), returning: !fresh });
   } catch { /* analytics must never break the app */ }
 }
 
@@ -73,6 +74,6 @@ export function trackSignupSource() {
   try {
     const raw = localStorage.getItem(FIRST_KEY);
     const f = raw ? JSON.parse(raw) : null;
-    post('signup_source', { source: (f && f.source) || 'direct', ref: (f && f.ref) || '' });
+    post('signup_source', { source: (f && f.source) || 'direct', ref: (f && f.ref) || '', campaign: (f && f.campaign) || '' });
   } catch { post('signup_source', { source: 'direct', ref: '' }); }
 }

@@ -9,7 +9,7 @@ const Check = ({ label, hint, checked, onChange, disabled }) => (
   </label>
 );
 
-export default function AdminAds({ token, onAuthFail }) {
+export default function AdminAds({ token, onAuthFail, only }) {
   const api = useMemo(() => makeApi(token, onAuthFail), [token, onAuthFail]);
   const [ads, setAds] = useState(null);
   const [stats, setStats] = useState(null);
@@ -17,7 +17,7 @@ export default function AdminAds({ token, onAuthFail }) {
   const [msg, setMsg] = useState('');
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
-  const [view, setView] = useState('own');
+  const [view, setView] = useState(only === 'earnings' ? 'adsterra' : 'own');
   const [ast, setAst] = useState(null);
   const [agb, setAgb] = useState('date');
 
@@ -47,13 +47,14 @@ export default function AdminAds({ token, onAuthFail }) {
     try { const d = await api('ads-save', { method: 'POST', body: { ads } }); setAds(d.ads); setMsg('Saved. Changes reach visitors within about a minute.'); } catch (e) { if (e.message !== 'auth') setErr(e.message); }
     setBusy(false);
   };
-  if (!ads) return <div className="adm-card">{err || 'Loading…'}</div>;
-  const off = !ads.master;
+  if (!ads && !only) return <div className="adm-card">{err || 'Loading…'}</div>;
+  const off = ads ? !ads.master : false;
 
   return (
     <div>
       {err && <div className="adm-error">{err}</div>}
       {msg && <div className="adm-ok">{msg}</div>}
+      {!only && (<>
 
       <section className="adm-card">
         <h2>Ads on or off</h2>
@@ -111,9 +112,10 @@ export default function AdminAds({ token, onAuthFail }) {
 
       <div className="adm-savebar"><button disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save ad settings'}</button></div>
 
+      </>)}
       <section className="adm-controls">
-        <div className="adm-pills">{[['own', 'Our views'], ['adsterra', 'Adsterra earnings']].map(([k, l]) => <button key={k} className={view === k ? 'on' : ''} onClick={() => setView(k)}>{l}</button>)}</div>
-        <div className="adm-pills">{[7, 30, 90].map((d) => <button key={d} className={days === d ? 'on' : ''} onClick={() => setDays(d)}>{d} days</button>)}</div>
+        {!only && <div className="adm-pills">{[['own', 'Our views'], ['adsterra', 'Adsterra earnings']].map(([k, l]) => <button key={k} className={view === k ? 'on' : ''} onClick={() => setView(k)}>{l}</button>)}</div>}
+        <div className="adm-pills">{[1, 7, 30, 90].map((d) => <button key={d} className={days === d ? 'on' : ''} onClick={() => setDays(d)}>{d} days</button>)}</div>
       </section>
       {view === 'adsterra' && (
         <>

@@ -1,3 +1,4 @@
+import { GK_EXTRA } from './gkBankPlus';
 // A broad general-knowledge bank — deliberately NOT tied to school subjects.
 // Spans sports, geography, science, history, entertainment, nature and
 // Nigeria-specific trivia. Items with an `emoji` are eligible for Picture
@@ -67,3 +68,13 @@ export const GK_BANK = [
   { term: 'Cactus',      clue: 'A spiky plant that stores water and thrives in the desert', category: 'Nature', emoji: '🌵' },
 ];
 
+
+// Everything, with the original simple items tagged easy.
+export const GK_ALL = [...GK_BANK.map((x) => ({ ...x, lvl: 'e' })), ...GK_EXTRA];
+
+// The pool a game draws from. Easy: simple + medium. Medium: everything. Hard: hard + medium (nothing easy).
+export function bankFor(difficulty) {
+  if (difficulty === 'easy') return GK_ALL.filter((x) => x.lvl !== 'h');
+  if (difficulty === 'hard') return GK_ALL.filter((x) => x.lvl !== 'e');
+  return GK_ALL;
+}

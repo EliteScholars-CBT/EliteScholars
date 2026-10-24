@@ -309,8 +309,8 @@ for (const p of POSTS) fs.writeFileSync(path.join(COVERS, `${p.id}.svg`), Fig.co
 // List for Admin → Blog (cover uploads): every post, live or scheduled.
 fs.writeFileSync(path.join(BLOG, 'posts-index.json'), JSON.stringify(POSTS.map((p) => ({ id: p.id, title: p.title, category: p.category, publishAt: p.publishAt, live: Engine.isLive(p) }))));
 
-// Small feed for the landing page's blog cards (latest 5).
-fs.writeFileSync(path.join(BLOG, 'latest.json'), JSON.stringify(live.slice(0, 5).map((p) => ({
+// Small feed for the landing page's blog cards (latest 8).
+fs.writeFileSync(path.join(BLOG, 'latest.json'), JSON.stringify(live.slice(0, 8).map((p) => ({
   id: p.id, title: p.title, excerpt: p.excerpt, category: p.category, readTime: p.readTime, cover: `/blog/covers/${p.id}.svg`, url: `/blog/${p.category}/${p.id}.html`,
 }))));
 

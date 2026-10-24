@@ -5,12 +5,12 @@ import { GOLD } from '../utils/colors';
 import Icon, { EmojiIcon } from './Icon';
 import { buildScramble, buildScrambleDeck, normalizeAnswer, buildMatchDeck, buildPictureDeck, buildPictureRound, generateSequence, SIMON_COLORS, topCategories, itemsInCategories, buildSliceDeck, shuffle, rng } from '../utils/gameEngine';
 import GameHud from './GameHud';
-import { GK_BANK } from '../data/gkBank';
+import { bankFor } from '../data/gkBank';
 import { MoreGames, MORE_GAME_TYPES, MORE_GAME_INFO, buildMoreGame } from './GameMore';
 import '../styles/gamemode.css';
 
 // ============================================================================
-// GameMode — arcade practice, deliberately NOT multiple-choice. CBT already
+// GameMode — quick-play practice, deliberately NOT multiple-choice. CBT already
 // covers "read a question, pick an option"; these two games test recall
 // (Word Scramble) and pairing (Memory Match) instead.
 // ============================================================================
@@ -713,6 +713,7 @@ export default function GameMode({ onBack, email, name, onLimit }) {
     try { slot = await reserve(email, 'game', `game_${Date.now()}`); } catch { /* offline: let them play */ }
     setStarting(false);
     if (!slot.allowed) { if (onLimit) onLimit('games'); return; }
+    const GK_BANK = bankFor(difficulty);
     const type = GAME_TYPES[Math.floor(Math.random() * GAME_TYPES.length)];
     setGameType(type);
     const count = difficulty === 'easy' ? 6 : difficulty === 'hard' ? 10 : 8;

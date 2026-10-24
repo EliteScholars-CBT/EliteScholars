@@ -108,3 +108,5 @@
 .st-insights .st-replyrow input { background: #F5F3FF; color: #1E1B4B; border-color: rgba(124,58,237,.3); }
 .st-insights .st-replyrow input::placeholder { color: #7C6BB5; }
 .st-insights .st-send { background: #7C3AED; color: #fff; }
+.st-tools button { width: 42px; height: 42px; padding: 0; font-size: 18px; display: grid; place-items: center; position: relative; }
+.st-tools .st-dot { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; border-radius: 99px; background: #EF4444; color: #fff; font: 800 10px/18px system-ui; font-style: normal; text-align: center; padding: 0 4px; }

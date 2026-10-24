@@ -18,7 +18,7 @@ import {
 } from '../analytics/studyAnalytics';
 import Icon, { EmojiIcon } from './Icon';
 import { normalizeForSpeech } from '../utils/ttsNormalize';
-import { wrapWords, unwrapWords, buildChunks, mapIndex, markChunk, clearChunk, keepInView } from '../utils/ttsHighlight';
+import { wrapWords, unwrapWords, buildChunks, mapIndex, markChunk, clearChunk, keepInView, keepWordInView, tapPosition, wordAtPosition } from '../utils/ttsHighlight';
 
 const FONT_SIZES = [13, 15, 17, 19, 21];
 const STORAGE_KEY = (examType, subjectId) => `es_learn_${examType}_${subjectId}`;
@@ -272,7 +272,9 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
       if (e.name === 'sentence') return;
       gotBoundary = true;
       clearInterval(estTimerRef.current);
-      markChunk(chunk, mapIndex(spoken, e.charIndex || 0, chunk.length));
+      const wi = mapIndex(spoken, e.charIndex || 0, chunk.length);
+      markChunk(chunk, wi);
+      keepWordInView(chunk[wi] && chunk[wi].el, scrollRef.current);
     };
     // Some phones never report word positions: estimate them from the speaking pace instead.
     utter.onstart = () => {
@@ -281,7 +283,9 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
       estTimerRef.current = setInterval(() => {
         if (gotBoundary || stoppedRef.current) { clearInterval(estTimerRef.current); return; }
         if (Date.now() - t0 < 700) return;
-        markChunk(chunk, Math.min(chunk.length - 1, Math.floor((Date.now() - t0 - 300) / 430)));
+        const wi = Math.min(chunk.length - 1, Math.floor((Date.now() - t0 - 300) / 430));
+        markChunk(chunk, wi);
+        keepWordInView(chunk[wi] && chunk[wi].el, scrollRef.current);
       }, 160);
     };
     const advance = () => {
@@ -294,13 +298,22 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
     window.speechSynthesis.speak(utter);
   };
 
-  const speakContent = () => {
+  const speakContent = (from) => {
     if (activeIdx === null) return;
     fullStopSpeech();
     const roots = Array.from(document.querySelectorAll('.learn-content-html'));
     if (!roots.length) return;
-    const chunks = buildChunks(wrapWords(roots));
+    const words = wrapWords(roots);
+    let chunks = buildChunks(words);
     if (!chunks.length) return;
+    // Tapped a word: start from that word (the rest of its sentence, then everything after it)
+    if (from && from.offset !== undefined) {
+      const wi = wordAtPosition(words, roots, from);
+      const target = words[wi];
+      const ci = chunks.findIndex((c) => c.includes(target));
+      if (ci > 0) chunks = chunks.slice(ci);
+      if (ci >= 0) chunks[0] = chunks[0].slice(chunks[0].indexOf(target));
+    }
     sentenceQueueRef.current = chunks;
     stoppedRef.current = false;
     setSpeaking(true);
@@ -321,6 +334,18 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
     let timer = setTimeout(tryStart, 30);
     return () => clearTimeout(timer);
   }, [activeIdx]); // eslint-disable-line
+
+  // Tap any sentence of the lesson and the voice carries on from there.
+  const onLessonTap = (e) => {
+    if (activeIdx === null || quizMode) return;
+    if (e.target.closest && e.target.closest('button,a,input,select,textarea,label,.learn-ad,.learn-tts-btn,.learn-quiz-overlay')) return;
+    const sel = window.getSelection && window.getSelection();
+    if (sel && !sel.isCollapsed) return;
+    const roots = Array.from(document.querySelectorAll('.learn-content-html'));
+    if (!e.target.closest('.learn-content-html') || !roots.length) return;
+    const pos = tapPosition(e, roots);
+    if (pos) speakContent(pos);
+  };
 
   const handlePause = () => {
     if (paused) {
@@ -660,7 +685,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
                   ))}
               </select>
               {!speaking ? (
-                <button className="learn-tts-btn" onClick={speakContent}>
+                <button className="learn-tts-btn" onClick={() => speakContent()}>
                   <Icon name="play" size={14} /> Read
                 </button>
               ) : (
@@ -830,6 +855,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
           className="scroll"
           ref={scrollRef}
           onScroll={handleScroll}
+          onClick={onLessonTap}
           style={{ flex: 1, overflowY: 'auto', padding: '0 0 24px' }}
         >
           <div style={{ padding: '12px 16px 0', fontSize: fSize }}>

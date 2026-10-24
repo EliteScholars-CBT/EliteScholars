@@ -13,6 +13,12 @@ export default function AdminSources({ token, onAuthFail }) {
   const [s, setS] = useState(null);
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
+  const [lbSrc, setLbSrc] = useState('sms');
+  const [lbCamp, setLbCamp] = useState('');
+  const [copied, setCopied] = useState(false);
+  const tag = (v) => String(v || '').toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 40);
+  const trackedLink = `https://elitescholars.site/?src=${lbSrc}${tag(lbCamp) ? `&utm_campaign=${tag(lbCamp)}` : ''}`;
+  const copyLink = () => { try { navigator.clipboard.writeText(trackedLink).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1600); }); } catch { /* ignore */ } };
 
   useEffect(() => {
     let on = true; setBusy(true);
@@ -29,6 +35,15 @@ export default function AdminSources({ token, onAuthFail }) {
           <button className="adm-small">{ref ? 'Change' : 'Filter'}</button>
           {ref && <button type="button" className="adm-small" onClick={() => { setRef(''); setDraft(''); }}>All traffic</button>}
         </form>
+      </section>
+      <section className="adm-card">
+        <h2>Make a tracked link (SMS, WhatsApp…)</h2>
+        <p className="adm-note" style={{ marginTop: 0 }}>Text messages do not tell us where a click came from, so put this link in your message. Visits and sign-ups from it are counted under the source you pick, and under your campaign name below.</p>
+        <div className="adm-inline">
+          <select value={lbSrc} onChange={(e) => setLbSrc(e.target.value)}>{['sms', 'whatsapp', 'email', 'facebook', 'instagram', 'x', 'tiktok', 'telegram'].map((k) => <option key={k} value={k}>{labelOf(k)}</option>)}</select>
+          <input placeholder="Campaign name, e.g. oct-jamb-blast" value={lbCamp} onChange={(e) => setLbCamp(e.target.value)} />
+        </div>
+        <div className="adm-linkbox"><code>{trackedLink}</code><button className="adm-small" onClick={copyLink}>{copied ? 'Copied' : 'Copy link'}</button></div>
       </section>
       {err && <div className="adm-error">{err}</div>}
       {!s && busy && <div className="adm-card">Loading…</div>}
@@ -56,6 +71,21 @@ export default function AdminSources({ token, onAuthFail }) {
             ) : <p className="adm-empty">Nothing recorded yet. Visits are counted from now on.</p>}
             <p className="adm-note">“Direct” means no source was passed (typed link, many in-app browsers, bookmarks). Links with <code>&amp;src=whatsapp</code> or <code>utm_source=</code> are always identified.</p>
           </section>
+          {s.campaigns && s.campaigns.length > 0 && (
+            <section className="adm-card">
+              <h2>Campaigns</h2>
+              <div className="adm-list tight">
+                {s.campaigns.map((x) => (
+                  <div className="adm-item" key={x.name}>
+                    <div className="adm-item-head static">
+                      <span className="adm-item-main"><b>{x.name.split(' · ').map((p, i) => (i === 0 ? labelOf(p) : p)).join(' · ')}</b><small>{x.rate}% sign up</small></span>
+                      <span className="adm-item-side"><b>{fmtN(x.visits)} visits</b><small>{fmtN(x.signups)} sign-ups</small></span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
           {!ref && s.pages.length > 0 && <section className="adm-card"><h2>Where they landed</h2><Bars data={s.pages} /></section>}
           {!ref && s.partners.length > 0 && (
             <section className="adm-card">

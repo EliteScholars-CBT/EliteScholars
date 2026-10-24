@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import EliteBadge from './EliteBadge';
 import StickerStudio from './StickerStudio';
 import { fetchMedia } from '../utils/media';
-import { scanImage } from '../utils/imageGuard';
+import { scanImage, flaggedMessage } from '../utils/imageGuard';
 import '../styles/status.css';
 
 // 24-hour status updates: share a short message with only yourself, your squad or everyone.
@@ -233,9 +233,9 @@ export default function StatusBar() {
                   <button className="st-send" disabled={!reply.trim()} onClick={() => sendReply(cur)} aria-label="Send reply">➤</button>
                 </div>
                 <div className="st-tools">
-                  <button onClick={() => tryReshare(cur)}>🔁 Reshare</button>
-                  <button onClick={() => openThread(cur)}>💬 Conversation{cur.answered > 0 ? ` (${cur.answered} new)` : ''}</button>
-                  <button onClick={() => reportStatus(cur)}>🚩 Report</button>
+                  <button onClick={() => tryReshare(cur)} aria-label="Reshare" title="Reshare">🔁</button>
+                  <button onClick={() => openThread(cur)} aria-label="Conversation" title="Conversation" className="st-tool-conv">💬{cur.answered > 0 && <i className="st-dot">{cur.answered}</i>}</button>
+                  <button onClick={() => reportStatus(cur)} aria-label="Report" title="Report">🚩</button>
                 </div>
               </div>
             )}
@@ -314,14 +314,15 @@ function Composer({ onClose, onPosted }) {
   const post = async () => {
     if ((!text.trim() && !image) || busy) return;
     setBusy(true); setErr('');
-    let scan;
+    let scan; let ocr;
     if (image) {
       setBusyText('Checking your photo…');
-      scan = await scanImage(image);
+      const sc = await scanImage(image);
       setBusyText('');
-      if (scan === 'flagged') { setBusy(false); setErr("That photo can't be posted. Please choose a different one."); return; }
+      if (sc.state === 'flagged') { setBusy(false); setErr(flaggedMessage(sc)); return; }
+      scan = sc.state; ocr = sc.text || undefined;
     }
-    const r = await call('post', { text, bg, privacy, image: image || undefined, scan });
+    const r = await call('post', { text, bg, privacy, image: image || undefined, scan, ocr });
     setBusy(false);
     if (!r.ok) { setErr(r.error); return; }
     onPosted();

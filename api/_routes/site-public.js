@@ -6,6 +6,7 @@ import { sendOk, sendErr, sendMethodNotAllowed, setCors, readBody } from "../_he
 import { rateLimitOk } from "../_helpers/guard.js";
 import { getPricing } from "../_helpers/pricing.js";
 import { getAdsConfig } from "../_helpers/adsConfig.js";
+import { getSettings as getPartnerSettings } from "../_helpers/partners.js";
 import { getShopCatalog, publicItem } from "../_helpers/shopItems.js";
 import { getSupabase } from "../_helpers/supabase.js";
 import { notifyAdmin } from "../_helpers/mail.js";
@@ -20,7 +21,9 @@ export default async function handler(req, res) {
 
   if (op === "config") {
     res.setHeader("Cache-Control", "public, max-age=60, s-maxage=60");
-    return sendOk(res, { ads: await getAdsConfig() });
+    let partnerRate = 40;
+    try { if (supabaseEnabled()) partnerRate = (await getPartnerSettings()).defaultRate || 40; } catch { /* default */ }
+    return sendOk(res, { ads: await getAdsConfig(), partnerRate });
   }
 
   if (op === "shop") {

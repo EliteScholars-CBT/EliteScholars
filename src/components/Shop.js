@@ -141,7 +141,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
       price: annualPrice, originalPrice, period: '/yr',
       features: [
         'Unlimited topics, every exam', 'Unlimited sessions, no time limit', 'Zero cooldown, ever',
-        'Zero ads, completely', 'WAEC, NECO, JAMB & GST', 'All 6 arcade games unlocked',
+        'Zero ads, completely', 'WAEC, NECO, JAMB & GST', 'All games unlocked',
         'Unlimited file uploads & study packs', 'Unlimited challenges & squads', 'Full offline access',
         'Priority support',
       ],

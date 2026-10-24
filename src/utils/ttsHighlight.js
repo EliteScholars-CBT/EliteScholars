@@ -83,13 +83,80 @@ export function clearChunk(chunk) {
   (chunk || []).forEach((w) => { if (w.el.isConnected) w.el.classList.remove('tts-sent', 'tts-now', 'tts-read'); });
 }
 
-// Keep the sentence being read comfortably on screen (only scrolls when it drifts out of the middle band).
-export function keepInView(chunk, scroller) {
-  const el = chunk[0] && chunk[0].el;
-  if (!el || !el.isConnected) return;
-  const r = el.getBoundingClientRect();
-  const box = scroller ? scroller.getBoundingClientRect() : { top: 0, bottom: window.innerHeight };
-  if (r.top < box.top + 90 || r.bottom > box.bottom - 120) {
-    try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch { el.scrollIntoView(); }
+// Nearest ancestor that actually scrolls (falls back to the page).
+function scrollerOf(el, hint) {
+  if (hint && hint.scrollHeight > hint.clientHeight + 4) return hint;
+  let n = el && el.parentElement;
+  while (n && n !== document.body) {
+    const oy = getComputedStyle(n).overflowY;
+    if ((oy === 'auto' || oy === 'scroll') && n.scrollHeight > n.clientHeight + 4) return n;
+    n = n.parentElement;
   }
+  return null; // the window itself
+}
+
+// Keep the word being read on screen: when it drifts out of the middle band, glide so it sits about a third from the top.
+let lastScrollAt = 0;
+export function keepWordInView(el, hint) {
+  if (!el || !el.isConnected) return;
+  const sc = scrollerOf(el, hint);
+  const box = sc ? sc.getBoundingClientRect() : { top: 0, bottom: window.innerHeight, height: window.innerHeight };
+  const r = el.getBoundingClientRect();
+  const topEdge = box.top + Math.min(110, box.height * 0.18);
+  const botEdge = box.bottom - Math.min(150, box.height * 0.28);
+  if (r.top >= topEdge && r.bottom <= botEdge) return;
+  const now = Date.now();
+  if (now - lastScrollAt < 350) return; // let the last glide finish
+  lastScrollAt = now;
+  const delta = r.top - (box.top + box.height * 0.33);
+  try {
+    if (sc) sc.scrollTo({ top: sc.scrollTop + delta, behavior: 'smooth' });
+    else window.scrollTo({ top: window.scrollY + delta, behavior: 'smooth' });
+  } catch {
+    if (sc) sc.scrollTop += delta; else window.scrollBy(0, delta);
+  }
+}
+
+export function keepInView(chunk, scroller) {
+  keepWordInView(chunk[0] && chunk[0].el, scroller);
+}
+
+// Where did the student tap? Returns { root, offset } — characters from the start of the lesson text — or null.
+export function tapPosition(e, roots) {
+  let node = null, off = 0;
+  const w = e.target && e.target.closest && e.target.closest('.tts-w');
+  if (w) { node = w.firstChild; off = 0; }
+  else if (document.caretRangeFromPoint) {
+    const r = document.caretRangeFromPoint(e.clientX, e.clientY);
+    if (r) { node = r.startContainer; off = r.startOffset; }
+  } else if (document.caretPositionFromPoint) {
+    const r = document.caretPositionFromPoint(e.clientX, e.clientY);
+    if (r) { node = r.offsetNode; off = r.offset; }
+  }
+  if (!node) return null;
+  const root = roots.find((x) => x.contains(node));
+  if (!root) return null;
+  try {
+    const rg = document.createRange();
+    rg.setStart(root, 0);
+    rg.setEnd(node, node.nodeType === 3 ? off : 0);
+    return { rootIdx: roots.indexOf(root), offset: rg.toString().length };
+  } catch { return null; }
+}
+
+// Index (in the wrapped word list) of the word that contains the tapped position.
+export function wordAtPosition(words, roots, pos) {
+  let best = 0;
+  for (let i = 0; i < words.length; i++) {
+    const w = words[i];
+    const rootIdx = roots.findIndex((x) => x.contains(w.el));
+    if (rootIdx < pos.rootIdx) { best = i; continue; }
+    if (rootIdx > pos.rootIdx) break;
+    const rg = document.createRange();
+    rg.setStart(roots[rootIdx], 0);
+    rg.setEnd(w.el, 0);
+    const start = rg.toString().length;
+    if (start <= pos.offset) best = i; else break;
+  }
+  return best;
 }

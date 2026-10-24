@@ -17,7 +17,7 @@ import { eliteEmails } from "../_helpers/elite.js";
 import { saveMedia } from "../_helpers/media.js";
 import { pushToEmails } from "../_helpers/push.js";
 import { checkText } from "../_helpers/contentGuard.js";
-import { moderateImage } from "../_helpers/imageGuard.js";
+import { judgePhoto } from "../_helpers/imageGuard.js";
 
 const HOURS = 24;
 const PRIVACY = ["me", "squad", "public"];
@@ -73,21 +73,18 @@ export default async function handler(req, res) {
       sb.from("events").insert({ type: "status_blocked", email, payload: { flag: guard.flag } }).then(() => {}, () => {});
       return sendErr(res, guard.message);
     }
-    if (b.scan === "flagged") return sendErr(res, "That photo can't be posted. Please choose a different one.");
-    // Every photo is checked on the server (nudity, sexual content, scam text, gore). If that check cannot run,
-    // the phone's own scan must have passed — otherwise the photo is not posted.
-    let scan = null;
+    // Photos are checked on the poster's phone (no AI); here we apply the same word filter to the words read from the picture.
+    let scan = null, forceSquad = false;
     if (b.image) {
-      const mod = await moderateImage(b.image);
-      if (mod.checked && !mod.ok) {
-        sb.from("events").insert({ type: "status_blocked", email, payload: { flag: `photo:${mod.reason}`, photo: true } }).then(() => {}, () => {});
-        return sendErr(res, mod.reason === "scam" ? "That photo looks like a money or scam offer. It can't be posted." : "That photo can't be posted on EliteScholars. Please choose a different one.");
+      const j = judgePhoto(b);
+      if (!j.ok) {
+        sb.from("events").insert({ type: "status_blocked", email, payload: { flag: j.flag, photo: true } }).then(() => {}, () => {});
+        return sendErr(res, j.error);
       }
-      if (mod.checked) scan = "ai";
-      else if (b.scan === "clean") scan = "clean";
-      else return sendErr(res, "We couldn't check that photo right now, so it wasn't posted. Please try again in a moment.");
+      scan = j.scan; forceSquad = j.forceSquad;
     }
-    const privacy = PRIVACY.includes(b.privacy) ? b.privacy : "me";
+    let privacy = PRIVACY.includes(b.privacy) ? b.privacy : "me";
+    if (forceSquad && privacy === "public") privacy = "squad"; // photos that could not be scanned never go public
     const bg = BGS.includes(b.bg) ? b.bg : "violet";
     const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
     const { count } = await sb.from("statuses").select("id", { count: "exact", head: true }).eq("email", email).gte("created_at", since);

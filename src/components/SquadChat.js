@@ -1,3 +1,4 @@
+import { scanImage, flaggedMessage } from '../utils/imageGuard';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import EliteBadge from './EliteBadge';
@@ -194,7 +195,20 @@ export default function SquadChat({ squadId, squadName, isOwner, onClose }) {
     if (!(await send({ text: t }, { kind: 'text', text: t }))) setText(t);
   };
   const sendSticker = (s) => { setTray(false); send({ sticker: s }, { kind: 'sticker', text: s }); };
-  const sendImage = (url) => { if (studio && studio.blank) saveMine(url); setStudio(null); send({ image: url }, { kind: 'image', text: '', media_id: null, _local: url }); };
+  const sendImage = async (url) => {
+    const isPhoto = !(studio && studio.blank);
+    if (!isPhoto) saveMine(url);
+    setStudio(null);
+    let scan = 'clean', ocr;
+    if (isPhoto) {
+      setErr(''); setSending(true);
+      const sc = await scanImage(url);
+      setSending(false);
+      if (sc.state === 'flagged') { setErr(flaggedMessage(sc)); return; }
+      scan = sc.state; ocr = sc.text || undefined;
+    }
+    send({ image: url, scan, ocr }, { kind: 'image', text: '', media_id: null, _local: url });
+  };
 
   const del = async (id) => {
     setMsgs((c) => c.filter((x) => x.id !== id));

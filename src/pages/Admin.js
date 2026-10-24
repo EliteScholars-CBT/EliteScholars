@@ -40,6 +40,7 @@ const TABS = [
   { id: 'blog', label: 'Blog', perms: ['blog'] },
   { id: 'sources', label: 'Sources', perms: ['analytics'] },
   { id: 'ads', label: 'Ads', perms: ['ads'] },
+  { id: 'earnings', label: 'Adsterra earnings', perms: ['ads'] },
   { id: 'shop', label: 'Shop', perms: ['shop'] },
   { id: 'partners', label: 'Partners', perms: ['partners', 'payouts'], badge: ['partners', 'payouts'] },
   { id: 'schools', label: 'Schools', perms: ['schools'], badge: ['schools'] },
@@ -194,6 +195,7 @@ export default function Admin() {
       {cur === 'blog' && <AdminBlog token={token} onAuthFail={authFail} />}
       {cur === 'sources' && <AdminSources token={token} onAuthFail={authFail} />}
       {cur === 'ads' && <AdminAds token={token} onAuthFail={authFail} />}
+      {cur === 'earnings' && <AdminAds token={token} onAuthFail={authFail} only="earnings" />}
       {cur === 'shop' && <AdminShop token={token} onAuthFail={authFail} />}
       {cur === 'schools' && <AdminSchools token={token} onAuthFail={authFail} />}
       {cur === 'prices' && <AdminPrices token={token} onAuthFail={authFail} />}
