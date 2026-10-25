@@ -1,6 +1,6 @@
 // ============================================================================
 // api/payment/status.js — GET /api/payment/status?email=...
-// Returns current premium status from sheet
+// Returns current pro status from sheet
 // ============================================================================
 
 import { sendOk, sendErr, sendMethodNotAllowed, setCors } from '../_helpers/response.js';

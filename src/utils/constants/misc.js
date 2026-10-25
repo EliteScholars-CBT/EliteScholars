@@ -19,14 +19,14 @@ export const VIBES = [
   '💡 Did you know? You can challenge a friend in the Challenges tab!',
   '💡 Use Learn Mode to master topics before CBT practice.',
   '💡 Boost your XP by maintaining daily streaks! Check your Profile.',
-  '💡 Check the Shop tab for premium study materials! 🛍️',
+  '💡 Check the Shop tab for pro study materials! 🛍️',
   '💡 Use keyboard arrows ← → to navigate questions in a quiz!',
   '📚 Study Tip: Review your wrong answers — that is where marks hide.',
   '📚 Study Tip: 30 minutes daily beats 5 hours once a week.',
   '🎯 Exam Tip: Read every question twice before picking an answer.',
   '🎯 Exam Tip: Eliminate wrong options first — narrow it down!',
   '🏅 Win Tip: Players with 50+ quizzes score 40% higher on average.',
-  '💡 Go Premium to remove all ads and unlock unlimited practice!',
+  '💡 Go Pro to remove all ads and unlock unlimited practice!',
 ];
 
 // ── Share message ─────────────────────────────────────────────────────────────

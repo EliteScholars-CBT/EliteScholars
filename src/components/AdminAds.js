@@ -59,7 +59,7 @@ export default function AdminAds({ token, onAuthFail, only }) {
       <section className="adm-card">
         <h2>Ads on or off</h2>
         <Check label="Show ads at all" hint="Master switch. Off = no ads anywhere (blog and app)." checked={ads.master} onChange={(v) => set('master', v)} />
-        <Check label="Hide ads from Premium students" hint="Recommended: it is one of the reasons to go Premium." checked={ads.hideForPremium} onChange={(v) => set('hideForPremium', v)} disabled={off} />
+        <Check label="Hide ads from Pro students" hint="Recommended: it is one of the reasons to go Pro." checked={ads.hideForPremium} onChange={(v) => set('hideForPremium', v)} disabled={off} />
       </section>
 
       <section className="adm-card">
@@ -91,6 +91,34 @@ export default function AdminAds({ token, onAuthFail, only }) {
           <Check label="Social bar" hint="Loads after about 45 seconds, never during a quiz or game." checked={ads.app.socialBar} onChange={(v) => set('app.socialBar', v)} disabled={off || !ads.app.enabled} />
           <Check label="Fill empty spots with our own promos" checked={ads.app.house} onChange={(v) => set('app.house', v)} disabled={off || !ads.app.enabled} />
         </div>
+      </section>
+
+      <section className="adm-card">
+        <h2>Our own ads</h2>
+        <p className="adm-note" style={{ marginTop: 0 }}>Promos we run ourselves (affiliate marketing, Resumify and so on). Switch one on and it joins the rotation in the app. Views and clicks come from the last {days} days.</p>
+        {(ads.ownAds || []).map((o, i) => {
+          const st = (stats ? stats.placements : []).filter((x) => String(x.name).endsWith(`own-${o.id}`));
+          const views = st.reduce((a, x) => a + x.views, 0), clicks = st.reduce((a, x) => a + x.clicks, 0);
+          const upd = (k, v) => set(`ownAds.${i}.${k}`, v);
+          return (
+            <div key={o.id} className="adm-ownad">
+              <div className="adm-ownad-top">
+                {o.image ? <img src={o.image} alt="" /> : <span className="adm-ownad-ph">📣</span>}
+                <div><b>{o.title || 'Untitled'}</b><small>{views} views · {clicks} clicks</small></div>
+                <label className="adm-switch"><input type="checkbox" checked={!!o.enabled} onChange={(e) => upd('enabled', e.target.checked)} disabled={off} /><span>{o.enabled ? 'On' : 'Off'}</span></label>
+              </div>
+              <div className="adm-form">
+                <label>Headline<input value={o.title} maxLength={80} onChange={(e) => upd('title', e.target.value)} /></label>
+                <label>Short text<input value={o.desc} maxLength={200} onChange={(e) => upd('desc', e.target.value)} /></label>
+                <label>Button words<input value={o.cta} maxLength={40} onChange={(e) => upd('cta', e.target.value)} /></label>
+                <label>Link (WhatsApp or website)<input value={o.link} onChange={(e) => upd('link', e.target.value)} placeholder="https://…" /></label>
+                <label>Picture (address)<input value={o.image} onChange={(e) => upd('image', e.target.value)} placeholder="/images/ads/name.jpg" /></label>
+              </div>
+              <button type="button" className="adm-link-danger" onClick={() => set('ownAds', ads.ownAds.filter((_, k) => k !== i))}>Remove this ad</button>
+            </div>
+          );
+        })}
+        {(ads.ownAds || []).length < 12 && <button type="button" className="adm-btn-ghost" onClick={() => set('ownAds', [...(ads.ownAds || []), { id: `ad${Date.now().toString(36)}`, enabled: false, title: 'New promo', desc: '', cta: 'Open →', image: '', link: 'https://' }])}>＋ Add an ad</button>}
       </section>
 
       <section className="adm-card">

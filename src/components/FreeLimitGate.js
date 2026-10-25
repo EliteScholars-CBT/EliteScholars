@@ -6,7 +6,7 @@ import { EmojiIcon } from './Icon';
 
 // ============================================================================
 // FreeLimitGate — Shown when free user hits their daily/session limit.
-// Displays countdown timer + option to go premium.
+// Displays countdown timer + option to go pro.
 // ============================================================================
 
 function fmtTime(secs) {
@@ -34,9 +34,9 @@ export default function FreeLimitGate({ email, name, reason = 'session', onClose
   }, [email]);
 
   const COPY = {
-    topics: { icon: '📚', title: 'Free topics used up for today', msg: "You've used your free topics for today. They come back tomorrow, or go Premium for unlimited topics." },
-    cbt:    { icon: '📝', title: 'Free CBT sessions used up for today', msg: "You've used your free CBT practice sessions for today. They come back tomorrow, or go Premium for unlimited practice." },
-    games:  { icon: '🎮', title: 'Free games used up for today', msg: "You've used your free games for today. They come back tomorrow, or go Premium for unlimited games." },
+    topics: { icon: '📚', title: 'Free topics used up for today', msg: "You've used your free topics for today. They come back tomorrow, or go Pro for unlimited topics." },
+    cbt:    { icon: '📝', title: 'Free CBT sessions used up for today', msg: "You've used your free CBT practice sessions for today. They come back tomorrow, or go Pro for unlimited practice." },
+    games:  { icon: '🎮', title: 'Free games used up for today', msg: "You've used your free games for today. They come back tomorrow, or go Pro for unlimited games." },
   };
   const daily = COPY[reason];
   const isCooldownDone = secsLeft <= 0;
@@ -79,7 +79,7 @@ export default function FreeLimitGate({ email, name, reason = 'session', onClose
             className="limit-gate-premium-btn"
             onClick={() => setShowPremium(true)}
           >
-            ⭐ Go Premium — Remove All Limits
+            ⭐ Go Pro — Remove All Limits
           </button>
 
           {!daily && isCooldownDone

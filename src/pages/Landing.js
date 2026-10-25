@@ -55,13 +55,16 @@ const EXAMS = ['WAEC', 'NECO', 'JAMB', 'GST'];
 
 const MARQUEE_WORDS = ['English', 'Mathematics', 'Biology', 'Chemistry', 'Physics', 'Economics', 'Government', 'Literature', 'Accounting', 'Geography', 'Commerce', 'Further Maths', 'CRS', 'Visual Arts', 'Food & Nutrition', 'Marketing', 'Agric Science', 'Citizenship', 'GST'];
 
+// How long each feature stays on screen (ms). Kept short: visitors do not wait.
+const TOUR_MS = (key) => (key === 'games' ? 6000 : 2300);
+
 const ROTATE_WORDS = ['WAEC', 'NECO', 'JAMB', 'GST'];
 
 const SHOTS = [
   { key: 'subjects', img: '/landing/m-subjects.webp', icon: 'clipboard', title: 'CBT Practice', desc: 'Real exam-style questions for WAEC, NECO, JAMB and GST — timed like the real thing, with instant explanations.' },
   { key: 'quiz', img: '/landing/m-quiz.webp', icon: 'target', title: 'Instant Answers', desc: 'Tap, submit, learn. Every question comes with a quick take that explains why — so you never repeat a mistake.' },
   { key: 'lesson', img: '/landing/m-lesson.webp', icon: 'bookOpen', title: 'Bite-sized Lessons', desc: 'Topics broken into clear notes, tables and tips. Tap Read and a voice reads the lesson to you, word by word.' },
-  { key: 'games', img: '/landing/m-games.webp', icon: 'gamepad', title: '11 Games', desc: 'Word Scramble, Memory Match, Picture Round, Colour Memory, Word Slice, Sort Rush, True or False, Hangman, Higher or Lower, Odd One Out and Speed Maths. Learning that feels like play.' },
+  { key: 'games', img: '/landing/m-games.webp', icon: 'gamepad', title: '20+ Games', desc: 'Word Scramble, Memory Match, Picture Round, Colour Memory, Word Slice, Sort Rush, True or False, Hangman, Higher or Lower, Odd One Out and Speed Maths. Learning that feels like play.' },
   { key: 'flash', img: '/landing/m-flash.webp', icon: 'cards', title: 'Flashcards', desc: 'Flip, mark what you know, and revise only what you need. Fast, focused and perfect for the night before.' },
   { key: 'status', img: '/landing/m-status.webp', icon: 'chat', title: 'Status & Squads', desc: 'Post a 24-hour status for just yourself, your squad or everyone, and see what your classmates are up to.' },
   { key: 'share', img: '/landing/m-share.webp', icon: 'share', title: 'Share Your Wins', desc: 'Every score and badge becomes a ready-made picture you can share anywhere or download, with your invite link on it.' },
@@ -75,7 +78,7 @@ const BENEFITS = [
   { icon: 'flame', title: 'Stay consistent', desc: 'Streaks, XP and rewards make daily study a habit, not a struggle.' },
   { icon: 'users', title: 'Learn with friends', desc: 'Challenge classmates, join a squad and push each other up the ranks.' },
   { icon: 'upload', title: 'Your notes, upgraded', desc: 'Upload a PDF or DOCX and get simple-language lessons, flashcards and questions.' },
-  { icon: 'gift', title: 'Free to start', desc: 'Begin with no payment and no card. Go Premium later for ₦3,000 a year.' },
+  { icon: 'gift', title: 'Free to start', desc: 'Begin with no payment and no card. Go Pro later for ₦3,000 a year.' },
   { icon: 'rocket', title: 'Installs in seconds', desc: 'Add it to your home screen straight from the browser. No app store, no big download.' },
 ];
 
@@ -87,7 +90,7 @@ const MORE = [
   { icon: 'wand', title: 'Study from your own files', desc: 'Upload notes and get them rewritten in simple words, with flashcards and questions.' },
   { icon: 'flag', title: 'Report a wrong question', desc: 'Spot a mistake? One tiny tap and our team reviews it. Questions keep getting better.' },
   { icon: 'wifiOff', title: 'Data saver mode', desc: 'Turn off sounds and heavy effects to save data and battery on any phone.' },
-  { icon: 'gem', title: 'Elite badge', desc: 'Premium students wear a gold Spartan badge on their profile, status and leaderboard rank.' },
+  { icon: 'gem', title: 'Elite badge', desc: 'Pro students wear a gold Spartan badge on their profile, status and leaderboard rank.' },
 ];
 
 const SCHOOL_POINTS = [
@@ -102,7 +105,7 @@ const PARENT_POINTS = [
   { icon: 'mail', title: 'Weekly report card', desc: 'Add a parent or guardian email and they get a simple progress report every Sunday: scores, streak and weak subjects.' },
   { icon: 'shield', title: 'Safe by design', desc: 'No ads inside the practice app, no chat with strangers, and statuses are private unless your child chooses otherwise.' },
   { icon: 'bell', title: 'Habit, not pressure', desc: 'Short daily sessions and streak reminders build steady revision instead of last-minute cramming.' },
-  { icon: 'coins', title: 'Affordable', desc: 'Start free. Premium is ₦3,000 for a whole year, far cheaper than one lesson.' },
+  { icon: 'coins', title: 'Affordable', desc: 'Start free. Pro is ₦3,000 for a whole year, far cheaper than one lesson.' },
 ];
 
 const DEMO_QS = [
@@ -114,7 +117,7 @@ const DEMO_QS = [
 const FAQ = [
   { q: 'Can my school or teacher use EliteScholars?', a: 'Yes. Any teacher can create a class, share the class code, set assignments with pictures and see how every student is doing. Students get a notification for each new assignment.' },
   { q: 'Can parents follow their child\'s progress?', a: 'Yes. Students add a parent or guardian email in their profile and the parent receives a weekly progress report by email every Sunday.' },
-  { q: 'Is EliteScholars really free?', a: 'Yes. You can start studying for free with daily limits. Premium removes the limits and costs ₦3,000 for a full year.' },
+  { q: 'Is EliteScholars really free?', a: 'Yes. You can start studying for free with daily limits. Pro removes the limits and costs ₦3,000 for a full year.' },
   { q: 'Does it work without data?', a: 'Yes. Once your content has loaded, topics, flashcards and quizzes keep working offline, and your progress syncs when you reconnect.' },
   { q: 'Which exams are covered?', a: 'WAEC, NECO, JAMB and GST, with lessons, past-question style practice, flashcards and games.' },
   { q: 'Do I need to download it from an app store?', a: 'No. Open it in your browser and tap Install or Add to Home Screen. It opens like any other app.' },
@@ -250,6 +253,23 @@ export default function Landing() {
   const [tab, setTab] = useState(0);
   const [auto, setAuto] = useState(true);
   const [faq, setFaq] = useState(0);
+  const listRef = useRef(null);
+  const stageRef = useRef(null);
+  // parallax: how far the phone stage is through the viewport (-1 .. 1), updated on scroll
+  const par = (() => {
+    const el = stageRef.current;
+    if (!el || typeof window === 'undefined') return 0;
+    const r = el.getBoundingClientRect();
+    const c = r.top + r.height / 2;
+    return Math.max(-1, Math.min(1, (c - window.innerHeight / 2) / window.innerHeight));
+  })();
+  // on phones the feature list rolls sideways; keep the active one in view
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list || list.scrollWidth <= list.clientWidth + 4) return;
+    const el = list.children[tab];
+    if (el) list.scrollTo({ left: el.offsetLeft - (list.clientWidth - el.offsetWidth) / 2, behavior: 'smooth' });
+  }, [tab]);
 
   useEffect(() => {
     captureReferralFromURL();
@@ -276,7 +296,7 @@ export default function Landing() {
   // Feature tour auto-advances until the visitor takes over
   useEffect(() => {
     if (!auto) return undefined;
-    const t = setTimeout(() => setTab((v) => (v + 1) % SHOTS.length), SHOTS[tab].key === 'games' ? 9200 : 4800);
+    const t = setTimeout(() => setTab((v) => (v + 1) % SHOTS.length), TOUR_MS(SHOTS[tab].key));
     return () => clearTimeout(t);
   }, [auto, tab]);
 
@@ -332,7 +352,7 @@ export default function Landing() {
         </div>
 
         <div className="land-hero-content">
-          <span className="land-pill"><Icon name="sparkles" size={13} /> 11 games · offline mode · study from your own notes</span>
+          <span className="land-pill"><Icon name="sparkles" size={13} /> 20+ games · offline mode · study from your own notes</span>
           <h1>
             Ace <RotatingWord /> <br />
             <span className="land-gold">the fun way</span>
@@ -379,7 +399,7 @@ export default function Landing() {
       <section className="l2-stats">
         <Stat value={50000} suffix="+" label="practice questions" />
         <Stat value={5} label="major exams covered" />
-        <Stat value={11} label="brain games" />
+        <Stat value={20} suffix="+" label="brain games" />
         <Stat value={0} suffix=" data" label="needed once loaded" />
       </section>
 
@@ -391,7 +411,7 @@ export default function Landing() {
           <p>Real screens from the real app. Tap a feature to take a look.</p>
         </Reveal>
         <div className="l2-tour-grid">
-          <div className="l2-tour-list" role="tablist">
+          <div className="l2-tour-list" role="tablist" ref={listRef}>
             {SHOTS.map((f, i) => (
               <button
                 key={f.key}
@@ -402,11 +422,12 @@ export default function Landing() {
               >
                 <span className="l2-tour-ico"><Icon name={f.icon} size={20} /></span>
                 <span className="l2-tour-txt"><b>{f.title}</b><em>{f.desc}</em></span>
-                {i === tab && auto && <i key={tab} className="l2-tour-bar" style={f.key === 'games' ? { animationDuration: '9.2s' } : undefined} />}
+                {i === tab && auto && <i key={tab} className="l2-tour-bar" style={{ animationDuration: `${TOUR_MS(f.key)}ms` }} />}
               </button>
             ))}
           </div>
-          <div className="l2-tour-stage">
+          <p className="l6-cap" aria-live="polite"><b>{SHOTS[tab].title}.</b> {SHOTS[tab].desc}</p>
+          <div className="l2-tour-stage" ref={stageRef} style={{ '--par': par }}>
             <div className="l2-tour-glow" aria-hidden="true" />
             <div className="l2-phone l2-tour-phone">
               <i className="l2-phone-btn" />
@@ -414,8 +435,9 @@ export default function Landing() {
                 <span className="l2-phone-notch" />
                 {SHOTS.map((f, i) => (f.key === 'games'
                   ? <div key={f.key} className={`l5-gp-wrap ${i === tab ? 'on' : ''}`}><LandingGamePreview active={i === tab} base={f.img} /></div>
-                  : <img key={f.key} className={i === tab ? 'on' : ''} src={f.img} alt={f.title} loading="lazy" draggable="false" />
+                  : <div key={f.key} className={`l6-pan ${i === tab ? 'on' : ''}`}><img src={f.img} alt={f.title} loading="lazy" draggable="false" /></div>
                 ))}
+                <i className="l6-tap" key={`tap${tab}`} aria-hidden="true" />
               </div>
             </div>
           </div>
@@ -450,8 +472,8 @@ export default function Landing() {
           <div className="l5-partner-pct" aria-hidden="true"><b>{partnerRate}%</b><span>commission</span></div>
           <div className="l5-partner-text">
             <span className="land-eyebrow">Partner programme</span>
-            <h2 id="l5-partner-h">Advertise EliteScholars and earn {partnerRate}% on every Premium</h2>
-            <p>Run a page, a school, a WhatsApp group or a business with students? Become a partner, share your own link and get {partnerRate}% commission each time a student you bring goes Premium. Track clicks, sign-ups and earnings from your own dashboard and request your payout.</p>
+            <h2 id="l5-partner-h">Advertise EliteScholars and earn {partnerRate}% on every Pro</h2>
+            <p>Run a page, a school, a WhatsApp group or a business with students? Become a partner, share your own link and get {partnerRate}% commission each time a student you bring goes Pro. Track clicks, sign-ups and earnings from your own dashboard and request your payout.</p>
             <ul className="l5-partner-points">
               <li><Icon name="checkCircle" size={16} /> Free to join</li>
               <li><Icon name="checkCircle" size={16} /> Your own link and code</li>

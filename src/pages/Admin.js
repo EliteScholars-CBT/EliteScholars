@@ -11,6 +11,7 @@ import AdminBlog from '../components/AdminBlog';
 import AdminTeam from '../components/AdminTeam';
 import AdminAI from '../components/AdminAI';
 import AdminAds from '../components/AdminAds';
+import AdminSecurity from '../components/AdminSecurity';
 import AdminShop from '../components/AdminShop';
 import AdminSources from '../components/AdminSources';
 import { AdminPrices, AdminSchools } from '../components/AdminPrices';
@@ -37,6 +38,7 @@ const TABS = [
   { id: 'students', label: 'Students', perms: ['students'] },
   { id: 'activity', label: 'Activity', perms: ['students'] },
   { id: 'status', label: 'Status', perms: ['status'], badge: ['status'] },
+  { id: 'security', label: 'Security', perms: ['status'], badge: ['security'] },
   { id: 'blog', label: 'Blog', perms: ['blog'] },
   { id: 'sources', label: 'Sources', perms: ['analytics'] },
   { id: 'ads', label: 'Ads', perms: ['ads'] },
@@ -89,7 +91,11 @@ export default function Admin() {
   const can = useCallback((k) => !!me && (me.owner || me.perms.includes(k)), [me]);
 
   // red dot: things that need attention (new partner, payout request, reports, school trials)
-  const refreshAlerts = useCallback(() => { if (token) api('alerts').then(setAlerts).catch(() => {}); }, [token, api]);
+  const refreshAlerts = useCallback(() => {
+    if (!token) return;
+    let secSince = ''; try { secSince = localStorage.getItem('adm_sec_seen') || ''; } catch { /* ignore */ }
+    api('alerts', secSince ? { query: { secSince } } : undefined).then(setAlerts).catch(() => {});
+  }, [token, api]);
   useEffect(() => {
     if (!token) return undefined;
     refreshAlerts();
@@ -129,6 +135,11 @@ export default function Admin() {
   const pickMonth = (v) => { setMonth(v); if (v) setRange(`month:${v}`); };
   const applyCustom = () => { if (from && to && from <= to) { setRange('custom'); load(token, 'custom', from, to); } else setError('Pick a valid start and end date.'); };
 
+  useEffect(() => {
+    if (view !== 'security') return;
+    try { localStorage.setItem('adm_sec_seen', new Date().toISOString()); } catch { /* ignore */ }
+    setAlerts((a) => ({ ...a, counts: { ...a.counts, security: 0 }, items: a.items.filter((x) => x.kind !== 'security'), total: Math.max(0, a.total - (a.counts.security || 0)) }));
+  }, [view]);
   if (!token) {
     return (
       <div className="adm-wrap adm-login">
@@ -192,6 +203,7 @@ export default function Admin() {
       {cur === 'students' && <AdminStudents token={token} onAuthFail={authFail} />}
       {cur === 'activity' && <AdminActivity token={token} onAuthFail={authFail} />}
       {cur === 'status' && <AdminStatus token={token} onAuthFail={authFail} />}
+      {cur === 'security' && <AdminSecurity token={token} onAuthFail={authFail} onOpenStudent={(e) => { try { sessionStorage.setItem('adm_open_student', e); } catch { /* ignore */ } setView('students'); }} />}
       {cur === 'blog' && <AdminBlog token={token} onAuthFail={authFail} />}
       {cur === 'sources' && <AdminSources token={token} onAuthFail={authFail} />}
       {cur === 'ads' && <AdminAds token={token} onAuthFail={authFail} />}
@@ -233,7 +245,7 @@ export default function Admin() {
             <Kpi label="Quizzes done" value={fmtN(s.kpis.quizzes.v)} k={s.kpis.quizzes} compare={compare} />
             <Kpi label="Revenue" value={fmtNaira(s.kpis.revenue.v)} k={s.kpis.revenue} compare={compare} money sub={`${fmtN(s.kpis.payments.v)} payments`} />
             <Kpi label="XP earned" value={fmtN(s.kpis.xp.v)} k={s.kpis.xp} compare={compare} sub={s.kpis.active.v ? `${fmtN(Math.round(s.kpis.xp.v / s.kpis.active.v))} per active student` : ''} />
-            <Kpi label="Premium now" value={fmtN(s.totals.premiumActive)} sub={`${premRate}% of all students`} />
+            <Kpi label="Pro now" value={fmtN(s.totals.premiumActive)} sub={`${premRate}% of all students`} />
           </section>
 
           <section className="adm-card">

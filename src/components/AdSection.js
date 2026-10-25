@@ -9,13 +9,14 @@ import { EmojiIcon } from './Icon';
 // Our own promos: shown when no third-party ad is available, or when the admin
 // has third-party ads off but "our own ads" on. Internal links only.
 const HOUSE = [
-  { id: 'premium', icon: '👑', title: 'Go Premium', desc: 'Unlimited topics, CBT and games. No ads, no daily limits.', cta: 'See Premium', link: '/app?src=house-premium' },
+  { id: 'premium', icon: '👑', title: 'Go Pro', desc: 'Unlimited topics, CBT and games. No ads, no daily limits.', cta: 'See Pro', link: '/app?src=house-premium' },
   { id: 'files', icon: '📄', title: 'Study from your own notes', desc: 'Upload a PDF or DOCX and get lessons, flashcards and quizzes.', cta: 'Try it', link: '/app?src=house-files' },
   { id: 'squad', icon: '👥', title: 'Study with a squad', desc: 'Make a squad, chat, and climb the leaderboard together.', cta: 'Open squads', link: '/app?src=house-squad' },
 ];
 
-function HouseCard({ slot, placement, examType }) {
-  const ad = HOUSE[Math.abs(slot) % HOUSE.length];
+function HouseCard({ slot, placement, examType, own = [] }) {
+  const pool = own.length ? [...own.map((o) => ({ id: `own-${o.id}`, icon: '📣', title: o.title, desc: o.desc, cta: o.cta, link: o.link, image: o.image, ext: true })), ...HOUSE] : HOUSE;
+  const ad = pool[Math.abs(slot) % pool.length];
   const ref = useRef(null);
   useEffect(() => {
     if (!ref.current) return undefined;
@@ -23,10 +24,10 @@ function HouseCard({ slot, placement, examType }) {
   }, [ad.id, ad.link, placement, examType]);
   return (
     <div ref={ref}>
-      <a className="ad-custom-card" href={ad.link} aria-label={`Promo: ${ad.title}`} onClick={() => trackAdClick('house', `${placement}-${ad.id}`, ad.link, examType)}>
-        <div className="ad-custom-img-placeholder"><EmojiIcon emoji={ad.icon} size="1.3em" /></div>
+      <a className="ad-custom-card" href={ad.link} {...(ad.ext ? { target: '_blank', rel: 'noopener sponsored' } : {})} aria-label={`Promo: ${ad.title}`} onClick={() => trackAdClick('house', `${placement}-${ad.id}`, ad.link, examType)}>
+        {ad.image ? <img className="ad-custom-img" src={ad.image} alt="" loading="lazy" /> : <div className="ad-custom-img-placeholder"><EmojiIcon emoji={ad.icon} size="1.3em" /></div>}
         <div className="ad-custom-body">
-          <div className="ad-custom-badge">EliteScholars</div>
+          <div className="ad-custom-badge">{ad.ext ? 'Sponsored' : 'EliteScholars'}</div>
           <div className="ad-custom-title">{ad.title}</div>
           <div className="ad-custom-desc">{ad.desc}</div>
           <div className="ad-custom-cta">{ad.cta}</div>
@@ -65,7 +66,7 @@ export default function AdSection({ slot = 0, placement = 'learn', examType, ema
       <div className="ad-section-label">Advertisement</div>
       {useNative
         ? <NativeBox unit={native} placement={placement} examType={examType} />
-        : <HouseCard slot={slot} placement={placement} examType={examType} />}
+        : <HouseCard slot={slot} placement={placement} examType={examType} own={(cfg.ownAds || []).filter((o) => o.enabled)} />}
     </div>
   );
 }

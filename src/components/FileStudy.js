@@ -62,7 +62,7 @@ export default function FileStudyHub() {
     if (!file) return;
     setError('');
     if (file.size > MAX_BYTES) { setError('That file is over 25 MB. Try a smaller one.'); return; }
-    // Free students get a few uploads per day (set in Admin); Premium (and trial / free-access) is unlimited.
+    // Free students get a few uploads per day (set in Admin); Pro (and trial / free-access) is unlimited.
     const me = loadUser();
     const slot = await reserve(me.email, 'file_study', `${file.name}:${file.size}`);
     syncLeft();

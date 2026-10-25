@@ -9,12 +9,13 @@ const imgOf = (i) => (i.imageUrl || (i.image ? `/shop/${i.image}` : ''));
 export default function AdminShop({ token, onAuthFail }) {
   const api = useMemo(() => makeApi(token, onAuthFail), [token, onAuthFail]);
   const [items, setItems] = useState(null);
+  const [removed, setRemoved] = useState([]);
   const [f, setF] = useState(null);
   const [err, setErr] = useState('');
   const [msg, setMsg] = useState('');
   const [busy, setBusy] = useState(false);
 
-  const load = useCallback(async () => { try { setItems((await api('shop-list')).items); setErr(''); } catch (e) { if (e.message !== 'auth') setErr(e.message); } }, [api]);
+  const load = useCallback(async () => { try { const d = await api('shop-list'); setItems(d.items); setRemoved(d.removed || []); setErr(''); } catch (e) { if (e.message !== 'auth') setErr(e.message); } }, [api]);
   useEffect(() => { load(); }, [load]);
 
   const flags = async (it, patch) => {
@@ -42,10 +43,11 @@ export default function AdminShop({ token, onAuthFail }) {
     setBusy(false);
   };
   const del = async (it) => {
-    if (!window.confirm(`Delete "${it.title}"? Students who already bought it keep their receipt.`)) return;
+    if (!window.confirm(`Delete "${it.title}" from the shop? Students who already bought it keep their receipt.`)) return;
     try { await api('shop-delete', { method: 'POST', body: { id: it.id } }); await load(); } catch (e) { if (e.message !== 'auth') setErr(e.message); }
   };
 
+  const restore = async (it) => { try { await api('shop-delete', { method: 'POST', body: { id: it.id, restore: true } }); await load(); } catch (e) { if (e.message !== 'auth') setErr(e.message); } };
   if (!items) return <div className="adm-card">{err || 'Loading…'}</div>;
   return (
     <div>
@@ -103,12 +105,18 @@ export default function AdminShop({ token, onAuthFail }) {
                 <label className="adm-check"><input type="checkbox" disabled={busy} checked={it.show.landing} onChange={(e) => flags(it, { showLanding: e.target.checked })} /> Landing</label>
                 <label className="adm-check"><input type="checkbox" disabled={busy} checked={it.active} onChange={(e) => flags(it, { active: e.target.checked })} /> For sale</label>
                 <button className="adm-small" onClick={() => edit(it)}>Edit</button>
-                {!it.builtin && <button className="adm-small danger" onClick={() => del(it)}>Delete</button>}
+                <button className="adm-small danger" onClick={() => del(it)}>Delete</button>
               </div>
             </div>
           ))}
         </div>
       </section>
+      {removed.length > 0 && (
+        <section className="adm-card">
+          <h2>Deleted built-in items</h2>
+          {removed.map((r) => <div key={r.id} className="adm-inline pad" style={{ justifyContent: 'space-between' }}><span>{r.title}</span><button className="adm-small" onClick={() => restore(r)}>Bring back</button></div>)}
+        </section>
+      )}
     </div>
   );
 }

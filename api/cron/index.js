@@ -142,7 +142,7 @@ function buildReportEmail({
     ? wardName + ' is making steady progress. With continued practice and focus, we expect to see significant improvement in the coming weeks.'
     : wardName + ' needs more practice sessions this week. We encourage you to remind them to study daily — even 15 minutes makes a difference.';
 
-  const planLabel   = plan || 'Premium';
+  const planLabel   = plan || 'Pro';
   const borderColor = color + '44';
 
   return `<!DOCTYPE html>
@@ -279,8 +279,8 @@ function buildReportEmail({
 // ============================================================================
 
 const PLAN_NAMES = {
-  monthly: 'Premium Monthly',
-  annual:  'Premium Annual',
+  monthly: 'Pro Monthly',
+  annual:  'Pro Annual',
   pro:     'Pro Monthly',
 };
 
@@ -298,7 +298,7 @@ function expiryReminderEmail({ firstName, plan, expiresAt }) {
       <tr>
         <td style="background:linear-gradient(135deg,#7a4500,#c47000,#7a4500);padding:32px 40px;text-align:center;">
           <div style="font-size:48px;margin-bottom:8px;">⏳</div>
-          <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;">Your Premium ends in 3 days</h1>
+          <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;">Your Pro ends in 3 days</h1>
           <p style="margin:4px 0 0;color:rgba(255,255,255,0.7);font-size:13px;">EliteScholars · Renewal Reminder</p>
         </td>
       </tr>
@@ -365,7 +365,7 @@ function missYouEmail({ firstName }) {
             Hey <strong style="color:#c8b4f0;">${firstName}</strong> 🥺
           </p>
           <p style="margin:0 0 20px;color:#9090b0;font-size:14px;line-height:1.8;">
-            Your Premium subscription has expired and honestly... EliteScholars hasn't been the same without you.
+            Your Pro subscription has expired and honestly... EliteScholars hasn't been the same without you.
             Your study streak, your scores, your progress — it's all still here, waiting for you to come back.
           </p>
           <p style="margin:0 0 28px;color:#9090b0;font-size:14px;line-height:1.8;">
@@ -385,7 +385,7 @@ function missYouEmail({ firstName }) {
             </p>
             <p style="margin:0 0 16px;color:#9090b0;font-size:13px;">Come back. We've got you. 🙏</p>
             <a href="https://elitescholars.site" style="display:inline-block;background:linear-gradient(135deg,#4B0082,#7B2FBE);color:#fff;text-decoration:none;padding:14px 36px;border-radius:8px;font-size:15px;font-weight:600;">
-              Renew My Premium
+              Renew My Pro
             </a>
           </div>
           <div style="background:#0f0f1a;border:1px solid #2a2a4a;border-radius:10px;padding:16px 20px;margin-bottom:24px;">
@@ -396,11 +396,11 @@ function missYouEmail({ firstName }) {
                 <td style="padding:8px 0;border-bottom:1px solid #1e1e3a;text-align:right;"><span style="color:#28c840;font-size:13px;font-weight:600;">₦3,000/mo</span></td>
               </tr>
               <tr>
-                <td style="padding:8px 0;border-bottom:1px solid #1e1e3a;"><span style="color:#c8c8c8;font-size:13px;">💎 Premium Monthly</span></td>
+                <td style="padding:8px 0;border-bottom:1px solid #1e1e3a;"><span style="color:#c8c8c8;font-size:13px;">💎 Pro Monthly</span></td>
                 <td style="padding:8px 0;border-bottom:1px solid #1e1e3a;text-align:right;"><span style="color:#28c840;font-size:13px;font-weight:600;">₦9,000/mo</span></td>
               </tr>
               <tr>
-                <td style="padding:8px 0;"><span style="color:#c8c8c8;font-size:13px;">👑 Premium Annual</span></td>
+                <td style="padding:8px 0;"><span style="color:#c8c8c8;font-size:13px;">👑 Pro Annual</span></td>
                 <td style="padding:8px 0;text-align:right;"><span style="color:#28c840;font-size:13px;font-weight:600;">₦89,000/yr</span></td>
               </tr>
             </table>
@@ -493,7 +493,7 @@ console.log('Finished calling getExpiringSubscriptions ', result);
       await resend.emails.send({
         from:    'EliteScholars <' + FROM + '>',
         to:      user.email,
-        subject: '⏳ ' + (user.firstName || 'Student') + ', your Premium expires in 3 days',
+        subject: '⏳ ' + (user.firstName || 'Student') + ', your Pro expires in 3 days',
         html:    expiryReminderEmail({
           firstName: user.firstName || 'Student',
           plan:      user.plan,

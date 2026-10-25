@@ -1,6 +1,6 @@
 import React from 'react';
 
-// Spartan-helmet badge for paid Premium students: the helmet with "PRO" written under it.
+// Spartan-helmet badge for paid Pro students: the helmet with "PRO" written under it.
 // On an avatar:  <span className="elite-wrap"><Avatar/> <EliteBadge /></span>   (sits on the corner)
 // Next to a name: <EliteBadge inline size={14} />
 export default function EliteBadge({ size = 18, inline = false }) {
@@ -11,8 +11,8 @@ export default function EliteBadge({ size = 18, inline = false }) {
     <span
       className={`elite-badge${inline ? ' inline' : ''}`}
       style={{ width: w, minHeight: Math.round(size * 1.5) }}
-      title="Elite Premium member"
-      aria-label="Elite Premium member"
+      title="Elite Pro member"
+      aria-label="Elite Pro member"
     >
       <svg viewBox="0 0 24 24" width={icon} height={icon} aria-hidden="true">
         <path fill="#2E1065" d="M12 2.5c-3.9 0-6.9 2.9-6.9 6.7v5.4c0 .5.2 1 .6 1.3l1.6 1.4V21h2.2v-3.2h1.1V21h2.8v-3.2h1.1V21h2.2v-4.4l1.6-1.4c.4-.3.6-.8.6-1.3V9.2c0-3.8-3-6.7-6.9-6.7z"/>

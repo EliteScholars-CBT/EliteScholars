@@ -88,7 +88,7 @@ export default function AdminAccess({ token, onAuthFail }) {
 
       <section className="adm-card">
         <h2>Free plan limits and trial</h2>
-        <p className="adm-note">What a free student can do. Daily limits reset at midnight Lagos time. Premium students, trial students and anyone with free access are unlimited.</p>
+        <p className="adm-note">What a free student can do. Daily limits reset at midnight Lagos time. Pro students, trial students and anyone with free access are unlimited.</p>
         <div className="adm-form">
           <label>Free topics per day
             <input type="number" min="0" max="100" value={limits.topics} onChange={(e) => setLimits({ ...limits, topics: e.target.value })} /></label>

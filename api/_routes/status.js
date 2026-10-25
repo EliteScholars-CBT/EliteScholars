@@ -18,6 +18,8 @@ import { saveMedia } from "../_helpers/media.js";
 import { pushToEmails } from "../_helpers/push.js";
 import { checkText } from "../_helpers/contentGuard.js";
 import { judgePhoto } from "../_helpers/imageGuard.js";
+import { logBlocked } from "../_helpers/security.js";
+import { checkImage } from "../_helpers/media.js";
 
 const HOURS = 24;
 const PRIVACY = ["me", "squad", "public"];
@@ -65,12 +67,19 @@ export default async function handler(req, res) {
   const sb = getSupabase();
   const nowIso = new Date().toISOString();
 
+  if (op === "blocked") {
+    if (!(await rateLimitOk(req, res, "status-blocked", 20, 600, email))) return;
+    const image = b.image && checkImage(b.image).ok ? b.image : null;
+    await logBlocked(sb, { email, where: b.where === "chat" ? "chat" : "photo", flag: `photo:${String(b.reason || "flagged").replace(/[^a-z]/g, "").slice(0, 12) || "flagged"}`, text: b.ocr ? `[words in photo] ${String(b.ocr).slice(0, 400)}` : "", image, detail: "stopped on the phone" });
+    return sendOk(res, {});
+  }
+
   if (op === "post") {
     const text = cleanText(b.text);
     if (text.length < 1 && !b.image) return sendErr(res, "Write something first.");
     const guard = checkText(text);
     if (!guard.ok) {
-      sb.from("events").insert({ type: "status_blocked", email, payload: { flag: guard.flag } }).then(() => {}, () => {});
+      await logBlocked(sb, { email, where: "status", flag: guard.flag, text });
       return sendErr(res, guard.message);
     }
     // Photos are checked on the poster's phone (no AI); here we apply the same word filter to the words read from the picture.
@@ -78,7 +87,7 @@ export default async function handler(req, res) {
     if (b.image) {
       const j = judgePhoto(b);
       if (!j.ok) {
-        sb.from("events").insert({ type: "status_blocked", email, payload: { flag: j.flag, photo: true } }).then(() => {}, () => {});
+        await logBlocked(sb, { email, where: "photo", flag: j.flag, text: `${text}${b.ocr ? `\n[words in photo] ${String(b.ocr).slice(0, 300)}` : ""}`, image: b.image });
         return sendErr(res, j.error);
       }
       scan = j.scan; forceSquad = j.forceSquad;
@@ -119,7 +128,7 @@ export default async function handler(req, res) {
     const rows = (data || []).filter((r) => r.email === email || r.privacy === "public" || (r.privacy === "squad" && mateSet.has(r.email)));
     const shown = rows.slice(0, 100);
     const ids = shown.map((r) => r.id);
-    const counts = {}, mine = {}, replyCount = {}, threadCount = {};
+    const counts = {}, mine = {}, replyCount = {}, threadCount = {}, viewCount = {};
     if (ids.length) {
       const { data: rx } = await sb.from("status_reactions").select("status_id,email,kind").in("status_id", ids).limit(5000);
       (rx || []).forEach((x) => {
@@ -136,6 +145,8 @@ export default async function handler(req, res) {
       if (own.length) {
         const { data: rp } = await sb.from("status_replies").select("status_id").in("status_id", own).limit(5000);
         (rp || []).forEach((x) => { replyCount[x.status_id] = (replyCount[x.status_id] || 0) + 1; });
+        const { data: vw, error: ve } = await sb.from("status_views").select("status_id").in("status_id", own).limit(10000);
+        if (!ve) (vw || []).forEach((x) => { viewCount[x.status_id] = (viewCount[x.status_id] || 0) + 1; });
       }
     }
     return sendOk(res, {
@@ -143,12 +154,22 @@ export default async function handler(req, res) {
         id: r.id, media_id: r.media_id || null, text: r.text, bg: r.bg, privacy: r.privacy, created_at: r.created_at, expires_at: r.expires_at,
         author: r.email === email ? "You" : r.display_name, mine: r.email === email, elite: elite.has(r.email),
         reshared_from: r.reshared_from || null,
-        reactions: counts[r.id] || {}, my_reaction: mine[r.id] || "", replies: replyCount[r.id] || 0, answered: threadCount[r.id] || 0,
+        reactions: counts[r.id] || {}, my_reaction: mine[r.id] || "", replies: replyCount[r.id] || 0, views: viewCount[r.id] || 0, answered: threadCount[r.id] || 0,
         can_reshare: r.email !== email && r.privacy === "public",
         // stable per-author key so the app can group stories without exposing emails
         key: r.email === email ? "me" : `${r.display_name}`,
       })),
     });
+  }
+
+  if (op === "view") {
+    // a student opened someone else's status: remember it once so the owner can see who looked
+    const row = await visibleStatus(sb, email, b.id);
+    if (!row || row.email === email) return sendOk(res, { ok: true });
+    const display = await nameOf(sb, email);
+    const { error } = await sb.from("status_views").upsert({ status_id: row.id, email, display_name: display }, { onConflict: "status_id,email", ignoreDuplicates: true });
+    if (error) console.error("[status] view", error.message); // table not created yet: harmless
+    return sendOk(res, { ok: true });
   }
 
   if (op === "delete") {
@@ -183,7 +204,7 @@ export default async function handler(req, res) {
     const text = cleanText(b.text).slice(0, 200);
     if (!text) return sendErr(res, "Write a reply first.");
     const guard = checkText(text);
-    if (!guard.ok) return sendErr(res, guard.message);
+    if (!guard.ok) { await logBlocked(sb, { email, where: "reply", flag: guard.flag, text }); return sendErr(res, guard.message); }
     if (!(await rateLimitOk(req, res, "status-reply", 12, 60, email))) return;
     const display = await nameOf(sb, email);
     const owner = row.email === email;
@@ -265,7 +286,8 @@ export default async function handler(req, res) {
       sb.from("status_reactions").select("display_name,kind,created_at").eq("status_id", id).order("created_at", { ascending: false }).limit(100),
       sb.from("status_replies").select("id,display_name,text,created_at,email").eq("status_id", id).order("created_at", { ascending: false }).limit(100),
     ]);
-    return sendOk(res, { reactions: rx || [], replies: (rp || []).filter((r) => r.email !== email).map((r) => ({ id: r.id, display_name: r.display_name, text: r.text, created_at: r.created_at })) });
+    const vq = await sb.from("status_views").select("display_name,created_at").eq("status_id", id).order("created_at", { ascending: false }).limit(300);
+    return sendOk(res, { views: vq.error ? [] : (vq.data || []).map((v) => ({ display_name: v.display_name, created_at: v.created_at })), reactions: rx || [], replies: (rp || []).filter((r) => r.email !== email).map((r) => ({ id: r.id, display_name: r.display_name, text: r.text, created_at: r.created_at })) });
   }
 
   return sendErr(res, "Unknown action.", 404);

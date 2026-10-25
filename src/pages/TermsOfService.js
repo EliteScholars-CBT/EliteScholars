@@ -10,7 +10,7 @@ export default function TermsOfService() {
       </section>
       <section className="sp-card">
         <h2>2. The Service</h2>
-        <p>EliteScholars provides exam practice for JAMB, WAEC, NECO and GST, including questions, CBT simulations, study notes, games and challenges. Some features are free with daily limits; EliteScholars Premium is a paid yearly plan that removes those limits.</p>
+        <p>EliteScholars provides exam practice for JAMB, WAEC, NECO and GST, including questions, CBT simulations, study notes, games and challenges. Some features are free with daily limits; EliteScholars Pro is a paid yearly plan that removes those limits.</p>
       </section>
       <section className="sp-card">
         <h2>3. Accounts</h2>
@@ -22,7 +22,7 @@ export default function TermsOfService() {
       </section>
       <section className="sp-card">
         <h2>4. Payments</h2>
-        <p>Premium is billed once per year through Flutterwave and unlocks on successful payment. Because access is digital and immediate, payments are generally non-refundable, except where the law requires otherwise or a payment error occurred on our side. If you were charged and did not receive access, email us with your payment reference.</p>
+        <p>Pro is billed once per year through Flutterwave and unlocks on successful payment. Because access is digital and immediate, payments are generally non-refundable, except where the law requires otherwise or a payment error occurred on our side. If you were charged and did not receive access, email us with your payment reference.</p>
       </section>
       <section className="sp-card">
         <h2>5. Acceptable use</h2>

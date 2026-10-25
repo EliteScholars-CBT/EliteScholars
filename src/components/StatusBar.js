@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import EliteBadge from './EliteBadge';
 import StickerStudio from './StickerStudio';
 import { fetchMedia } from '../utils/media';
-import { scanImage, flaggedMessage } from '../utils/imageGuard';
+import { scanImage, flaggedMessage, reportBlocked } from '../utils/imageGuard';
 import '../styles/status.css';
 
 // 24-hour status updates: share a short message with only yourself, your squad or everyone.
@@ -36,6 +36,7 @@ export default function StatusBar() {
   const [paused, setPaused] = useState(false); // true while replying / choosing a reaction
   const [reply, setReply] = useState('');
   const [toast, setToast] = useState('');
+  const viewed = useRef(new Set());
   const [insights, setInsights] = useState(null); // { reactions, replies } for your own status
   const [resharing, setResharing] = useState(null); // the status being reshared
   const [thread, setThread] = useState(null); // { st, replies } conversation panel
@@ -132,6 +133,7 @@ export default function StatusBar() {
     if (!view) return undefined;
     const cur = view.stories[view.i];
     if (!cur) { close(); return undefined; }
+    if (!cur.mine && !viewed.current.has(cur.id)) { viewed.current.add(cur.id); call('view', { id: cur.id }); }
     const s = { ...loadSeen(), [cur.id]: Date.now() };
     saveSeen(s); setSeen(s);
     if (paused) return undefined;
@@ -213,7 +215,7 @@ export default function StatusBar() {
             {cur.mine ? (
               <div className="st-actions" onClick={(e) => e.stopPropagation()}>
                 <button className="st-pill" onClick={() => openInsights(cur)}>
-                  {total > 0 || cur.replies > 0 ? `${Object.entries(cur.reactions || {}).filter(([, n]) => n > 0).map(([k]) => EMOJI[k]).join('')} ${total} · 💬 ${cur.replies || 0}` : '👁 No reactions yet'}
+                  {`👁 ${cur.views || 0}${total > 0 ? ` · ${Object.entries(cur.reactions || {}).filter(([, n]) => n > 0).map(([k]) => EMOJI[k]).join('')} ${total}` : ''}${cur.replies > 0 ? ` · 💬 ${cur.replies}` : ''}`}
                 </button>
                 <button className="st-del" onClick={() => del(cur.id)}>Delete</button>
               </div>
@@ -242,8 +244,10 @@ export default function StatusBar() {
 
             {insights && cur.mine && (
               <div className="st-insights" onClick={(e) => e.stopPropagation()}>
-                <div className="st-ins-top"><b>Who reacted</b><button onClick={closeThread} aria-label="Close">✕</button></div>
-                {!insights.reactions.length && !(thread && thread.replies.length) && <p>Nobody yet. Check back soon.</p>}
+                <div className="st-ins-top"><b>Seen by {(insights.views || []).length}</b><button onClick={closeThread} aria-label="Close">✕</button></div>
+                {(insights.views || []).length > 0 && <div className="st-seen">{insights.views.map((v, i) => <span key={`v${i}`}>{v.display_name || 'A student'}</span>)}</div>}
+                {!(insights.views || []).length && !insights.reactions.length && !(thread && thread.replies.length) && <p>Nobody has seen it yet. Check back soon.</p>}
+                {insights.reactions.length > 0 && <div className="st-ins-h">Who reacted</div>}
                 {insights.reactions.map((r, i) => <div className="st-ins-row" key={`r${i}`}><span>{EMOJI[r.kind] || '👍'}</span><b>{r.display_name || 'A student'}</b></div>)}
                 {thread && thread.replies.length > 0 && <div className="st-ins-h">Replies (only you and each student see their conversation)</div>}
                 {thread && Object.entries(thread.replies.reduce((m, x) => { (m[x.thread] = m[x.thread] || []).push(x); return m; }, {})).map(([k, msgs]) => {
@@ -319,7 +323,7 @@ function Composer({ onClose, onPosted }) {
       setBusyText('Checking your photo…');
       const sc = await scanImage(image);
       setBusyText('');
-      if (sc.state === 'flagged') { setBusy(false); setErr(flaggedMessage(sc)); return; }
+      if (sc.state === 'flagged') { reportBlocked(image, sc, 'status'); setBusy(false); setErr(flaggedMessage(sc)); return; }
       scan = sc.state; ocr = sc.text || undefined;
     }
     const r = await call('post', { text, bg, privacy, image: image || undefined, scan, ocr });

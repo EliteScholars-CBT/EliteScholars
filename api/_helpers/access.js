@@ -1,7 +1,7 @@
 // api/_helpers/access.js — who gets unlimited use, and what free students may do.
 //
 // Tiers, best first:
-//   premium     paid yearly plan (the only thing that creates commission)
+//   pro     paid yearly plan (the only thing that creates commission)
 //   free_access admin gift: to everyone, or to one student; until a date or forever
 //   trial       automatic at sign-up when the trial switch is on
 //   free        daily / lifetime limits below

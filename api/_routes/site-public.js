@@ -19,6 +19,46 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   const op = String(req.query?.op || "");
 
+  // Link previews: crawlers (WhatsApp, Facebook, X, Telegram) do not run the app, so /partner and /school are served
+  // as the normal page with their own preview title, text and picture swapped into the <head>.
+  if (op === "page") {
+    const PAGES = {
+      partner: { title: "Partner with EliteScholars: earn commission on every student", desc: "Share your own link and earn commission each time a student you bring goes Pro. Free to join, track every referral.", img: "og/og-partner.jpg", path: "/partner" },
+      school: { title: "EliteScholars for Schools: exam prep, assignments and progress", desc: "CBT practice, class assignments and progress tracking for every student in your school. Start with a free trial.", img: "og/og-school.jpg", path: "/school" },
+    };
+    const key = String(req.query?.p || "") === "school" ? "school" : "partner";
+    const pg = PAGES[key];
+    const SITE = "https://elitescholars.site";
+    let html = "";
+    try {
+      const host = String(req.headers["x-forwarded-host"] || req.headers.host || "elitescholars.site").replace(/[^A-Za-z0-9.:-]/g, "");
+      const r = await fetch(`https://${host}/index.html`, { headers: { "User-Agent": "es-og-page" } });
+      if (r.ok) html = await r.text();
+    } catch { /* fall through */ }
+    if (!html || !html.includes("</head>")) { res.statusCode = 302; res.setHeader("Location", "/"); return res.end(); }
+    const e = (v) => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    const setMeta = (attr, name, val) => {
+      const re = new RegExp(`<meta\\s+${attr}="${name}"\\s+content="[^"]*"\\s*/?>`, "i");
+      const tag = `<meta ${attr}="${name}" content="${e(val)}" />`;
+      html = re.test(html) ? html.replace(re, tag) : html.replace("</head>", `${tag}</head>`);
+    };
+    const multi = (attr, name, val) => { // handles tags written over several lines in index.html
+      const re = new RegExp(`<meta\\s+${attr}="${name}"\\s+content="[^"]*"\\s*/?>`, "i");
+      if (re.test(html)) html = html.replace(re, `<meta ${attr}="${name}" content="${e(val)}" />`); else setMeta(attr, name, val);
+    };
+    html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${e(pg.title)}</title>`);
+    multi("name", "description", pg.desc);
+    multi("property", "og:title", pg.title); multi("property", "og:description", pg.desc);
+    multi("property", "og:url", SITE + pg.path); multi("property", "og:image", `${SITE}/${pg.img}`);
+    multi("property", "og:image:alt", pg.title); multi("property", "og:type", "website");
+    multi("name", "twitter:title", pg.title); multi("name", "twitter:description", pg.desc); multi("name", "twitter:image", `${SITE}/${pg.img}`);
+    html = html.replace(/<link rel="canonical" href="[^"]*"\s*\/?>/i, `<link rel="canonical" href="${SITE}${pg.path}" />`);
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400");
+    return res.end(html);
+  }
+
   if (op === "config") {
     res.setHeader("Cache-Control", "public, max-age=60, s-maxage=60");
     let partnerRate = 40;

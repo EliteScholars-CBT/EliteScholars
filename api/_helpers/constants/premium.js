@@ -6,7 +6,7 @@ export const FREE_TOPICS_PER_DAY   = 2;
 export const FREE_SESSION_MINUTES  = 30;
 export const FREE_COOLDOWN_HOURS   = 0;
 
-// Premium is annual-only — no monthly tier.
+// Pro is annual-only — no monthly tier.
 export const PREMIUM_ANNUAL_PRICE          = 3000;
 export const PREMIUM_ANNUAL_ORIGINAL_PRICE = 15000;
 export const PRO_MONTHLY_PRICE             = 3000;

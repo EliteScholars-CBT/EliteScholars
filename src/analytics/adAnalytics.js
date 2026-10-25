@@ -135,3 +135,11 @@ export function observeAdElement(el, adId, adType, examType, adLink) {
 
   return () => _observer.unobserve(el);
 }
+
+// Send what is queued every 20 seconds and when the app is hidden or closed (before, small numbers of views never left the phone).
+if (typeof window !== 'undefined' && !window.__esAdFlush) {
+  window.__esAdFlush = true;
+  setInterval(() => { if (!document.hidden) flushAdAnalytics(); }, 20000);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) flushAdAnalytics(); });
+  window.addEventListener('pagehide', flushAdAnalytics);
+}

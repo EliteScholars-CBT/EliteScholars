@@ -23,6 +23,8 @@ const Fig = require('./blog-figures.js');
 const ROOT = path.join(__dirname, '..');
 const BLOG = path.join(ROOT, 'public', 'blog');
 const SITE = process.env.SITE_URL || 'https://elitescholars.site';
+// Link-preview picture: the post's own cover (pre-made JPG in public/blog/covers), else the branded site picture.
+const ogCover = (id) => (fs.existsSync(path.join(__dirname, '..', 'public', 'blog', 'covers', `${id}.jpg`)) ? `${SITE}/blog/covers/${id}.jpg` : `${SITE}/og-image.jpg`);
 const NOW = process.env.BLOG_NOW ? new Date(process.env.BLOG_NOW) : new Date();
 
 const read = (f) => fs.readFileSync(path.join(BLOG, f), 'utf8');
@@ -162,9 +164,14 @@ function postPage(post) {
   <meta property="og:type" content="article" />
   <meta property="og:url" content="${url}" />
   <meta property="og:site_name" content="EliteScholars" />
-  <meta property="og:image" content="${SITE}/android-chrome-512x512.png" />
+  <meta property="og:image" content="${ogCover(post.id)}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="article:published_time" content="${new Date(post.publishAt).toISOString()}" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${esc(title)}" />
+  <meta name="twitter:description" content="${esc(desc)}" />
+  <meta name="twitter:image" content="${ogCover(post.id)}" />
   <meta name="theme-color" content="#7C3AED" />
   <link rel="canonical" href="${url}" />
   <link rel="icon" href="../../favicon.ico" />
@@ -248,7 +255,11 @@ ${footer('./')}`;
   <meta property="og:description" content="JAMB updates, study strategies, university tips and real talk. No fluff." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="${SITE}/blog/" />
-  <meta property="og:image" content="${SITE}/android-chrome-512x512.png" />
+  <meta property="og:image" content="${SITE}/og/og-blog.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="${SITE}/og/og-blog.jpg" />
   <meta name="theme-color" content="#7C3AED" />
   <link rel="icon" href="../favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />

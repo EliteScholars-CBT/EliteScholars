@@ -24,7 +24,7 @@ export default function PrivacyPolicy() {
         <h2>2. How we use it</h2>
         <ul>
           <li>To create and run your account, save your progress and show leaderboards.</li>
-          <li>To process payments, unlock Premium and prevent fraud.</li>
+          <li>To process payments, unlock Pro and prevent fraud.</li>
           <li>To send essential emails such as password resets and receipts.</li>
           <li>To understand which features work and improve the Service.</li>
           <li>To show advertising on our blog, as described in section 5.</li>
@@ -53,7 +53,7 @@ export default function PrivacyPolicy() {
         <h2>5. Advertising</h2>
         <p>The free blog displays advertising to fund the Service. Ads are always labelled "Advertisement" or "Sponsored".</p>
         <ul>
-          <li><strong>Our own ads:</strong> promotions for EliteScholars, such as Premium or our WhatsApp Channel. These need no third-party cookies.</li>
+          <li><strong>Our own ads:</strong> promotions for EliteScholars, such as Pro or our WhatsApp Channel. These need no third-party cookies.</li>
           <li><strong>Third-party ads:</strong> served by advertising partners such as Adsterra. These partners may use cookies or similar technologies and may collect your IP address, device and browsing information to show and measure ads.</li>
         </ul>
         <p><strong>Your choice:</strong> where a cookie choice banner is shown, your selection is respected and can be changed from the blog footer. You can also limit ad tracking through your browser settings, by blocking third-party cookies, or by enabling the Global Privacy Control signal, which we honour by showing only our own ads.</p>

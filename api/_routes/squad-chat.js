@@ -11,10 +11,11 @@ import { requireUser } from "../_helpers/session.js";
 import { rateLimitOk } from "../_helpers/guard.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { pushToEmails } from "../_helpers/push.js";
-import { saveMedia } from "../_helpers/media.js";
+import { saveMedia, saveAudio } from "../_helpers/media.js";
 import { eliteEmails } from "../_helpers/elite.js";
 import { judgePhoto } from "../_helpers/imageGuard.js";
 import { checkText } from "../_helpers/contentGuard.js";
+import { logBlocked } from "../_helpers/security.js";
 
 const clean = (v, n) => String(v || "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").replace(/\n{3,}/g, "\n\n").trim().slice(0, n);
 const UUID = /^[\w-]{6,64}$/;
@@ -107,7 +108,7 @@ export default async function handler(req, res) {
       const nm = Object.fromEntries(list.map((m) => [m.email, m.display_name || m.email.split("@")[0]]));
       out.online = emails.filter(live).length; out.total = emails.length;
       out.typing = (reads || []).filter((r) => r.email !== email && r.typing_at && Date.now() - new Date(r.typing_at).getTime() < 6000).map((r) => nm[r.email] || "Someone");
-      out.pins = (pinQ.data || []).map((r) => ({ id: r.id, kind: r.kind, text: r.kind === "image" ? "" : r.text, media_id: r.media_id, author: r.email === email ? "You" : r.display_name }));
+      out.pins = (pinQ.data || []).map((r) => ({ id: r.id, kind: r.kind, text: r.kind === "image" && !String(r.text || "").startsWith("vn:") ? "" : r.text, media_id: r.media_id, author: r.email === email ? "You" : r.display_name }));
       out.ids = (idsQ.data || []).map((r) => r.id);
     }
     return sendOk(res, out);
@@ -152,7 +153,7 @@ export default async function handler(req, res) {
     if (Date.now() - new Date(msg.created_at).getTime() > EDIT_MS) return sendErr(res, "You can only edit a message within 15 minutes of sending it.");
     const text = clean(b.text, 600);
     if (!text) return sendErr(res, "A message can't be empty.");
-    { const g = checkText(text, { mode: "chat" }); if (!g.ok) return sendErr(res, g.message); }
+    { const g = checkText(text, { mode: "chat" }); if (!g.ok) { await logBlocked(sb, { email, where: "chat-edit", flag: g.flag, text }); return sendErr(res, g.message); } }
     const { error } = await sb.from("squad_messages").update({ text, edited_at: nowIso, updated_at: nowIso }).eq("id", id);
     if (error) return sendErr(res, "Could not edit.", 500);
     return sendOk(res, { message: shape({ ...msg, text, edited_at: nowIso, updated_at: nowIso }, elite) });
@@ -161,18 +162,24 @@ export default async function handler(req, res) {
   if (op === "send") {
     const text = clean(b.text, 600);
     const sticker = clean(b.sticker, 40);
-    if (text) { const g = checkText(text, { mode: "chat" }); if (!g.ok) return sendErr(res, g.message); }
-    let kind = "text", mediaId = null;
-    if (b.image) {
+    if (text) { const g = checkText(text, { mode: "chat" }); if (!g.ok) { await logBlocked(sb, { email, where: "chat", flag: g.flag, text }); return sendErr(res, g.message); } }
+    let kind = "text", mediaId = null, voiceText = "";
+    if (b.voice) {
+      // voice note: stored like a picture row (kind "image") with text "vn:<seconds>" so no database change is needed
+      const secs = Math.max(1, Math.min(90, Math.round(Number(b.secs) || 1)));
+      const a = await saveAudio(sb, email, b.voice);
+      if (a.error) return sendErr(res, a.error);
+      kind = "image"; mediaId = a.id; voiceText = `vn:${secs}`;
+    } else if (b.image) {
       // photos are checked on the sender's phone (no AI); the words read from the picture are checked here too
       const j = judgePhoto(b);
-      if (!j.ok) return sendErr(res, j.error);
+      if (!j.ok) { await logBlocked(sb, { email, where: "chat", flag: j.flag, text: b.ocr ? `[words in photo] ${String(b.ocr).slice(0, 400)}` : "", image: b.image }); return sendErr(res, j.error); }
       const m = await saveMedia(sb, email, b.image);
       if (m.error) return sendErr(res, m.error);
       kind = "image"; mediaId = m.id;
     } else if (sticker) kind = "sticker";
     if (kind === "text" && !text) return sendErr(res, "Type a message first.");
-    const body = kind === "sticker" ? sticker : text;
+    const body = voiceText || (kind === "sticker" ? sticker : text);
     const { data, error } = await sb.from("squad_messages").insert({ squad_id: squadId, email, display_name: mem.display_name || email.split("@")[0], kind, text: body, media_id: mediaId }).select("id,created_at").single();
     if (error) { console.error("[chat] send", error.message); return sendErr(res, "Could not send.", 500); }
     // housekeeping: keep the last 30 days only
@@ -188,7 +195,7 @@ export default async function handler(req, res) {
       if (targets.length) {
         const { data: squad } = await sb.from("squads").select("name").eq("id", squadId).maybeSingle();
         const who = mem.display_name || "A squadmate";
-        const preview = kind === "image" ? "sent a photo 📷" : kind === "sticker" ? (body.startsWith("st:") ? "sent a sticker" : `sent ${body}`) : body.length > 80 ? body.slice(0, 77) + "…" : body;
+        const preview = voiceText ? "sent a voice note 🎤" : kind === "image" ? "sent a photo 📷" : kind === "sticker" ? (body.startsWith("st:") ? "sent a sticker" : `sent ${body}`) : body.length > 80 ? body.slice(0, 77) + "…" : body;
         await pushToEmails(targets, { title: `💬 ${(squad && squad.name) || "Your squad"}`, body: kind === "text" ? `${who}: ${preview}` : `${who} ${preview}`, url: "/app?squadchat=1", tag: `squad-chat-${squadId}`, type: "squad-chat" });
       }
     } catch (e) { console.warn("[chat] push", e?.message); }

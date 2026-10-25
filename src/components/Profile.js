@@ -5,6 +5,7 @@ import ShareSheet from './ShareSheet';
 import { pushStatus, enablePush, disablePush } from '../utils/push';
 import { isDataSaver, setDataSaver } from '../utils/dataSaver';
 import React, { useState, useEffect, useRef } from 'react';
+import { installApp, canInstallNow, onInstallChange, isStandaloneApp, isIosDevice } from '../utils/installApp';
 import { useNavigate } from 'react-router-dom';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -49,6 +50,13 @@ export default function Profile({
   const navigate = useNavigate();
   const [pushState, setPushState] = useState('off');
   const [saver, setSaver] = useState(isDataSaver());
+  const [canInst, setCanInst] = useState(canInstallNow());
+  const [instHelp, setInstHelp] = useState(false);
+  useEffect(() => onInstallChange(() => setCanInst(canInstallNow())), []);
+  const doInstall = async () => {
+    if (canInstallNow()) { const r = await installApp(); if (r !== 'unavailable') return; }
+    setInstHelp((v) => !v);
+  };
   useEffect(() => { pushStatus().then(setPushState); }, []);
   const togglePush = async () => {
     if (pushState === 'on') setPushState(await disablePush());
@@ -133,7 +141,7 @@ export default function Profile({
     return () => clearTimeout(timer);
   }, [email, allScores]);
 
-  // Load guardian email for premium users
+  // Load guardian email for pro users
   useEffect(() => {
     if (!email || !localPremium) return;
     fetchGuardianEmail(email).then(result => {
@@ -402,6 +410,26 @@ export default function Profile({
                 </div>
               </div>
 
+              {!isStandaloneApp() && (
+                <div className="settings-card" style={{ marginTop: 10 }}>
+                  <div className="settings-item" onClick={doInstall} style={{ cursor: 'pointer' }}>
+                    <div className="settings-icon">📲</div>
+                    <div className="settings-info">
+                      <div className="settings-name">Install app</div>
+                      <div className="settings-desc">Add EliteScholars to your home screen. Opens fast, works offline</div>
+                    </div>
+                    <button type="button" className="settings-install-btn">{canInst ? 'Install' : 'How'}</button>
+                  </div>
+                  {instHelp && (
+                    <div className="settings-install-help">
+                      {isIosDevice()
+                        ? <>Tap the <b>Share</b> button in Safari, then <b>Add to Home Screen</b>.</>
+                        : <>Open your browser menu (⋮) and tap <b>Install app</b> or <b>Add to Home screen</b>. If you do not see it, open elitescholars.site in Chrome first.</>}
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div className="settings-card" onClick={toggleSaver} style={{ cursor: 'pointer', marginTop: 10 }}>
                 <div className="settings-item">
                   <div className="settings-icon">📶</div>
@@ -456,7 +484,7 @@ export default function Profile({
                     <div className="settings-info">
                       <div className="settings-name">Guardian Weekly Report</div>
                       <div className="settings-desc">
-                        Upgrade to Premium to add a parent or guardian. They'll receive a weekly academic report card every Sunday.
+                        Upgrade to Pro to add a parent or guardian. They'll receive a weekly academic report card every Sunday.
                       </div>
                     </div>
                     <div className="guardian-locked-badge">PRO</div>
@@ -571,11 +599,11 @@ export default function Profile({
             </div>
           )}
 
-          {/* ── Premium / Upgrade section ── */}
+          {/* ── Pro / Upgrade section ── */}
           <div style={{ margin: '20px 0 8px' }}>
             {localPremium ? (
               <div className="premium-active-box">
-                <div className="premium-badge"><EmojiIcon emoji="⭐" size="1.15em" /> Premium Active</div>
+                <div className="premium-badge"><EmojiIcon emoji="⭐" size="1.15em" /> Pro Active</div>
                 <div className="premium-active-title" style={{ marginTop: 8 }}>
                   {premData?.plan === 'annual' ? '👑 Annual Plan' : '💎 Monthly Plan'}
                 </div>
@@ -589,7 +617,7 @@ export default function Profile({
                 style={{ width: '100%', marginBottom: 12 }}
                 onClick={() => setShowPremiumModal(true)}
               >
-                ⭐ Upgrade to Premium
+                ⭐ Upgrade to Pro
               </button>
             )}
 

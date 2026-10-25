@@ -68,7 +68,7 @@ export const shopReceiptEmail = ({ firstName, title, link, amount }) => layout({
 
 export const partnerApprovedEmail = ({ name, code, rate }) => layout({
   preheader: "You're in! Start sharing your link.", emoji: "🎉", heading: "You're an EliteScholars partner!",
-  body: `<p style="margin:0 0 12px">Hi ${esc(name)}, great news — your application was approved.</p><p style="margin:0">You earn commission every time a student you refer pays — for Premium <b>and</b> for shop items.</p>`,
+  body: `<p style="margin:0 0 12px">Hi ${esc(name)}, great news — your application was approved.</p><p style="margin:0">You earn commission every time a student you refer pays — for Pro <b>and</b> for shop items.</p>`,
   rows: [["Your referral code", code], ["Your commission", `${rate}%`]],
   cta: { label: "Open my partner dashboard", url: `${APP}/partner` },
 });

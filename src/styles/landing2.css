@@ -72,7 +72,7 @@
 .l2-tour-txt b { display: block; font-size: 15.5px; color: var(--l-ink); }
 .l2-tour-txt em { display: block; font-style: normal; font-size: 13.5px; line-height: 1.55; color: var(--l-text-soft); max-height: 0; opacity: 0; overflow: hidden; transition: max-height .4s ease, opacity .4s, margin .4s; }
 .l2-tour-item.on .l2-tour-txt em { max-height: 120px; opacity: 1; margin-top: 4px; }
-.l2-tour-bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; transform-origin: 0 50%; background: linear-gradient(90deg, #7C3AED, #FFC53D); animation: l2Bar 4.8s linear both; }
+.l2-tour-bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; transform-origin: 0 50%; background: linear-gradient(90deg, #7C3AED, #FFC53D); animation: l2Bar 2.3s linear both; }
 @keyframes l2Bar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .l2-tour-stage { position: relative; display: flex; justify-content: center; }
 .l2-tour-glow { position: absolute; inset: 8% -20%; border-radius: 50%; background: radial-gradient(circle, rgba(124,58,237,.28), rgba(255,197,61,.12) 55%, transparent 70%); filter: blur(30px); animation: l2Pulse 5s ease-in-out infinite; }
@@ -217,7 +217,7 @@
 /* ── Subjects marquee (rebuilt: plain list, no overlap) ─────────────────── */
 .l4-mq { overflow: hidden; padding: 18px 0; border-block: 1px solid rgba(124,58,237,.1); background: #fff;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
-.l4-mq-track { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: nowrap; width: max-content; animation: l4Marq 60s linear infinite; }
+.l4-mq-track { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: nowrap; width: max-content; animation: l4Marq 16s linear infinite; }
 .l4-mq-track li { flex: 0 0 auto; display: block; position: static; margin: 0 14px 0 0; padding: 8px 20px; border-radius: 99px; font-size: 14px; font-weight: 700; line-height: 1.3; letter-spacing: 0; white-space: nowrap; color: var(--l-violet); background: rgba(124,58,237,.07); }
 @keyframes l4Marq { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
 @media (prefers-reduced-motion: reduce) { .l4-mq-track { animation: none !important; } }
@@ -288,3 +288,27 @@
 .land-blog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 @media (max-width: 960px) { .land-blog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .land-blog-grid { grid-template-columns: minmax(0, 1fr); } .land-blog-grid > .land-blog-card:nth-child(n+4) { display: none; } }
+
+/* ── Feature tour: screens that move, parallax, and a list that rolls sideways on phones ── */
+.l2-tour-phone .l2-phone-screen .l6-pan { position: absolute; inset: 0; opacity: 0; transition: opacity .3s ease; overflow: hidden; transform: translate3d(0, calc(var(--par, 0) * -12px), 0); }
+.l2-tour-phone .l2-phone-screen .l6-pan.on { opacity: 1; }
+.l2-tour-phone .l2-phone-screen .l6-pan img { position: absolute; left: 0; top: 0; width: 100%; height: 118%; opacity: 1; transform: none; transition: none; object-fit: cover; object-position: top; animation: l6Pan 2.3s ease-in-out infinite alternate; }
+@keyframes l6Pan { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, -15%, 0); } }
+.l6-tap { position: absolute; z-index: 4; left: 62%; top: 58%; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%; background: rgba(255,255,255,.55); box-shadow: 0 0 0 0 rgba(255,197,61,.7); animation: l6Tap 1.1s ease-out .35s 2 both; pointer-events: none; }
+@keyframes l6Tap { 0% { transform: scale(.3); opacity: 0; box-shadow: 0 0 0 0 rgba(255,197,61,.7); } 30% { opacity: 1; } 100% { transform: scale(1); opacity: 0; box-shadow: 0 0 0 26px rgba(255,197,61,0); } }
+.l2-tour-stage { transform: translate3d(0, calc(var(--par, 0) * 14px), 0); }
+.l6-cap { display: none; margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--l-text-soft); text-align: center; padding: 0 6px; }
+.l6-cap b { color: var(--l-ink); }
+@media (max-width: 920px) {
+  .l2-tour-grid { gap: 14px; }
+  .l2-tour-list { flex-direction: row; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: 0 -20px; padding: 4px 20px 10px; -webkit-overflow-scrolling: touch; }
+  .l2-tour-list::-webkit-scrollbar { display: none; }
+  .l2-tour-item { flex: 0 0 auto; width: auto; scroll-snap-align: center; align-items: center; padding: 10px 16px 10px 10px; border-radius: 99px; background: rgba(124,58,237,.06); }
+  .l2-tour-item .l2-tour-txt em { display: none; }
+  .l2-tour-item .l2-tour-txt b { white-space: nowrap; font-size: 14px; }
+  .l2-tour-item .l2-tour-ico { width: 34px; height: 34px; border-radius: 50%; }
+  .l2-tour-item.on { transform: none; background: #fff; border-color: rgba(124,58,237,.35); }
+  .l2-tour-item .l2-tour-bar { border-radius: 0 0 99px 99px; }
+  .l6-cap { display: block; }
+}
+@media (prefers-reduced-motion: reduce) { .l2-tour-phone .l2-phone-screen .l6-pan img, .l6-tap { animation: none !important; } .l2-tour-stage, .l2-tour-phone .l2-phone-screen .l6-pan { transform: none !important; } }

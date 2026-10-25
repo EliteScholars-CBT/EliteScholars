@@ -142,3 +142,10 @@ export async function scanImage(dataUrl) {
 export const flaggedMessage = (r) => (r && r.reason === 'scam'
   ? 'That photo has words that look like a money, betting or exam-leak offer. It can\'t be posted.'
   : 'That photo can\'t be posted on EliteScholars. Please choose a different one.');
+
+// Tell the server a photo was stopped on the phone, so the admin can review it (who, what, picture). Best effort.
+export function reportBlocked(image, sc, where = 'status') {
+  try {
+    fetch('/api/status/blocked', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image, reason: sc && sc.reason, ocr: sc && sc.text, where }), keepalive: true }).catch(() => {});
+  } catch { /* ignore */ }
+}

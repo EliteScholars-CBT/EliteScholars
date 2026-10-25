@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Icon from './Icon';
 import logo from '../assets/elite-scholars-logo.png';
 import { sendAnalytics } from '../utils/referral';
+import '../utils/installApp';
 
 // ============================================================================
 // PWAInstallBanner — install nudge with a 3-strike rule.

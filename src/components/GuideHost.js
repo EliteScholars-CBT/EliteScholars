@@ -14,13 +14,13 @@ export const GUIDES = [
   { id: 'learn', emoji: '📖', title: 'How to study a topic', screens: ['subjects'], steps: ['Pick your exam and a subject.', 'Open Learn and choose a topic.', 'Tap Read to hear the lesson. The words light up as they are spoken.', 'Finish the short quiz at the end to earn XP.'] },
   { id: 'lifelines', emoji: '💡', title: 'Stuck on a question? Use Hint and 50/50', screens: ['subjects'], steps: ['During a quiz, look for the two buttons above the question: ⚖️ 50/50 and 💡 Hint.', 'Tap 💡 Hint to see a clue that points you to the answer.', 'Tap ⚖️ 50/50 to remove two wrong options, so only two are left.', 'Each one can be used once per round, so save them for the hard questions.'], note: 'The 🔊 button reads each question aloud if you prefer to listen.' },
   { id: 'challenge', emoji: '⚔️', title: 'How to challenge a friend', screens: ['challenges', 'leaderboard', 'subjects'], steps: ['Open Challenges.', 'Search for your friend by username.', 'Pick a subject and send the challenge.', 'They get a notification. The winner earns bonus XP.'] },
-  { id: 'files', emoji: '📄', title: 'How to study from your own notes', screens: ['subjects'], steps: ['Open Study from files on the subjects screen.', 'Upload a PDF, Word file or a photo of your notes.', 'Wait a moment while we turn it into simple notes.', 'Use the flashcards, games and practice questions made from it.'], note: 'Free students get a small number of uploads. Premium has more.' },
+  { id: 'files', emoji: '📄', title: 'How to study from your own notes', screens: ['subjects'], steps: ['Open Study from files on the subjects screen.', 'Upload a PDF, Word file or a photo of your notes.', 'Wait a moment while we turn it into simple notes.', 'Use the flashcards, games and practice questions made from it.'], note: 'Free students get a small number of uploads. Pro has more.' },
   { id: 'status', emoji: '📸', title: 'How to post and react to a status', screens: ['subjects', 'leaderboard'], steps: ['Tap the + circle at the top of the screen to post. Pick a template or photo, add text and stickers, and choose who can see it.', 'Tap a friend\'s circle to watch their status. React with 👍 ❤️ 🔥 👏 😮 or send a private reply.', 'Tap 🔁 on a public status to reshare it. It will show "Reshared from" their name.', 'Statuses disappear after 24 hours. You can also add your achievements and score cards to your status when you share them.'] },
   { id: 'guardian', emoji: '👨‍👩‍👧', title: 'How to add a parent or guardian', pro: true, screens: ['profile'], steps: ['Open Profile.', 'Find Guardian Weekly Report.', 'Type your parent or guardian\'s email and save.', 'They get a progress report card by email every Sunday.'] },
   { id: 'streak', emoji: '🔥', title: 'How to keep your streak', screens: ['profile', 'subjects'], steps: ['Do one short study session every day.', 'Turn on reminders in Profile.', 'We nudge you before the streak ends.'] },
   { id: 'school', emoji: '🏫', title: 'How to join a class', screens: ['profile'], steps: ['Ask your teacher for the class code.', 'Open Profile, then School.', 'Choose I\'m a student and enter the code.', 'Your homework appears there.'] },
   { id: 'shop', emoji: '🛍️', title: 'How to buy study materials', screens: ['shop'], steps: ['Open the Shop tab.', 'Tap an item and pay securely.', 'We email your item link as soon as the payment goes through.'] },
-  { id: 'premium', emoji: '👑', title: 'What Premium gives you', pro: true, screens: ['shop', 'profile'], steps: ['Unlimited topics, CBT sessions and games.', 'No ads.', 'Guardian weekly report for your parent.', 'More study-from-file uploads.'] },
+  { id: 'premium', emoji: '👑', title: 'What Pro gives you', pro: true, screens: ['shop', 'profile'], steps: ['Unlimited topics, CBT sessions and games.', 'No ads.', 'Guardian weekly report for your parent.', 'More study-from-file uploads.'] },
   { id: 'report', emoji: '🚩', title: 'How to report a wrong question', screens: ['subjects', 'leaderboard'], steps: ['While answering, tap the small flag on the question.', 'Pick what is wrong.', 'We check every report and fix it.'] },
 ];
 
@@ -36,7 +36,7 @@ export function guidesPending(email) {
   return GUIDES.some((g) => !(st.seen || {})[g.id]);
 }
 
-export default function GuideHost({ screen, email, premium, onOpenShop }) {
+export default function GuideHost({ screen, email, pro, onOpenShop }) {
   const [guide, setGuide] = useState(null);
   const shownCount = useRef(0);
   const lastShownAt = useRef(0);
@@ -99,14 +99,14 @@ export default function GuideHost({ screen, email, premium, onOpenShop }) {
         <div className="gd-emoji" aria-hidden="true">{guide.emoji}</div>
         {guide.pro && <span className="gd-pro">PRO</span>}
         <h3>{guide.title}</h3>
-        {locked && <p className="gd-lock">This is a Premium feature. You can read how it works now and unlock it any time.</p>}
+        {locked && <p className="gd-lock">This is a Pro feature. You can read how it works now and unlock it any time.</p>}
         <ol className="gd-steps">{guide.steps.map((s, i) => <li key={i}><b>{i + 1}</b><span>{s}</span></li>)}</ol>
         {guide.note && <p className="gd-note">{guide.note}</p>}
         <div className="gd-help">
           Need help? Email <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> or read more on the <a href="/blog/" target="_blank" rel="noreferrer">blog</a>.
         </div>
         <div className="gd-actions">
-          {locked && onOpenShop && <button className="gd-secondary" onClick={() => { close(); onOpenShop(); }}>See Premium</button>}
+          {locked && onOpenShop && <button className="gd-secondary" onClick={() => { close(); onOpenShop(); }}>See Pro</button>}
           <button className="gd-ok" onClick={close}>Got it</button>
         </div>
       </div>

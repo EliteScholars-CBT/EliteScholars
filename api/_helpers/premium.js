@@ -1,4 +1,4 @@
-// api/_helpers/premium.js — premium activation + payment logging (Supabase only).
+// api/_helpers/premium.js — pro activation + payment logging (Supabase only).
 import { getSupabase, supabaseEnabled } from "./supabase.js";
 import { recordCommission } from "./partners.js";
 
@@ -13,7 +13,7 @@ export async function getFirstName(email) {
 }
 
 // Idempotent per transaction: the redirect, the webhook and any replayed
-// request all call this, but a given tx_ref can only ever activate premium once
+// request all call this, but a given tx_ref can only ever activate pro once
 // (the payments row is claimed first; a duplicate is ignored).
 export async function activatePremiumAndLog({ email, plan, txRef, expiresAt, amount }) {
   if (!supabaseEnabled()) return { activated: false };
@@ -42,7 +42,7 @@ export async function activatePremiumAndLog({ email, plan, txRef, expiresAt, amo
   }
 }
 
-// A group plan: the payer gets Premium for the year AND a group they can add members to
+// A group plan: the payer gets Pro for the year AND a group they can add members to
 // (50 or 100 seats). Idempotent per transaction like activatePremiumAndLog.
 export async function activateGroupAndLog({ email, plan, txRef, expiresAt, amount }) {
   if (!supabaseEnabled()) return { activated: false };
@@ -85,7 +85,7 @@ export async function getPremiumStatus(email) {
 }
 
 // A paid shop item: logged once per transaction, and the referring partner earns commission on it
-// exactly like they do on Premium.
+// exactly like they do on Pro.
 export async function logShopPurchase({ email, txRef, amount, itemId }) {
   if (!supabaseEnabled()) return { error: true };
   const sb = getSupabase();

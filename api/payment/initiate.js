@@ -13,11 +13,11 @@ import { findShopItem } from '../_helpers/shopItems.js';
 
 const FLW_SECRET_KEY = process.env.FLW_SECRET_KEY;
 
-// Premium is annual-only — no monthly tier. Prices come from the admin-editable settings.
+// Pro is annual-only — no monthly tier. Prices come from the admin-editable settings.
 const PLAN_NAMES   = {
-  annual: 'EliteScholars Premium Annual',
-  group50: 'EliteScholars Group Plan (up to 50 members, 1 year)',
-  group100: 'EliteScholars Group Plan (up to 100 members, 1 year)',
+  annual: 'EliteScholars Pro Annual',
+  group50: 'EliteScholars Squad Plan (up to 50 members, 1 year)',
+  group100: 'EliteScholars Squad Plan (up to 100 members, 1 year)',
 };
 
 async function run(req, res) {

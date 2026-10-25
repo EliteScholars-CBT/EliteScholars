@@ -2,7 +2,7 @@
 //   GET  /api/group/get      -> { groups: [{ id, seats, used, expiresAt, active, members: [{email,name}] }] }
 //   POST /api/group/add      { groupId, email }   (the person must already have an EliteScholars account)
 //   POST /api/group/remove   { groupId, email }
-// Members get Premium until the group's expiry date; removing someone ends the Premium that group gave them.
+// Members get Pro until the group's expiry date; removing someone ends the Pro that group gave them.
 import { sendOk, sendErr, sendMethodNotAllowed, setCors, readBody } from "../_helpers/response.js";
 import { requireUser } from "../_helpers/session.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
@@ -65,7 +65,7 @@ export default async function handler(req, res) {
   }
   if (op === "remove") {
     await sb.from("group_members").delete().eq("group_id", g.id).eq("email", target);
-    // end only the Premium this group gave them
+    // end only the Pro this group gave them
     await sb.from("profiles").update({ is_premium: false, expires_at: new Date().toISOString() }).eq("email", target).eq("subscription_tx_ref", tag(g.id));
     return sendOk(res, { groups: await load(sb, email) });
   }

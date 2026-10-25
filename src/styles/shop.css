@@ -747,3 +747,22 @@ body.dark-mode .shop-plans-trust {
 .grp-member span { display: grid; min-width: 0; } .grp-member b { font-size: 13.5px; } .grp-member small { font-size: 11.5px; opacity: .6; overflow: hidden; text-overflow: ellipsis; }
 .grp-member button { border: 0; background: rgba(239,68,68,.12); color: #DC2626; border-radius: 10px; padding: 6px 10px; font-weight: 800; font-size: 12px; cursor: pointer; }
 .grp-empty { font-size: 12.5px; opacity: .65; }
+
+.grp-price em { font-size: 12px; font-style: normal; font-weight: 700; opacity: .6; }
+.grp-save { align-self: flex-start; margin: 6px 0 12px; padding: 5px 11px; border-radius: 99px; background: rgba(22,163,74,.14); color: #16A34A; font-size: 12.5px; font-weight: 900; }
+
+/* Pro plan card: clearer, richer, one obvious button */
+.shop-plans-card { background: linear-gradient(160deg, #1E1147 0%, #3B1C8C 60%, #5B21B6 100%); color: #fff; border: 1px solid rgba(255,197,61,.35); box-shadow: 0 14px 40px rgba(76,29,149,.28); }
+.shop-plans-card-title { font-size: 26px; font-weight: 900; letter-spacing: -.01em; background: linear-gradient(90deg, #FDE68A, #F59E0B); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.shop-plans-card-sub { color: rgba(255,255,255,.8); }
+.shop-plan-col--highlight { background: rgba(255,255,255,.08); border: 1.5px solid rgba(253,230,138,.55); border-radius: 20px; }
+.shop-plan-name { color: #fff; }
+.shop-plan-was { color: rgba(255,255,255,.55); text-decoration: line-through; margin-right: 8px; font-size: 14px; }
+.shop-plan-amount { font-size: 34px; font-weight: 900; color: #FDE68A; }
+.shop-plan-currency, .shop-plan-period { color: rgba(255,255,255,.75); }
+.shop-plan-save { display: inline-block; margin-top: 6px; padding: 4px 11px; border-radius: 99px; background: rgba(34,197,94,.2); color: #86EFAC; font-size: 12.5px; font-weight: 900; }
+.shop-plan-feature { color: rgba(255,255,255,.92); }
+.shop-plan-check { color: #FDE68A; }
+.shop-plan-cta--primary { background: linear-gradient(135deg, #FBBF24, #F59E0B); color: #3B1C00; font-weight: 900; font-size: 16px; border: 0; border-radius: 16px; padding: 14px; box-shadow: 0 8px 22px rgba(245,158,11,.4); }
+.shop-plans-trust { color: rgba(255,255,255,.7); }
+@media (min-width: 700px) { .shop-plan-features { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px; } }

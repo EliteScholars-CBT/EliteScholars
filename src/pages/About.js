@@ -37,8 +37,8 @@ export default function About() {
       </section>
 
       <section className="sp-card">
-        <h2>Free and Premium</h2>
-        <p>You can start without paying: every day you get a set number of free topics, CBT tests and games. EliteScholars Premium is a single yearly plan that removes those limits. We also show advertising on our blog to help keep the free tier running.</p>
+        <h2>Free and Pro</h2>
+        <p>You can start without paying: every day you get a set number of free topics, CBT tests and games. EliteScholars Pro is a single yearly plan that removes those limits. We also show advertising on our blog to help keep the free tier running.</p>
       </section>
 
       <section className="sp-card">

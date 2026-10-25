@@ -299,7 +299,7 @@ function PartnerDetail({ d, err, msg, back, act }) {
         <div className="adm-table">
           {d.students.map((s) => (
             <div className="adm-tr adm-tr5" key={s.email}><span>{s.email}</span><span>{s.name}</span><span>{dt(s.joined)}</span>
-              <span>{s.premium ? 'Premium' : 'Free'}</span><span>{s.earned ? fmtNaira(s.earned) : '—'}</span></div>
+              <span>{s.premium ? 'Pro' : 'Free'}</span><span>{s.earned ? fmtNaira(s.earned) : '—'}</span></div>
           ))}
         </div>
       </section>

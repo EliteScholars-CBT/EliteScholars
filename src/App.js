@@ -24,6 +24,7 @@ import { reserve, refreshEntitlement, isUnlimitedCached } from './utils/entitlem
 import GameMode from './components/GameMode';
 
 import ExamTypeSelect from './components/ExamTypeSelect';
+import ProNudge from './components/ProNudge';
 
 
 import Flashcards from './components/Flashcards';
@@ -392,7 +393,7 @@ export default function App() {
 
   const [premiumPaid, setPremiumUser] = useState(false);
   const [entUnlimited, setEntUnlimited] = useState(false);
-  // Unlimited = paid Premium, a free trial, or a free-access gift from the admin.
+  // Unlimited = paid Pro, a free trial, or a free-access gift from the admin.
   const premiumUser = premiumPaid || entUnlimited;
 
   const [showLimitGate, setShowLimitGate] = useState(false);
@@ -679,7 +680,7 @@ export default function App() {
 
 
 
-              // ── Sync premium status from server into localStorage ──────────
+              // ── Sync pro status from server into localStorage ──────────
 
               if (p.premiumPlan && p.premiumExpiresAt) {
 
@@ -917,7 +918,7 @@ export default function App() {
 
 
 
-  // ── Trial / free-access / premium status from the server ───────────────────
+  // ── Trial / free-access / pro status from the server ───────────────────
   useEffect(() => {
     if (!email) { setEntUnlimited(false); return undefined; }
     setEntUnlimited(isUnlimitedCached(email));
@@ -1342,7 +1343,7 @@ export default function App() {
 
     setShowLimitGate(false);
 
-    showToast('⭐ Premium activated! Enjoy unlimited access.', 'success');
+    showToast('⭐ Pro activated! Enjoy unlimited access.', 'success');
 
     const updated = [...achievements, ACHIEVEMENTS.premiumMember].filter(
 
@@ -1855,6 +1856,7 @@ export default function App() {
 
       )}
 
+      {showBottomNav && email && <ProNudge screen={screen} premium={premiumUser} onOpen={() => setScreen('shop')} />}
       {showBottomNav && <GuideHost screen={screen} email={email} premium={premiumUser} onOpenShop={() => setScreen('shop')} />}
       {showBottomNav && <TipsHost screen={screen} email={email} />}
       <NotificationPrompt active={!!(name && email && ['examType', 'subjects', 'leaderboard', 'challenges', 'shop', 'profile'].includes(screen))} name={name} reminderTimes={REMINDER_TIMES} />
@@ -1937,9 +1939,9 @@ export default function App() {
             borderRadius: 16, padding: '14px 16px', fontSize: 14, lineHeight: 1.5, boxShadow: '0 12px 30px rgba(0,0,0,.45)',
           }}
         >
-          {payNotice === 'failed' && 'We could not confirm your payment. If money left your account, do not pay again — it is added automatically within a few minutes, and your premium will appear. Still nothing? Contact support with your payment receipt.'}
+          {payNotice === 'failed' && 'We could not confirm your payment. If money left your account, do not pay again — it is added automatically within a few minutes, and your pro will appear. Still nothing? Contact support with your payment receipt.'}
           {payNotice === 'cancelled' && 'Payment cancelled. You have not been charged.'}
-          {payNotice === 'pending' && 'We are confirming your payment. Your premium will switch on automatically in a minute — you do not need to pay again.'}
+          {payNotice === 'pending' && 'We are confirming your payment. Your pro will switch on automatically in a minute — you do not need to pay again.'}
           <div style={{ marginTop: 6, fontSize: 12, opacity: 0.7 }}>Tap to dismiss</div>
         </div>
       )}
@@ -1995,7 +1997,7 @@ export default function App() {
 
             <div style={{ fontSize: 56, marginBottom: 12 }}>🎉</div>
 
-            <h2 style={{ color: '#fff', fontSize: 22, margin: '0 0 8px' }}>You're Premium!</h2>
+            <h2 style={{ color: '#fff', fontSize: 22, margin: '0 0 8px' }}>You're Pro!</h2>
 
             <p style={{ color: '#9090b0', fontSize: 14, margin: '0 0 24px', lineHeight: 1.6 }}>
 
@@ -2005,9 +2007,9 @@ export default function App() {
 
                 {paymentModal.plan === 'annual'
 
-                  ? 'Premium Annual'
+                  ? 'Pro Annual'
 
-                  : 'Premium'}
+                  : 'Pro'}
 
               </strong>{' '}
 

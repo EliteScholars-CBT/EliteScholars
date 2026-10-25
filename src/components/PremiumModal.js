@@ -18,7 +18,7 @@ export default function PremiumModal({
   const [error, setError] = useState('');
 
   // All prices from API via props, frontend values as fallback only.
-  // Premium is annual-only — no monthly tier.
+  // Pro is annual-only — no monthly tier.
   const annualPrice   = pricing.premiumAnnual ?? 3000;
   const originalPrice = pricing.premiumAnnualOriginal ?? 15000;
   const annualSavings = originalPrice - annualPrice;
@@ -27,7 +27,7 @@ export default function PremiumModal({
   const PLANS = {
     annual: {
       id: 'annual',
-      name: 'Premium',
+      name: 'Pro',
       emoji: '👑',
       price: annualPrice,
       originalPrice,
@@ -87,7 +87,7 @@ export default function PremiumModal({
         {/* Header */}
         <div className="pm-header">
           <span className="pm-crown"><EmojiIcon emoji="👑" size="1.1em" /></span>
-          <div className="pm-title">Go Premium</div>
+          <div className="pm-title">Go Pro</div>
           <div className="pm-subtitle">Unlock your full potential. No limits.</div>
         </div>
 

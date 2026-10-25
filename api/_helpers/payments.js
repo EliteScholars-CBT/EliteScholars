@@ -1,6 +1,6 @@
 // api/_helpers/payments.js — shared, hardened payment confirmation.
 // Used by BOTH the browser redirect (payment/verify) and Flutterwave's server
-// webhook (payment/webhook). Whichever arrives first activates premium; the
+// webhook (payment/webhook). Whichever arrives first activates pro; the
 // other is a harmless no-op, so a replayed link can never extend a subscription.
 import { Resend } from 'resend';
 import { getFirstName, activatePremiumAndLog, activateGroupAndLog, logShopPurchase } from './premium.js';
@@ -9,7 +9,7 @@ import { findShopItem } from './shopItems.js';
 
 const APP_URL = 'https://elitescholars.site';
 const PLAN_AMOUNT = { annual: 3000, pro: 3000, shop: 1, group50: 1, group100: 1 }; // real prices come from admin settings (see getPricing)
-const PLAN_NAMES = { annual: 'Premium Annual', pro: 'Pro Monthly', group50: 'Group Plan (50 members)', group100: 'Group Plan (100 members)' };
+const PLAN_NAMES = { annual: 'Pro Annual', pro: 'Pro Monthly', group50: 'Squad Plan (50 members)', group100: 'Squad Plan (100 members)' };
 const PLAN_DAYS = { annual: 365, pro: 30, group50: 365, group100: 365 };
 const fmt = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -31,7 +31,7 @@ function confirmationEmail({ firstName, plan, amount, activatedOn, expiryDate })
       <tr>
         <td style="background:linear-gradient(135deg,#0a5c2e,#1a8c47,#0a5c2e);padding:32px 40px;text-align:center;">
           <div style="font-size:48px;margin-bottom:8px;">🎉</div>
-          <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;">You're now Premium!</h1>
+          <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;">You're now Pro!</h1>
           <p style="margin:4px 0 0;color:rgba(255,255,255,0.7);font-size:13px;">EliteScholars · Subscription Confirmed</p>
         </td>
       </tr>
@@ -155,7 +155,7 @@ export async function finalizePayment(txRef, via) {
       await new Resend(process.env.RESEND_API_KEY).emails.send({
         from: `EliteScholars <${process.env.FROM_EMAIL}>`,
         to: email,
-        subject: `🎉 ${firstName}, your Premium is now active!`,
+        subject: `🎉 ${firstName}, your Pro is now active!`,
         html: confirmationEmail({ firstName, plan, amount: `₦${amount.toLocaleString('en-NG')}`, activatedOn: fmt(new Date()), expiryDate: fmt(expiry) }),
       });
     }

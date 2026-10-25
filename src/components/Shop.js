@@ -65,7 +65,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
 
   const FMT = (n) => n?.toLocaleString('en-NG') ?? '0';
 
-  // ── Derived pricing — Premium is annual-only, no monthly tier ─────────────
+  // ── Derived pricing — Pro is annual-only, no monthly tier ─────────────
   const annualPrice       = pricing.premiumAnnual           ?? 3000;
   const originalPrice     = pricing.premiumAnnualOriginal   ?? 15000;
   const annualSavings     = originalPrice - annualPrice;
@@ -82,7 +82,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
       .finally(() => setLoadingShop(false));
   }, []);
 
-  // ── Check server-side premium status ───────────────────────────────────────
+  // ── Check server-side pro status ───────────────────────────────────────
   useEffect(() => {
     if (!userEmail) return;
     fetchPremiumStatus(userEmail).then(data => {
@@ -137,7 +137,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
 
   const COMPARE_PLANS = [
     {
-      id: 'premium', label: 'Premium', icon: '👑', tag: `${annualDiscountPct}% OFF`,
+      id: 'premium', label: 'Pro', icon: '👑', tag: `${annualDiscountPct}% OFF`,
       price: annualPrice, originalPrice, period: '/yr',
       features: [
         'Unlimited topics, every exam', 'Unlimited sessions, no time limit', 'Zero cooldown, ever',
@@ -166,13 +166,13 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
       </div>
       <div className="shop-body">
 
-        {/* ── Premium active ── */}
+        {/* ── Pro active ── */}
         {localPremium ? (
           <div className="shop-premium-active">
             <div className="shop-premium-active-glow" />
-            <div className="shop-premium-active-badge"><EmojiIcon emoji="⭐" size="1.15em" /> Premium Active</div>
+            <div className="shop-premium-active-badge"><EmojiIcon emoji="⭐" size="1.15em" /> Pro Active</div>
             <div className="shop-premium-active-plan">
-              {premData?.plan === 'pro' ? 'Pro Plan' : 'Premium Annual Plan'}
+              {premData?.plan === 'pro' ? 'Pro Plan' : 'Pro Annual Plan'}
             </div>
             {premData?.expiresDateStr && (
               <div className="shop-premium-active-expiry">
@@ -194,10 +194,10 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
             ) : (
               <div className="shop-cancel-confirm">
                 <button className="shop-cancel-yes" onClick={handleCancel}>
-                  Cancel Premium
+                  Cancel Pro
                 </button>
                 <button className="shop-cancel-no" onClick={() => setShowCancelConfirm(false)}>
-                  Keep Premium
+                  Keep Pro
                 </button>
               </div>
             )}
@@ -211,7 +211,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
 
               {/* Header row */}
               <div className="shop-plans-card-header">
-                <div className="shop-plans-card-title">Premium</div>
+                <div className="shop-plans-card-title">Go Pro</div>
                 <div className="shop-plans-card-sub">Everything unlocked for a full year.</div>
               </div>
 
@@ -247,6 +247,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
                               </>
                             )}
                           </div>
+                          {plan.originalPrice && plan.originalPrice > price && <div className="shop-plan-save">You save ₦{FMT(plan.originalPrice - price)}</div>}
                         </div>
                       </div>
 

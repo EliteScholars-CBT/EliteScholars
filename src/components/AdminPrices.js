@@ -4,7 +4,7 @@ import { fmtN, fmtNaira } from './AdminCharts';
 
 const num = (v) => (v === '' ? '' : String(v).replace(/[^\d]/g, ''));
 
-// Prices the owner can change any time: Premium, shop items, and the school plan (trial + tiers).
+// Prices the owner can change any time: Pro, shop items, and the school plan (trial + tiers).
 export function AdminPrices({ token, onAuthFail }) {
   const api = useMemo(() => makeApi(token, onAuthFail), [token, onAuthFail]);
   const [d, setD] = useState(null);
@@ -36,21 +36,21 @@ export function AdminPrices({ token, onAuthFail }) {
       {err && <div className="adm-error">{err}</div>}
 
       <section className="adm-card">
-        <h2>Premium prices</h2>
+        <h2>Pro prices</h2>
         <p className="adm-note" style={{ marginTop: 0 }}>Changes apply straight away in the app and at checkout. Anyone already mid-payment still pays the price they were shown.</p>
         <div className="adm-fields">
-          <label>Premium (per year)<input inputMode="numeric" value={p.premiumAnnual} onChange={(e) => setP({ ...p, premiumAnnual: num(e.target.value) })} /></label>
+          <label>Pro (per year)<input inputMode="numeric" value={p.premiumAnnual} onChange={(e) => setP({ ...p, premiumAnnual: num(e.target.value) })} /></label>
           <label>"Was" price (crossed out)<input inputMode="numeric" value={p.premiumAnnualOriginal} onChange={(e) => setP({ ...p, premiumAnnualOriginal: num(e.target.value) })} /></label>
         </div>
-        <button disabled={busy} onClick={() => save(() => api('prices-save', { method: 'POST', body: { premiumAnnual: p.premiumAnnual, premiumAnnualOriginal: p.premiumAnnualOriginal } }), 'Premium prices saved.')}>Save premium prices</button>
+        <button disabled={busy} onClick={() => save(() => api('prices-save', { method: 'POST', body: { premiumAnnual: p.premiumAnnual, premiumAnnualOriginal: p.premiumAnnualOriginal } }), 'Pro prices saved.')}>Save premium prices</button>
       </section>
 
       <section className="adm-card">
-        <h2>Group plan prices (1 year)</h2>
-        <p className="adm-note" style={{ marginTop: 0 }}>Sold in the shop. One payer, Premium for up to 50 or 100 members they add themselves.</p>
+        <h2>Squad plan prices (1 year)</h2>
+        <p className="adm-note" style={{ marginTop: 0 }}>Sold in the shop. One payer, Pro for up to 50 or 100 members they add themselves.</p>
         <div className="adm-fields">
-          <label>Group of 50 (₦)<input inputMode="numeric" value={p.group50 || ''} onChange={(e) => setP({ ...p, group50: num(e.target.value) })} /></label>
-          <label>Group of 100 (₦)<input inputMode="numeric" value={p.group100 || ''} onChange={(e) => setP({ ...p, group100: num(e.target.value) })} /></label>
+          <label>Squad of 50 (₦)<input inputMode="numeric" value={p.group50 || ''} onChange={(e) => setP({ ...p, group50: num(e.target.value) })} /></label>
+          <label>Squad of 100 (₦)<input inputMode="numeric" value={p.group100 || ''} onChange={(e) => setP({ ...p, group100: num(e.target.value) })} /></label>
         </div>
         <button disabled={busy} onClick={() => save(() => api('prices-save', { method: 'POST', body: { group50: p.group50, group100: p.group100 } }), 'Group prices saved.')}>Save group prices</button>
       </section>

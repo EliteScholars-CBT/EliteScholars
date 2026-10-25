@@ -1,4 +1,4 @@
-import { scanImage, flaggedMessage } from '../utils/imageGuard';
+import { scanImage, flaggedMessage, reportBlocked } from '../utils/imageGuard';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import EliteBadge from './EliteBadge';
@@ -11,6 +11,8 @@ import { REACTION_EMOJI } from '../utils/emojiData';
 import StickerPicker, { StickerArt, saveMine } from './StickerPicker';
 import Icon from './Icon';
 import { fetchMedia } from '../utils/media';
+import VoicePlayer from './VoiceNote';
+import { startRecording, voiceSupported } from '../utils/voice';
 import '../styles/chat.css';
 
 async function call(path, body) {
@@ -35,6 +37,9 @@ function Pic({ id, onOpen }) {
   return src ? <img className="sc-pic" src={src} alt="Shared" draggable={false} onClick={(e) => { e.stopPropagation(); onOpen(src); }} /> : <div className="sc-pic wait">Loading…</div>;
 }
 
+const isTouch = () => typeof window !== 'undefined' && (window.matchMedia ? window.matchMedia('(pointer: coarse)').matches : false);
+const grow = (el) => { if (!el) return; el.style.height = 'auto'; el.style.height = `${Math.min(el.scrollHeight, 132)}px`; };
+
 function Bubble({ m, onLong, onOpenImg, onReact, flash }) {
   const sticker = m.kind === 'sticker';
   const art = sticker && isStickerMsg(m.text);
@@ -47,15 +52,18 @@ function Bubble({ m, onLong, onOpenImg, onReact, flash }) {
   };
   const move = (e) => { if (pos.current && Math.abs(e.clientX - pos.current.x) + Math.abs(e.clientY - pos.current.y) > 10) cancel(); };
   const rx = Object.entries(m.reactions || {});
+  const voice = m.kind === 'image' && String(m.text || '').startsWith('vn:');
+  const vsecs = voice ? Number(String(m.text).slice(3)) || 0 : 0;
   return (
     <div id={`m-${m.id}`} className={`sc-msg ${m.mine ? 'mine' : ''} ${flash ? 'sc-flash' : ''}`}>
       {!m.mine && <div className="sc-who">{m.author}{m.elite && <EliteBadge inline size={12} />}</div>}
-      <div className={`sc-bub ${sticker ? 'stk' : ''} ${m.kind === 'image' ? 'img' : ''}`}
+      <div className={`sc-bub ${sticker ? 'stk' : ''} ${m.kind === 'image' && !voice ? 'img' : ''} ${voice ? 'vnb' : ''}`}
         onPointerDown={down} onPointerMove={move} onPointerUp={cancel} onPointerLeave={cancel} onPointerCancel={cancel}
         onContextMenu={(e) => { e.preventDefault(); if (!m.temp) onLong(m); }}
         onClickCapture={(e) => { if (fired.current) { e.stopPropagation(); e.preventDefault(); fired.current = false; } }}>
-        {m.kind === 'image' && <Pic id={m.media_id} onOpen={onOpenImg} />}
-        {art ? <StickerArt id={m.text.slice(3)} className="sc-stkmsg" /> : sticker ? (isTag(m.text) ? <span className="sc-tag" style={{ background: tagColor(m.text) }}>{m.text}</span> : <span className="sc-big">{m.text}</span>) : (m.text ? <span className="sc-text">{m.text}</span> : null)}
+        {m.kind === 'image' && !voice && <Pic id={m.media_id} onOpen={onOpenImg} />}
+        {voice && <VoicePlayer id={m.media_id} src={m._voice} secs={vsecs} mine={m.mine} />}
+        {voice ? null : art ? <StickerArt id={m.text.slice(3)} className="sc-stkmsg" /> : sticker ? (isTag(m.text) ? <span className="sc-tag" style={{ background: tagColor(m.text) }}>{m.text}</span> : <span className="sc-big">{m.text}</span>) : (m.text ? <span className="sc-text">{m.text}</span> : null)}
         <small>{m.pinned && <span className="sc-pinmark"><Icon name="pin" size={10} /></span>}{m.edited && <span className="sc-edited">edited · </span>}{hhmm(m.created_at)}</small>
       </div>
       {rx.length > 0 && <div className="sc-rx">{rx.map(([em, n]) => <button type="button" key={em} className={m.my_reaction === em ? 'mine' : ''} onClick={() => onReact(m, em)}>{em} {n > 1 ? n : ''}</button>)}</div>}
@@ -83,6 +91,9 @@ export default function SquadChat({ squadId, squadName, isOwner, onClose }) {
   const cursor = useRef('');
   const box = useRef(null);
   const input = useRef(null);
+  const [rec, setRec] = useState(null);      // { secs, cancel } while the finger is holding the mic
+  const [draft, setDraft] = useState(null);  // { dataUrl, secs } recorded, waiting for the send button
+  const recRef = useRef(null), startX = useRef(0);
   const sel = useRef({ s: 0, e: 0 });
   const caret = useRef(null);
   const stick = useRef(true);
@@ -159,6 +170,7 @@ export default function SquadChat({ squadId, squadName, isOwner, onClose }) {
     if (keep.current) { el.scrollTop = keep.current.t + (el.scrollHeight - keep.current.h); keep.current = null; }
     else if (stick.current) el.scrollTop = el.scrollHeight;
   }, [msgs]);
+  useLayoutEffect(() => { grow(input.current); }, [text]);
   useLayoutEffect(() => { if (caret.current !== null && input.current) { try { input.current.setSelectionRange(caret.current, caret.current); } catch { /* ignore */ } sel.current = { s: caret.current, e: caret.current }; caret.current = null; } }, [text]);
 
   const onScroll = () => {
@@ -194,6 +206,32 @@ export default function SquadChat({ squadId, squadName, isOwner, onClose }) {
     setText('');
     if (!(await send({ text: t }, { kind: 'text', text: t }))) setText(t);
   };
+  const holdStart = async (e) => {
+    if (rec || draft || sending) return;
+    setErr(''); startX.current = e.clientX;
+    try { e.currentTarget.setPointerCapture && e.currentTarget.setPointerCapture(e.pointerId); } catch { /* ignore */ }
+    try {
+      const r = await startRecording((secs) => setRec((c) => (c ? { ...c, secs } : c)), () => holdEnd());
+      recRef.current = r; setRec({ secs: 0, cancelling: false });
+      try { navigator.vibrate && navigator.vibrate(15); } catch { /* ignore */ }
+    } catch { setErr('Allow microphone access to send voice notes.'); }
+  };
+  const cancelling = useRef(false);
+  const holdMove = (e) => { if (!recRef.current) return; const c = startX.current - e.clientX > 90; cancelling.current = c; setRec((x) => (x ? { ...x, cancelling: c } : x)); };
+  const holdEnd = async () => {
+    const r = recRef.current; if (!r) return;
+    recRef.current = null; setRec(null);
+    if (cancelling.current) { cancelling.current = false; r.cancel(); return; }
+    const out = await r.stop();
+    if (out) setDraft(out);
+  };
+  const sendVoice = async () => {
+    const d = draft; if (!d || sending) return;
+    setDraft(null);
+    if (!(await send({ voice: d.dataUrl, secs: d.secs }, { kind: 'image', text: `vn:${d.secs}`, media_id: null, _voice: d.dataUrl }))) setDraft(d);
+  };
+  useEffect(() => () => { if (recRef.current) { recRef.current.cancel(); recRef.current = null; } }, []);
+
   const sendSticker = (s) => { setTray(false); send({ sticker: s }, { kind: 'sticker', text: s }); };
   const sendImage = async (url) => {
     const isPhoto = !(studio && studio.blank);
@@ -204,7 +242,7 @@ export default function SquadChat({ squadId, squadName, isOwner, onClose }) {
       setErr(''); setSending(true);
       const sc = await scanImage(url);
       setSending(false);
-      if (sc.state === 'flagged') { setErr(flaggedMessage(sc)); return; }
+      if (sc.state === 'flagged') { reportBlocked(url, sc, 'chat'); setErr(flaggedMessage(sc)); return; }
       scan = sc.state; ocr = sc.text || undefined;
     }
     send({ image: url, scan, ocr }, { kind: 'image', text: '', media_id: null, _local: url });
@@ -268,7 +306,8 @@ export default function SquadChat({ squadId, squadName, isOwner, onClose }) {
   const canEdit = (m) => m.mine && m.kind === 'text' && !m.temp && Date.now() - new Date(m.created_at).getTime() < EDIT_MS;
   const typingTxt = typing.length === 1 ? `${typing[0]} is typing` : typing.length === 2 ? `${typing[0]} and ${typing[1]} are typing` : typing.length ? 'Several people are typing' : '';
   const pin = pins.length ? pins[Math.min(pinIdx, pins.length - 1)] : null;
-  const pinPic = pin && pin.kind === 'image';
+  const pinVoice = !!pin && String(pin.text || '').startsWith('vn:');
+  const pinPic = !!pin && pin.kind === 'image' && !pinVoice;
 
   return createPortal(
     <div className="sc-wrap" role="dialog" aria-label="Squad chat">
@@ -284,7 +323,7 @@ export default function SquadChat({ squadId, squadName, isOwner, onClose }) {
       {pin && (
         <div className="sc-pins" onClick={tapPin} role="button" tabIndex={0}>
           <div className="sc-pins-bar">{pins.map((p, i) => <i key={p.id} className={i === Math.min(pinIdx, pins.length - 1) ? 'on' : ''} />)}</div>
-          <div className="sc-pins-txt"><b>Pinned message {pins.length > 1 ? `${Math.min(pinIdx, pins.length - 1) + 1} of ${pins.length}` : ''}</b><span>{pinPic ? 'Photo' : pin.kind === 'sticker' ? 'Sticker' : pin.text}</span></div>
+          <div className="sc-pins-txt"><b>Pinned message {pins.length > 1 ? `${Math.min(pinIdx, pins.length - 1) + 1} of ${pins.length}` : ''}</b><span>{pinVoice ? 'Voice note' : pinPic ? 'Photo' : pin.kind === 'sticker' ? 'Sticker' : pin.text}</span></div>
           {pinPic && <PinThumb id={pin.media_id} />}
           <Icon name="pin" size={16} />
         </div>
@@ -302,13 +341,31 @@ export default function SquadChat({ squadId, squadName, isOwner, onClose }) {
       {tray === 'stickers' && <StickerPicker mode="stickers" onSticker={sendSticker} onMine={(u) => { setTray(false); send({ image: u }, { kind: 'image', text: '', media_id: null, _local: u }); }} onCreate={() => { setTray(false); setStudio({ blank: true, mine: true }); }} />}
       {tray === 'emoji' && <EmojiPicker onPick={insertEmoji} />}
       <div className="sc-bar">
-        <button className="sc-ic" onClick={() => setTray((t) => (t === 'emoji' ? false : 'emoji'))} aria-label="Emoji"><Icon name="smile" size={21} /></button>
-        <button className="sc-ic" onClick={() => setTray((t) => (t === 'stickers' ? false : 'stickers'))} aria-label="Stickers"><Icon name="sticker" size={21} /></button>
-        <label className="sc-ic" aria-label="Send a photo"><Icon name="camera" size={21} /><input type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) setStudio({ file: f }); }} /></label>
-        <input ref={input} className="allow-copy sc-in" value={text} maxLength={600} placeholder={editing ? 'Edit your message…' : 'Message your squad…'}
-          onChange={(e) => { onType(e.target.value); readSel(); }} onSelect={readSel} onKeyUp={readSel} onClick={readSel} onBlur={readSel}
-          onKeyDown={(e) => { if (e.key === 'Enter') sendText(); }} />
-        <button className="sc-send" disabled={!text.trim() || sending} onClick={sendText} aria-label={editing ? 'Save' : 'Send'}><Icon name={editing ? 'check' : 'send'} size={19} /></button>
+        {rec ? (
+          <div className={`sc-rec ${rec.cancelling ? 'cancel' : ''}`}>
+            <i className="sc-rec-dot" /><b>{Math.floor(rec.secs / 60)}:{String(rec.secs % 60).padStart(2, '0')}</b>
+            <span>{rec.cancelling ? 'Release to cancel' : '‹ Slide to cancel · release to stop'}</span>
+          </div>
+        ) : draft ? (
+          <div className="sc-draft">
+            <button type="button" className="sc-ic" onClick={() => setDraft(null)} aria-label="Delete voice note"><Icon name="trash" size={20} /></button>
+            <VoicePlayer src={draft.dataUrl} secs={draft.secs} mine />
+          </div>
+        ) : (
+          <>
+            <button className="sc-ic" onClick={() => setTray((t) => (t === 'emoji' ? false : 'emoji'))} aria-label="Emoji"><Icon name="smile" size={21} /></button>
+            <button className="sc-ic" onClick={() => setTray((t) => (t === 'stickers' ? false : 'stickers'))} aria-label="Stickers"><Icon name="sticker" size={21} /></button>
+            <label className="sc-ic" aria-label="Send a photo"><Icon name="camera" size={21} /><input type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) setStudio({ file: f }); }} /></label>
+            <textarea ref={input} rows={1} className="allow-copy sc-in" value={text} maxLength={600} placeholder={editing ? 'Edit your message…' : 'Message your squad…'}
+              onChange={(e) => { onType(e.target.value); readSel(); grow(e.target); }} onSelect={readSel} onKeyUp={readSel} onClick={readSel} onBlur={readSel}
+              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !isTouch()) { e.preventDefault(); sendText(); } }} />
+          </>
+        )}
+        {(text.trim() || draft || editing) && !rec
+          ? <button className="sc-send" disabled={sending || (!draft && !text.trim())} onClick={draft ? sendVoice : sendText} aria-label={editing ? 'Save' : 'Send'}><Icon name={editing ? 'check' : 'send'} size={19} /></button>
+          : voiceSupported()
+            ? <button className={`sc-send sc-mic ${rec ? 'on' : ''}`} onPointerDown={holdStart} onPointerMove={holdMove} onPointerUp={holdEnd} onPointerCancel={holdEnd} onContextMenu={(e) => e.preventDefault()} aria-label="Hold to record a voice note"><Icon name="mic" size={20} /></button>
+            : <button className="sc-send" disabled aria-label="Send"><Icon name="send" size={19} /></button>}
       </div>
       {studio && <StickerStudio aspect={studio.file ? 4 / 5 : 1} initialFile={studio.file || null} title="Sticker studio" cta="Send" onClose={() => setStudio(null)} onDone={sendImage} />}
       {viewer && <ImageViewer src={viewer} onClose={() => setViewer('')} />}

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Icon from './Icon';
 import Confetti from './Confetti';
 import SquadChat, { chatSeenKey } from './SquadChat';
+import { peekUnread, OPEN_SQUAD_KEY } from './SquadShortcut';
 import { wantsChat, clearOpenChat } from '../utils/chatLink';
 import EliteBadge from './EliteBadge';
 import { MAX_SQUADS } from '../utils/squadApi';
@@ -34,6 +35,7 @@ export default function StudySquads({ userEmail, userName }) {
   const [synced, setSynced] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [unread, setUnread] = useState(0);
+  const [unreadMap, setUnreadMap] = useState({});
   const [copied, setCopied] = useState('');
   const copyTimer = useRef(null);
 
@@ -49,7 +51,9 @@ export default function StudySquads({ userEmail, userName }) {
     const fresh = res.success ? (res.squads && res.squads.length ? res.squads : (res.squad ? [res.squad] : [])) : [];
     if (fresh.length) {
       setSquads(fresh);
-      setActiveId((cur) => (fresh.some((q) => q.id === cur) ? cur : fresh[0].id));
+      let want = null;
+      try { want = sessionStorage.getItem(OPEN_SQUAD_KEY); sessionStorage.removeItem(OPEN_SQUAD_KEY); } catch { /* ignore */ }
+      setActiveId((cur) => (want && fresh.some((q) => q.id === want) ? want : fresh.some((q) => q.id === cur) ? cur : fresh[0].id));
       const keep = fresh.find((q) => q.id === activeId) || fresh[0];
       saveSquadCache(keep);
       setSynced(true);
@@ -81,6 +85,18 @@ export default function StudySquads({ userEmail, userName }) {
     })();
     return () => { on = false; };
   }, [synced, squad && squad.id, chatOpen]); // eslint-disable-line
+
+  // unread count on every squad tab
+  useEffect(() => {
+    if (!synced || squads.length < 2) return undefined;
+    let on = true;
+    (async () => {
+      const m = {};
+      await Promise.all(squads.filter((q) => !q._local).map(async (q) => { m[q.id] = await peekUnread(q.id); }));
+      if (on) setUnreadMap(m);
+    })();
+    return () => { on = false; };
+  }, [synced, squads.length, activeId, chatOpen]); // eslint-disable-line
 
   const finishAdd = () => {
     setCelebrate(true);
@@ -186,7 +202,7 @@ export default function StudySquads({ userEmail, userName }) {
         {(squads.length > 1 || squads.length < MAX_SQUADS) && (
           <div className="squad-tabs" role="tablist" aria-label="Your squads">
             {squads.map((q) => (
-              <button key={q.id} role="tab" aria-selected={q.id === squad.id} className={`squad-tab ${q.id === squad.id ? 'on' : ''}`} onClick={() => { pick(q); setView('hub'); }}>{q.name}</button>
+              <button key={q.id} role="tab" aria-selected={q.id === squad.id} className={`squad-tab ${q.id === squad.id ? 'on' : ''}`} onClick={() => { pick(q); setView('hub'); }}>{q.name}{q.id !== squad.id && unreadMap[q.id] > 0 && <em>{unreadMap[q.id]}</em>}</button>
             ))}
             {squads.length < MAX_SQUADS && <button className="squad-tab add" onClick={() => { setView('create'); setError(''); }}>＋ Add squad</button>}
           </div>

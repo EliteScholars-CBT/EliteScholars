@@ -38,7 +38,7 @@ export const ACHIEVEMENTS = {
   challengeWinner:  { id: 'challengeWinner',   name: '🏆 Challenge Winner',   desc: 'Win your first challenge',                   icon: '🏆' },
   challengeStreak3: { id: 'challengeStreak3',  name: '⚔️ Combo Fighter',      desc: 'Win 3 challenges in a row',                  icon: '⚔️' },
   shopShopper:      { id: 'shopShopper',       name: '🛍️ Shop Explorer',      desc: 'Visited the Shop',                           icon: '🛍️' },
-  premiumMember:    { id: 'premiumMember',     name: '⭐ Premium Member',     desc: 'Subscribed to EliteScholars Premium',         icon: '⭐' },
+  premiumMember:    { id: 'premiumMember',     name: '⭐ Pro Member',     desc: 'Subscribed to EliteScholars Pro',         icon: '⭐' },
   dailyLogin:       { id: 'dailyLogin',        name: '📅 Daily Player',       desc: 'Logged in 7 days in a row',                  icon: '📅' },
   gamePlayer:       { id: 'gamePlayer',        name: '🎮 Gamer Scholar',      desc: 'Complete your first game mode round',         icon: '🎮' },
   gamePerfect:      { id: 'gamePerfect',       name: '🕹️ Perfect Run',        desc: 'Complete a game round with 100%',             icon: '🕹️' },

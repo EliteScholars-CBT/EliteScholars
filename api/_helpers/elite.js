@@ -1,4 +1,4 @@
-// Which of these accounts have an active PAID Premium plan? (Trials and admin
+// Which of these accounts have an active PAID Pro plan? (Trials and admin
 // free-access grants do not earn the Elite badge.) Returns a Set of emails.
 import { getSupabase, supabaseEnabled } from "./supabase.js";
 

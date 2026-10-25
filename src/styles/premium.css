@@ -1665,3 +1665,10 @@ body.dark-mode .pm-error {
 body.dark-mode .pm-glow {
   opacity: 0.4;
 }
+/* Go Pro pill (floats above the bottom bar) */
+.pro-nudge { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(76px + env(safe-area-inset-bottom)); z-index: 900; display: flex; align-items: center; gap: 4px; max-width: calc(100% - 28px); padding: 4px 6px 4px 4px; border-radius: 99px; background: linear-gradient(135deg, #4C1D95, #7C3AED); box-shadow: 0 8px 24px rgba(76,29,149,.45); animation: proNudgeIn .4s cubic-bezier(.2,.9,.3,1.2) both; }
+.pro-nudge-main { display: flex; align-items: center; gap: 10px; border: 0; background: transparent; color: #fff; font-family: inherit; text-align: left; padding: 6px 10px 6px 8px; cursor: pointer; }
+.pro-nudge-main > span:first-child { font-size: 22px; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: linear-gradient(135deg, #FBBF24, #F59E0B); }
+.pro-nudge-main b { display: block; font-size: 14px; } .pro-nudge-main small { display: block; font-size: 11px; opacity: .85; }
+.pro-nudge-x { border: 0; background: rgba(255,255,255,.18); color: #fff; width: 26px; height: 26px; border-radius: 50%; font-size: 17px; line-height: 1; cursor: pointer; }
+@keyframes proNudgeIn { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }

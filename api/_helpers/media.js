@@ -18,3 +18,15 @@ export async function saveMedia(sb, email, dataUrl) {
   if (error) { console.error("[media] insert", error.message); return { error: "Could not save the image." }; }
   return { id: data.id };
 }
+
+// Voice notes: small compressed audio (about 3 KB per second, 90 s max), stored in the same table.
+const MAX_AUDIO = 420 * 1024;
+const AUDIO_RE = /^data:audio\/(webm|mp4|ogg|mpeg|aac|x-m4a)(;codecs=[A-Za-z0-9.,=_-]+)?;base64,([A-Za-z0-9+/=]+)$/;
+export async function saveAudio(sb, email, dataUrl) {
+  const m = AUDIO_RE.exec(String(dataUrl || ""));
+  if (!m) return { error: "That voice note isn't supported." };
+  if (Math.floor((m[3].length * 3) / 4) > MAX_AUDIO) return { error: "That voice note is too long. Keep it under 90 seconds." };
+  const { data, error } = await sb.from("media").insert({ email, data: dataUrl }).select("id").single();
+  if (error) { console.error("[media] audio insert", error.message); return { error: "Could not save the voice note." }; }
+  return { id: data.id };
+}

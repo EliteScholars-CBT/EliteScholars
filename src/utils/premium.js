@@ -1,5 +1,5 @@
 // ============================================================================
-// premium.js — Premium subscription state management
+// pro.js — Pro subscription state management
 // ============================================================================
 
 import { getFreeSessionConfig } from './entitlement';
@@ -14,7 +14,7 @@ const KEY_TOPICS_TODAY = (email) => `ep_topics_${email}_${new Date().toDateStrin
 const KEY_SESSION_START= (email) => `ep_session_start_${email}`;
 const KEY_COOLDOWN_END = (email) => `ep_cooldown_end_${email}`;
 
-// ── Premium status ────────────────────────────────────────────────────────────
+// ── Pro status ────────────────────────────────────────────────────────────
 
 export function isPremium(email) {
   if (!email) return false;
@@ -70,7 +70,7 @@ export function cancelPremium(email) {
   try { localStorage.removeItem(KEY_PREMIUM(email)); } catch {}
 }
 
-// ── Sync premium status from server ──────────────────────────────────────────
+// ── Sync pro status from server ──────────────────────────────────────────
 // Call this after a successful verifyProfile so localStorage stays in sync
 // with whatever the server says about the user's subscription.
 

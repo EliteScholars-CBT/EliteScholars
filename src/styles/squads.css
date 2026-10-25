@@ -117,3 +117,13 @@
 .sq-short-txt small { font-size: 11.5px; color: var(--text-secondary); }
 .sq-short.live .sq-short-txt small { color: #16A34A; font-weight: 800; }
 .sq-short-go { font-size: 22px; opacity: .45; }
+
+.sq-short-wrap { display: block; }
+.sq-short.new { border-color: rgba(124,58,237,.6); background: rgba(124,58,237,.12); }
+.sq-short.new .sq-short-txt small { color: #7C3AED; font-weight: 800; }
+.sq-short-badge, .sq-chip em { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 99px; background: #EF4444; color: #fff; font-family: inherit; font-weight: 800; font-size: 12px; line-height: 22px; font-style: normal; text-align: center; box-sizing: border-box; flex: 0 0 auto; }
+.sq-chips { display: flex; gap: 8px; margin: 0 16px 6px; padding: 2px 0 4px; overflow-x: auto; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.sq-chips::-webkit-scrollbar { display: none; }
+.sq-chip { flex: 0 0 auto; scroll-snap-align: start; display: flex; align-items: center; gap: 6px; border: 1.5px solid rgba(124,58,237,.25); background: var(--card-bg, #fff); color: var(--text-primary); border-radius: 99px; padding: 7px 12px; font-family: inherit; font-weight: 700; font-size: 12.5px; cursor: pointer; max-width: 190px; }
+.sq-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.squad-tab em { display: inline-block; margin-left: 6px; min-width: 18px; padding: 0 5px; border-radius: 99px; background: #EF4444; color: #fff; font-family: inherit; font-weight: 800; font-size: 11px; line-height: 18px; font-style: normal; text-align: center; }

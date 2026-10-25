@@ -11,8 +11,9 @@ import crypto from "crypto";
 import { sendOk, sendErr, sendMethodNotAllowed, setCors, readBody } from "../_helpers/response.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { getAdsConfig, sanitizeAds, bustAdsCache } from "../_helpers/adsConfig.js";
-import { getShopCatalog } from "../_helpers/shopItems.js";
+import { getShopCatalog, getRemovedBuiltins } from "../_helpers/shopItems.js";
 import { saveMedia } from "../_helpers/media.js";
+import { whereLabel } from "../_helpers/security.js";
 import { adminFromToken, ADMIN_PERMS, ROLE_TEMPLATES } from "./admin.js";
 import { hashPasswordStrong } from "../_helpers/hash.js";
 import { sendHtml } from "../_helpers/mail.js";
@@ -72,7 +73,7 @@ const studentRow = (p) => ({
 
 // Plain-English one-liners for the activity timeline
 const EVENT_LABEL = {
-  quiz_start: "Started a quiz", quiz_complete: "Finished a quiz", signup: "Signed up", login: "Logged in", premium_modal_open: "Looked at Premium",
+  quiz_start: "Started a quiz", quiz_complete: "Finished a quiz", signup: "Signed up", login: "Logged in", premium_modal_open: "Looked at Pro",
   learn_open: "Opened a Learn topic", status_post: "Posted a status", status_reply: "Replied to a status", status_reply_back: "Answered a reply on their status", status_blocked: "Tried to post a blocked status", game_start: "Started a game", game_over: "Finished a game", share: "Shared something", pwa_installed: "Installed the app",
 };
 const labelEvent = (e) => {
@@ -84,6 +85,7 @@ const labelEvent = (e) => {
   if (e.type === "referral_signup") return `Signed up through a partner link${p.referred_by ? ` (${p.referred_by})` : ""}`;
   if (e.type === "status_post") return `Posted a status (${p.privacy || "squad"}${p.photo ? ", with photo" : ""})${p.preview ? ` — "${p.preview}"` : ""}`;
   if (e.type === "status_reply" || e.type === "status_reply_back") return `${EVENT_LABEL[e.type]}${p.to ? ` by ${p.to}` : ""}${p.preview ? ` — "${p.preview}"` : ""}`;
+  if (e.type === "content_blocked") return `Blocked: tried to post ${({ explicit: "explicit words", scam: "a money / scam offer", link: "a link", phone: "a phone number" })[String(p.flag).replace(/^photo:/, "")] || p.flag || "something not allowed"} in ${whereLabel(p.where)}${p.text ? ` — "${String(p.text).slice(0, 60)}"` : ""}`;
   if (e.type === "status_blocked") return `Tried to post a blocked status (${p.flag || "flagged"})`;
   const extra = [p.subject, p.exam, p.topic, p.score !== undefined ? `score ${p.score}` : "", p.postTitle].filter(Boolean).join(" · ");
   return extra ? `${base} — ${extra}` : base;
@@ -158,7 +160,7 @@ async function sourceStats(sb, days, ref) {
 // Ad analytics from our own events. (Adsterra's earnings are only in their dashboard.)
 async function adStats(sb, days) {
   const since = new Date(Date.now() - days * D).toISOString();
-  const rows = await fetchPages(sb, "events", "type,payload,created_at", (q) => q.in("type", ["ad_impression", "ad_click", "blog_ad_view", "blog_ad_click"]).gte("created_at", since), 40);
+  const rows = await fetchPages(sb, "events", "type,payload,created_at", (q) => q.in("type", ["ad_impression", "ad_click", "ad_ad_impression", "ad_ad_click", "blog_ad_view", "blog_ad_click"]).gte("created_at", since), 40);
   const dayKey = (iso) => new Date(new Date(iso).getTime() + 3600000).toISOString().slice(0, 10);
   const place = {}, perDay = {};
   const bump = (name, surface, kind, f) => { const o = (place[`${surface}|${name}|${kind}`] = place[`${surface}|${name}|${kind}`] || { surface, name, kind, views: 0, clicks: 0 }); o[f]++; };
@@ -166,6 +168,8 @@ async function adStats(sb, days) {
   for (const r of rows) {
     const p = r.payload || {};
     const d = dayKey(r.created_at);
+    // the app saves these as "ad_ad_impression" / "ad_ad_click" (batch kind + event name); older rows may have no prefix
+    if (r.type === "ad_ad_impression") r.type = "ad_impression"; else if (r.type === "ad_ad_click") r.type = "ad_click";
     if (r.type === "ad_impression") { appViews++; bump(String(p.adId || "app"), "App", String(p.adType || "ad"), "views"); (perDay[d] = perDay[d] || { app: 0, blog: 0 }).app++; }
     else if (r.type === "blog_ad_view") { blogViews++; bump(String(p.slot || "slot"), "Blog", String(p.kind === "adsterra" ? "Adsterra" : "Own ad"), "views"); (perDay[d] = perDay[d] || { app: 0, blog: 0 }).blog++; }
     else { clicks++; bump(String(p.adId || p.slot || p.ad || "ad"), r.type === "ad_click" ? "App" : "Blog", String(p.adType || p.kind || "ad"), "clicks"); }
@@ -282,6 +286,14 @@ export default async function handler(req, res) {
         try { const r = await sb.from("statuses").select("id", { count: "exact", head: true }).eq("reviewed", false).gt("reports", 0); n = r.count || 0; } catch { n = 0; }
         counts.status = n;
         if (n) items.push({ kind: "status", text: `${n} reported status${n === 1 ? "" : "es"} to review`, at: null, tab: "status" });
+      }
+      if (need("status")) {
+        // new refused posts (words, links, scams, flagged photos) since the admin last opened Security
+        const seen = iso(q.secSince) || new Date(Date.now() - 24 * 3600000).toISOString();
+        let n = 0;
+        try { const r = await sb.from("events").select("id", { count: "exact", head: true }).in("type", ["content_blocked", "status_blocked"]).gt("created_at", seen); n = r.count || 0; } catch { n = 0; }
+        counts.security = n;
+        if (n) items.push({ kind: "security", text: `${n} blocked post${n === 1 ? "" : "s"} to look at (words, links, photos)`, at: null, tab: "security" });
       }
       return sendOk(res, { counts, total: Object.values(counts).reduce((a, n) => a + n, 0), items });
     }
@@ -407,7 +419,7 @@ export default async function handler(req, res) {
     // ── shop items ──
     if (op === "shop-list") {
       if (!need("shop")) return deny();
-      return sendOk(res, { items: await getShopCatalog({ includeHidden: true }) });
+      return sendOk(res, { items: await getShopCatalog({ includeHidden: true }), removed: await getRemovedBuiltins() });
     }
     if (op === "shop-save") {
       if (!need("shop")) return deny();
@@ -461,7 +473,17 @@ export default async function handler(req, res) {
     if (op === "shop-delete") {
       if (!need("shop")) return deny();
       const id = String(b.id || "");
-      if (!id.startsWith("custom_")) return sendErr(res, "Only items you added can be deleted. Built-in items can be hidden.");
+      if (!id) return sendErr(res, "Pick an item.");
+      if (!id.startsWith("custom_")) {
+        // built-in item: mark it removed (or bring it back); students who already bought it keep their receipt
+        if (!SHOP_ITEMS.some((x) => x.id === id && !x.isPremium)) return sendErr(res, "Unknown item.");
+        const { data: cur } = await sb.from("settings").select("value").eq("key", "shop_flags").maybeSingle();
+        const all = (cur && cur.value) || {};
+        all[id] = { ...(all[id] || {}), removed: !b.restore };
+        await sb.from("settings").upsert({ key: "shop_flags", value: all, updated_at: new Date().toISOString() }, { onConflict: "key" });
+        await audit(sb, who, b.restore ? "shop.restore" : "shop.delete", id);
+        return sendOk(res, {});
+      }
       await sb.from("shop_items").delete().eq("id", id);
       await audit(sb, who, "shop.delete", id);
       return sendOk(res, {});
@@ -510,6 +532,27 @@ export default async function handler(req, res) {
           resharedFrom: r.reshared_from || null, reports: r.reports || 0, flag: r.flag || null, scan: r.scan || null, reviewed: !!r.reviewed, suspended: susp.has(r.email),
         })),
         next: rows.length >= 30 ? rows[rows.length - 1].created_at : null,
+      });
+    }
+    if (op === "security") {
+      if (!need("status")) return deny();
+      const before = iso(q.before);
+      let ev = sb.from("events").select("id,email,payload,created_at").in("type", ["content_blocked", "status_blocked"]).order("created_at", { ascending: false }).limit(40);
+      if (before) ev = ev.lt("created_at", before);
+      const { data, error } = await ev;
+      if (error) return sendErr(res, "Could not load the security log.", 500);
+      const rows = data || [];
+      const emails = [...new Set(rows.map((r) => r.email).filter(Boolean))];
+      const nm = {}, susp = new Set();
+      if (emails.length) {
+        try { const { data: ps } = await sb.from("profiles").select("email,first_name,last_name,username,suspended").in("email", emails); (ps || []).forEach((p) => { nm[p.email] = `${p.first_name || ""} ${p.last_name || ""}`.trim() || p.username || p.email; if (p.suspended) susp.add(p.email); }); } catch { /* ignore */ }
+      }
+      const since = new Date(Date.now() - 7 * D).toISOString();
+      const counts = {};
+      try { const { data: c } = await sb.from("events").select("email").in("type", ["content_blocked", "status_blocked"]).gte("created_at", since).limit(5000); (c || []).forEach((r) => { counts[r.email] = (counts[r.email] || 0) + 1; }); } catch { /* ignore */ }
+      return sendOk(res, {
+        items: rows.map((r) => { const p = r.payload || {}; return { id: r.id, at: r.created_at, email: r.email, name: nm[r.email] || r.email, suspended: susp.has(r.email), where: p.where || "status", flag: String(p.flag || "blocked"), text: p.text || "", mediaId: p.mediaId || null, detail: p.detail || "", weekCount: counts[r.email] || 1 }; }),
+        next: rows.length >= 40 ? rows[rows.length - 1].created_at : null,
       });
     }
     if (op === "status-media") {

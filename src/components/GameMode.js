@@ -693,7 +693,27 @@ const DIFFICULTIES = [
 // Small built-in sampler so the games always have something to play even
 // before real per-subject question-bank wiring lands. Each entry doubles as
 // { term, clue } for Scramble and { a: clue, b: term } for Memory.
-export default function GameMode({ onBack, email, name, onLimit }) {
+export default function GameMode(props) {
+  const { onBack } = props;
+  const [leaving, setLeaving] = useState(false);
+  return (
+    <div className="game-shell">
+      <div className="game-topstrip">
+        <button type="button" className="game-topback" onClick={() => setLeaving(true)} aria-label="Back"><Icon name="arrowLeft" size={18} /></button>
+        <span className="game-toptitle">Game mode</span>
+      </div>
+      <GameModeInner {...props} />
+      {leaving && (
+        <div className="game-leave" role="dialog">
+          <div className="game-leave-card"><b>Leave the game?</b><span>Your current round will be lost.</span>
+            <div><button type="button" onClick={() => setLeaving(false)}>Keep playing</button><button type="button" className="out" onClick={onBack}>Leave</button></div></div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function GameModeInner({ onBack, email, name, onLimit }) {
   const [phase, setPhase]       = useState('menu');
   const [difficulty, setDiff]   = useState('medium');
   const [gameType, setGameType] = useState(null);
@@ -769,7 +789,7 @@ export default function GameMode({ onBack, email, name, onLimit }) {
           <div className="game-result-title">{title}</div>
           <div className="game-result-score">{result.score} pts</div>
           <div className="game-result-xp">+{result.xp} XP earned</div>
-          <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+          <div className="game-result-actions">
             <button className="game-result-btn" onClick={startGame}><Icon name="refresh" size={16} /> Play Again</button>
             <button className="game-result-btn" style={{ background: 'transparent', border: `2px solid ${GOLD}`, color: GOLD }} onClick={onBack}><Icon name="arrowLeft" size={15} /> Exit</button>
           </div>
@@ -781,7 +801,6 @@ export default function GameMode({ onBack, email, name, onLimit }) {
   return (
     <div className="scr fd game-menu-screen">
       <div className="game-menu-header">
-        <button className="game-back-btn" onClick={onBack}><Icon name="arrowLeft" size={15} /> Back</button>
         <div className="game-menu-title"><EmojiIcon emoji="🎮" size="1.15em" /> Game Mode</div>
         <div className="game-menu-sub">Quick brain games. Play, score and earn XP.</div>
       </div>

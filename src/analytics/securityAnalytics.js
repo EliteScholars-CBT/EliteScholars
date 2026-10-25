@@ -66,7 +66,7 @@ export function trackSuspiciousQuizActivity(subjectId, detail = '') {
   return track('suspicious_quiz_activity', { subjectId, detail });
 }
 
-/** Track premium bypass attempt (e.g. localStorage manipulation) */
+/** Track pro bypass attempt (e.g. localStorage manipulation) */
 export function trackPremiumBypassAttempt(detail = '') {
   return track('premium_bypass_attempt', { detail });
 }

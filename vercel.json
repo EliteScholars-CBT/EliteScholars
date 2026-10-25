@@ -122,12 +122,24 @@
       "destination": "/api/data?route=status/reshare"
     },
     {
+      "source": "/api/status/blocked",
+      "destination": "/api/data?route=status/blocked"
+    },
+    {
+      "source": "/api/status/view",
+      "destination": "/api/data?route=status/view"
+    },
+    {
       "source": "/api/status/insights",
       "destination": "/api/data?route=status/insights"
     },
     {
       "source": "/api/admin/status-list",
       "destination": "/api/data?route=admin/status-list"
+    },
+    {
+      "source": "/api/admin/security",
+      "destination": "/api/data?route=admin/security"
     },
     {
       "source": "/api/admin/status-media",
@@ -492,6 +504,18 @@
     {
       "source": "/api/admin/access-action",
       "destination": "/api/data?route=admin/access-action"
+    },
+    {
+      "source": "/partner",
+      "destination": "/api/data?route=site/page&p=partner"
+    },
+    {
+      "source": "/school",
+      "destination": "/api/data?route=site/page&p=school"
+    },
+    {
+      "source": "/schools",
+      "destination": "/api/data?route=site/page&p=school"
     },
     {
       "source": "/blog",

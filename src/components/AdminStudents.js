@@ -65,6 +65,7 @@ export default function AdminStudents({ token, onAuthFail }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [open, setOpen] = useState('');
+  useEffect(() => { try { const e = sessionStorage.getItem('adm_open_student'); if (e) { sessionStorage.removeItem('adm_open_student'); setF((c) => ({ ...c, q: e })); setOpen(e); } } catch { /* ignore */ } }, []);
   const [more, setMore] = useState(false);
   const timer = useRef(null);
 
@@ -96,7 +97,7 @@ export default function AdminStudents({ token, onAuthFail }) {
           <label>Last seen<select value={f.seen} onChange={set('seen')}>{SEEN.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select></label>
           <label>Sort by<select value={f.sort} onChange={set('sort')}>{SORT.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select></label>
           <label>Order<select value={f.dir} onChange={set('dir')}><option value="desc">High / newest first</option><option value="asc">Low / oldest first</option></select></label>
-          <label>Plan<select value={f.premium} onChange={set('premium')}><option value="">All</option><option value="yes">Premium</option><option value="no">Free</option></select></label>
+          <label>Plan<select value={f.premium} onChange={set('premium')}><option value="">All</option><option value="yes">Pro</option><option value="no">Free</option></select></label>
           <label>Min XP<input type="number" inputMode="numeric" value={f.minXp} onChange={set('minXp')} placeholder="0" /></label>
           <label>Max XP<input type="number" inputMode="numeric" value={f.maxXp} onChange={set('maxXp')} placeholder="any" /></label>
           {f.seen === 'custom' && (<>
@@ -116,7 +117,7 @@ export default function AdminStudents({ token, onAuthFail }) {
                 <b>{fmtN(s.xp)} XP</b>
                 <small className={Date.now() - new Date(s.lastActive || 0).getTime() < 900000 ? 'adm-live' : ''}>{s.lastActive ? `${fmtDT(s.lastActive)} · ${ago(s.lastActive)}` : 'never seen'}</small>
               </span>
-              {s.premium && <span className="adm-chip active">Premium</span>}
+              {s.premium && <span className="adm-chip active">Pro</span>}
               <span className="adm-caret">{open === s.email ? '▴' : '▾'}</span>
             </button>
             {open === s.email && <Detail api={api} email={s.email} />}

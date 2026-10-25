@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 const FILTERS = {
-  students: [['all', 'All students'], ['premium', 'Premium only'], ['free', 'Free only'], ['selected', 'Choose specific students']],
+  students: [['all', 'All students'], ['premium', 'Pro only'], ['free', 'Free only'], ['selected', 'Choose specific students']],
   partners: [['all', 'All partners'], ['active', 'Active partners'], ['pending', 'Pending partners'], ['selected', 'Choose specific partners']],
 };
 

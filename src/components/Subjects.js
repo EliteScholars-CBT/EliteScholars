@@ -22,6 +22,7 @@ const MODES = [
 ];
 
 const MODE_DESC = {
+  game:     'Quick brain games and XP',
   cbt:      'Practice past questions',
   learn:    'Study notes & key concepts',
   flashcard:'Quick card revision',
@@ -60,8 +61,12 @@ export default function Subjects({
 }) {
   const { theme, toggleTheme } = useTheme();
 
-  // Learn is the default every time a subject list opens; the student can switch to CBT, Flash or Game.
-  const [mode, setMode] = useState('learn');
+  // The last mode the student picked (Learn, CBT, Flash or Game) is remembered, even after the browser is closed,
+  // until they pick another. First time ever: Learn.
+  const [mode, setModeState] = useState(() => {
+    try { const v = localStorage.getItem('es_study_mode'); return ['learn', 'cbt', 'flashcard', 'game'].includes(v) ? v : 'learn'; } catch { return 'learn'; }
+  });
+  const setMode = (m) => { setModeState(m); try { localStorage.setItem('es_study_mode', m); } catch { /* ignore */ } };
 
   // ── Subject metadata, QB, and learn bank ─────────────────────────────────
   const getSubjectsAndQB = () => {
@@ -111,8 +116,8 @@ export default function Subjects({
   // ── Mode switch ───────────────────────────────────────────────────────────
   const handleModeSwitch = (m) => {
     SFX.select?.();
-    if (m === 'game') { onStartGame?.(); return; }
     setMode(m);
+    if (m === 'game') onStartGame?.();
   };
 
   // ── Subject click ─────────────────────────────────────────────────────────
@@ -215,7 +220,15 @@ export default function Subjects({
       <div className="scroll subjects-body">
 
         {/* Flashcard unavailable for grid exams */}
-        {flashUnavailable ? (
+        {mode === 'game' ? (
+          <div className="subjects-empty-state">
+            <div className="subjects-empty-icon"><Icon name="gamepad" size={40} /></div>
+            <div className="subjects-empty-title">Game mode</div>
+            <div className="subjects-empty-sub">20+ quick brain games. Play, score and earn XP.</div>
+            <button className="subjects-empty-btn" onClick={() => onStartGame?.()}>Start playing</button>
+          </div>
+
+        ) : flashUnavailable ? (
           <div className="subjects-empty-state">
             <div className="subjects-empty-icon"><Icon name="layers" size={40} /></div>
             <div className="subjects-empty-title">Flashcards Coming Soon</div>

@@ -592,3 +592,16 @@ alter table squad_chat_reads add column if not exists typing_at timestamptz;
 alter table status_replies add column if not exists to_email  text;
 alter table status_replies add column if not exists parent_id uuid;
 create index if not exists idx_status_replies_to on status_replies (status_id, to_email);
+
+
+-- ------------------------------------------------------------ status views --
+-- Who opened a status (one row per student per status). The owner sees the list and the count.
+create table if not exists status_views (
+  status_id    uuid not null references statuses(id) on delete cascade,
+  email        text not null,
+  display_name text not null default '',
+  created_at   timestamptz not null default now(),
+  primary key (status_id, email)
+);
+create index if not exists idx_status_views_status on status_views (status_id, created_at desc);
+alter table status_views enable row level security;

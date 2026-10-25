@@ -12,7 +12,7 @@ async function loadFlags(sb) {
   try { const { data } = await sb.from("settings").select("value").eq("key", "shop_flags").maybeSingle(); return (data && data.value) || {}; } catch { return {}; }
 }
 
-// All purchasable items (never the premium plan). `includeHidden` is for the admin list.
+// All purchasable items (never the pro plan). `includeHidden` is for the admin list.
 export async function getShopCatalog({ includeHidden = false } = {}) {
   const pr = await getPricing();
   const sb = supabaseEnabled() ? getSupabase() : null;
@@ -20,6 +20,7 @@ export async function getShopCatalog({ includeHidden = false } = {}) {
   const out = [];
   for (const it of SHOP_ITEMS) {
     if (it.isPremium) continue;
+    if (flags[it.id] && flags[it.id].removed) continue; // deleted by the admin
     const f = { ...DEFAULT_FLAGS, ...(flags[it.id] || {}) };
     const price = pr.items[it.id];
     // Admin edits to a built-in item (title, description, picture…) are stored beside its visibility flags.
@@ -46,6 +47,13 @@ export async function getShopCatalog({ includeHidden = false } = {}) {
     } catch { /* table not created yet */ }
   }
   return includeHidden ? out : out.filter((i) => i.active);
+}
+
+// Built-in items the admin deleted (so they can be brought back).
+export async function getRemovedBuiltins() {
+  const sb = supabaseEnabled() ? getSupabase() : null;
+  const flags = sb ? await loadFlags(sb) : {};
+  return SHOP_ITEMS.filter((it) => !it.isPremium && flags[it.id] && flags[it.id].removed).map((it) => ({ id: it.id, title: (flags[it.id] && flags[it.id].title) || it.title }));
 }
 
 export async function findShopItem(id, anyState = false) {

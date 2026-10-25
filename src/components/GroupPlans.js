@@ -41,40 +41,38 @@ export default function GroupPlans({ userEmail, name, pricing }) {
       const r = await fetch(`/api/group/${op}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ groupId, email: who }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || j.success === false) setErr(j.error || 'That did not work. Try again.');
-      else { setGroups(j.groups || []); if (op === 'add') { setEmail((e) => ({ ...e, [groupId]: '' })); setNote('Added. They now have Premium.'); } else setNote('Removed.'); }
+      else { setGroups(j.groups || []); if (op === 'add') { setEmail((e) => ({ ...e, [groupId]: '' })); setNote('Added. They now have Pro.'); } else setNote('Removed.'); }
     } catch { setErr('Network error. Check your connection.'); }
     setBusy('');
   };
 
+  const solo = Number(pricing.premiumAnnual) || 3000; // what one person pays for Pro alone
   return (
     <section className="grp">
       <div className="grp-head">
-        <div className="grp-title"><Icon name="users" size={18} /> Group plans</div>
-        <div className="grp-sub">One payment, one year of Premium for your whole class, school, church group or club.</div>
+        <div className="grp-title"><Icon name="users" size={18} /> Squad plan</div>
+        <div className="grp-sub">Form a squad, get Pro together and invite them. Everyone studies without limits.</div>
       </div>
 
       <div className="grp-cards">
-        {PLANS.map((p) => (
-          <div key={p.id} className={`grp-card${p.best ? ' best' : ''}`} style={{ '--hue': p.hue }}>
-            {p.best && <span className="grp-flag">Best value</span>}
-            <div className="grp-seats">{p.seats}<small>people</small></div>
-            <div className="grp-term">1 year</div>
-            <div className="grp-price"><span>₦</span>{FMT(p.price)}</div>
-            <div className="grp-per">about ₦{FMT(Math.round(p.price / p.seats))} per person</div>
-            <ul>
-              <li>Add up to {p.seats} members</li>
-              <li>Everyone gets full Premium for a year</li>
-              <li>You add or remove members anytime</li>
-            </ul>
-            <button className="grp-buy" disabled={!!buying} onClick={() => buy(p.id)}>{buying === p.id ? 'Opening payment…' : `Get for ${p.seats} people`}</button>
-          </div>
-        ))}
+        {PLANS.map((p) => {
+          const save = p.seats * solo - p.price;
+          return (
+            <div key={p.id} className={`grp-card${p.best ? ' best' : ''}`} style={{ '--hue': p.hue }}>
+              {p.best && <span className="grp-flag">Best value</span>}
+              <div className="grp-seats">{p.seats}<small>people</small></div>
+              <div className="grp-price"><span>₦</span>{FMT(p.price)}<em> / year</em></div>
+              {save > 0 && <div className="grp-save">You save ₦{FMT(save)}</div>}
+              <button className="grp-buy" disabled={!!buying} onClick={() => buy(p.id)}>{buying === p.id ? 'Opening payment…' : 'Get Squad plan'}</button>
+            </div>
+          );
+        })}
       </div>
       {err && <div className="grp-err">{err}</div>}
 
       {groups.map((g) => (
         <div key={g.id} className="grp-mine">
-          <div className="grp-mine-top"><b>Your group of {g.seats}</b><span>{g.used}/{g.seats} used · {g.active ? `until ${when(g.expiresAt)}` : 'expired'}</span></div>
+          <div className="grp-mine-top"><b>Your squad of {g.seats}</b><span>{g.used}/{g.seats} used · {g.active ? `until ${when(g.expiresAt)}` : 'expired'}</span></div>
           {g.active && (
             <div className="grp-add">
               <input value={email[g.id] || ''} onChange={(e) => setEmail((x) => ({ ...x, [g.id]: e.target.value }))} placeholder="Member's email (they must have signed up)" inputMode="email" autoCapitalize="off" />
@@ -88,7 +86,7 @@ export default function GroupPlans({ userEmail, name, pricing }) {
                 <div key={m.email} className="grp-member"><span><b>{m.name || m.email.split('@')[0]}</b><small>{m.email}</small></span><button onClick={() => act('remove', g.id, m.email)} disabled={!!busy}>Remove</button></div>
               ))}
             </div>
-          ) : <div className="grp-empty">No members yet. Add the first one above.</div>}
+          ) : <div className="grp-empty">Nobody invited yet. Add the first person above.</div>}
         </div>
       ))}
     </section>
