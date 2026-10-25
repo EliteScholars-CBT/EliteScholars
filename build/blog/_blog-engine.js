@@ -10,7 +10,8 @@
     'study-tips': { bg: '#DBEAFE', color: '#1D4ED8', label: 'Study Tips' },
     waec: { bg: '#DCFCE7', color: '#065F46', label: 'WAEC' },
     gst: { bg: '#FEE2E2', color: '#DC2626', label: 'GST' },
-    postutme: { bg: '#FEF3C7', color: '#B45309', label: 'Post UTME' },
+    neco: { bg: '#FFEDD5', color: '#C2410C', label: 'NECO' },
+    lessons: { bg: '#CCFBF1', color: '#0F766E', label: 'Lessons' },
   };
 
   window.BlogEngine = {
@@ -35,50 +36,23 @@
       return CATEGORY_COLORS[cat] || { bg: '#F3F4F6', color: '#374151', label: cat };
     },
 
-    renderAdPublisher() {
-      return `<div class="blog-ad blog-ad-publisher">
-        <p class="blog-ad-label">Advertisement</p>
-        <div class="blog-ad-slot" id="pub-ad-slot">
-          <span class="blog-ad-placeholder">Publisher Ad Space</span>
-        </div>
-      </div>`;
+    // Ads are only empty containers here; _blog-ads.js fills them in the visitor's
+    // browser (Adsterra after consent, otherwise our own ads). Keeping them out of
+    // the article HTML means they never count as page content for search engines.
+    adSlot(slot, house) {
+      return `<div class="es-ad" data-slot="${slot}"${house ? ` data-house="${house}"` : ''} aria-label="Advertisement"></div>`;
     },
 
-    renderAdAffiliate(item) {
-      return `<div class="blog-ad blog-ad-affiliate">
-        <p class="blog-ad-label">Sponsored</p>
-        <a href="${item.link}" target="_blank" rel="noopener" class="blog-aff-card">
-          <div class="blog-aff-icon">${item.icon}</div>
-          <div class="blog-aff-body">
-            <div class="blog-aff-title">${item.title}</div>
-            <div class="blog-aff-desc">${item.desc}</div>
-          </div>
-          <div class="blog-aff-cta">${item.cta}</div>
-        </a>
-      </div>`;
-    },
-
-    renderAdPartner(item) {
-      return `<div class="blog-ad blog-ad-partner">
-        <p class="blog-ad-label">Partner</p>
-        <a href="${item.link}" target="_blank" rel="noopener" class="blog-partner-card">
-          <div class="blog-partner-logo">${item.logo}</div>
-          <div class="blog-partner-body">
-            <div class="blog-partner-title">${item.title}</div>
-            <div class="blog-partner-desc">${item.desc}</div>
-          </div>
-        </a>
-      </div>`;
-    },
-
-    injectAdsIntoContent(html, affiliateAd, partnerAd) {
+    injectAdsIntoContent(html) {
       const paragraphs = html.split(/<\/p>/i);
+      const n = paragraphs.filter((x) => x.trim()).length;
       let result = '';
       paragraphs.forEach((para, i) => {
         result += para + (para.trim() ? '</p>' : '');
-        if (i === 2) result += this.renderAdPublisher();
-        if (i === 5 && affiliateAd) result += this.renderAdAffiliate(affiliateAd);
-        if (i === 8 && partnerAd) result += this.renderAdPartner(partnerAd);
+        if (!para.trim()) return;
+        if (i === 1 && n >= 4) result += this.adSlot('inline-1');
+        if (i === 3 && n >= 6) result += this.adSlot('inline-2');
+        if (i === 5 && n >= 8) result += this.adSlot('inline-3');
       });
       return result;
     },
