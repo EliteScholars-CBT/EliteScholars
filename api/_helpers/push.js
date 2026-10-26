@@ -13,9 +13,13 @@ async function lib() {
   return wp;
 }
 
+// Opening the app from a notification adds ?np=<kind> so the app can log "opened from a reminder".
+const withNp = (u, kind) => { const s = String(u); return /[?&]np=/.test(s) ? s : s + (s.includes("?") ? "&" : "?") + "np=" + encodeURIComponent(kind); };
+
 // payload: { title, body, url, tag }
 export async function pushToEmails(emails, payload) {
   const out = { sent: 0, removed: 0, failed: 0 };
+  const okEmails = [];
   const list = [...new Set((emails || []).filter(Boolean))];
   if (!list.length || !pushEnabled() || !supabaseEnabled()) return out;
   try {
@@ -26,17 +30,23 @@ export async function pushToEmails(emails, payload) {
       const { data } = await sb.from("push_subscriptions").select("endpoint,p256dh,auth,email").in("email", list.slice(i, i + 200));
       subs.push(...(data || []));
     }
-    const body = JSON.stringify({ title: payload.title, body: payload.body, url: payload.url || "/app", tag: payload.tag || "elitescholars", type: payload.type || "general" });
+    const body = JSON.stringify({ title: payload.title, body: payload.body, url: withNp(payload.url || "/app", payload.type || "general"), tag: payload.tag || "elitescholars", type: payload.type || "general" });
     const dead = [];
     for (let i = 0; i < subs.length; i += 25) {
       await Promise.all(subs.slice(i, i + 25).map(async (s) => {
         try {
           await w.sendNotification({ endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } }, body, { TTL: 43200 });
-          out.sent++;
+          out.sent++; okEmails.push(s.email);
         } catch (e) {
           if (e && (e.statusCode === 404 || e.statusCode === 410)) dead.push(s.endpoint); else out.failed++;
         }
       }));
+    }
+    // keep a record of every push that went out (who, what kind) for Admin → Reminders
+    if (okEmails.length) {
+      const kind = String(payload.type || "general").slice(0, 40), tag = String(payload.tag || "").slice(0, 60);
+      const rows = [...new Set(okEmails)].map((email) => ({ type: "push_sent", email, payload: { kind, tag } }));
+      for (let i = 0; i < rows.length; i += 200) { try { await sb.from("events").insert(rows.slice(i, i + 200)); } catch { /* log only */ } }
     }
     if (dead.length) { await sb.from("push_subscriptions").delete().in("endpoint", dead); out.removed = dead.length; }
   } catch (e) { console.warn("[push]", e?.message); }

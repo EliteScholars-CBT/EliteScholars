@@ -1,30 +1,28 @@
-ELITESCHOLARS — MERGED UPDATE (update 3 + update 4 + update 5 in ONE zip)
-Upload keeping the same folder paths, then redeploy. Replaces the earlier update-3 and update-4 zips.
+EliteScholars update (blog files NOT included: the blog zip stays separate until you say "continue the blog")
 
-DELETE (optional): public/ jamb-key-points.jpg  (old file whose name starts with a space)
+NEW FILES
+ api/_helpers/groupChats.js      api/_routes/game-public.js
+ src/components/AdminGames.js    src/components/AdminGroups.js   src/components/AdminReminders.js
+ src/components/GameBoard.js     src/components/VoicePicker.js   src/pages/GamePage.js
+ src/utils/gameApi.js            src/utils/gameSounds.js         src/utils/pushTrack.js
 
-SQL TO RUN (Supabase SQL editor): the new block at the bottom of supabase/schema.sql  -> status_views table (status viewers). Optional: everything else works without it.
-ENV VARS: ADSTERRA_API (already set). Nothing new.
-ROUTES: status/blocked, status/view, admin/security, site/page + rewrites /partner /school /schools are already in api/data.js and vercel.json. No new serverless files (12-function limit safe).
-IMPORTANT: api/_helpers/security.js REPLACES the old one (keeps logSecurityEvent for login, adds logBlocked).
+CHANGED FILES: see list in the zip (everything else listed below)
+ api/_helpers/{partners,push,security}.js  api/_routes/{admin-ops,site-public}.js  api/auth/register.js  api/data.js
+ public/sw.js  src/App.js  src/index.js  src/pages/{Admin,Partner}.js
+ src/components/{AdminSecurity,AuthScreen,GameMode,GuideHost,Learn,NotificationPrompt,Result,StatusBar,Subjects}.js
+ src/styles/{components,gamemode,guides,partner}.css
+ src/utils/{sounds,trafficSource,ttsHighlight,voices}.js  src/utils/constants/links.js
+ supabase/schema.sql  vercel.json
 
-UPDATE 5 (this one)
-  Admin: Security tab and the bell now show a badge for NEW blocked posts (since you last opened Security)  (Admin.js, admin-ops.js)
-  Games: back arrow always works (top strip with a Leave-game confirm); strip reserves space at the top for the social bar, which can now load on game screens; Play Again / Exit buttons have side padding  (GameMode.js, gamemode.css, useSocialBar.js)
-  Mode memory: the last mode (Learn / CBT / Flash / Game) is remembered, even after the browser closes, until you pick another. Back from a game returns to Game mode (Subjects.js)
-  Landing: subject marquee 4x faster; feature tour advances every ~2.3 s (games slide 6 s) with matching progress bar; screens inside the phone now pan like scrolling, shift with page scroll (parallax) and show a tap ripple; on phones the feature list is a horizontal row under the phone that rolls to the active item, with the description underneath  (Landing.js, landing2.css)
+NEW ROUTES (registered in api/data.js + vercel.json, NO new Vercel function)
+ POST /api/game/score   GET /api/game/board   GET /api/site/groups
+ GET /api/admin/reminders   GET /api/admin/games   GET /api/admin/groups   POST /api/admin/group-save   POST /api/admin/group-delete
+NEW PAGE: /game (public)
+NEW ADMIN TABS: Reminders, Games, Groups
 
-UPDATE 4 (included)
-  Security log: refused words/links/scams/photos are saved with who/where/what/picture -> Admin -> Security + activity feed
-  Chat: growing message box; hold-to-record voice notes; laptop layout; squad bar unread counts + squad chips; unread badges on squad tabs
-  Premium renamed Pro everywhere; "Squad plan" with savings; Pro card redesign; "Go Pro" pill; bottom-nav labels; purple Challenges icon in dark mode
-  Status views (who/how many saw your status)
-  Ads: fixed app-ad tracking; "Our own ads" in Admin -> Ads (affiliate masterclass, Resumify, Volt, PalmPay; off until you switch them on)
-  Shop: every item deletable in Admin (built-ins can be brought back)
-  Settings: Install app button
-  Link previews: new branded images (site, partner, school, blog, each blog cover as JPG); /partner and /school serve their own preview
-  Partner page redesigned (hero, how it works, earnings slider, FAQ, then sign-up)
-  "11 games" -> "20+ games"
+SQL TO RUN (Supabase SQL editor) - the end of supabase/schema.sql:
+ create table game_scores (...)  -- needed for the scoreboard
+ Also, if you saved a payout minimum before: update settings set value='10000' where key='min_payout';
 
-UPDATE 3 (included)
-  Learn auto-scroll + tap-to-read; status icons only; all SS3 subjects + SS2 extras wired; harder/more game questions; landing fixes (partner banner, blog 8 latest, etc.); Adsterra earnings tab; SMS tracked links in Sources; photo scanning with no AI (skin + NSFWJS + Tesseract on the phone); strong word filter
+ENV VARS: none new.  (HASH_SALT is used to hash IPs for the multi-account log.)
+FILES TO DELETE: none

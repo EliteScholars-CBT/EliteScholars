@@ -83,13 +83,19 @@ self.addEventListener('push', (event) => {
     vibrate: [200, 100, 200],
   };
   event.waitUntil(
-    self.registration.showNotification(data.title || 'EliteScholars CBT', options)
+    self.registration.showNotification(data.title || 'EliteScholars CBT', options).then(() => {
+      try { return fetch('/api/events/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'push_shown', kind: data.type || 'general' }), keepalive: true }); } catch (e) { return null; }
+    }).catch(() => {})
   );
 });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const targetUrl = event.notification.data?.url || '/app';
+  let targetUrl = event.notification.data?.url || '/app';
+  const kind = event.notification.data?.type || 'general';
+  if (!/[?&]np=/.test(targetUrl)) targetUrl += (targetUrl.includes('?') ? '&' : '?') + 'np=' + encodeURIComponent(kind);
+  // count the click (no login needed); the app itself logs who opened it
+  try { fetch('/api/events/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'push_click', kind, tag: event.notification.tag || '' }), keepalive: true }).catch(() => {}); } catch (e) { /* ignore */ }
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
       for (const client of list) {
@@ -112,7 +118,7 @@ function showReminder(name) {
     renotify: true,
     vibrate: [200, 100, 200],
     data: { url: '/app', type: 'reminder' },
-  });
+  }).then(() => { try { return fetch('/api/events/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'push_shown', kind: 'reminder' }), keepalive: true }); } catch (e) { return null; } }).catch(() => {});
 }
 
 function scheduleReminders(times, name) {

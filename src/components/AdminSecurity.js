@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { makeApi, fmtDT, ago } from './adminApi';
 
 const FLAG = { explicit: ['Explicit words', '#DC2626'], scam: ['Money / scam offer', '#D97706'], link: ['Link', '#2563EB'], phone: ['Phone number', '#7C3AED'], adult: ['Nudity / adult photo', '#DC2626'], flagged: ['Flagged photo', '#DC2626'] };
-const WHERE = { status: 'Status', reply: 'Status reply', chat: 'Squad chat', 'chat-edit': 'Chat edit', photo: 'Status photo', voice: 'Voice note' };
+const WHERE = { signup: 'sign-up',  status: 'Status', reply: 'Status reply', chat: 'Squad chat', 'chat-edit': 'Chat edit', photo: 'Status photo', voice: 'Voice note' };
 const flagOf = (f) => { const k = String(f).replace(/^photo:/, ''); return FLAG[k] || [k, '#6B7280']; };
 
 // Everything students tried to post that was REFUSED: who, where, what they wrote and the picture.

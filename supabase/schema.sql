@@ -605,3 +605,17 @@ create table if not exists status_views (
 );
 create index if not exists idx_status_views_status on status_views (status_id, created_at desc);
 alter table status_views enable row level security;
+
+-- ── Game scoreboard (public /game page + in-app Game mode) ─────────────────
+create table if not exists game_scores (
+  id bigserial primary key,
+  player_key text not null,            -- email for members, anonymous id for guests
+  is_guest boolean not null default false,
+  name text not null,
+  game text not null,
+  score int not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists game_scores_created_idx on game_scores (created_at desc);
+create index if not exists game_scores_player_idx on game_scores (player_key);
+alter table game_scores enable row level security;

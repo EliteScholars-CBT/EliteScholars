@@ -4495,3 +4495,22 @@ body.dark-mode .guardian-card:hover {
   }
 }
 
+
+/* Bottom nav: labels were clipped at the bottom. Give the bar room, never cut text. */
+.bottom-nav { height: auto; min-height: 58px; padding: 6px 8px calc(10px + env(safe-area-inset-bottom, 0px)); align-items: stretch; overflow: visible; }
+.bottom-nav .bottom-nav-item { height: auto; min-height: 48px; justify-content: center; padding: 4px 4px 5px; gap: 3px; overflow: visible; min-width: 0; }
+.bottom-nav .bottom-nav-icon { display: flex; align-items: center; justify-content: center; height: 24px; line-height: 1; flex: none; }
+.bottom-nav .bottom-nav-label { font-size: 10.5px; line-height: 1.3; padding-bottom: 1px; height: auto; overflow: visible; white-space: nowrap; flex: none; }
+
+/* Voice picker */
+.vp-btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border-color, rgba(128,128,128,.3)); background: var(--card-bg, #fff); color: var(--text-primary, inherit); border-radius: 99px; padding: 4px 10px 4px 4px; font-weight: 700; font-size: 13px; font-family: inherit; cursor: pointer; }
+.vp-av { width: 24px; height: 24px; border-radius: 50%; display: inline-grid; place-items: center; font-weight: 800; font-size: 12px; color: #fff; background: #7C3AED; flex: none; } .vp-av.male { background: #0EA5E9; }
+.vp-back { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1200; display: flex; align-items: flex-end; justify-content: center; animation: vpFade .15s both; }
+.vp-sheet { width: 100%; max-width: 460px; background: var(--card-bg, #fff); color: var(--text-primary, #111); border-radius: 22px 22px 0 0; padding: 14px 16px calc(18px + env(safe-area-inset-bottom, 0px)); animation: vpUp .22s both; }
+.vp-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; } .vp-head button { background: none; border: 0; color: inherit; padding: 6px; cursor: pointer; }
+.vp-group { font-size: 11.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; opacity: .6; margin: 12px 0 6px; }
+.vp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.vp-card { position: relative; border: 1.5px solid var(--border-color, rgba(128,128,128,.25)); border-radius: 16px; } .vp-card.on { border-color: var(--gold, #F59E0B); background: rgba(245,158,11,.1); }
+.vp-pick { width: 100%; background: none; border: 0; color: inherit; font-family: inherit; display: grid; justify-items: center; gap: 3px; padding: 12px 4px 10px; cursor: pointer; } .vp-pick .vp-av { width: 36px; height: 36px; font-size: 16px; } .vp-name { font-weight: 800; font-size: 14px; } .vp-pick small { font-size: 10.5px; opacity: .7; text-align: center; line-height: 1.2; }
+.vp-play { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(128,128,128,.18); color: inherit; display: grid; place-items: center; cursor: pointer; padding: 0; }
+@keyframes vpFade { from { opacity: 0; } } @keyframes vpUp { from { transform: translateY(40px); opacity: 0; } }

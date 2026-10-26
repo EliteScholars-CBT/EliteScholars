@@ -32,3 +32,24 @@ export async function logSecurityEvent({ type, email, ip, detail = '' }) {
     });
   } catch {}
 }
+
+// Several accounts from one network/device in a short time: kept in the same admin Security feed. Never throws.
+import crypto from "crypto";
+export const ipHash = (ip) => crypto.createHash("sha256").update(String(ip) + (process.env.HASH_SALT || "ep_salt_2025")).digest("hex").slice(0, 16);
+export async function logMultiAccount(sb, { email, ip, detail, count }) {
+  try {
+    if (!sb) return;
+    await sb.from("events").insert({ type: "multi_account", email: String(email || "unknown").toLowerCase().slice(0, 254), payload: { where: "signup", flag: "multiple accounts", text: String(detail || "").slice(0, 300), ip: ipHash(ip), count: count || 0 } });
+  } catch (e) { console.error("[security] multi-account log failed", e && e.message); }
+}
+export async function noteSignupIp(sb, { email, ip }) {
+  // returns how many OTHER sign-ups came from this IP in the last 24 hours
+  try {
+    if (!sb) return 0;
+    const h = ipHash(ip);
+    const since = new Date(Date.now() - 86400000).toISOString();
+    const { count } = await sb.from("events").select("id", { count: "exact", head: true }).eq("type", "signup_ip").eq("payload->>ip", h).gte("created_at", since);
+    await sb.from("events").insert({ type: "signup_ip", email, payload: { ip: h } });
+    return count || 0;
+  } catch { return 0; }
+}

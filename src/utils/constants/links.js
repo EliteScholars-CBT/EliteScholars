@@ -2,35 +2,37 @@
 // constants/links.js — External URLs, group chat links and exam type metadata
 // ============================================================================
 
-export const WA_GROUP   = 'https://chat.whatsapp.com/DSeaqKuKRhw1bIFVpAJreB?mode=gi_t';
+export const WA_GROUP   = 'https://chat.whatsapp.com/EMxGWjBhDOuJI5I99UoGdV';
 export const WA_CHANNEL = 'https://whatsapp.com/channel/0029Vb6wPv72kNFnjr4FMr24';
 export const APP_URL    = 'https://elitescholars.site';
 
-// ── Group chat links per exam type ───────────────────────────────────────────
-export const GC_LINKS = {
-  jamb:    { label: 'JAMB',      emoji: '📚', url: 'https://chat.whatsapp.com/DSeaqKuKRhw1bIFVpAJreB?mode=gi_t' },
-  waec:    { label: 'WAEC',      emoji: '📝', url: 'https://chat.whatsapp.com/DSeaqKuKRhw1bIFVpAJreB?mode=gi_t' },
-  neco:    { label: 'NECO',      emoji: '📋', url: 'https://chat.whatsapp.com/DSeaqKuKRhw1bIFVpAJreB?mode=gi_t' },
-  gst:     { label: 'GST',       emoji: '🏛️', url: 'https://chat.whatsapp.com/DSeaqKuKRhw1bIFVpAJreB?mode=gi_t' },
-};
+// ── Group chat links ─────────────────────────────────────────────────────────
+// The live list comes from the admin panel (/api/site/groups). These are the fallback if it cannot load.
+export const DEFAULT_GROUPS = [
+  { id: 'g-jamb', name: 'JAMB, aspirants and SS1–SS3', url: 'https://chat.whatsapp.com/EMxGWjBhDOuJI5I99UoGdV', audiences: ['jamb', 'aspirant', 'senior_school'] },
+  { id: 'g-waec', name: 'WAEC, NECO and SS1–SS3', url: 'https://chat.whatsapp.com/E13l17eqAN11Eg2EfO3ucn', audiences: ['waec', 'neco', 'senior_school'] },
+  { id: 'g-uni', name: 'University and GST', url: 'https://chat.whatsapp.com/GFm40LBFpF031tpY3e3z4B', audiences: ['gst', 'university'] },
+];
 
-export function getStudentGCLinks(studentType, selectedExams = []) {
-  const links = [];
-  const add = (key) => {
-    if (!links.find(l => l.key === key)) links.push({ key, ...GC_LINKS[key] });
-  };
+let groupsCache = null;
+export async function fetchGroups() {
+  if (groupsCache) return groupsCache;
+  try {
+    const r = await fetch('/api/site/groups');
+    const d = await r.json();
+    if (d && Array.isArray(d.groups) && d.groups.length) { groupsCache = d.groups; return groupsCache; }
+  } catch { /* use fallback */ }
+  return DEFAULT_GROUPS;
+}
 
-  if (studentType === 'senior_school') {
-    add('jamb'); add('waec'); add('neco');
-  } else if (studentType === 'university') {
-    add('gst');
-    if (selectedExams.includes('jamb'))     add('jamb');
-    if (selectedExams.includes('waec'))     add('waec');
-    if (selectedExams.includes('neco'))     add('neco');
-  } else {
-    add('jamb');
-  }
-  return links;
+// Which groups suit this student: matches their level (senior school / university) or any exam they study for.
+export function groupsFor(groups, studentType, selectedExams = []) {
+  const tags = new Set(selectedExams);
+  if (studentType) tags.add(studentType);
+  if (studentType === 'senior_school') ['jamb', 'waec', 'neco', 'aspirant'].forEach((t) => tags.add(t));
+  if (studentType === 'university') tags.add('gst');
+  const hit = groups.filter((g) => (g.audiences || []).some((a) => tags.has(a)));
+  return hit.length ? hit : groups.slice(0, 1);
 }
 
 // ── Exam types ────────────────────────────────────────────────────────────────

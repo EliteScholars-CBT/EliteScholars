@@ -10,6 +10,7 @@ const H = 3600000;
 const DAY = 24 * H;
 
 export const GUIDES = [
+  { id: 'games', emoji: '🎮', reel: true, title: 'Play games to learn faster', screens: ['subjects'], steps: ['Switch to Game mode at the top of the Study screen.', 'Each round is a different quick game built from real exam words.', 'Score points, earn XP and see where you rank on the scoreboard.', 'Challenge a friend on WhatsApp to beat your score.'], play: true },
   { id: 'squad', emoji: '👥', title: 'How to create or join a study squad', screens: ['leaderboard', 'subjects'], steps: ['Tap the 👥 squad card under the status circles, or open the Leaderboard tab and tap My Squad.', 'Create a squad with a name, or join a friend\'s squad with their code. You can be in up to 5 squads.', 'Tap the code to copy it, then share it with friends.', 'Use squad chat to talk. Green dots show who is online right now.'] },
   { id: 'learn', emoji: '📖', title: 'How to study a topic', screens: ['subjects'], steps: ['Pick your exam and a subject.', 'Open Learn and choose a topic.', 'Tap Read to hear the lesson. The words light up as they are spoken.', 'Finish the short quiz at the end to earn XP.'] },
   { id: 'lifelines', emoji: '💡', title: 'Stuck on a question? Use Hint and 50/50', screens: ['subjects'], steps: ['During a quiz, look for the two buttons above the question: ⚖️ 50/50 and 💡 Hint.', 'Tap 💡 Hint to see a clue that points you to the answer.', 'Tap ⚖️ 50/50 to remove two wrong options, so only two are left.', 'Each one can be used once per round, so save them for the hard questions.'], note: 'The 🔊 button reads each question aloud if you prefer to listen.' },
@@ -36,7 +37,26 @@ export function guidesPending(email) {
   return GUIDES.some((g) => !(st.seen || {})[g.id]);
 }
 
-export default function GuideHost({ screen, email, pro, onOpenShop }) {
+// A fast, looping "GIF" of the games: a new picture every fraction of a second, so it reads as motion.
+const REEL = [
+  ['🔤', 'Word Scramble', '#7C3AED', '#A78BFA'], ['🃏', 'Memory Match', '#0EA5E9', '#38BDF8'], ['🖼️', 'Picture Round', '#F59E0B', '#FCD34D'],
+  ['🎨', 'Colour Memory', '#EC4899', '#F9A8D4'], ['⚡', 'Word Slice', '#EF4444', '#FCA5A5'], ['🗂️', 'Sort Rush', '#10B981', '#6EE7B7'],
+  ['➗', 'Quick Maths', '#6366F1', '#A5B4FC'], ['📈', 'Higher or Lower', '#14B8A6', '#5EEAD4'],
+];
+function GameReel() {
+  const [i, setI] = useState(0);
+  useEffect(() => { const t = setInterval(() => setI((n) => (n + 1) % REEL.length), 520); return () => clearInterval(t); }, []);
+  const [em, name, c1, c2] = REEL[i];
+  return (
+    <div className="gd-reel" style={{ background: `linear-gradient(135deg, ${c1}, ${c2})` }} aria-hidden="true">
+      <span key={i} className="gd-reel-em">{em}</span>
+      <span className="gd-reel-name">{name}</span>
+      <span className="gd-reel-dots">{REEL.map((_, k) => <i key={k} className={k === i ? 'on' : ''} />)}</span>
+    </div>
+  );
+}
+
+export default function GuideHost({ screen, email, premium, onOpenShop }) {
   const [guide, setGuide] = useState(null);
   const shownCount = useRef(0);
   const lastShownAt = useRef(0);
@@ -96,7 +116,7 @@ export default function GuideHost({ screen, email, pro, onOpenShop }) {
     <div className="gd-overlay" role="dialog" aria-modal="true" aria-label={guide.title} onClick={(e) => e.target === e.currentTarget && close()}>
       <div className="gd-card">
         <button className="gd-x" onClick={close} aria-label="Close">✕</button>
-        <div className="gd-emoji" aria-hidden="true">{guide.emoji}</div>
+        {guide.reel ? <GameReel /> : <div className="gd-emoji" aria-hidden="true">{guide.emoji}</div>}
         {guide.pro && <span className="gd-pro">PRO</span>}
         <h3>{guide.title}</h3>
         {locked && <p className="gd-lock">This is a Pro feature. You can read how it works now and unlock it any time.</p>}
@@ -107,6 +127,7 @@ export default function GuideHost({ screen, email, pro, onOpenShop }) {
         </div>
         <div className="gd-actions">
           {locked && onOpenShop && <button className="gd-secondary" onClick={() => { close(); onOpenShop(); }}>See Pro</button>}
+          {guide.play && <button className="gd-secondary" onClick={() => { try { localStorage.setItem('es_study_mode', 'game'); window.dispatchEvent(new CustomEvent('es:set-mode', { detail: 'game' })); } catch { /* ignore */ } close(); }}>Play a game</button>}
           <button className="gd-ok" onClick={close}>Got it</button>
         </div>
       </div>

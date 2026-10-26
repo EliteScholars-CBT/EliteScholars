@@ -88,7 +88,7 @@ export async function getSettings() {
   const m = Object.fromEntries((data || []).map((r) => [r.key, r.value]));
   return {
     defaultRate: Number(m.default_commission_rate ?? 40),
-    minPayout: Number(m.min_payout ?? 1000),
+    minPayout: Number(m.min_payout ?? 10000),
   };
 }
 export const effectiveRate = (partner, settings) =>

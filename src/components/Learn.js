@@ -9,7 +9,8 @@ import AdSection from './AdSection';
 import { useAdsConfig, adsOn } from '../utils/adsConfig';
 import { SFX, stopSpeech, getVoicesCached } from '../utils/sounds';
 import BackButton from './BackButton';
-import { mapToCharacterVoices, getVoiceForCharacter } from '../utils/voices';
+import { mapToCharacterVoices, getVoiceForCharacter, getCharacter } from '../utils/voices';
+import VoicePicker from './VoicePicker';
 import {
   startStudySession,
   endStudySession,
@@ -18,11 +19,10 @@ import {
 } from '../analytics/studyAnalytics';
 import Icon, { EmojiIcon } from './Icon';
 import { normalizeForSpeech } from '../utils/ttsNormalize';
-import { wrapWords, unwrapWords, buildChunks, mapIndex, markChunk, clearChunk, keepInView, keepWordInView, tapPosition, wordAtPosition } from '../utils/ttsHighlight';
+import { wrapWords, unwrapWords, buildChunks, mapIndex, markChunk, clearChunk, keepInView, keepWordInView, resetManualScroll, tapPosition, wordAtPosition } from '../utils/ttsHighlight';
 
 const FONT_SIZES = [13, 15, 17, 19, 21];
 const STORAGE_KEY = (examType, subjectId) => `es_learn_${examType}_${subjectId}`;
-const MIN_CORRECT_ANSWERS = 3;
 
 function injectAds(html, adEvery, maxAds, topicIdx, adSequence) {
   if (!html || adEvery <= 0) return [{ type: 'html', content: html }];
@@ -265,8 +265,9 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
     const voice = getVoiceForCharacter(selectedCharId, characterVoices);
     if (voice) utter.voice = voice;
     utter.lang = (voice && voice.lang) || 'en-GB'; // always an English voice: stops phones reading English topics with another language's sounds
-    utter.rate = 0.8;
-    utter.pitch = 1.0;
+    const ch = getCharacter(selectedCharId);
+    utter.rate = 0.8 * ch.rate;
+    utter.pitch = ch.pitch;
     let gotBoundary = false;
     utter.onboundary = (e) => {
       if (e.name === 'sentence') return;
@@ -315,7 +316,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
       if (ci >= 0) chunks[0] = chunks[0].slice(chunks[0].indexOf(target));
     }
     sentenceQueueRef.current = chunks;
-    stoppedRef.current = false;
+    stoppedRef.current = false; resetManualScroll();
     setSpeaking(true);
     setPaused(false);
     speakNextSentence();
@@ -589,7 +590,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
           <div className="learn-topic-list">
             {topics.map((t, i) => {
               const isDone = completedTopics.includes(i);
-              const isLocked = i > 0 && !completedTopics.includes(i - 1);
+              const isLocked = false; // no pass mark: every topic is open
               return (
                 <TopicCard
                   key={i}
@@ -671,19 +672,7 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
               </div>
             </div>
             <div className="learn-tts-bar learn-tts-compact">
-              <select
-                className="learn-voice-select"
-                value={selectedCharId}
-                onChange={(e) => setSelectedCharId(e.target.value)}
-              >
-                {characterVoices
-                  .filter((c) => c.voice)
-                  .map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name} ({c.gender === 'female' ? '♀' : '♂'})
-                    </option>
-                  ))}
-              </select>
+              <VoicePicker voices={characterVoices.filter((c) => c.voice)} value={selectedCharId} onChange={setSelectedCharId} />
               {!speaking ? (
                 <button className="learn-tts-btn" onClick={() => speakContent()}>
                   <Icon name="play" size={14} /> Read
@@ -787,9 +776,9 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
               <div className="learn-quiz-results-label">
                 {quizScore === quizQs.length
                   ? '🎉 Perfect score!'
-                  : quizScore >= MIN_CORRECT_ANSWERS
+                  : quizScore >= 1
                     ? '👍 Well done!'
-                    : `📚 Keep studying!`}
+                    : `📚 Keep going, you will get it!`}
               </div>
               <div className="learn-quiz-results-list">
                 {quizResults.map((r, i) => (
@@ -935,13 +924,13 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
               <button
                 className="learn-nav-btn learn-nav-next"
                 onClick={() => openTopic(Math.min(topics.length - 1, activeIdx + 1))}
-                disabled={activeIdx === topics.length - 1 || !isDoneNow}
+                disabled={activeIdx === topics.length - 1}
                 style={isDoneNow ? { borderColor: meta.color, color: meta.color } : {}}
               >
-                {isDoneNow ? 'Next →' : '🔒 Next'}
+                Next →
               </button>
             </div>
-            <p className="learn-keyboard-hint">{`⌨️ Arrow keys to navigate · Complete quiz to unlock next topic`}</p>
+            <p className="learn-keyboard-hint">{`⌨️ Arrow keys to navigate · Take the quiz to finish a topic`}</p>
           </div>
         </div>
       )}

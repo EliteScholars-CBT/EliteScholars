@@ -103,6 +103,8 @@ function playTone(frequency, duration, type = 'sine', volume = 0.18, delay = 0) 
   } catch (e) {}
 }
 
+export const tone = playTone;
+
 export const SFX = {
   intro: () => {
     playTone(80, 0.35, 'sine', 0.22, 0.0);

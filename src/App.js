@@ -25,6 +25,7 @@ import GameMode from './components/GameMode';
 
 import ExamTypeSelect from './components/ExamTypeSelect';
 import ProNudge from './components/ProNudge';
+import { captureNotificationOpen } from './utils/pushTrack';
 
 
 import Flashcards from './components/Flashcards';
@@ -360,6 +361,24 @@ export default function App() {
   const [lastDate, setLastDate] = useState('');
 
   const [adRefresh, setAdRefresh] = useState(0);
+
+  // A day of studying counts toward the streak, not only finishing a quiz: opening the app and being active (learn, games) keeps it going.
+  const streakRef = React.useRef({ streak: 1, lastDate: '' });
+  streakRef.current = { streak, lastDate };
+  useEffect(() => {
+    if (!email) return undefined;
+    const t = setTimeout(() => {
+      const { streak: st, lastDate: ld } = streakRef.current;
+      const today = new Date().toDateString();
+      if (!ld || ld === today) return;
+      const yst = new Date(Date.now() - 86400000).toDateString();
+      const ns = ld === yst ? (st || 1) + 1 : 1;
+      setStreak(ns); setLastDate(today);
+      try { const cur = JSON.parse(localStorage.getItem('ep_stats_' + email) || 'null'); if (cur) saveStats({ ...cur, streak: ns, lastDate: today }, email); } catch { /* ignore */ }
+    }, 6000);
+    return () => clearTimeout(t);
+  }, [email]); // eslint-disable-line react-hooks/exhaustive-deps
+
 
   const [showAdGate, setShowAdGate] = useState(false);
 
@@ -973,6 +992,7 @@ export default function App() {
   // ── Back button (installed app / phone back) ────────────────────────────────
   // The app keeps its screens in state, so without this the phone's back button leaves the app for
   // whatever page was open before. We keep a sentinel history entry so back is always ours to handle.
+  useEffect(() => { captureNotificationOpen(); }, []);
   const backRef = React.useRef({});
   backRef.current = { screen, goHome, showToast };
   useEffect(() => {

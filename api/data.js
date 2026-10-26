@@ -7,6 +7,7 @@
 import xpAdd from "./_routes/xp-add.js";
 import eventsTrack from "./_routes/events-track.js";
 import sitePublic from "./_routes/site-public.js";
+import gamePublic from "./_routes/game-public.js";
 import squadsCreate from "./_routes/squads-create.js";
 import squadsJoin from "./_routes/squads-join.js";
 import squadsGet from "./_routes/squads-get.js";
@@ -51,6 +52,9 @@ const ROUTES = {
   "site/shop": withOp(sitePublic, "shop"),
   "site/media": withOp(sitePublic, "media"),
   "site/blog-covers": withOp(sitePublic, "blog-covers"),
+  "site/groups": withOp(sitePublic, "groups"),
+  "game/score": withOp(gamePublic, "score"),
+  "game/board": withOp(gamePublic, "board"),
   "squads/create": squadsCreate,
   "squads/join": squadsJoin,
   "squads/get": squadsGet,
@@ -142,6 +146,11 @@ const ROUTES = {
   "admin/status-list": withOp(adminOps, "status-list"),
   "admin/status-media": withOp(adminOps, "status-media"),
   "admin/security": withOp(adminOps, "security"),
+  "admin/reminders": withOp(adminOps, "reminders"),
+  "admin/games": withOp(adminOps, "games"),
+  "admin/groups": withOp(adminOps, "groups"),
+  "admin/group-save": withOp(adminOps, "group-save"),
+  "admin/group-delete": withOp(adminOps, "group-delete"),
   "admin/status-action": withOp(adminOps, "status-action"),
   "admin/status-suspend": withOp(adminOps, "status-suspend"),
   "admin/team": withOp(adminOps, "team"),

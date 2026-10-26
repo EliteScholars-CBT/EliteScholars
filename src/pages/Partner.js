@@ -84,7 +84,7 @@ export default function Partner() {
     const goForm = (m) => { setMode(m); setError(''); setInfo(''); setTimeout(() => { const el = document.getElementById('pt-form'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 30); };
     const FAQ = [
       ['Is it free to join?', 'Yes. Signing up costs nothing and there is no target to hit. You only earn, you never pay.'],
-      ['How do I get paid?', `Your commission shows in your dashboard as students pay. Once you reach ${fmtNaira(1000)} you request a payout and we send it to your Nigerian bank account.`],
+      ['How do I get paid?', `Your commission shows in your dashboard as students pay. Once you reach ${fmtNaira(10000)} you request a payout and we send it to your Nigerian bank account.`],
       ['How are referrals tracked?', 'Every partner gets a personal link. When a student opens it and signs up, they are tied to you, even if they pay a few days later.'],
       ['Who is this for?', 'Social media pages, WhatsApp and Telegram group admins, teachers, school clubs, student leaders, tutors and anyone with students around them.'],
       ['What do students get?', 'JAMB, WAEC, NECO and GST practice, CBT mock exams, study notes, 20+ games, squads and challenges. Free to start, with Pro for no limits.'],
@@ -92,7 +92,7 @@ export default function Partner() {
     return (
       <div className="pt-page">
         <nav className="pt-nav">
-          <a href="/" className="pt-brand"><img src={logo} alt="" width="34" height="34" />EliteScholars <b>Partners</b></a>
+          <a href="/" className="pt-brand"><img src={logo} alt="" width="34" height="34" />EliteScholars</a>
           <button type="button" onClick={() => goForm('login')}>Sign in</button>
         </nav>
 
@@ -145,8 +145,8 @@ export default function Partner() {
         </section>
 
         <section className="pt-sec" id="pt-form">
-          <form className="adm-card adm-login-card pt-form" onSubmit={submit}>
-            <h2>{mode === 'login' ? 'Partner sign in' : 'Create your partner account'}</h2>
+          <form className="pt-form" onSubmit={submit}>
+            <h2 key={mode} className="pt-swap">{mode === 'login' ? 'Partner sign in' : 'Create your partner account'}</h2>
             <p>{mode === 'login' ? 'See your referrals and earnings.' : `Free. Start earning ${rate}% today.`}</p>
             {mode === 'signup' && <input placeholder="Full name" value={form.name} onChange={set('name')} autoComplete="name" />}
             <input type="email" placeholder="Email" value={form.email} onChange={set('email')} autoComplete="email" />

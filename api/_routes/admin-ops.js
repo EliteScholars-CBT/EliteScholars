@@ -291,7 +291,7 @@ export default async function handler(req, res) {
         // new refused posts (words, links, scams, flagged photos) since the admin last opened Security
         const seen = iso(q.secSince) || new Date(Date.now() - 24 * 3600000).toISOString();
         let n = 0;
-        try { const r = await sb.from("events").select("id", { count: "exact", head: true }).in("type", ["content_blocked", "status_blocked"]).gt("created_at", seen); n = r.count || 0; } catch { n = 0; }
+        try { const r = await sb.from("events").select("id", { count: "exact", head: true }).in("type", ["content_blocked", "status_blocked", "multi_account"]).gt("created_at", seen); n = r.count || 0; } catch { n = 0; }
         counts.security = n;
         if (n) items.push({ kind: "security", text: `${n} blocked post${n === 1 ? "" : "s"} to look at (words, links, photos)`, at: null, tab: "security" });
       }
@@ -390,6 +390,35 @@ export default async function handler(req, res) {
     if (op === "blog") {
       if (!need("blog")) return deny();
       return sendOk(res, { blog: await blogStats(sb, [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 30) });
+    }
+
+    // ── WhatsApp group chats ──
+    if (op === "groups") {
+      if (!need("status")) return deny();
+      const { loadGroups, AUDIENCES } = await import("../_helpers/groupChats.js");
+      return sendOk(res, { groups: await loadGroups(sb), audiences: AUDIENCES });
+    }
+    if (op === "group-save" || op === "group-delete") {
+      if (!need("status")) return deny();
+      const { loadGroups, AUDIENCES, validGroupUrl } = await import("../_helpers/groupChats.js");
+      let list = [...(await loadGroups(sb))];
+      const id = String(b.id || "").slice(0, 40);
+      if (op === "group-delete") {
+        list = list.filter((g) => g.id !== id);
+      } else {
+        const name = String(b.name || "").trim().slice(0, 80);
+        const url = String(b.url || "").trim();
+        if (!name) return sendErr(res, "Give the group a name.");
+        if (!validGroupUrl(url)) return sendErr(res, "That does not look like a WhatsApp group link (https://chat.whatsapp.com/…).");
+        const audiences = (Array.isArray(b.audiences) ? b.audiences : []).filter((a) => AUDIENCES.includes(a));
+        if (!audiences.length) return sendErr(res, "Choose who this group is for.");
+        const row = { id: id || "g-" + Date.now().toString(36), name, url, audiences, on: b.on !== false };
+        const i = list.findIndex((g) => g.id === row.id);
+        if (i >= 0) list[i] = row; else { if (list.length >= 30) return sendErr(res, "That is the maximum number of groups."); list.push(row); }
+      }
+      await sb.from("settings").upsert({ key: "group_chats", value: list, updated_at: new Date().toISOString() }, { onConflict: "key" });
+      await audit(sb, who, op === "group-delete" ? "groups.delete" : "groups.save", id || String(b.name || "").slice(0, 60));
+      return sendOk(res, { groups: list });
     }
 
     // ── blog cover images ──
@@ -537,7 +566,7 @@ export default async function handler(req, res) {
     if (op === "security") {
       if (!need("status")) return deny();
       const before = iso(q.before);
-      let ev = sb.from("events").select("id,email,payload,created_at").in("type", ["content_blocked", "status_blocked"]).order("created_at", { ascending: false }).limit(40);
+      let ev = sb.from("events").select("id,email,payload,created_at").in("type", ["content_blocked", "status_blocked", "multi_account"]).order("created_at", { ascending: false }).limit(40);
       if (before) ev = ev.lt("created_at", before);
       const { data, error } = await ev;
       if (error) return sendErr(res, "Could not load the security log.", 500);
@@ -549,10 +578,72 @@ export default async function handler(req, res) {
       }
       const since = new Date(Date.now() - 7 * D).toISOString();
       const counts = {};
-      try { const { data: c } = await sb.from("events").select("email").in("type", ["content_blocked", "status_blocked"]).gte("created_at", since).limit(5000); (c || []).forEach((r) => { counts[r.email] = (counts[r.email] || 0) + 1; }); } catch { /* ignore */ }
+      try { const { data: c } = await sb.from("events").select("email").in("type", ["content_blocked", "status_blocked", "multi_account"]).gte("created_at", since).limit(5000); (c || []).forEach((r) => { counts[r.email] = (counts[r.email] || 0) + 1; }); } catch { /* ignore */ }
       return sendOk(res, {
         items: rows.map((r) => { const p = r.payload || {}; return { id: r.id, at: r.created_at, email: r.email, name: nm[r.email] || r.email, suspended: susp.has(r.email), where: p.where || "status", flag: String(p.flag || "blocked"), text: p.text || "", mediaId: p.mediaId || null, detail: p.detail || "", weekCount: counts[r.email] || 1 }; }),
         next: rows.length >= 40 ? rows[rows.length - 1].created_at : null,
+      });
+    }
+    if (op === "games") {
+      if (!need("analytics")) return deny();
+      const days = [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 7;
+      const since = new Date(Date.now() - days * D).toISOString();
+      let rows = [];
+      try { rows = await fetchPages(sb, "events", "type,email,payload,created_at", (x) => x.in("type", ["game_view", "game_started", "game_finished", "game_wall", "game_share", "game_signup_tap", "signup_source"]).gte("created_at", since), 30); } catch { return sendErr(res, "Could not load game numbers.", 500); }
+      const guests = new Set(), played = new Set(), wallSeen = new Set(), shares = {}, days_ = {};
+      let views = 0, started = 0, finished = 0, wall = 0, taps = 0, signups = 0, memberStarts = 0;
+      for (const r of rows) {
+        const p = r.payload || {};
+        const day = String(r.created_at).slice(0, 10);
+        const d = (days_[day] = days_[day] || { day, plays: 0, signups: 0 });
+        if (r.type === "game_view") { views++; if (p.anon) guests.add(p.anon); }
+        else if (r.type === "game_started") { if (r.email) memberStarts++; else started++; if (p.anon) played.add(p.anon); d.plays++; }
+        else if (r.type === "game_finished") finished++;
+        else if (r.type === "game_wall") { wall++; if (p.anon) wallSeen.add(p.anon); }
+        else if (r.type === "game_share") { const c = String(p.channel || "other"); shares[c] = (shares[c] || 0) + 1; }
+        else if (r.type === "game_signup_tap") taps++;
+        else if (r.type === "signup_source" && p.via === "game") { signups++; d.signups++; }
+      }
+      let top = [], playersTotal = 0, guestBest = 0;
+      try {
+        const { data } = await sb.from("game_scores").select("player_key,name,is_guest,game,score,created_at").gte("created_at", since).order("score", { ascending: false }).limit(2000);
+        const best = new Map();
+        for (const r of data || []) if (!best.has(r.player_key)) best.set(r.player_key, r);
+        playersTotal = best.size; guestBest = [...best.values()].filter((r) => r.is_guest).length;
+        top = [...best.values()].slice(0, 15).map((r) => ({ name: r.name, guest: !!r.is_guest, score: r.score, game: r.game, at: r.created_at }));
+      } catch { /* table may not exist yet */ }
+      return sendOk(res, {
+        days, views, guests: guests.size, guestStarts: started, memberStarts, finished, played: played.size, wall, wallPeople: wallSeen.size, taps, signups,
+        shares, players: playersTotal, guestPlayers: guestBest, top, series: Object.values(days_).sort((a, b) => (a.day < b.day ? -1 : 1)),
+      });
+    }
+    if (op === "reminders") {
+      if (!need("analytics")) return deny();
+      const days = [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 7;
+      const since = new Date(Date.now() - days * D).toISOString();
+      const TYPES = ["push_sent", "push_shown", "push_click", "push_open", "notif_prompt_shown", "notif_prompt_allow_tapped", "notif_enabled", "notif_blocked", "notif_failed", "notif_prompt_declined"];
+      let rows = [];
+      try { rows = await fetchPages(sb, "events", "type,email,payload,created_at", (x) => x.in("type", TYPES).gte("created_at", since), 30); } catch { return sendErr(res, "Could not load reminder numbers.", 500); }
+      const tot = {}, kinds = {}, people = {}, opens = [];
+      for (const r of rows) {
+        tot[r.type] = (tot[r.type] || 0) + 1;
+        const k = String((r.payload && r.payload.kind) || "general");
+        if (r.type.startsWith("push_")) { const o = (kinds[k] = kinds[k] || { kind: k, sent: 0, shown: 0, clicks: 0, opens: 0 }); if (r.type === "push_sent") o.sent++; else if (r.type === "push_shown") o.shown++; else if (r.type === "push_click") o.clicks++; else if (r.type === "push_open") o.opens++; }
+        if (r.type === "push_open" && r.email) { opens.push(r); people[r.email] = 1; }
+      }
+      opens.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+      const recent = opens.slice(0, 40);
+      const emails = [...new Set(recent.map((r) => r.email))];
+      const nm = {};
+      if (emails.length) { try { const { data } = await sb.from("profiles").select("email,first_name,last_name,username").in("email", emails); (data || []).forEach((p) => { nm[p.email] = `${p.first_name || ""} ${p.last_name || ""}`.trim() || p.username || p.email; }); } catch { /* names optional */ } }
+      let subscribers = 0;
+      try { const r = await sb.from("push_subscriptions").select("endpoint", { count: "exact", head: true }); subscribers = r.count || 0; } catch { /* ignore */ }
+      return sendOk(res, {
+        days, subscribers,
+        sent: tot.push_sent || 0, shown: tot.push_shown || 0, clicks: tot.push_click || 0, opens: tot.push_open || 0, openers: Object.keys(people).length,
+        prompt: { shown: tot.notif_prompt_shown || 0, tapped: tot.notif_prompt_allow_tapped || 0, accepted: tot.notif_enabled || 0, blocked: tot.notif_blocked || 0, failed: tot.notif_failed || 0, declined: tot.notif_prompt_declined || 0 },
+        kinds: Object.values(kinds).sort((a, b) => b.sent - a.sent),
+        recent: recent.map((r) => ({ at: r.created_at, name: nm[r.email] || r.email, email: r.email, kind: String((r.payload && r.payload.kind) || "general") })),
       });
     }
     if (op === "status-media") {

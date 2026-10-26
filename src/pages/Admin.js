@@ -12,6 +12,9 @@ import AdminTeam from '../components/AdminTeam';
 import AdminAI from '../components/AdminAI';
 import AdminAds from '../components/AdminAds';
 import AdminSecurity from '../components/AdminSecurity';
+import AdminReminders from '../components/AdminReminders';
+import AdminGroups from '../components/AdminGroups';
+import AdminGames from '../components/AdminGames';
 import AdminShop from '../components/AdminShop';
 import AdminSources from '../components/AdminSources';
 import { AdminPrices, AdminSchools } from '../components/AdminPrices';
@@ -38,6 +41,9 @@ const TABS = [
   { id: 'students', label: 'Students', perms: ['students'] },
   { id: 'activity', label: 'Activity', perms: ['students'] },
   { id: 'status', label: 'Status', perms: ['status'], badge: ['status'] },
+  { id: 'reminders', label: 'Reminders', perms: ['analytics'] },
+  { id: 'games', label: 'Games', perms: ['analytics'] },
+  { id: 'groups', label: 'Groups', perms: ['status'] },
   { id: 'security', label: 'Security', perms: ['status'], badge: ['security'] },
   { id: 'blog', label: 'Blog', perms: ['blog'] },
   { id: 'sources', label: 'Sources', perms: ['analytics'] },
@@ -203,6 +209,9 @@ export default function Admin() {
       {cur === 'students' && <AdminStudents token={token} onAuthFail={authFail} />}
       {cur === 'activity' && <AdminActivity token={token} onAuthFail={authFail} />}
       {cur === 'status' && <AdminStatus token={token} onAuthFail={authFail} />}
+      {cur === 'games' && <AdminGames token={token} onAuthFail={authFail} />}
+      {cur === 'groups' && <AdminGroups token={token} onAuthFail={authFail} />}
+      {cur === 'reminders' && <AdminReminders token={token} onAuthFail={authFail} />}
       {cur === 'security' && <AdminSecurity token={token} onAuthFail={authFail} onOpenStudent={(e) => { try { sessionStorage.setItem('adm_open_student', e); } catch { /* ignore */ } setView('students'); }} />}
       {cur === 'blog' && <AdminBlog token={token} onAuthFail={authFail} />}
       {cur === 'sources' && <AdminSources token={token} onAuthFail={authFail} />}

@@ -15,12 +15,16 @@ const ALIASES = {
   youtube: 'youtube', yt: 'youtube', 'youtube.com': 'youtube', 'm.youtube.com': 'youtube', 'youtu.be': 'youtube',
   google: 'google', 'google.com': 'google', 'google.com.ng': 'google', bing: 'bing', 'bing.com': 'bing', duckduckgo: 'google',
   linkedin: 'linkedin', 'linkedin.com': 'linkedin', 'lnkd.in': 'linkedin',
+  chatgpt: 'chatgpt', 'chatgpt.com': 'chatgpt', 'chat.openai.com': 'chatgpt', 'openai.com': 'chatgpt',
+  perplexity: 'perplexity', 'perplexity.ai': 'perplexity', gemini: 'gemini', 'gemini.google.com': 'gemini', 'bard.google.com': 'gemini',
+  claude: 'claude', 'claude.ai': 'claude', copilot: 'copilot', 'copilot.microsoft.com': 'copilot',
+  reddit: 'reddit', 'reddit.com': 'reddit', 'out.reddit.com': 'reddit', pinterest: 'pinterest', 'pinterest.com': 'pinterest',
   snapchat: 'snapchat', email: 'email', sms: 'sms', 'mail.google.com': 'email',
 };
 
 export const SOURCE_LABELS = {
   whatsapp: 'WhatsApp', facebook: 'Facebook', instagram: 'Instagram', x: 'X (Twitter)', tiktok: 'TikTok', telegram: 'Telegram',
-  youtube: 'YouTube', google: 'Google search', bing: 'Bing', linkedin: 'LinkedIn', snapchat: 'Snapchat', email: 'Email', sms: 'SMS', direct: 'Direct', other: 'Other sites',
+  youtube: 'YouTube', google: 'Google search', bing: 'Bing', linkedin: 'LinkedIn', snapchat: 'Snapchat', chatgpt: 'ChatGPT', perplexity: 'Perplexity', gemini: 'Gemini', claude: 'Claude', copilot: 'Copilot', reddit: 'Reddit', pinterest: 'Pinterest', game: 'Game page', email: 'Email', sms: 'SMS', direct: 'Direct', other: 'Other sites',
 };
 
 const clean = (v) => String(v || '').toLowerCase().trim().replace(/^www\./, '').replace(/[^a-z0-9.\-_]/g, '').slice(0, 40);
@@ -32,6 +36,7 @@ export function classifySource(referrer, search, ownHost) {
   if (tag && ALIASES[tag]) return ALIASES[tag];
   if (utm) return utm; // an explicit utm_source we don't know by name: keep it as written
   let host = '';
+  if (referrer && /^android-app:\/\//.test(referrer)) { const pk = referrer.replace('android-app://', '').split('/')[0]; if (/whatsapp/.test(pk)) return 'whatsapp'; if (/facebook|katana/.test(pk)) return 'facebook'; if (/instagram/.test(pk)) return 'instagram'; if (/telegram/.test(pk)) return 'telegram'; if (/twitter/.test(pk)) return 'x'; if (/tiktok|musically/.test(pk)) return 'tiktok'; if (/google.*search|quicksearchbox/.test(pk)) return 'google'; }
   try { host = referrer ? new URL(referrer).hostname.replace(/^www\./, '').toLowerCase() : ''; } catch { host = ''; }
   if (host && ownHost && host === ownHost.replace(/^www\./, '')) return 'internal';
   if (host) {
@@ -39,7 +44,9 @@ export function classifySource(referrer, search, ownHost) {
     if (/google\./.test(host)) return 'google';
     if (/facebook\./.test(host)) return 'facebook';
     if (/instagram\./.test(host)) return 'instagram';
-    return 'other';
+    if (/(^|\.)(chatgpt|openai)\.com$/.test(host)) return 'chatgpt';
+    if (/(^|\.)bing\.com$/.test(host)) return 'bing';
+    return clean(host.split('.').slice(-2).join('.')) || 'other'; // keep the site's name so the admin can see it
   }
   return 'direct';
 }
@@ -48,7 +55,7 @@ const post = (type, payload) => {
   try { fetch('/api/events/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type, ...payload }), keepalive: true }).catch(() => {}); } catch { /* ignore */ }
 };
 
-const pageKind = (path) => (path === '/' || path === '/school' ? 'landing' : path.startsWith('/blog') ? 'blog' : path.startsWith('/app') ? 'app' : 'page');
+const pageKind = (path) => (path.startsWith('/game') ? 'game' : path === '/' || path === '/school' ? 'landing' : path.startsWith('/blog') ? 'blog' : path.startsWith('/app') ? 'app' : 'page');
 
 export function captureTrafficSource() {
   try {
@@ -74,6 +81,7 @@ export function trackSignupSource() {
   try {
     const raw = localStorage.getItem(FIRST_KEY);
     const f = raw ? JSON.parse(raw) : null;
-    post('signup_source', { source: (f && f.source) || 'direct', ref: (f && f.ref) || '', campaign: (f && f.campaign) || '' });
+    let viaGame = false; try { viaGame = !!localStorage.getItem('es_via_game'); } catch { /* ignore */ }
+    post('signup_source', { source: (f && f.source) || 'direct', ref: (f && f.ref) || '', campaign: (f && f.campaign) || (viaGame ? 'game' : ''), via: viaGame ? 'game' : '' });
   } catch { post('signup_source', { source: 'direct', ref: '' }); }
 }

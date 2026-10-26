@@ -1,3 +1,4 @@
+import Icon from './Icon';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import EliteBadge from './EliteBadge';
@@ -8,7 +9,7 @@ import '../styles/status.css';
 
 // 24-hour status updates: share a short message with only yourself, your squad or everyone.
 const BGS = { violet: ['#4C1D95', '#7C3AED'], gold: ['#B45309', '#F59E0B'], teal: ['#0F766E', '#14B8A6'], rose: ['#9F1239', '#F43F5E'], blue: ['#1E3A8A', '#3B82F6'], dark: ['#111827', '#374151'] };
-const PRIVACY = [['me', 'Only me', '🔒'], ['squad', 'My squad', '👥'], ['public', 'Everyone', '🌍']];
+const PRIVACY = [['me', 'Only me', 'lock'], ['squad', 'My squad', 'users'], ['public', 'Everyone', 'globe']];
 const SEEN_KEY = 'es_status_seen_v1';
 const DUR = 5000;
 const REACTS = [['like', '👍'], ['love', '❤️'], ['fire', '🔥'], ['clap', '👏'], ['wow', '😮']];
@@ -232,12 +233,12 @@ export default function StatusBar() {
                   <input className="allow-copy" value={reply} maxLength={200} placeholder={`Reply to ${cur.author}…`}
                     onFocus={() => setPaused(true)} onBlur={() => { if (!reply) setPaused(false); }}
                     onChange={(e) => setReply(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') sendReply(cur); }} />
-                  <button className="st-send" disabled={!reply.trim()} onClick={() => sendReply(cur)} aria-label="Send reply">➤</button>
+                  <button className="st-send" disabled={!reply.trim()} onClick={() => sendReply(cur)} aria-label="Send reply"><Icon name="send" size={18} /></button>
                 </div>
                 <div className="st-tools">
-                  <button onClick={() => tryReshare(cur)} aria-label="Reshare" title="Reshare">🔁</button>
-                  <button onClick={() => openThread(cur)} aria-label="Conversation" title="Conversation" className="st-tool-conv">💬{cur.answered > 0 && <i className="st-dot">{cur.answered}</i>}</button>
-                  <button onClick={() => reportStatus(cur)} aria-label="Report" title="Report">🚩</button>
+                  <button onClick={() => tryReshare(cur)} aria-label="Reshare" title="Reshare"><Icon name="refresh" size={18} /></button>
+                  <button onClick={() => openThread(cur)} aria-label="Conversation" title="Conversation" className="st-tool-conv"><Icon name="chat" size={18} />{cur.answered > 0 && <i className="st-dot">{cur.answered}</i>}</button>
+                  <button onClick={() => reportStatus(cur)} aria-label="Report" title="Report"><Icon name="flag" size={18} /></button>
                 </div>
               </div>
             )}
@@ -308,7 +309,7 @@ function StoryImage({ id, text }) {
 function Composer({ onClose, onPosted }) {
   const [text, setText] = useState('');
   const [bg, setBg] = useState('violet');
-  const [privacy, setPrivacy] = useState('squad');
+  const [privacy, setPrivacy] = useState('public');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [image, setImage] = useState('');
@@ -356,7 +357,7 @@ function Composer({ onClose, onPosted }) {
         </div>
         <div className="st-priv-label">Who can see it?</div>
         <div className="st-priv">
-          {PRIVACY.filter(([id]) => id !== 'me').map(([id, label, ic]) => <button key={id} className={privacy === id ? 'on' : ''} onClick={() => setPrivacy(id)}><span>{ic}</span>{label}</button>)}
+          {PRIVACY.filter(([id]) => id !== 'me').map(([id, label, ic]) => <button key={id} className={privacy === id ? 'on' : ''} onClick={() => setPrivacy(id)}><span><Icon name={ic} size={15} /></span>{label}</button>)}
         </div>
         {err && <div className="st-err">{err}</div>}
         <button className="st-post" disabled={(!text.trim() && !image) || busy} onClick={post}>{busy ? (busyText || 'Posting…') : 'Post status'}</button>

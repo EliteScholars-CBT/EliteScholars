@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { QB, JAMB_LEARN } from '../data/jamb';
 import { WAEC_SUBJECTS, WAEC_QB, WAEC_LEARN } from '../data/waec/index';
 import { NECO_SUBJECTS, NECO_QB, NECO_LEARN } from '../data/neco/index';
@@ -67,6 +67,11 @@ export default function Subjects({
     try { const v = localStorage.getItem('es_study_mode'); return ['learn', 'cbt', 'flashcard', 'game'].includes(v) ? v : 'learn'; } catch { return 'learn'; }
   });
   const setMode = (m) => { setModeState(m); try { localStorage.setItem('es_study_mode', m); } catch { /* ignore */ } };
+  useEffect(() => { // the games guide can switch this screen to Game mode
+    const on = (e) => { const m = e.detail; if (['learn', 'cbt', 'flashcard', 'game'].includes(m)) setMode(m); };
+    window.addEventListener('es:set-mode', on);
+    return () => window.removeEventListener('es:set-mode', on);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Subject metadata, QB, and learn bank ─────────────────────────────────
   const getSubjectsAndQB = () => {

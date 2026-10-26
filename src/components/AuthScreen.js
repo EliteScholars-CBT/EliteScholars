@@ -73,7 +73,8 @@ function getNetworkError(e) {
 }
 
 export default function AuthScreen({ onDone }) {
-  const [view, setView] = useState('login');
+  // First visit on this phone: show Sign up. Anyone who has logged in or signed up here before: show Log in.
+  const [view, setView] = useState(() => { try { return localStorage.getItem('es_has_account') ? 'login' : 'signup'; } catch { return 'login'; } });
   const [step, setStep] = useState(1);
   const [resetStep, setResetStep] = useState(1);
 
@@ -197,6 +198,7 @@ export default function AuthScreen({ onDone }) {
       const u = result.profile;
       devLog('✅ Login success, profile:', u);
 
+      try { localStorage.setItem('es_has_account', '1'); } catch { /* ignore */ }
       saveUser({
         name: `${u.firstName} ${u.lastName}`,
         firstName: u.firstName,
@@ -331,6 +333,7 @@ export default function AuthScreen({ onDone }) {
       const u = result.profile;
       devLog('✅ Registration success, profile:', u);
       console.groupEnd();
+      try { localStorage.setItem('es_has_account', '1'); } catch { /* ignore */ }
 
       saveUser({
         name: `${u.firstName} ${u.lastName}`,

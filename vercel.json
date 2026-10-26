@@ -138,6 +138,38 @@
       "destination": "/api/data?route=admin/status-list"
     },
     {
+      "source": "/api/admin/group-delete",
+      "destination": "/api/data?route=admin/group-delete"
+    },
+    {
+      "source": "/api/admin/group-save",
+      "destination": "/api/data?route=admin/group-save"
+    },
+    {
+      "source": "/api/admin/groups",
+      "destination": "/api/data?route=admin/groups"
+    },
+    {
+      "source": "/api/game/board",
+      "destination": "/api/data?route=game/board"
+    },
+    {
+      "source": "/api/game/score",
+      "destination": "/api/data?route=game/score"
+    },
+    {
+      "source": "/api/site/groups",
+      "destination": "/api/data?route=site/groups"
+    },
+    {
+      "source": "/api/admin/games",
+      "destination": "/api/data?route=admin/games"
+    },
+    {
+      "source": "/api/admin/reminders",
+      "destination": "/api/data?route=admin/reminders"
+    },
+    {
       "source": "/api/admin/security",
       "destination": "/api/data?route=admin/security"
     },

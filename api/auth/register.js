@@ -1,8 +1,8 @@
 import { checkRateLimit } from '../_helpers/rateLimit.js';
 import { sendOk, sendErr, sendRateLimited, sendMethodNotAllowed, setCors } from '../_helpers/response.js';
 import { hashPasswordStrong } from '../_helpers/hash.js';
-import { logSecurityEvent } from '../_helpers/security.js';
-import { selectOne, insertRow, supabaseEnabled } from '../_helpers/supabase.js';
+import { logSecurityEvent, logMultiAccount, noteSignupIp } from '../_helpers/security.js';
+import { selectOne, insertRow, supabaseEnabled, getSupabase } from '../_helpers/supabase.js';
 import { findPartnerByCode } from '../_helpers/partners.js';
 import { legacyProfileExists } from '../_helpers/legacy.js';
 import { profileOut } from '../_helpers/profileOut.js';
@@ -24,6 +24,7 @@ async function handler(req, res) {
   const { allowed, retryAfter } = await checkRateLimit(`register:${ip}`, 5, 3600);
   if (!allowed) {
     await logSecurityEvent({ type: 'register_rate_limited', email: '', ip, detail: 'IP blocked' });
+    try { const em = req.body && typeof req.body.email === 'string' ? req.body.email : ''; await logMultiAccount(getSupabase(), { email: em, ip, detail: 'Blocked: too many sign-up attempts from one network in an hour.', count: 5 }); } catch { /* log only */ }
     return sendRateLimited(res, retryAfter);
   }
 
@@ -56,6 +57,11 @@ async function handler(req, res) {
   // Referred by an affiliate partner? (their own email never counts)
   let partner = null;
   const refCode = str(referredBy) && /^[A-Za-z0-9_-]{3,32}$/.test(referredBy) ? referredBy.toUpperCase() : null;
+  try {
+    const others = await noteSignupIp(getSupabase(), { email: emailLower, ip });
+    if (others >= 1) await logMultiAccount(getSupabase(), { email: emailLower, ip, detail: `${others + 1} accounts created from the same network in 24 hours.`, count: others + 1 });
+  } catch { /* log only */ }
+
   if (refCode) {
     partner = await findPartnerByCode(refCode);
     if (partner && partner.email === emailLower) partner = null;

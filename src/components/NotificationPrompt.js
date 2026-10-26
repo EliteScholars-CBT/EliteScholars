@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { enablePush, pushSupported } from '../utils/push';
 import { scheduleDailyReminder } from '../utils/notifications';
 import Icon from './Icon';
+import { trackNotif } from '../utils/pushTrack';
 
 const KEY = 'es_notif_prompt_v1'; // { n: times dismissed, at: last dismissed }
 const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { return {}; } };
@@ -19,16 +20,18 @@ export default function NotificationPrompt({ active, name, reminderTimes }) {
     if (!active || !pushSupported() || Notification.permission !== 'default') return undefined;
     const st = read();
     if ((st.n || 0) >= 3 || (st.at && Date.now() - st.at < 3 * 86400000)) return undefined;
-    const t = setTimeout(() => setShow(true), 9000); // let them settle in first
+    const t = setTimeout(() => { setShow(true); trackNotif('notif_prompt_shown'); }, 9000); // let them settle in first
     return () => clearTimeout(t);
   }, [active]);
 
   if (!show) return null;
-  const later = () => { const st = read(); write({ n: (st.n || 0) + 1, at: Date.now() }); setShow(false); };
+  const later = () => { trackNotif('notif_prompt_declined'); const st = read(); write({ n: (st.n || 0) + 1, at: Date.now() }); setShow(false); };
   const allow = async () => {
     setBusy(true); setMsg('');
+    trackNotif('notif_prompt_allow_tapped');
     const r = await enablePush();
     setBusy(false);
+    trackNotif(r === 'on' ? 'notif_enabled' : r === 'blocked' ? 'notif_blocked' : 'notif_failed');
     if (r === 'on') {
       try { scheduleDailyReminder(reminderTimes || [18], name || 'Scholar'); } catch { /* ignore */ }
       write({ n: 99, at: Date.now() });

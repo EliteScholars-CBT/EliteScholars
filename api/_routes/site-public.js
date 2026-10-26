@@ -74,6 +74,14 @@ export default async function handler(req, res) {
     return sendOk(res, { items });
   }
 
+  if (op === "groups") {
+    res.setHeader("Cache-Control", "public, max-age=60, s-maxage=60");
+    const { loadGroups, DEFAULT_GROUPS } = await import("../_helpers/groupChats.js");
+    let list = DEFAULT_GROUPS;
+    try { list = await loadGroups(getSupabase()); } catch { /* defaults */ }
+    return sendOk(res, { groups: list.filter((g) => g.on !== false).map((g) => ({ id: g.id, name: g.name, url: g.url, audiences: g.audiences || [] })) });
+  }
+
   if (op === "blog-covers") {
     res.setHeader("Cache-Control", "public, max-age=60, s-maxage=60");
     let map = {};

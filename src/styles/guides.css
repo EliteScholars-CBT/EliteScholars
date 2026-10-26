@@ -20,3 +20,11 @@
 .gd-ok { background: linear-gradient(135deg, #7C3AED, #5B21B6); color: #fff; box-shadow: 0 8px 20px rgba(91, 33, 182, .35); }
 .gd-secondary { background: #FEF3C7; color: #78350F; }
 @media (prefers-reduced-motion: reduce) { .gd-card, .gd-emoji, .gd-overlay { animation: none; } }
+
+/* Games guide: fast cycling picture reel */
+.gd-reel { height: 120px; border-radius: 20px; margin: 0 auto 10px; display: grid; place-items: center; align-content: center; gap: 2px; position: relative; overflow: hidden; transition: background .15s; }
+.gd-reel-em { font-size: 48px; line-height: 1; animation: gdReelPop .52s ease-out both; }
+.gd-reel-name { font-weight: 900; color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,.3); font-size: 15px; }
+.gd-reel-dots { position: absolute; bottom: 7px; display: flex; gap: 4px; } .gd-reel-dots i { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.45); } .gd-reel-dots i.on { background: #fff; }
+@keyframes gdReelPop { 0% { transform: scale(.5) rotate(-12deg); opacity: 0; } 60% { transform: scale(1.12) rotate(3deg); opacity: 1; } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gd-reel-em { animation: none; } }

@@ -5,7 +5,9 @@ import {
   SHARE_GATE_EVERY,
   WA_CHANNEL,
   VIBES,
-  getStudentGCLinks,
+  fetchGroups,
+  groupsFor,
+  DEFAULT_GROUPS,
 } from '../utils/constants';
 import { DPURP, PURPLE, BG, WHITE, GRAY, GOLD, GREEN } from '../utils/colors';
 import { SFX } from '../utils/sounds';
@@ -37,7 +39,9 @@ export default function Result({
   const [showReview, setShowReview] = useState(false);
   const [reviewIdx, setReviewIdx] = useState(null);
 
-  const gcLinks = getStudentGCLinks(studentType, selectedExams);
+  const [allGroups, setAllGroups] = useState(DEFAULT_GROUPS);
+  useEffect(() => { let on = true; fetchGroups().then((g) => on && setAllGroups(g)); return () => { on = false; }; }, []);
+  const gcLinks = groupsFor(allGroups, studentType, selectedExams);
 
   const meta = getSubjectMeta(subjectId);
   const pct = totalQ ? Math.round((correct / totalQ) * 100) : 0;
@@ -173,11 +177,11 @@ export default function Result({
             <div className="join-subtitle">Practise with serious exam candidates daily.</div>
             {gcLinks.map((gc) => (
               <button
-                key={gc.key}
+                key={gc.id}
                 className="join-button"
                 onClick={() => window.open(gc.url, '_blank')}
               >
-                {gc.emoji} Join {gc.label} WhatsApp Group
+                Join {gc.name} on WhatsApp
               </button>
             ))}
             <button className="join-play-again" onClick={onHome}>

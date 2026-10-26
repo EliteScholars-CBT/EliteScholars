@@ -97,6 +97,15 @@ function scrollerOf(el, hint) {
 
 // Keep the word being read on screen: when it drifts out of the middle band, glide so it sits about a third from the top.
 let lastScrollAt = 0;
+// When the student scrolls with a finger or wheel, they are in charge: reading carries on but the page stops following until the voice reaches what is on screen again.
+let manual = false;
+export const resetManualScroll = () => { manual = false; };
+if (typeof window !== 'undefined' && !window.__ttsManualBound) {
+  window.__ttsManualBound = true;
+  const grab = () => { manual = true; };
+  ['wheel', 'touchmove'].forEach((ev) => window.addEventListener(ev, grab, { capture: true, passive: true }));
+  window.addEventListener('keydown', (e) => { if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' '].includes(e.key)) grab(); }, { capture: true, passive: true });
+}
 export function keepWordInView(el, hint) {
   if (!el || !el.isConnected) return;
   const sc = scrollerOf(el, hint);
@@ -104,7 +113,8 @@ export function keepWordInView(el, hint) {
   const r = el.getBoundingClientRect();
   const topEdge = box.top + Math.min(110, box.height * 0.18);
   const botEdge = box.bottom - Math.min(150, box.height * 0.28);
-  if (r.top >= topEdge && r.bottom <= botEdge) return;
+  if (r.top >= topEdge && r.bottom <= botEdge) { manual = false; return; }
+  if (manual) return;
   const now = Date.now();
   if (now - lastScrollAt < 350) return; // let the last glide finish
   lastScrollAt = now;

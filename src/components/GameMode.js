@@ -7,7 +7,14 @@ import { buildScramble, buildScrambleDeck, normalizeAnswer, buildMatchDeck, buil
 import GameHud from './GameHud';
 import { bankFor } from '../data/gkBank';
 import { MoreGames, MORE_GAME_TYPES, MORE_GAME_INFO, buildMoreGame } from './GameMore';
+import GameBoard from './GameBoard';
+import { attachGameSounds } from '../utils/gameSounds';
+import { SFX } from '../utils/sounds';
+import { nextGameType, trackGame } from '../utils/gameApi';
 import '../styles/gamemode.css';
+
+const FREE_GUEST_GAMES = 2; // guests: 2 games per visit, kept in memory only, so a refresh gives 2 more
+let guestPlays = 0;
 
 // ============================================================================
 // GameMode — quick-play practice, deliberately NOT multiple-choice. CBT already
@@ -694,14 +701,16 @@ const DIFFICULTIES = [
 // before real per-subject question-bank wiring lands. Each entry doubles as
 // { term, clue } for Scramble and { a: clue, b: term } for Memory.
 export default function GameMode(props) {
-  const { onBack } = props;
+  const { onBack, guest } = props;
   const [leaving, setLeaving] = useState(false);
+  const shellRef = useRef(null);
+  useEffect(() => attachGameSounds(shellRef.current), []);
   return (
-    <div className="game-shell">
-      <div className="game-topstrip">
+    <div className="game-shell" ref={shellRef}>
+      {!guest && <div className="game-topstrip">
         <button type="button" className="game-topback" onClick={() => setLeaving(true)} aria-label="Back"><Icon name="arrowLeft" size={18} /></button>
         <span className="game-toptitle">Game mode</span>
-      </div>
+      </div>}
       <GameModeInner {...props} />
       {leaving && (
         <div className="game-leave" role="dialog">
@@ -713,7 +722,7 @@ export default function GameMode(props) {
   );
 }
 
-function GameModeInner({ onBack, email, name, onLimit }) {
+function GameModeInner({ onBack, email, name, onLimit, guest, onSignup }) {
   const [phase, setPhase]       = useState('menu');
   const [difficulty, setDiff]   = useState('medium');
   const [gameType, setGameType] = useState(null);
@@ -725,17 +734,21 @@ function GameModeInner({ onBack, email, name, onLimit }) {
 
   const [starting, setStarting] = useState(false);
   const [moreCfg, setMoreCfg]   = useState(null);
+  const [wall, setWall]         = useState(false);
 
   const startGame = async () => {
     if (starting) return;
+    if (guest && guestPlays >= FREE_GUEST_GAMES) { setWall(true); trackGame('game_wall', { plays: guestPlays }); return; }
     setStarting(true);
     let slot = { allowed: true };
-    try { slot = await reserve(email, 'game', `game_${Date.now()}`); } catch { /* offline: let them play */ }
+    if (!guest) { try { slot = await reserve(email, 'game', `game_${Date.now()}`); } catch { /* offline: let them play */ } }
     setStarting(false);
     if (!slot.allowed) { if (onLimit) onLimit('games'); return; }
     const GK_BANK = bankFor(difficulty);
-    const type = GAME_TYPES[Math.floor(Math.random() * GAME_TYPES.length)];
+    const type = nextGameType(GAME_TYPES);
     setGameType(type);
+    if (guest) guestPlays += 1;
+    trackGame('game_started', { game: type, guest: !!guest });
     const count = difficulty === 'easy' ? 6 : difficulty === 'hard' ? 10 : 8;
     const seed = Date.now() & 0xffffffff;
     if (type === 'scramble') {
@@ -767,7 +780,19 @@ function GameModeInner({ onBack, email, name, onLimit }) {
     const xp = Math.round(score / 2);
     setResult({ score, total, xp });
     setPhase('result');
+    SFX.roundComplete();
+    trackGame('game_finished', { game: gameType, score, guest: !!guest });
   };
+
+  const wallEl = wall && (
+    <div className="game-leave" role="dialog">
+      <div className="game-leave-card">
+        <b>Sign up to keep playing</b>
+        <span>You have played your {FREE_GUEST_GAMES} free games. Create a free account to keep playing, save your scores and climb the board.</span>
+        <div><button type="button" onClick={() => setWall(false)}>Not now</button><button type="button" className="out" style={{ background: '#F59E0B', color: '#3B1C00' }} onClick={() => { trackGame('game_signup_tap'); if (onSignup) onSignup(); }}>Sign up free</button></div>
+      </div>
+    </div>
+  );
 
   if (phase === 'playing') {
     if (gameType === 'scramble')    return <ScrambleGame deck={deck} onEnd={handleEnd} email={email} name={name} />;
@@ -784,14 +809,18 @@ function GameModeInner({ onBack, email, name, onLimit }) {
     const title = result.score >= result.total * 15 ? 'Legendary!' : result.score >= result.total * 8 ? 'Well played!' : 'Keep going!';
     return (
       <div className="game-result-screen">
+        {wallEl}
         <div className="game-result-card">
           <div className="game-result-icon"><Icon name={tier} size={44} /></div>
           <div className="game-result-title">{title}</div>
           <div className="game-result-score">{result.score} pts</div>
-          <div className="game-result-xp">+{result.xp} XP earned</div>
+          {!guest && <div className="game-result-xp">+{result.xp} XP earned</div>}
+          <GameBoard game={gameType} score={result.score} guest={guest} onSignup={onSignup} />
           <div className="game-result-actions">
-            <button className="game-result-btn" onClick={startGame}><Icon name="refresh" size={16} /> Play Again</button>
-            <button className="game-result-btn" style={{ background: 'transparent', border: `2px solid ${GOLD}`, color: GOLD }} onClick={onBack}><Icon name="arrowLeft" size={15} /> Exit</button>
+            {guest && guestPlays >= FREE_GUEST_GAMES
+              ? <button className="game-result-btn" onClick={() => { trackGame('game_wall', { plays: guestPlays }); setWall(true); }}>Sign up to continue</button>
+              : <button className="game-result-btn" onClick={startGame}><Icon name="refresh" size={16} /> Play Again</button>}
+            {!guest && <button className="game-result-btn" style={{ background: 'transparent', border: `2px solid ${GOLD}`, color: GOLD }} onClick={onBack}><Icon name="arrowLeft" size={15} /> Exit</button>}
           </div>
         </div>
       </div>
@@ -800,6 +829,7 @@ function GameModeInner({ onBack, email, name, onLimit }) {
 
   return (
     <div className="scr fd game-menu-screen">
+      {wallEl}
       <div className="game-menu-header">
         <div className="game-menu-title"><EmojiIcon emoji="🎮" size="1.15em" /> Game Mode</div>
         <div className="game-menu-sub">Quick brain games. Play, score and earn XP.</div>

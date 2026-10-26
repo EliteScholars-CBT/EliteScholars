@@ -22,6 +22,7 @@ applyDataSaver();
 // Loaded on demand so students never download the admin dashboard code.
 const Admin = lazy(() => import('./pages/Admin'));
 const Partner = lazy(() => import('./pages/Partner'));
+const GamePage = lazy(() => import('./pages/GamePage'));
 
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
@@ -45,6 +46,9 @@ root.render(
 
           {/* Private owner dashboard (password protected on the server) */}
           <Route path="/admin" element={<Suspense fallback={null}><Admin /></Suspense>} />
+
+          {/* Public games page: guests get 2 free games, then sign up */}
+          <Route path="/game" element={<Suspense fallback={null}><GamePage /></Suspense>} />
 
           {/* Affiliate partner portal */}
           <Route path="/partner" element={<Suspense fallback={null}><Partner /></Suspense>} />
