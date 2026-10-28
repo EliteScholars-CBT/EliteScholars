@@ -619,3 +619,76 @@ create table if not exists game_scores (
 create index if not exists game_scores_created_idx on game_scores (created_at desc);
 create index if not exists game_scores_player_idx on game_scores (player_key);
 alter table game_scores enable row level security;
+
+-- ── School portal (/school-portal) ─────────────────────────────────────────
+-- A school has one owner (the first admin), staff (admins + teachers), classes and students.
+-- Billing/trial still lives in school_accounts, keyed by the owner's email.
+create table if not exists schools (
+  id          uuid primary key default gen_random_uuid(),
+  name        text not null,
+  owner_email text not null,
+  created_at  timestamptz not null default now()
+);
+create index if not exists idx_schools_owner on schools (owner_email);
+alter table schools add column if not exists kind text not null default 'school'; -- 'school' (terms) or 'centre' (tutorial / JAMB centre, monthly)
+create table if not exists school_staff (
+  school_id  uuid not null references schools(id) on delete cascade,
+  email      text not null,
+  role       text not null default 'teacher' check (role in ('admin','teacher')),
+  added_by   text not null default '',
+  created_at timestamptz not null default now(),
+  primary key (school_id, email)
+);
+create index if not exists idx_school_staff_email on school_staff (email);
+alter table classes add column if not exists school_id uuid references schools(id) on delete set null;
+create index if not exists idx_classes_school on classes (school_id);
+-- Every student of a school, including ones not yet in a class. created_by_school = account made by the school.
+create table if not exists school_students (
+  school_id         uuid not null references schools(id) on delete cascade,
+  email             text not null,
+  created_by_school boolean not null default false,
+  created_at        timestamptz not null default now(),
+  primary key (school_id, email)
+);
+create index if not exists idx_school_students_email on school_students (email);
+alter table schools         enable row level security;
+alter table school_staff    enable row level security;
+alter table school_students enable row level security;
+
+-- ---------------------------------------- school logo, notices, mock exams (update 8) --
+alter table schools add column if not exists logo text;  -- small data-URL image (<= ~120 KB), set in the portal
+alter table statuses add column if not exists school_id uuid;
+alter table statuses add column if not exists class_id uuid;
+alter table statuses drop constraint if exists statuses_privacy_check;
+alter table statuses add constraint statuses_privacy_check check (privacy in ('me','squad','public','school'));
+create index if not exists idx_statuses_school on statuses (school_id, created_at desc);
+create table if not exists school_mocks (
+  id         uuid primary key default gen_random_uuid(),
+  school_id  uuid not null references schools(id) on delete cascade,
+  class_id   uuid references classes(id) on delete cascade,   -- null = whole school / centre
+  title      text not null,
+  subject    text not null,
+  exam_type  text not null default 'jamb',
+  starts_at  timestamptz not null,
+  ends_at    timestamptz not null,
+  created_by text not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists idx_school_mocks_school on school_mocks (school_id, starts_at desc);
+create table if not exists school_mock_scores (
+  mock_id    uuid not null references school_mocks(id) on delete cascade,
+  email      text not null,
+  score      int  not null,
+  correct    int  not null default 0,
+  total      int  not null default 0,
+  created_at timestamptz not null default now(),
+  primary key (mock_id, email)
+);
+alter table school_mocks enable row level security;
+alter table school_mock_scores enable row level security;
+
+-- ---------------------- tests & quizzes with the teacher's own questions (update 9) --
+alter table school_mocks add column if not exists kind text not null default 'mock';        -- mock | test | quiz
+alter table school_mocks add column if not exists source text not null default 'builtin';   -- builtin (EliteScholars questions) | custom
+alter table school_mocks add column if not exists questions jsonb;                          -- custom: [{q, o:[...], a:index, e}]
+alter table school_mocks add column if not exists duration_min int not null default 0;      -- custom: minutes allowed (0 = no timer)

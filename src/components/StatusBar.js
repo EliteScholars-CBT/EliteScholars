@@ -60,7 +60,7 @@ export default function StatusBar() {
   const groups = [];
   list.slice().reverse().forEach((s) => {
     let g = groups.find((x) => x.key === s.key);
-    if (!g) { g = { key: s.key, author: s.author, mine: s.mine, items: [] }; groups.push(g); }
+    if (!g) { g = { key: s.key, author: s.author, mine: s.mine, official: s.official || null, items: [] }; groups.push(g); }
     g.items.push(s);
   });
   groups.sort((a, b) => (b.mine ? 1 : 0) - (a.mine ? 1 : 0));
@@ -181,7 +181,7 @@ export default function StatusBar() {
         )}
         {others.map((g) => (
           <button className="st-item" key={g.key} onClick={() => open(g)} role="listitem">
-            <span className="elite-wrap"><span className={`st-ring ${unseen(g) ? 'on' : 'seen'}`}><span className="st-av">{initial(g.author)}</span></span>{g.items[0].elite && <EliteBadge size={18} />}</span>
+            <span className="elite-wrap"><span className={`st-ring ${unseen(g) ? 'on' : 'seen'}`}><span className="st-av">{g.official && g.official.logo ? <img className="st-logo" src={g.official.logo} alt="" /> : initial(g.author)}</span></span>{g.official ? <span className="st-official" title="Official notice">✓</span> : g.items[0].elite && <EliteBadge size={18} />}</span>
             <span className="st-name">{g.author}</span>
           </button>
         ))}
@@ -201,10 +201,10 @@ export default function StatusBar() {
               ))}
             </div>
             <div className="st-head">
-              <span className="elite-wrap"><span className="st-av sm">{initial(cur.author)}</span>{cur.elite && <EliteBadge size={14} />}</span>
+              <span className="elite-wrap"><span className="st-av sm">{cur.official && cur.official.logo ? <img className="st-logo" src={cur.official.logo} alt="" /> : initial(cur.author)}</span>{cur.official ? <span className="st-official sm">✓</span> : cur.elite && <EliteBadge size={14} />}</span>
               <div>
                 <b>{cur.author}</b>
-                <small>{left(cur.expires_at)} · {(PRIVACY.find((p) => p[0] === cur.privacy) || [])[1]}</small>
+                <small>{left(cur.expires_at)} · {cur.official ? 'Official notice' : (PRIVACY.find((p) => p[0] === cur.privacy) || [])[1]}</small>
                 {cur.reshared_from && <small className="st-reshared">🔁 Reshared from {cur.reshared_from}</small>}
               </div>
               <button className="st-x" onClick={(e) => { e.stopPropagation(); close(); }} aria-label="Close">✕</button>

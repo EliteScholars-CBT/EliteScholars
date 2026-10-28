@@ -5,12 +5,12 @@ import { getPricing, tierFor } from "./pricing.js";
 
 const DAY = 86400000;
 
-export async function ensureAccount(sb, email, schoolName) {
+export async function ensureAccount(sb, email, schoolName, kind) {
   const { data: ex } = await sb.from("school_accounts").select("*").eq("teacher_email", email).maybeSingle();
   if (ex) return ex;
   const pr = await getPricing();
   const now = Date.now();
-  const row = { teacher_email: email, school_name: schoolName || "", trial_started_at: new Date(now).toISOString(), trial_ends_at: new Date(now + pr.school.trialDays * DAY).toISOString() };
+  const row = { teacher_email: email, school_name: schoolName || "", trial_started_at: new Date(now).toISOString(), trial_ends_at: new Date(now + (kind === "centre" ? pr.centre : pr.school).trialDays * DAY).toISOString() };
   const { data } = await sb.from("school_accounts").insert(row).select("*").single();
   return data || row;
 }
@@ -22,12 +22,13 @@ export function accountStatus(acc) {
   return { status: "expired", daysLeft: 0, until: (acc && (acc.paid_until || acc.trial_ends_at)) || null };
 }
 
-export async function planSummary(sb, email, students) {
+export async function planSummary(sb, email, students, kind) {
   const acc = await ensureAccount(sb, email, "");
   const st = accountStatus(acc);
   const pr = await getPricing();
-  const tier = tierFor(pr.school, students);
-  return { ...st, students, tier: tier ? { label: tier.label, price: tier.price } : null, period: pr.school.period, trialDays: pr.school.trialDays };
+  const sp = kind === "centre" ? pr.centre : pr.school;
+  const tier = tierFor(sp, students);
+  return { ...st, kind: kind === "centre" ? "centre" : "school", students, tier: tier ? { label: tier.label, price: tier.price } : null, period: sp.period, trialDays: sp.trialDays };
 }
 
 export async function canUseSchool(sb, email) {

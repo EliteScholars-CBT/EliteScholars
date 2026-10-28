@@ -1005,6 +1005,7 @@ export default function App() {
         try { window.history.pushState({ es: 1 }, ''); } catch { /* ignore */ }
         if (sc === 'quiz' || sc === 'ready' || sc === 'adgate' || sc === 'sharegate') { toastIt('Use the Quit button to leave this screen', 'info'); return; }
         if (sc === 'result' || sc === 'game') { home(); return; }
+        if (sc === 'learn' && window.__esLearnBack && window.__esLearnBack()) return;
         if (['flashcards', 'learn', 'leaderboard', 'challenges', 'shop', 'profile', 'school'].includes(sc)) { home(); return; }
         setScreen('examType');
         return;
@@ -1031,13 +1032,24 @@ export default function App() {
 
 
 
+  // A school / centre mock exam: same CBT, but it skips the free-play limits and the score is sent to the teacher.
+  const startMock = (m) => {
+    try { window.__esMock = { id: m.id, title: m.title }; } catch { /* ignore */ }
+    setExamType(m.exam_type || 'jamb');
+    startQuiz(m.subject, { mock: true });
+  };
+
   // ── CBT start ────────────────────────────────────────────────────────────────
 
-  const startQuiz = async (sel) => {
+  const startQuiz = async (sel, opts) => {
 
-    if (checkSessionLimit()) return;
+    const isMock = !!(opts && opts.mock);
 
-    if (!premiumUser) {
+    if (!isMock) window.__esMock = null; // a normal quiz must never count as a mock exam
+
+    if (!isMock && checkSessionLimit()) return;
+
+    if (!premiumUser && !isMock) {
       const slot = await reserve(email, 'cbt', `cbt_${Date.now()}`);
       if (!slot.allowed) { setLimitReason('cbt'); setShowLimitGate(true); return; }
     }
@@ -1048,7 +1060,7 @@ export default function App() {
 
       const pending = localStorage.getItem(`ep_sharepending_${email}`);
 
-      if (pending && !SHOW_POPOVER_AD) {
+      if (pending && !SHOW_POPOVER_AD && !isMock) {
 
         setPendingSubject(sel);
 
@@ -1290,6 +1302,12 @@ export default function App() {
     }
 
 
+
+    if (window.__esMock) {
+      const mk = window.__esMock; window.__esMock = null;
+      fetch('/api/school/mock-submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mock_id: mk.id, correct, total: totalQ }) })
+        .then((r) => r.json()).then((j) => { if (j && j.success && j.score !== undefined) showToast(`${mk.title}: your score is ${j.score}% and your teacher can see it`, 'success'); else if (j && j.already) showToast('You already took this mock exam. Your first score counts.', 'info'); }).catch(() => {});
+    }
 
     trackEvent('quiz_complete', {
 
@@ -1568,7 +1586,7 @@ export default function App() {
 
               {screen === 'leaderboard' && <Leaderboard userEmail={email} userName={name} />}
 
-              {screen === 'school' && <School onBack={() => setScreen('profile')} />}
+              {screen === 'school' && <School onBack={() => setScreen('profile')} onStartMock={startMock} />}
 
               {screen === 'challenges' && (
 

@@ -66,8 +66,21 @@ export function unlockAudio() {
   primeSpeech();
 }
 
+// Some phones return an empty voice list for the first second or two. Poll briefly so the list is ready
+// before anyone opens Learn mode, instead of waiting for the (sometimes missing) voiceschanged event.
+export function warmVoices(cb) {
+  let tries = 0;
+  const tick = () => {
+    const v = refreshVoices();
+    if (v.length) { if (cb) cb(v); return; }
+    if (++tries < 40) setTimeout(tick, 100);
+  };
+  tick();
+}
+
 if (typeof window !== 'undefined') {
   refreshVoices();
+  warmVoices();
   try {
     if (window.speechSynthesis) {
       if (window.speechSynthesis.addEventListener) window.speechSynthesis.addEventListener('voiceschanged', refreshVoices);

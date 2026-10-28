@@ -33,6 +33,7 @@ import status from "./_routes/status.js";
 import adminMail from "./_routes/admin-mail.js";
 import push from "./_routes/push.js";
 import school from "./_routes/school.js";
+import schoolPortal from "./_routes/school-portal.js";
 import report from "./_routes/report.js";
 import adminOps from "./_routes/admin-ops.js";
 import squadChat from "./_routes/squad-chat.js";
@@ -78,8 +79,12 @@ const ROUTES = {
   "push/key": withOp(push, "key"),
   "push/subscribe": withOp(push, "subscribe"),
   "push/unsubscribe": withOp(push, "unsubscribe"),
+  "portal": schoolPortal, // /api/portal/<op> (op comes from the rewrite)
   "school/classes": withOp(school, "classes"),
   "school/class-create": withOp(school, "class-create"),
+  "school/mock-list": withOp(school, "mock-list"),
+  "school/mock-submit": withOp(school, "mock-submit"),
+  "school/mock-questions": withOp(school, "mock-questions"),
   "school/class-join": withOp(school, "class-join"),
   "school/class-leave": withOp(school, "class-leave"),
   "school/class-delete": withOp(school, "class-delete"),

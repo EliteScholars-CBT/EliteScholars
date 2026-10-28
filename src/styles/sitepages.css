@@ -28,3 +28,4 @@ body:has(.sp) { background: #FBFAFF !important; }
   .sp-hero { padding: 48px 20px 30px; } .sp-hero h1 { font-size: 30px; }
   .sp-card { padding: 20px 18px 16px; } .sp-grid { grid-template-columns: 1fr; }
 }
+.sp-main.sp-wide { max-width: 1080px; }

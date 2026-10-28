@@ -8,7 +8,7 @@ import { getPricing } from './pricing.js';
 import { findShopItem } from './shopItems.js';
 
 const APP_URL = 'https://elitescholars.site';
-const PLAN_AMOUNT = { annual: 3000, pro: 3000, shop: 1, group50: 1, group100: 1 }; // real prices come from admin settings (see getPricing)
+const PLAN_AMOUNT = { annual: 3000, pro: 3000, shop: 1, group50: 1, group100: 1, school: 1 }; // real prices come from admin settings (see getPricing)
 const PLAN_NAMES = { annual: 'Pro Annual', pro: 'Pro Monthly', group50: 'Squad Plan (50 members)', group100: 'Squad Plan (100 members)' };
 const PLAN_DAYS = { annual: 365, pro: 30, group50: 365, group100: 365 };
 const fmt = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -106,13 +106,16 @@ export async function verifyWithFlutterwave(txRef) {
       item = await findShopItem(t.meta?.item, true); // paid already: honour it even if hidden since
       if (!item) return null;
       need = Number(t.meta?.expected) || item.priceNGN;
+    } else if (plan === 'school') {
+      need = Number(t.meta?.expected); // set by the server when the payment was started
+      if (!(need > 0) || !t.meta?.school_id) return null;
     } else {
       need = Number(t.meta?.expected) || (plan === 'pro' ? pr.pro : plan === 'group50' ? pr.group50 : plan === 'group100' ? pr.group100 : pr.premiumAnnual);
     }
     if (!(need > 0) || Number(t.amount) < need) return null;
     const email = String(t.customer?.email || '').toLowerCase().trim();
     if (!email) return null;
-    return { plan, email, amount: Number(t.amount), tx: t, item };
+    return { plan, email, amount: Number(t.amount), tx: t, item, meta: t.meta || {} };
   } catch (e) {
     console.error('[payments] verify failed:', e?.message);
     return null;
@@ -125,6 +128,22 @@ export async function finalizePayment(txRef, via) {
   if (!v) return { ok: false };
   const { plan, email, amount, item } = v;
   const firstName = await getFirstName(email);
+  if (plan === 'school') {
+    const { activateSchoolAndLog } = await import('./schoolPay.js');
+    const r = await activateSchoolAndLog({ email, txRef, amount, schoolId: String(v.meta.school_id), periods: Number(v.meta.periods) || 1 });
+    if (r.error) return { ok: false };
+    if (r.duplicate) return { ok: true, fresh: false, plan, email, firstName };
+    try {
+      if (process.env.RESEND_API_KEY && process.env.FROM_EMAIL) {
+        await new Resend(process.env.RESEND_API_KEY).emails.send({
+          from: `EliteScholars <${process.env.FROM_EMAIL}>`, to: email,
+          subject: `School plan active: ${r.schoolName}`,
+          html: `<div style="font-family:Arial,sans-serif;max-width:480px;margin:auto"><h2>Payment received</h2><p>Hi ${String(firstName).replace(/[<>&"]/g, '')}, thank you. The EliteScholars school plan for <b>${String(r.schoolName).replace(/[<>&"]/g, '')}</b> is active until <b>${fmt(new Date(r.paidUntil))}</b>.</p><p>Amount paid: <b>₦${amount.toLocaleString('en-NG')}</b><br/>Reference: ${txRef}</p><p><a href="${APP_URL}/school-portal">Open the school portal</a></p></div>`,
+        });
+      }
+    } catch (e) { console.error('[payments] school email failed:', e?.message); }
+    return { ok: true, fresh: true, plan, email, firstName };
+  }
   if (plan === 'shop') {
     const r = await logShopPurchase({ email, txRef, amount, itemId: item.id });
     if (r.error) return { ok: false };

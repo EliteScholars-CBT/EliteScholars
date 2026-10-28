@@ -46,11 +46,25 @@ async function squadEmails(sb, email) {
 // Load one live status and say whether `email` is allowed to see it.
 async function visibleStatus(sb, email, id) {
   if (!/^[\w-]{6,64}$/.test(String(id || ""))) return null;
-  const { data: row } = await sb.from("statuses").select("id,email,display_name,text,bg,privacy,media_id,expires_at,reshared_from,reshared_id").eq("id", id).gt("expires_at", new Date().toISOString()).maybeSingle();
+  const { data: row } = await sb.from("statuses").select("id,email,display_name,text,bg,privacy,media_id,expires_at,reshared_from,reshared_id,school_id,class_id").eq("id", id).gt("expires_at", new Date().toISOString()).maybeSingle();
   if (!row) return null;
   if (row.email === email || row.privacy === "public") return row;
   if (row.privacy === "squad" && (await squadEmails(sb, email)).includes(row.email)) return row;
+  if (row.privacy === "school" && (await schoolAudience(sb, email)).ok(row)) return row;
   return null;
+}
+
+// Notices posted by a school or tutorial centre: visible to its students (all of them, or one class) and its staff.
+async function schoolAudience(sb, email) {
+  const [a, b, c] = await Promise.all([
+    sb.from("school_students").select("school_id").eq("email", email).limit(20),
+    sb.from("class_members").select("class_id").eq("email", email).limit(60),
+    sb.from("school_staff").select("school_id").eq("email", email).limit(20),
+  ]);
+  const schools = new Set([...(a.data || []), ...(c.data || [])].map((r) => r.school_id));
+  const classes = new Set((b.data || []).map((r) => r.class_id));
+  const staff = new Set((c.data || []).map((r) => r.school_id));
+  return { ok: (r) => !!r.school_id && (staff.has(r.school_id) || (schools.has(r.school_id) && (!r.class_id || classes.has(r.class_id)))) };
 }
 
 export default async function handler(req, res) {
@@ -120,12 +134,13 @@ export default async function handler(req, res) {
 
   if (op === "feed") {
     const mates = await squadEmails(sb, email);
-    const q = sb.from("statuses").select("id,email,display_name,text,bg,privacy,media_id,created_at,expires_at,reshared_from").gt("expires_at", nowIso).order("created_at", { ascending: false }).limit(150);
+    const q = sb.from("statuses").select("id,email,display_name,text,bg,privacy,media_id,created_at,expires_at,reshared_from,school_id,class_id").gt("expires_at", nowIso).order("created_at", { ascending: false }).limit(150);
     const { data, error } = await q;
     if (error) { console.error("[status] feed", error.message); return sendErr(res, "Could not load statuses.", 500); }
     const mateSet = new Set(mates);
     const elite = await eliteEmails((data || []).map((r) => r.email));
-    const rows = (data || []).filter((r) => r.email === email || r.privacy === "public" || (r.privacy === "squad" && mateSet.has(r.email)));
+    const aud = (data || []).some((r) => r.privacy === "school") ? await schoolAudience(sb, email) : { ok: () => false };
+    const rows = (data || []).filter((r) => r.email === email || r.privacy === "public" || (r.privacy === "squad" && mateSet.has(r.email)) || (r.privacy === "school" && aud.ok(r)));
     const shown = rows.slice(0, 100);
     const ids = shown.map((r) => r.id);
     const counts = {}, mine = {}, replyCount = {}, threadCount = {}, viewCount = {};
@@ -149,15 +164,19 @@ export default async function handler(req, res) {
         if (!ve) (vw || []).forEach((x) => { viewCount[x.status_id] = (viewCount[x.status_id] || 0) + 1; });
       }
     }
+    const schoolIds = [...new Set(shown.filter((r) => r.privacy === "school" && r.school_id).map((r) => r.school_id))];
+    const schoolInfo = {};
+    if (schoolIds.length) { const { data: sc } = await sb.from("schools").select("id,name,logo").in("id", schoolIds); (sc || []).forEach((x) => { schoolInfo[x.id] = { name: x.name, logo: x.logo || null }; }); }
     return sendOk(res, {
       statuses: shown.map((r) => ({
+        official: r.privacy === "school" ? (schoolInfo[r.school_id] || { name: r.display_name, logo: null }) : undefined,
         id: r.id, media_id: r.media_id || null, text: r.text, bg: r.bg, privacy: r.privacy, created_at: r.created_at, expires_at: r.expires_at,
-        author: r.email === email ? "You" : r.display_name, mine: r.email === email, elite: elite.has(r.email),
+        author: r.email === email && r.privacy !== "school" ? "You" : r.display_name, mine: r.email === email, elite: elite.has(r.email),
         reshared_from: r.reshared_from || null,
         reactions: counts[r.id] || {}, my_reaction: mine[r.id] || "", replies: replyCount[r.id] || 0, views: viewCount[r.id] || 0, answered: threadCount[r.id] || 0,
         can_reshare: r.email !== email && r.privacy === "public",
         // stable per-author key so the app can group stories without exposing emails
-        key: r.email === email ? "me" : `${r.display_name}`,
+        key: r.privacy === "school" ? `school:${r.school_id}` : r.email === email ? "me" : `${r.display_name}`,
       })),
     });
   }

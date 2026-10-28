@@ -1,0 +1,7 @@
+/* Fast, springy scroll reveal (see utils/useReveal.js) */
+.rv.rv { opacity: 0; transform: translateY(26px) scale(.985); filter: blur(4px);
+  transition: opacity .42s cubic-bezier(.2,.8,.2,1) var(--rv-d,0ms), transform .5s cubic-bezier(.2,.9,.25,1.05) var(--rv-d,0ms), filter .42s ease var(--rv-d,0ms);
+  will-change: opacity, transform; }
+.rv.rv.rv-left { transform: translateX(-30px); } .rv.rv.rv-right { transform: translateX(30px); } .rv.rv.rv-zoom { transform: scale(.9); }
+.rv.rv.rv-in { opacity: 1; transform: none; filter: none; }
+@media (prefers-reduced-motion: reduce) { .rv.rv { opacity: 1; transform: none; filter: none; transition: none; } }

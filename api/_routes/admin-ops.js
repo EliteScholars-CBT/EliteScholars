@@ -816,7 +816,7 @@ export default async function handler(req, res) {
       return sendOk(res, {
         prices: { premiumAnnual: pr.premiumAnnual, premiumAnnualOriginal: pr.premiumAnnualOriginal, pro: pr.pro, group50: pr.group50, group100: pr.group100 },
         items: SHOP_ITEMS.filter((i) => !i.isPremium).map((i) => ({ id: i.id, title: i.title, category: i.category, price: pr.items[i.id] })),
-        school: pr.school,
+        school: pr.school, centre: pr.centre,
       });
     }
     if (op === "prices-save") {
@@ -861,14 +861,15 @@ export default async function handler(req, res) {
       if (req.method !== "POST") return sendMethodNotAllowed(res);
       const trialDays = Math.round(Number(b.trialDays));
       if (!Number.isFinite(trialDays) || trialDays < 0 || trialDays > 365) return sendErr(res, "Trial days must be between 0 and 365.");
-      const tiers = (Array.isArray(b.tiers) ? b.tiers : []).map((t) => ({ min: Math.max(0, Math.round(Number(t.min) || 0)), label: clean(t.label, 60), price: Math.max(0, Math.round(Number(t.price) || 0)) }));
+      const isCentre = b.kind === "centre";
+      const tiers = (Array.isArray(b.tiers) ? b.tiers : []).map((t) => ({ min: Math.max(0, Math.round(Number(t.min) || 0)), label: clean(t.label, 60), price: Math.max(0, Math.round(Number(t.price) || 0)), yearPrice: Math.max(0, Math.round(Number(t.yearPrice) || 0)) }));
       if (!tiers.length) return sendErr(res, "Add at least one price tier.");
       if (tiers.some((t) => !t.price)) return sendErr(res, "Every tier needs a price.");
       if (new Set(tiers.map((t) => t.min)).size !== tiers.length) return sendErr(res, "Two tiers start at the same student count.");
-      const value = { trialDays, tiers: tiers.map((t) => ({ ...t, label: t.label || `${t.min}+ students` })), period: clean(b.period, 20) || DEFAULT_SCHOOL.period };
-      await sb.from("settings").upsert({ key: "school_plan", value, updated_at: new Date().toISOString() }, { onConflict: "key" });
+      const value = { trialDays, tiers: tiers.map((t) => ({ ...t, label: t.label || `${t.min}+ students` })), period: isCentre ? "month" : (clean(b.period, 20) || DEFAULT_SCHOOL.period) };
+      await sb.from("settings").upsert({ key: isCentre ? "centre_plan" : "school_plan", value, updated_at: new Date().toISOString() }, { onConflict: "key" });
       bustPricingCache();
-      await audit(sb, who, "school.settings", `trial ${trialDays}d, ${tiers.length} tiers`);
+      await audit(sb, who, isCentre ? "centre.settings" : "school.settings", `trial ${trialDays}d, ${tiers.length} tiers`);
       return sendOk(res, {});
     }
     if (op === "school-account") {

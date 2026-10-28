@@ -9,6 +9,7 @@ import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import NotFound from './pages/NotFound';
 import SchoolLanding from './pages/SchoolLanding';
+import CentreLanding from './pages/CentreLanding';
 import { installSessionFetch } from './utils/sessionFetch';
 import { installLoginPersistence } from './utils/persistLogin';
 import { installContentGuard } from './utils/contentGuard';
@@ -23,6 +24,7 @@ applyDataSaver();
 const Admin = lazy(() => import('./pages/Admin'));
 const Partner = lazy(() => import('./pages/Partner'));
 const GamePage = lazy(() => import('./pages/GamePage'));
+const SchoolPortal = lazy(() => import('./pages/SchoolPortal'));
 
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
@@ -50,6 +52,9 @@ root.render(
           {/* Public games page: guests get 2 free games, then sign up */}
           <Route path="/game" element={<Suspense fallback={null}><GamePage /></Suspense>} />
 
+          {/* School portal: school admins and teachers */}
+          <Route path="/school-portal" element={<Suspense fallback={null}><SchoolPortal /></Suspense>} />
+
           {/* Affiliate partner portal */}
           <Route path="/partner" element={<Suspense fallback={null}><Partner /></Suspense>} />
 
@@ -60,6 +65,9 @@ root.render(
           <Route path="/privacy" element={<PrivacyPolicy />} />
 
           <Route path="/school" element={<SchoolLanding />} />
+          <Route path="/schools" element={<SchoolLanding />} />
+          <Route path="/centre" element={<CentreLanding />} />
+          <Route path="/centres" element={<CentreLanding />} />
 
           {/* Anything else */}
           <Route path="*" element={<NotFound />} />

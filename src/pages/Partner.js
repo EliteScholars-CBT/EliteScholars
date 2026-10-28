@@ -1,3 +1,5 @@
+import useReveal from '../utils/useReveal';
+import '../styles/reveal.css';
 import React, { useState, useEffect, useCallback } from 'react';
 import { fmtN, fmtNaira, TrendChart, Kpi } from '../components/AdminCharts';
 import { SOURCE_LABELS } from '../utils/trafficSource';
@@ -22,8 +24,9 @@ async function call(path, { method = 'GET', token, body } = {}) {
 
 export default function Partner() {
   const [token, setToken] = useState(() => { try { return localStorage.getItem(TOKEN_KEY) || ''; } catch { return ''; } });
-  const [mode, setMode] = useState('login');
+  const [mode, setMode] = useState('signup');
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '' });
+  useReveal('.pt-sec > h2, .pt-sec > p, .pt-steps > div, .pt-grid > div, .pt-faq > div, .pt-calc, .pt-form', token);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
@@ -218,6 +221,9 @@ export default function Partner() {
               <a className="adm-btn" href={`https://wa.me/?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noreferrer">Share on WhatsApp</a>
               <button className="adm-ghost" onClick={() => { copy(shareText); setInfo('Message copied.'); }}>Copy message</button>
             </div>
+            <h3 style={{ margin: '14px 0 6px' }}>Your link for schools</h3>
+            <div className="adm-linkbox"><span>{`https://elitescholars.site/school?ref=${p.code}`}</span><button className="adm-small" onClick={() => { copy(`https://elitescholars.site/school?ref=${p.code}`); setInfo('School link copied.'); }}>Copy</button></div>
+            <p className="adm-note">Share this with school owners, principals and teachers. When a school pays for its plan you earn <b>{p.rate}%</b> of what they pay, on every payment. Your normal link above also works: schools that sign up through either are credited to you.</p>
             <p className="adm-note">You earn <b>{p.rate}%</b> of every Pro payment from students who join through your link, about <b>{fmtNaira(perSale)}</b> on a {fmtNaira(PREMIUM_PRICE)} plan. Your code is <b>{p.code}</b>. The link remembers a visitor for 60 days.</p>
           </section>
 

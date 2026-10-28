@@ -26,8 +26,17 @@ const genderOf = (v) => {
 };
 
 /** Map the device's voices onto the six characters. Every character gets a voice if the device has any English one. */
+let _mapKey = '';
+let _mapVal = [];
 export function mapToCharacterVoices(availableVoices) {
   if (!availableVoices?.length) return [];
+  const key = availableVoices.length + ':' + (availableVoices[0] && availableVoices[0].name) + ':' + (availableVoices[availableVoices.length - 1] && availableVoices[availableVoices.length - 1].name);
+  if (key === _mapKey && _mapVal.length) return _mapVal; // cached: same voices, same mapping
+  const out = mapToCharacterVoicesRaw(availableVoices);
+  _mapKey = key; _mapVal = out;
+  return out;
+}
+function mapToCharacterVoicesRaw(availableVoices) {
   const en = availableVoices.filter((v) => v.lang?.toLowerCase().startsWith('en') || !v.lang);
   const all = en.length ? en : availableVoices;
   const pool = { female: [], male: [], unknown: [] };

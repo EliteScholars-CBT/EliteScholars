@@ -7,7 +7,7 @@ import { GST_SUBJECTS } from '../data/gst/index';
 import { NECO_SUBJECTS } from '../data/neco/index';
 import AdSection from './AdSection';
 import { useAdsConfig, adsOn } from '../utils/adsConfig';
-import { SFX, stopSpeech, getVoicesCached } from '../utils/sounds';
+import { SFX, stopSpeech, getVoicesCached, warmVoices, unlockAudio } from '../utils/sounds';
 import BackButton from './BackButton';
 import { mapToCharacterVoices, getVoiceForCharacter, getCharacter } from '../utils/voices';
 import VoicePicker from './VoicePicker';
@@ -208,16 +208,20 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
   const fSize = FONT_SIZES[fontSize];
 
   useEffect(() => {
-    const load = () => {
-      const raw = getVoicesCached() || [];
-      const mapped = mapToCharacterVoices(raw);
+    const apply = (raw) => {
+      const mapped = mapToCharacterVoices(raw || []);
+      if (!mapped.length) return;
       setCharVoices(mapped);
       const firstAvail = mapped.find((c) => c.voice);
-      if (firstAvail) setSelectedCharId(firstAvail.id);
+      if (firstAvail) setSelectedCharId((cur) => (mapped.find((c) => c.id === cur && c.voice) ? cur : firstAvail.id));
     };
-    load();
-    if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = load;
-    return () => stopSpeech();
+    unlockAudio(); // wakes the speech engine now, so the first sentence is not delayed
+    apply(getVoicesCached()); // instant when voices were already warmed at app start
+    warmVoices(apply);
+    const syn = window.speechSynthesis;
+    const onChange = () => apply(getVoicesCached());
+    if (syn && syn.addEventListener) syn.addEventListener('voiceschanged', onChange);
+    return () => { if (syn && syn.removeEventListener) syn.removeEventListener('voiceschanged', onChange); stopSpeech(); };
   }, []);
 
   useEffect(() => {
@@ -517,6 +521,16 @@ export default function Learn({ subjectId, onBack, onTopicComplete, examType = '
   const learnAdEvery = learnAds ? adsCfg.app.learn.everySections : 0;
   const learnAdMax = learnAds ? adsCfg.app.learn.max : 0;
   const topic = activeIdx !== null ? topics[activeIdx] : null;
+  // Phone/system back: mirror the on-screen back button (topic -> topic list -> subjects).
+  const phoneBackRef = useRef(null);
+  phoneBackRef.current = () => {
+    if (activeIdx !== null) { closeTopic(); return; }
+    endStudySession(email); fullStopSpeech(); onBack();
+  };
+  useEffect(() => {
+    window.__esLearnBack = () => { try { phoneBackRef.current && phoneBackRef.current(); return true; } catch { return false; } };
+    return () => { if (window.__esLearnBack) delete window.__esLearnBack; };
+  }, []);
   const contentBlocks = topic
     ? injectAds(
         topic.contentHTML || `<p class="learn-p">${topic.content || ''}</p>`,

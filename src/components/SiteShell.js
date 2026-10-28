@@ -8,7 +8,7 @@ import '../styles/sitepages.css';
 
 // Shared frame for About / Privacy / Terms so they look like the landing page:
 // same sticky nav, same footer, same type. No "back" button — the nav is enough.
-export default function SiteShell({ eyebrow, title, intro, updated, children }) {
+export default function SiteShell({ eyebrow, title, intro, updated, wide, children }) {
   const navigate = useNavigate();
   const fromApp = !!useLocation().state?.fromApp;
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function SiteShell({ eyebrow, title, intro, updated, children }) 
         </div>
       </header>
 
-      <main className="sp-main">{children}</main>
+      <main className={`sp-main${wide ? ' sp-wide' : ''}`}>{children}</main>
 
       <footer className="land-footer">
         <div className="land-footer-inner">
@@ -58,6 +58,7 @@ export default function SiteShell({ eyebrow, title, intro, updated, children }) 
           </a>
           <div className="land-footer-links">
             <a href="/school">For schools</a>
+            <a href="/centre">For tutorial centres</a>
             <a href="/blog/">Blog</a>
             <a href="/app/about">About</a>
             <a href="/app/terms">Terms</a>

@@ -9,6 +9,7 @@ import { rateLimitOk } from "../_helpers/guard.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { pushToEmails } from "../_helpers/push.js";
 import { ensureAccount, planSummary, canUseSchool } from "../_helpers/schoolPlan.js";
+import { canManageClass, planOwnerFor } from "../_helpers/schoolPortal.js";
 
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const code6 = () => Array.from({ length: 6 }, () => ALPHABET[crypto.randomInt(ALPHABET.length)]).join("");
@@ -66,7 +67,81 @@ export default async function handler(req, res) {
       return sendOk(res, { teaching: (teaching || []).map((c) => ({ id: c.id, name: c.name, school: c.school_name, code: c.code, students: counts[c.id] || 0 })), joined, plan });
     }
 
+    // ── mock exams (student side) ────────────────────────────────────────────
+    if (op === "mock-list") {
+      const { data: ss } = await sb.from("school_students").select("school_id").eq("email", email).limit(10);
+      const { data: cm } = await sb.from("class_members").select("class_id").eq("email", email).limit(60);
+      const schoolIds = [...new Set((ss || []).map((r) => r.school_id))], classIds = new Set((cm || []).map((r) => r.class_id));
+      if (!schoolIds.length) return sendOk(res, { mocks: [] });
+      const since = new Date(Date.now() - 14 * 86400000).toISOString();
+      const { data } = await sb.from("school_mocks").select("id,school_id,class_id,title,subject,exam_type,starts_at,ends_at,kind,source,duration_min,questions").in("school_id", schoolIds).gte("ends_at", since).order("starts_at", { ascending: false }).limit(20);
+      const mine = (data || []).filter((m) => !m.class_id || classIds.has(m.class_id));
+      const ids = mine.map((m) => m.id);
+      const { data: sc } = ids.length ? await sb.from("school_mock_scores").select("mock_id,email,score").in("mock_id", ids).limit(10000) : { data: [] };
+      const now = Date.now();
+      return sendOk(res, { mocks: mine.map((m) => {
+        const rows = (sc || []).filter((x) => x.mock_id === m.id).sort((a, c) => c.score - a.score);
+        const my = rows.find((x) => x.email === email);
+        return { id: m.id, kind: m.kind || "mock", source: m.source || "builtin", questions: Array.isArray(m.questions) ? m.questions.length : 0, duration_min: m.duration_min || 0, title: m.title, subject: m.subject, exam_type: m.exam_type, starts_at: m.starts_at, ends_at: m.ends_at,
+          state: new Date(m.starts_at).getTime() > now ? "upcoming" : new Date(m.ends_at).getTime() > now ? "live" : "closed",
+          done: !!my, my_score: my ? my.score : null, rank: my ? rows.indexOf(my) + 1 : null, took: rows.length };
+      }) });
+    }
+    // Custom tests: the student gets the questions WITHOUT the answers; grading happens on the server.
+    const openMock = async (id) => {
+      if (!uuidish(id)) return { err: "Not found." };
+      const { data: m } = await sb.from("school_mocks").select("id,school_id,class_id,title,starts_at,ends_at,source,questions,duration_min,kind").eq("id", id).maybeSingle();
+      if (!m) return { err: "Not found." };
+      const { data: ss } = await sb.from("school_students").select("email").eq("school_id", m.school_id).eq("email", email).maybeSingle();
+      if (!ss) return { err: "This is not for you." };
+      if (m.class_id && !(await isMember(sb, m.class_id, email))) return { err: "This is for another class." };
+      return { m };
+    };
+    if (op === "mock-questions") {
+      const { m, err } = await openMock(b.mock_id);
+      if (err) return sendErr(res, err, 403);
+      if (m.source !== "custom" || !Array.isArray(m.questions)) return sendErr(res, "This one uses the EliteScholars quiz.");
+      const now = Date.now();
+      if (now < new Date(m.starts_at).getTime() - 60000 || now > new Date(m.ends_at).getTime()) return sendErr(res, "This is not open right now.");
+      const { data: had } = await sb.from("school_mock_scores").select("email").eq("mock_id", m.id).eq("email", email).maybeSingle();
+      if (had) return sendErr(res, "You already took this one.");
+      return sendOk(res, { title: m.title, kind: m.kind, duration_min: m.duration_min || 0, questions: m.questions.map((x) => ({ q: x.q, o: x.o })) });
+    }
+    if (op === "mock-submit") {
+      if (!uuidish(b.mock_id)) return sendErr(res, "Not found.", 404);
+      const { data: m } = await sb.from("school_mocks").select("id,school_id,class_id,starts_at,ends_at,source,questions").eq("id", b.mock_id).maybeSingle();
+      if (!m) return sendErr(res, "Mock exam not found.", 404);
+      const { data: ss } = await sb.from("school_students").select("email").eq("school_id", m.school_id).eq("email", email).maybeSingle();
+      if (!ss) return sendErr(res, "This mock exam is not for you.", 403);
+      if (m.class_id && !(await isMember(sb, m.class_id, email))) return sendErr(res, "This mock exam is for another class.", 403);
+      const now = Date.now();
+      if (now < new Date(m.starts_at).getTime() - 60000 || now > new Date(m.ends_at).getTime() + 30 * 60000) return sendErr(res, "This mock exam is not open.", 400);
+      let review = null;
+      if (m.source === "custom" && Array.isArray(m.questions)) { // grade it here: never trust a score sent by the phone
+        const ans = Array.isArray(b.answers) ? b.answers : [];
+        const total = m.questions.length; const correct = m.questions.reduce((n, x, i) => n + (Number(ans[i]) === x.a ? 1 : 0), 0);
+        const score = total ? Math.round((correct * 100) / total) : 0;
+        const { data: had2 } = await sb.from("school_mock_scores").select("email").eq("mock_id", m.id).eq("email", email).maybeSingle();
+        if (had2) return sendOk(res, { already: true });
+        const { error: e2 } = await sb.from("school_mock_scores").insert({ mock_id: m.id, email, score, correct, total });
+        if (e2 && e2.code !== "23505") return sendErr(res, "Could not save your score.", 500);
+        review = m.questions.map((x, i) => ({ a: x.a, e: x.e || "", yours: Number.isInteger(Number(ans[i])) ? Number(ans[i]) : null }));
+        return sendOk(res, { score, correct, total, review });
+      }
+      const total = Math.max(0, Math.min(500, Math.round(Number(b.total) || 0))), correct = Math.max(0, Math.min(total, Math.round(Number(b.correct) || 0)));
+      const score = total > 0 ? Math.round((correct * 100) / total) : Math.max(0, Math.min(100, Math.round(Number(b.score) || 0)));
+      const { data: had } = await sb.from("school_mock_scores").select("email").eq("mock_id", m.id).eq("email", email).maybeSingle();
+      if (had) return sendOk(res, { already: true });
+      const { error } = await sb.from("school_mock_scores").insert({ mock_id: m.id, email, score, correct, total }); // first attempt counts
+      if (error && error.code === "23505") return sendOk(res, { already: true });
+      if (error) return sendErr(res, "Could not save your score.", 500);
+      return sendOk(res, { score });
+    }
+
     if (op === "class-create") {
+      // Classes are created by school staff in the school portal, never from the student app.
+      const { count: staffRows } = await sb.from("school_staff").select("email", { count: "exact", head: true }).eq("email", email);
+      if (!staffRows) return sendErr(res, "Classes are created by teachers in the school portal (/school-portal).", 403);
       const name = clean(b.name, 60), school = clean(b.school, 80);
       if (name.length < 2) return sendErr(res, "Give the class a name.");
       const acc = await ensureAccount(sb, email, school);
@@ -86,13 +161,14 @@ export default async function handler(req, res) {
     if (op === "class-join") {
       const code = clean(b.code, 10).toUpperCase();
       if (!/^[A-Z0-9]{6}$/.test(code)) return sendErr(res, "Enter the 6-character class code.");
-      const { data: c } = await sb.from("classes").select("id,name,teacher_email").eq("code", code).maybeSingle();
+      const { data: c } = await sb.from("classes").select("id,name,teacher_email,school_id").eq("code", code).maybeSingle();
       if (!c) return sendErr(res, "No class with that code.", 404);
       if (c.teacher_email === email) return sendErr(res, "That is your own class.");
       const { count } = await sb.from("class_members").select("id", { count: "exact", head: true }).eq("class_id", c.id);
       if ((count || 0) >= 300) return sendErr(res, "This class is full.");
       const { error } = await sb.from("class_members").upsert({ class_id: c.id, email, display_name: await displayName(sb, email) }, { onConflict: "class_id,email" });
       if (error) return sendErr(res, "Could not join.", 500);
+      if (c.school_id) { try { await sb.from("school_students").upsert({ school_id: c.school_id, email }, { onConflict: "school_id,email", ignoreDuplicates: true }); } catch { /* portal list only */ } }
       return sendOk(res, { class: { id: c.id, name: c.name } });
     }
 
@@ -104,7 +180,7 @@ export default async function handler(req, res) {
 
     if (op === "class-delete") {
       const c = await loadClass(sb, b.class_id);
-      if (!c || c.teacher_email !== email) return sendErr(res, "Not allowed.", 403);
+      if (!(await canManageClass(sb, c, email))) return sendErr(res, "Not allowed.", 403);
       await sb.from("classes").delete().eq("id", c.id);
       return sendOk(res, { deleted: true });
     }
@@ -112,7 +188,7 @@ export default async function handler(req, res) {
     // ── teacher: students + performance ─────────────────────────────────────
     if (op === "class-members") {
       const c = await loadClass(sb, b.class_id);
-      if (!c || c.teacher_email !== email) return sendErr(res, "Not allowed.", 403);
+      if (!(await canManageClass(sb, c, email))) return sendErr(res, "Not allowed.", 403);
       const { data: mem } = await sb.from("class_members").select("id,email,display_name,joined_at").eq("class_id", c.id).limit(300);
       const emails = (mem || []).map((m) => m.email);
       const { data: asg } = await sb.from("assignments").select("id").eq("class_id", c.id);
@@ -145,7 +221,7 @@ export default async function handler(req, res) {
 
     if (op === "class-remove") {
       const c = await loadClass(sb, b.class_id);
-      if (!c || c.teacher_email !== email) return sendErr(res, "Not allowed.", 403);
+      if (!(await canManageClass(sb, c, email))) return sendErr(res, "Not allowed.", 403);
       if (!uuidish(b.mid)) return sendErr(res, "Invalid student.");
       await sb.from("class_members").delete().eq("class_id", c.id).eq("id", b.mid);
       return sendOk(res, { removed: true });
@@ -154,8 +230,8 @@ export default async function handler(req, res) {
     // ── assignments ─────────────────────────────────────────────────────────
     if (op === "assign-create") {
       const c = await loadClass(sb, b.class_id);
-      if (!c || c.teacher_email !== email) return sendErr(res, "Not allowed.", 403);
-      if (!(await canUseSchool(sb, email))) return sendErr(res, "Your free trial has ended. Contact EliteScholars to activate your school plan.", 402);
+      if (!(await canManageClass(sb, c, email))) return sendErr(res, "Not allowed.", 403);
+      if (!(await canUseSchool(sb, await planOwnerFor(sb, c)))) return sendErr(res, "The school plan has ended. Contact EliteScholars to activate it.", 402);
       const title = clean(b.title, 120), body = String(b.body || "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").trim().slice(0, 4000);
       if (title.length < 2) return sendErr(res, "Add a title.");
       if (!body && !(b.images && b.images.length)) return sendErr(res, "Write the assignment or add a picture.");
@@ -177,7 +253,7 @@ export default async function handler(req, res) {
       if (b.class_id) {
         const c = await loadClass(sb, b.class_id);
         if (!c) return sendErr(res, "Class not found.", 404);
-        if (c.teacher_email === email) teacherMode = true; else if (!(await isMember(sb, c.id, email))) return sendErr(res, "Not allowed.", 403);
+        if (await canManageClass(sb, c, email)) teacherMode = true; else if (!(await isMember(sb, c.id, email))) return sendErr(res, "Not allowed.", 403);
         classIds = [c.id]; names[c.id] = c.name;
       } else {
         const { data: mem } = await sb.from("class_members").select("class_id").eq("email", email);
@@ -204,9 +280,11 @@ export default async function handler(req, res) {
       if (!uuidish(b.id)) return sendErr(res, "Invalid assignment.");
       const { data: a } = await sb.from("assignments").select("*").eq("id", b.id).maybeSingle();
       if (!a) return sendErr(res, "Not found.", 404);
-      if (a.teacher_email !== email && !(await isMember(sb, a.class_id, email))) return sendErr(res, "Not allowed.", 403);
+      const ac = await loadClass(sb, a.class_id);
+      const mine = a.teacher_email === email || (await canManageClass(sb, ac, email));
+      if (!mine && !(await isMember(sb, a.class_id, email))) return sendErr(res, "Not allowed.", 403);
       const { data: d } = await sb.from("assignment_done").select("id").eq("assignment_id", a.id).eq("email", email).maybeSingle();
-      return sendOk(res, { assignment: { id: a.id, title: a.title, body: a.body, images: Array.isArray(a.images) ? a.images : [], due_at: a.due_at, created_at: a.created_at, done: !!d, mine: a.teacher_email === email } });
+      return sendOk(res, { assignment: { id: a.id, title: a.title, body: a.body, images: Array.isArray(a.images) ? a.images : [], due_at: a.due_at, created_at: a.created_at, done: !!d, mine } });
     }
 
     if (op === "assign-done") {
@@ -220,7 +298,10 @@ export default async function handler(req, res) {
 
     if (op === "assign-delete") {
       if (!uuidish(b.id)) return sendErr(res, "Invalid assignment.");
-      await sb.from("assignments").delete().eq("id", b.id).eq("teacher_email", email);
+      const { data: a } = await sb.from("assignments").select("id,class_id,teacher_email").eq("id", b.id).maybeSingle();
+      if (!a) return sendOk(res, { deleted: true });
+      if (a.teacher_email !== email && !(await canManageClass(sb, await loadClass(sb, a.class_id), email))) return sendErr(res, "Not allowed.", 403);
+      await sb.from("assignments").delete().eq("id", a.id);
       return sendOk(res, { deleted: true });
     }
     return sendErr(res, "Unknown action.", 404);

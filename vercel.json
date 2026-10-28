@@ -218,8 +218,24 @@
       "destination": "/api/data?route=push/unsubscribe"
     },
     {
+      "source": "/api/portal/:op",
+      "destination": "/api/data?route=portal&op=:op"
+    },
+    {
       "source": "/api/school/classes",
       "destination": "/api/data?route=school/classes"
+    },
+    {
+      "source": "/api/school/mock-questions",
+      "destination": "/api/data?route=school/mock-questions"
+    },
+    {
+      "source": "/api/school/mock-list",
+      "destination": "/api/data?route=school/mock-list"
+    },
+    {
+      "source": "/api/school/mock-submit",
+      "destination": "/api/data?route=school/mock-submit"
     },
     {
       "source": "/api/school/class-create",
@@ -548,6 +564,14 @@
     {
       "source": "/schools",
       "destination": "/api/data?route=site/page&p=school"
+    },
+    {
+      "source": "/centre",
+      "destination": "/api/data?route=site/page&p=centre"
+    },
+    {
+      "source": "/centres",
+      "destination": "/api/data?route=site/page&p=centre"
     },
     {
       "source": "/blog",

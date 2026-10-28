@@ -36,14 +36,17 @@ body:has(.pt-page) { background: #0B0720; }
 @keyframes ptFloat { to { transform: translate(60px, 50px) scale(1.15); } }
 @keyframes ptUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 @keyframes ptPop { 0% { transform: scale(.9); opacity: 0; } 100% { transform: none; opacity: 1; } }
-.pt-nav { animation: ptUp .5s both; }
+.pt-nav { animation: ptUp .35s both; }
 .pt-brand { color: var(--pt-txt); }
 .pt-nav button { color: #E9DDFF; border-color: rgba(255,255,255,.35); transition: background .2s, transform .15s; } .pt-nav button:hover { background: rgba(255,255,255,.1); } .pt-nav button:active { transform: scale(.96); }
-.pt-hero { max-width: calc(880px - 32px); animation: ptPop .7s .1s both; padding-left: 24px; padding-right: 24px; }
-.pt-hero h1 { animation: ptUp .7s .25s both; } .pt-hero p { animation: ptUp .7s .4s both; } .pt-cta { animation: ptUp .7s .55s both; }
+.pt-hero { max-width: calc(880px - 32px); animation: ptPop .45s .05s both; padding-left: 24px; padding-right: 24px; }
+.pt-hero h1 { animation: ptUp .45s .12s both; } .pt-hero p { animation: ptUp .45s .22s both; } .pt-cta { animation: ptUp .45s .32s both; }
 .pt-cta button { transition: transform .15s, box-shadow .2s; box-shadow: 0 8px 24px rgba(245,158,11,.3); } .pt-cta button:active { transform: scale(.96); }
-.pt-sec { animation: ptUp .7s both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
-@supports not (animation-timeline: view()) { .pt-sec { animation: ptUp .7s .2s both; } }
+.pt-trust li { animation: ptUp .45s .6s both; }
+.pt-cta button { position: relative; overflow: hidden; }
+.pt-cta button:not(.ghost)::after { content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent); transform: skewX(-20deg); animation: ptShine 3.2s 1.2s ease-in-out infinite; }
+@keyframes ptShine { 0% { left: -60%; } 40%, 100% { left: 130%; } }
+.pt-steps i { transition: transform .3s cubic-bezier(.3,1.6,.5,1); } .pt-steps > div:hover i { transform: rotate(-8deg) scale(1.15); }
 .pt-sec h2 { color: #fff; }
 .pt-muted { opacity: 1; color: var(--pt-sub); }
 .pt-steps > div, .pt-grid > div { background: var(--pt-card); border-color: var(--pt-line); color: var(--pt-txt); transition: transform .2s, border-color .2s; } .pt-steps > div:hover, .pt-grid > div:hover { transform: translateY(-3px); border-color: rgba(251,191,36,.5); }

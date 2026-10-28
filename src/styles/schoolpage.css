@@ -24,3 +24,15 @@
 .scp-hp { position: absolute !important; left: -9999px !important; height: 0; width: 0; opacity: 0; }
 .scp-err { color: #B91C1C; font-size: 13.5px; }
 .scp-done { padding: 16px; border-radius: 14px; background: rgba(16, 185, 129, .12); font-weight: 700; }
+/* motion */
+.scp-btn { transition: transform .18s cubic-bezier(.3,1.5,.5,1), box-shadow .25s; position: relative; overflow: hidden; }
+.scp-btn:hover { transform: translateY(-2px); } .scp-btn:active { transform: scale(.96); }
+.scp-btn.primary::after { content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.5), transparent); transform: skewX(-20deg); animation: scpShine 3s 1s ease-in-out infinite; }
+@keyframes scpShine { 0% { left: -60%; } 40%, 100% { left: 130%; } }
+.scp-feat { transition: transform .25s cubic-bezier(.3,1.4,.5,1), box-shadow .25s, background .25s; }
+.scp-feat:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(91,33,182,.14); background: rgba(124,58,237,.1); }
+.scp-feat > span { display: inline-block; transition: transform .3s cubic-bezier(.3,1.7,.5,1); } .scp-feat:hover > span { transform: scale(1.2) rotate(-6deg); }
+.scp-steps li > b { transition: transform .3s cubic-bezier(.3,1.7,.5,1); } .scp-steps li:hover > b { transform: scale(1.15) rotate(8deg); }
+.scp-tier { transition: transform .2s, border-color .2s; } .scp-tier:hover { transform: translateX(4px); border-color: #7C3AED; }
+.scp-cta-row.rv.rv { transform: translateY(14px) scale(.96); }
+.scp-year { display: block; font-size: 11px; color: #047857; font-weight: 800; }
