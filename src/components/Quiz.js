@@ -58,9 +58,28 @@ export default function Quiz({
           : examType === 'waec'
             ? WAEC_QB
             : QB;
-    const questions = bankByType[subjectId] || WAEC_QB[subjectId] || QB[subjectId] || NECO_QB[subjectId] || GST_QB[subjectId] || [];
+    // const questions = bankByType[subjectId] || WAEC_QB[subjectId] || QB[subjectId] || NECO_QB[subjectId] || GST_QB[subjectId] || [];
     // Shuffle then slice to exactly effectiveRoundSize questions.
     // This fixes the Q count mismatch — the pool literally has only N questions.
+    // return sfl(questions).slice(0, effectiveRoundSize);
+    
+    const primaryQuestions = bankByType[subjectId] || [];
+    const waecQuestions = WAEC_QB[subjectId] || [];
+    const jambQuestions = QB[subjectId] || [];
+
+    const questions =
+      primaryQuestions.length >= effectiveRoundSize
+        ? primaryQuestions
+        : [
+            ...primaryQuestions,
+            ...waecQuestions.filter((q) => !primaryQuestions.some((p) => p.id === q.id)),
+            ...jambQuestions.filter(
+              (q) =>
+                !primaryQuestions.some((p) => p.id === q.id) &&
+                !waecQuestions.some((w) => w.id === q.id)
+            ),
+          ];
+
     return sfl(questions).slice(0, effectiveRoundSize);
   });
 
