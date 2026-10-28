@@ -1,9 +1,5 @@
 import ReportQuestion from './ReportQuestion';
 import React, { useState, useEffect, useRef } from 'react';
-import { QB } from '../data/jamb/index';
-import { WAEC_QB } from '../data/waec/index';
-import { NECO_QB } from '../data/neco/index';
-import { GST_QB } from '../data/gst/index';
 import { SUBJ } from '../data/subjects';
 import { ROUND_SIZE, getTimerSecs, SHOW_ADS } from '../utils/constants';
 import {
@@ -22,6 +18,7 @@ import {
 } from '../utils/colors';
 import { SFX, speak, stopSpeech } from '../utils/sounds';
 import { sfl } from '../utils/helpers';
+import { getQuestionPool } from '../utils/questionPool';
 import { EmojiIcon } from './Icon';
 
 export default function Quiz({
@@ -49,49 +46,10 @@ export default function Quiz({
   // effectiveRoundSize: how many questions per round
   const effectiveRoundSize = roundSize || ROUND_SIZE;
 
-  const [shuffled] = useState(() => {
-    const bankByType =
-      examType === 'neco'
-        ? NECO_QB
-        : examType === 'gst'
-          ? GST_QB
-          : examType === 'waec'
-            ? WAEC_QB
-            : QB;
-
-    // Dedupe by question text (these questions have no `id` field).
-    const key = (x) => String(x.q).trim().toLowerCase();
-
-    const primaryQuestions = bankByType[subjectId] || [];
-    const jambQuestions = QB[subjectId] || [];
-    const waecQuestions = WAEC_QB[subjectId] || [];
-    const necoQuestions = NECO_QB[subjectId] || [];
-
-    // WAEC and NECO share JAMB's subjects and question database, so for them
-    // the order is: own bank, then JAMB, then the other banks.
-    // JAMB: own bank, then the others.
-    const sources =
-      examType === 'waec' || examType === 'neco'
-        ? [primaryQuestions, jambQuestions, waecQuestions, necoQuestions]
-        : [primaryQuestions, waecQuestions, jambQuestions, necoQuestions];
-
-    const seen = new Set();
-    const pool = [];
-    sources.forEach((list) => {
-      list.forEach((item) => {
-        const k = key(item);
-        if (!seen.has(k)) {
-          seen.add(k);
-          pool.push(item);
-        }
-      });
-    });
-
-    // Fallback for GST or any subject with nothing above.
-    const finalPool = pool.length ? pool : GST_QB[subjectId] || [];
-
-    return sfl(finalPool).slice(0, effectiveRoundSize);
-  });
+  const [shuffled] = useState(() =>
+    // Random 20 (or effectiveRoundSize) from the subject's full question pool.
+    sfl(getQuestionPool(examType, subjectId)).slice(0, effectiveRoundSize)
+  );
 
   const [qi, setQi] = useState(0);
   const [sel, setSel] = useState(-1);
@@ -175,7 +133,7 @@ export default function Quiz({
     }
   }, [qi, voiceEnabled, q]);
 
-  // ── Timer — runs per round, auto-ends quiz when time hits 0 ────────────────
+  // ── Timer — runs per round, auto-ends quiz when time hits 0 ──────────────── 
   useEffect(() => {
     setTL(roundSecs);
     if (timerRef.current) clearInterval(timerRef.current);
@@ -437,9 +395,7 @@ export default function Quiz({
           gap: 20,
         }}
       >
-        <div style={{ fontSize: 48 }}>
-          <EmojiIcon emoji="❌" size="1.1em" />
-        </div>
+        <div style={{ fontSize: 48 }}><EmojiIcon emoji="❌" size="1.1em" /></div>
         <div style={{ fontSize: 18, fontWeight: 600, color: PURPLE }}>Error Loading Questions</div>
         <div style={{ fontSize: 14, color: GRAY, textAlign: 'center', maxWidth: 300 }}>
           No questions found for {subjectId}.
@@ -575,13 +531,7 @@ export default function Quiz({
             >
               {q.yr}
             </div>
-            <ReportQuestion
-              subject={subjectId}
-              exam={examType}
-              qi={qi}
-              question={q.q}
-              options={q.o}
-            />
+            <ReportQuestion subject={subjectId} exam={examType} qi={qi} question={q.q} options={q.o} />
           </div>
           <div className="question-text">{q.q}</div>
           {q.o.map((opt, i) => (
@@ -674,9 +624,7 @@ export default function Quiz({
         >
           <div className="modal-content">
             <div className="modal-handle" />
-            <div className="modal-title">
-              <EmojiIcon emoji="💡" size="1.15em" /> Full Explanation
-            </div>
+            <div className="modal-title"><EmojiIcon emoji="💡" size="1.15em" /> Full Explanation</div>
             <div className="modal-question">{q.q}</div>
             <div className="modal-section-title">WHY THIS ANSWER?</div>
             <div className="modal-explanation">

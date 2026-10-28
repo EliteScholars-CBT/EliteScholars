@@ -1,53 +1,13 @@
-EliteScholars CUMULATIVE UPDATE (updates 5 + 6 + 7 + 8 + 9). Use ONLY this zip on top of the merged update you already uploaded. Blog files not included (blog paused).
-It already contains everything from the previous combined zip, so if you have not uploaded that one, skip it.
+QUESTION POOL FIX (WAEC / NECO / GST = 20 questions per quiz)
 
-WHAT'S NEW IN UPDATE 9 (tests/quizzes + new /school and /centre pages)
- - Teachers set a MOCK EXAM, TEST or QUIZ. Source defaults to "EliteScholars questions" (subject + exam); or "My own questions": type them, paste many, or upload Excel/CSV (columns: Question, A, B, C, D, Answer A-D, Explanation). Optional time limit.
- - Students take own-question tests inside the app (My Classes > Start): timer, one question at a time, graded on the SERVER, answers + explanations shown afterwards, first attempt counts.
- - NEW /centre page (also /centres) and rebuilt /school page: animated phone and laptop mock-ups (notices, quiz, test editor, Excel upload, results/WhatsApp). They are drawn in HTML/CSS with sample data, not photos. Link previews for /centre reuse the school preview image (og/og-school.jpg); add public/og/og-centre.jpg later if you want a separate one.
- - Fix: scroll-reveal animations on /school and /partner now always trigger.
- NEW FILES (update 9): src/components/{SiteMocks,TeacherTest}.js  src/pages/{AudienceLanding,CentreLanding}.js  src/styles/sitemocks.css
- NEW ROUTE (no new function): POST /api/school/mock-questions   NEW PAGES: /centre, /centres (vercel.json rewrites + sitemap)
- SQL (update 9): the LAST block of supabase/schema.sql ("tests & quizzes with the teacher's own questions"): 4 new columns on school_mocks. Safe to re-run. Run the update-8 block first if you have not.
+NEW      src/utils/questionPool.js      shared pool + console logging
+CHANGED  src/components/Quiz.js         builds the round from getQuestionPool(); removed 4 unused bank imports
+CHANGED  src/components/Subjects.js     hides 0-question subjects, card counts = real pool, console logs
 
-WHAT'S NEW IN UPDATE 8 (tutorial centres + notices)
- - Schools / centres upload a LOGO (Overview tab). Shown on notices and printed at the top of reports.
- - NOTICES tab: post to the whole school/centre or one class/batch. Students see it on their status bar (with logo + blue tick) and get a push notification. Stays 24h / 3 days / 7 days.
- - MOCK EXAMS tab: schedule a timed CBT mock (subject, exam, open time, window, audience). A notice goes out automatically. Students see it under My Classes (and a banner on home) and tap Start; first attempt counts. Teachers see a ranked list and can share results on WhatsApp.
- - WhatsApp buttons: per-student report and class summary (Reports tab).
- - Centre admins get an "Earn from your students" card linking to /partner.
- - Mock exams bypass the free-play CBT limit for the student.
- NEW FILES (update 8): src/components/PortalExtras.js
- NEW ROUTES (no new function): POST /api/school/mock-list, /api/school/mock-submit; portal ops school-logo, announce, announce-list, announce-delete, mock-save, mock-list, mock-delete
- SQL (update 8): last block of supabase/schema.sql ("school logo, notices, mock exams"): schools.logo, statuses.school_id/class_id + new privacy value 'school', tables school_mocks + school_mock_scores. Safe to re-run.
+Routes: none.  Env vars: none.  SQL: none.  Files to delete: none.
 
-WHAT'S NEW IN UPDATE 7
- - School plan: "Full year" option (3 terms). Price = 3 terms added up, or your own year price per tier (Admin > Prices).
- - NEW tutorial / JAMB centre portal type (monthly plans: 1, 3, 6 or 12 months; "Batches" instead of "Classes"), its own prices in Admin > Prices.
- - Students upload from Excel (.xlsx) or CSV in the portal (any size; created in batches of 40).
- - /partner shows Sign up first (top "Sign in" button still signs in); /school has no "demo" wording; both have fast scroll animations.
- - Student app: teacher / class-creation side removed (class-create also blocked on the server unless you are school staff).
- - Phone back button inside Learn mode now behaves like the on-screen back (topic -> topic list -> subjects).
- - Game scoreboard: bar podium for top 3, rest listed below, every player gets a unique avatar.
- - Voices in Learn mode load faster (warmed at app start, cached mapping).
+Cause: CBT read only the tiny *_QB files (0-10 questions). The real questions live inside the
+learn topics (WAEC_LEARN / GST_LEARN) and the shared JAMB bank. The pool now merges them
+(de-duplicated by question text).
 
-NEW FILES (since your merged update)
- api/_helpers/{groupChats,schoolPortal,schoolPay}.js  api/_routes/{game-public,school-portal}.js
- src/components/{AdminGames,AdminGroups,AdminReminders,GameBoard,VoicePicker,PortalCharts,Avatar}.js
- src/pages/{GamePage,SchoolPortal}.js  src/styles/{schoolportal,reveal}.css
- src/utils/{gameApi,gameSounds,pushTrack,readSheet,useReveal}.js
-
-CHANGED FILES: every other file in this zip.
-
-ROUTES (no new Vercel function): POST /api/game/score, GET /api/game/board, GET /api/site/groups, /api/admin/{reminders,games,groups,group-save,group-delete}, POST /api/portal/<op>
-PAGES: /game, /school-portal  (centre sign-up link: /school-portal?kind=centre)
-
-SQL TO RUN (Supabase SQL editor), at the end of supabase/schema.sql, safe to re-run:
- 1) game_scores block
- 2) School portal block (schools, school_staff, school_students, classes.school_id)
- 3) alter table schools add column if not exists kind text not null default 'school';
- 4) the "update 8" block, then 5) NEW: the "update 9" block, both at the very end of schema.sql
- (If you saved a payout minimum before: update settings set value='10000' where key='min_payout';)
-
-ENV VARS: none new.
-FILES TO DELETE: none.
+Quiz.js is based on the version you attached on Oct 28 (16:01).

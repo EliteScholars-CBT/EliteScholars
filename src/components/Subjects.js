@@ -4,6 +4,7 @@ import { WAEC_SUBJECTS, WAEC_QB, WAEC_LEARN } from '../data/waec/index';
 import { NECO_SUBJECTS, NECO_QB, NECO_LEARN } from '../data/neco/index';
 import { GST_SUBJECTS, GST_QB, GST_LEARN } from '../data/gst/index';
 import { getDeck } from '../utils/flashDeck';
+import { poolSize, logQuestionSummary } from '../utils/questionPool';
 import StatusBar from './StatusBar';
 import SquadShortcut from './SquadShortcut';
 import AssignmentBanner from './AssignmentBanner';
@@ -31,18 +32,6 @@ const MODE_DESC = {
 
 // Grid exams always use grid layout regardless of mode
 const GRID_EXAMS = ['waec', 'neco', 'gst'];
-
-// ── Count total questions (QB + embedded topic questions, deduped) ───────────
-function countTotalQuestions(qbArr = [], learnTopics = []) {
-  const qbSet = new Set(qbArr.map((q) => q.q));
-  let total = qbArr.length;
-  learnTopics.forEach((topic) => {
-    (topic.questions || []).forEach((q) => {
-      if (!qbSet.has(q.q)) { qbSet.add(q.q); total++; }
-    });
-  });
-  return total;
-}
 
 export default function Subjects({
   name,
@@ -73,6 +62,9 @@ export default function Subjects({
     return () => window.removeEventListener('es:set-mode', on);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Log every subject's question count for every exam type (once per session).
+  useEffect(() => { logQuestionSummary(); }, []);
+
   // ── Subject metadata, QB, and learn bank ─────────────────────────────────
   const getSubjectsAndQB = () => {
     switch (examType) {
@@ -88,17 +80,17 @@ export default function Subjects({
 
   const isGridExam = GRID_EXAMS.includes(examType);
 
-  // ── For JAMB: fall back to WAEC_QB if subject not in JAMB QB ───
-  const getQuestionPool = (subjectId) => {
-    const jambPool = QB[subjectId] || [];
-    if (jambPool.length > 0) return jambPool;
-    return WAEC_QB[subjectId] || [];
-  };
+  useEffect(() => {
+    if (!isGridExam || !gridSubjects || mode === 'game' || mode === 'flashcard') return;
+    const hiddenIds = gridSubjects
+      .filter((x) => (mode === 'learn' ? !((gridLearn || {})[x.id] || []).length : poolSize(examType, x.id) === 0))
+      .map((x) => x.id);
+    if (hiddenIds.length) console.warn(`[Subjects] ${examType.toUpperCase()} ${mode}: hidden →`, hiddenIds.join(', '));
+  }, [examType, mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getJambTotalCount = (subjectId) => {
-    const learnBank = JAMB_LEARN;
     if (mode === 'flashcard') return getDeck(subjectId, examType).length;
-    return countTotalQuestions(getQuestionPool(subjectId), (learnBank[subjectId] || []));
+    return poolSize(examType, subjectId);
   };
 
   const hasLearnContent = (subjectId) => {
@@ -106,9 +98,7 @@ export default function Subjects({
     return (learnBank[subjectId] || []).length > 0;
   };
 
-  const hasQuestions = (subjectId) => {
-    return getQuestionPool(subjectId).length > 0;
-  };
+  const hasQuestions = (subjectId) => poolSize(examType, subjectId) > 0;
 
   // ── Header label ─────────────────────────────────────────────────────────
   const examLabel = {
@@ -247,7 +237,11 @@ export default function Subjects({
             // For WAEC/NECO/GST use their dedicated subject list
             // For JAMB build from SUBJ filtered by availability
             const cardSubjects = isGridExam
-              ? (gridSubjects || []).filter((x) => mode !== 'flashcard' || getDeck(x.id, examType).length > 0)
+              ? (gridSubjects || []).filter((x) => {
+                  if (mode === 'flashcard') return getDeck(x.id, examType).length > 0;
+                  if (mode === 'learn') return ((gridLearn || {})[x.id] || []).length > 0; // needs study topics
+                  return poolSize(examType, x.id) > 0; // CBT: hide subjects with 0 questions
+                })
               : getJambGridSubjects();
             const cardQB       = isGridExam ? gridQB : QB;
             const cardLearn    = isGridExam ? gridLearn : (JAMB_LEARN);
@@ -277,10 +271,7 @@ export default function Subjects({
                     if (mode === 'flashcard') {
                       qCount = getDeck(subj.id, examType).length;
                     } else if (isGridExam) {
-                      qCount = countTotalQuestions(
-                        gridQB?.[subj.id] || [],
-                        gridLearn?.[subj.id] || []
-                      );
+                      qCount = poolSize(examType, subj.id);
                     } else {
                       qCount = getJambTotalCount(subj.id);
                     }
