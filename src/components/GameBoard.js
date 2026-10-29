@@ -46,8 +46,12 @@ export default function GameBoard({ game, score, guest, onSignup }) {
       </div>
       <div className="gb-title"><Icon name="trophy" size={16} /> Top players this week</div>
       <Podium top={d.top} />
-      {d.top.slice(3).map((p) => <div key={p.rank} className={`gb-row ${p.you ? 'you' : ''}`}><i>{p.rank}</i><Avatar name={p.name} size={28} /><span>{p.name}{p.you ? ' (you)' : ''}</span><b>{p.score}</b></div>)}
-      {!inTop && d.mine && <><div className="gb-gap">· · ·</div><div className="gb-row you"><i>{d.mine.rank}</i><Avatar name={d.mine.name} size={28} /><span>{d.mine.name} (you)</span><b>{d.mine.score}</b></div></>}
+      {(d.top.length > 3 || (!inTop && d.mine)) && (
+        <div className="gb-rest" role="list" aria-label="Rest of the leaderboard">
+          {d.top.slice(3).map((p) => <div key={p.rank} role="listitem" className={`gb-row ${p.you ? 'you' : ''}`}><i>{p.rank}</i><Avatar name={p.name} size={26} /><span>{p.name}{p.you ? ' (you)' : ''}</span><b>{p.score}</b></div>)}
+          {!inTop && d.mine && <><div className="gb-gap">· · ·</div><div role="listitem" className="gb-row you"><i>{d.mine.rank}</i><Avatar name={d.mine.name} size={26} /><span>{d.mine.name} (you)</span><b>{d.mine.score}</b></div></>}
+        </div>
+      )}
       <div className="gb-share">
         <button type="button" className="wa" onClick={() => shareScore(score, 'whatsapp')}>Challenge on WhatsApp</button>
         <button type="button" onClick={() => shareScore(score, navigator.share ? 'native' : 'copy')}><Icon name="share" size={14} /> {navigator.share ? 'Share' : 'Copy'}</button>

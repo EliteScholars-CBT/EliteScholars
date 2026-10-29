@@ -351,3 +351,26 @@
 .gb-bar em { font-style: normal; font-weight: 900; font-size: 20px; color: rgba(0,0,0,.45); }
 @keyframes gbGrow { from { transform: scaleY(0); opacity: .2; } to { transform: scaleY(1); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .gb-bar, .gb-crown { animation: none; } }
+
+/* ── Result screen v2: compact header, scrolling leaderboard, pinned small buttons ─────────── */
+.game-result-screen { padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px)); align-items: stretch; overflow: hidden; }
+.game-result-card { display: flex; flex-direction: column; max-width: 380px; margin: 0 auto; min-height: 0; height: 100%; }
+.game-result-top { display: flex; align-items: center; gap: 12px; text-align: left; padding: 4px 2px 8px; flex: none; }
+.game-result-top .game-result-icon { width: 54px; height: 54px; margin: 0; border-radius: 18px; flex: none; box-shadow: 0 8px 18px rgba(255, 197, 61, .4); }
+.game-result-head { min-width: 0; }
+.game-result-top .game-result-title { font-size: 18px; margin: 0; line-height: 1.2; }
+.game-result-top .game-result-score { font-size: 28px; line-height: 1.1; }
+.game-result-top .game-result-xp { margin-top: 1px; font-size: 12px; }
+.game-result-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 0 2px; }
+.game-result-scroll .gb { margin-top: 4px; }
+.gb-rest { max-height: min(34vh, 240px); overflow-y: auto; overscroll-behavior: contain; margin-top: 4px; padding: 4px; border-radius: 14px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); scrollbar-width: thin; scrollbar-color: rgba(255,197,61,.6) transparent; }
+.gb-rest::-webkit-scrollbar { width: 6px; } .gb-rest::-webkit-scrollbar-thumb { background: rgba(255,197,61,.55); border-radius: 9px; }
+.gb-rest .gb-row { padding: 6px 8px; font-size: 13px; }
+.gb-podium { margin: 2px 0 6px; } .gb-share { margin-top: 10px; } .gb-share button { padding: 9px 8px; font-size: 12.5px; border-radius: 10px; }
+.game-result-actions { flex: none; margin-top: 0; padding: 10px 0 0; gap: 8px; border-top: 1px solid rgba(255,255,255,.12); background: transparent; }
+.game-result-actions .game-result-btn { padding: 9px 14px; font-size: 13px; border-radius: 11px; flex: 1; }
+@media (max-height: 640px) { .game-result-top .game-result-icon { width: 44px; height: 44px; } .game-result-top .game-result-score { font-size: 24px; } .gb-rest { max-height: 26vh; } }
+.game-result-screen { height: 100dvh; max-height: 100dvh; }
+.gb-row > :first-child, .gb-row > :nth-child(2) { flex: none; } .gb-row .av, .gb-row [class*="avatar"], .gb-row img, .gb-row canvas { flex: none; }
+.gb-row .avt { flex: none; }
+@media (max-height: 700px) { .gb-bar { height: calc(var(--h) * .5); } .gb-crown { font-size: 16px; } .gb-title { margin: 4px 0; } .gb-msg { margin-bottom: 4px; } }

@@ -53,7 +53,7 @@ export async function refreshEntitlement(email) {
     if (!res.ok) return getCachedEntitlement(email);
     const j = await res.json();
     if (!j?.success) return getCachedEntitlement(email);
-    writeCache(email, { entitlement: j.entitlement, limits: j.limits, session: j.session, usage: j.usage, usageDay: j.day, fetchedAt: Date.now() });
+    writeCache(email, { entitlement: j.entitlement, limits: j.limits, share: j.share, session: j.session, usage: j.usage, usageDay: j.day, fetchedAt: Date.now() });
     return { ...j.entitlement, unlimited: stillUnlimited(j.entitlement) };
   } catch {
     return getCachedEntitlement(email);
@@ -128,3 +128,26 @@ export async function reserve(email, kind, ref = '') {
   } catch { /* offline: fall through */ }
   return localUse(email, kind, ref, limitFor(email, kind));
 }
+
+// ── share a group link to earn extra uses (rules are set by the admin) ───────
+// What the share offer looks like for one kind ('topic' | 'cbt' | 'game') right now, or null if it isn't on offer.
+export function getShareOffer(email, kind) {
+  const c = email ? readCache(email) : null;
+  const sh = c && c.share;
+  const key = KIND_KEY[kind];
+  if (!sh || !sh.enabled || !key || !DAILY[kind] || kind === 'file_study') return null;
+  const made = (sh.claims && sh.claims[key]) || 0;
+  if (made >= sh.maxClaims) return null;
+  return { amount: sh.amount, verifySeconds: sh.verifySeconds, left: sh.maxClaims - made };
+}
+
+async function shareCall(op, email, kind) {
+  try {
+    const res = await fetch(`/api/entitlement/${op}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind }) });
+    const j = await res.json().catch(() => ({}));
+    if (res.ok && j.success !== false) { if (op === 'share-claim') await refreshEntitlement(email); return { ok: true, ...j }; }
+    return { ok: false, error: j.error || 'Could not do that. Please try again.', waitSeconds: j.waitSeconds };
+  } catch { return { ok: false, error: 'No connection. Please try again.' }; }
+}
+export const startShare = (email, kind) => shareCall('share-start', email, kind);
+export const claimShare = (email, kind) => shareCall('share-claim', email, kind);

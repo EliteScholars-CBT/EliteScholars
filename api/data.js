@@ -184,6 +184,8 @@ const ROUTES = {
   "profile/guardian": withOp(profile, "guardian"),
   "entitlement/get": withOp(entitlement, "get"),
   "entitlement/use": withOp(entitlement, "use"),
+  "entitlement/share-start": withOp(entitlement, "share-start"),
+  "entitlement/share-claim": withOp(entitlement, "share-claim"),
   "admin/access": withOp(adminAccess, "access"),
   "admin/access-action": withOp(adminAccess, "access-action"),
 };

@@ -20,6 +20,7 @@ export default function AdminAccess({ token, onAuthFail }) {
 
   const [sess, setSess] = useState({ minutes: '0', cooldown: '0' });
   const [limits, setLimits] = useState({ topics: '3', cbt: '3', games: '3', fileStudy: '2' });
+  const [share, setShare] = useState({ enabled: true, amount: '3', maxClaimsPerDay: '1', verifySeconds: '20' });
   const [trialOn, setTrialOn] = useState(false);
   const [trialDays, setTrialDays] = useState('14');
 
@@ -62,6 +63,7 @@ export default function AdminAccess({ token, onAuthFail }) {
     const c = data.config;
     setSess({ minutes: String(c.sessionMinutes || 0), cooldown: String(c.cooldownMinutes || 0) });
     setLimits({ topics: String(c.limits.topics), cbt: String(c.limits.cbt), games: String(c.limits.games), fileStudy: String(c.limits.fileStudy) });
+    if (c.shareBonus) setShare({ enabled: c.shareBonus.enabled, amount: String(c.shareBonus.amount), maxClaimsPerDay: String(c.shareBonus.maxClaimsPerDay), verifySeconds: String(c.shareBonus.verifySeconds) });
     setTrialOn(c.trialEnabled);
     setTrialDays(String(c.trialDays));
   }, [data]);
@@ -111,6 +113,21 @@ export default function AdminAccess({ token, onAuthFail }) {
           }, 'Saved.')}>Save limits and trial</button>
         </div>
         <p className="adm-note">Trials start at sign-up, only once per student, and only for students who sign up while this is on. Trials and free access never earn partner commission.</p>
+      </section>
+
+      <section className="adm-card">
+        <h2>Share a group link to get more</h2>
+        <p className="adm-note">When a free student reaches a daily limit (topics, CBT or games), they can share EliteScholars to a WhatsApp group to earn extra uses for that same thing. We can't see inside WhatsApp, so they claim after the wait time below.</p>
+        <div className="adm-form">
+          <label className="adm-check"><input type="checkbox" checked={share.enabled} onChange={(e) => setShare({ ...share, enabled: e.target.checked })} /> Let free students share for extra uses</label>
+          <label>Extra uses per share
+            <input type="number" min="1" max="20" value={share.amount} onChange={(e) => setShare({ ...share, amount: e.target.value })} /></label>
+          <label>How many times a day (per topics / CBT / games)
+            <input type="number" min="1" max="10" value={share.maxClaimsPerDay} onChange={(e) => setShare({ ...share, maxClaimsPerDay: e.target.value })} /></label>
+          <label>Wait before they can claim (seconds)
+            <input type="number" min="0" max="300" value={share.verifySeconds} onChange={(e) => setShare({ ...share, verifySeconds: e.target.value })} /></label>
+          <button disabled={busy} onClick={() => act({ action: 'set-config', shareBonus: { enabled: share.enabled, amount: Number(share.amount), maxClaimsPerDay: Number(share.maxClaimsPerDay), verifySeconds: Number(share.verifySeconds) } }, 'Share settings saved.')}>Save share settings</button>
+        </div>
       </section>
 
       <section className="adm-card">

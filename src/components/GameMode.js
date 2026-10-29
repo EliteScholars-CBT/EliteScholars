@@ -700,6 +700,28 @@ const DIFFICULTIES = [
 // Small built-in sampler so the games always have something to play even
 // before real per-subject question-bank wiring lands. Each entry doubles as
 // { term, clue } for Scramble and { a: clue, b: term } for Memory.
+// Result grading. Scores include combo multipliers (up to x5), so the old "score >= questions x 15" bar was
+// cleared by almost every decent run and the screen said "Legendary!" every time. Legendary now needs a score
+// close to the realistic maximum, and each tier has a few phrases that rotate so the same words never repeat
+// two games in a row.
+const GRADES = [
+  { min: 60, tier: 'trophy', titles: ['Legendary!', 'Unstoppable!', 'Flawless run!'] },
+  { min: 35, tier: 'trophy', titles: ['Brilliant!', 'On fire!', 'Top class!'] },
+  { min: 18, tier: 'star', titles: ['Well played!', 'Solid round!', 'Nice one!'] },
+  { min: 8, tier: 'star', titles: ['Good effort!', 'Getting there!', 'Not bad!'] },
+  { min: 0, tier: 'zap', titles: ['Keep going!', 'Warm-up done!', 'Go again!'] },
+];
+let lastGradeTitle = '';
+let gradeTick = 0;
+function gradeResult(score, total) {
+  const per = score / Math.max(1, total || 1);
+  const g = GRADES.find((x) => per >= x.min) || GRADES[GRADES.length - 1];
+  const pool = g.titles.filter((t) => t !== lastGradeTitle);
+  const title = pool[(gradeTick++) % pool.length];
+  lastGradeTitle = title;
+  return { tier: g.tier, title };
+}
+
 export default function GameMode(props) {
   const { onBack, guest } = props;
   const [leaving, setLeaving] = useState(false);
@@ -778,7 +800,7 @@ function GameModeInner({ onBack, email, name, onLimit, guest, onSignup }) {
 
   const handleEnd = (score, total) => {
     const xp = Math.round(score / 2);
-    setResult({ score, total, xp });
+    setResult({ score, total, xp, ...gradeResult(score, total) });
     setPhase('result');
     SFX.roundComplete();
     trackGame('game_finished', { game: gameType, score, guest: !!guest });
@@ -805,22 +827,27 @@ function GameModeInner({ onBack, email, name, onLimit, guest, onSignup }) {
   }
 
   if (phase === 'result') {
-    const tier = result.score >= result.total * 15 ? 'trophy' : result.score >= result.total * 8 ? 'star' : 'zap';
-    const title = result.score >= result.total * 15 ? 'Legendary!' : result.score >= result.total * 8 ? 'Well played!' : 'Keep going!';
+    const { tier, title } = result;
     return (
       <div className="game-result-screen">
         {wallEl}
         <div className="game-result-card">
-          <div className="game-result-icon"><Icon name={tier} size={44} /></div>
-          <div className="game-result-title">{title}</div>
-          <div className="game-result-score">{result.score} pts</div>
-          {!guest && <div className="game-result-xp">+{result.xp} XP earned</div>}
-          <GameBoard game={gameType} score={result.score} guest={guest} onSignup={onSignup} />
+          <div className="game-result-top">
+            <div className="game-result-icon"><Icon name={tier} size={30} /></div>
+            <div className="game-result-head">
+              <div className="game-result-title">{title}</div>
+              <div className="game-result-score">{result.score} pts</div>
+              {!guest && <div className="game-result-xp">+{result.xp} XP earned</div>}
+            </div>
+          </div>
+          <div className="game-result-scroll">
+            <GameBoard game={gameType} score={result.score} guest={guest} onSignup={onSignup} />
+          </div>
           <div className="game-result-actions">
             {guest && guestPlays >= FREE_GUEST_GAMES
               ? <button className="game-result-btn" onClick={() => { trackGame('game_wall', { plays: guestPlays }); setWall(true); }}>Sign up to continue</button>
-              : <button className="game-result-btn" onClick={startGame}><Icon name="refresh" size={16} /> Play Again</button>}
-            {!guest && <button className="game-result-btn" style={{ background: 'transparent', border: `2px solid ${GOLD}`, color: GOLD }} onClick={onBack}><Icon name="arrowLeft" size={15} /> Exit</button>}
+              : <button className="game-result-btn" onClick={startGame}><Icon name="refresh" size={14} /> Play again</button>}
+            {!guest && <button className="game-result-btn" style={{ background: 'transparent', border: `2px solid ${GOLD}`, color: GOLD }} onClick={onBack}><Icon name="arrowLeft" size={13} /> Exit</button>}
           </div>
         </div>
       </div>

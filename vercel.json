@@ -562,6 +562,14 @@
       "destination": "/api/data?route=entitlement/use"
     },
     {
+      "source": "/api/entitlement/share-start",
+      "destination": "/api/data?route=entitlement/share-start"
+    },
+    {
+      "source": "/api/entitlement/share-claim",
+      "destination": "/api/data?route=entitlement/share-claim"
+    },
+    {
       "source": "/api/admin/access",
       "destination": "/api/data?route=admin/access"
     },

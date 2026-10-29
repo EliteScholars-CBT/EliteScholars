@@ -7,8 +7,8 @@ const hash = (str) => { let h = 2166136261; const s = String(str || '?'); for (l
 
 export function avatarSpec(name) {
   const h = hash(String(name || '?').toLowerCase());
-  const h1 = h % 360, h2 = (h1 + 40 + ((h >> 9) % 140)) % 360, ang = (h >> 4) % 360, pat = (h >> 12) % 4;
-  return { animal: ANIMALS[(h >> 3) % ANIMALS.length], h1, h2, ang, pat };
+  const h1 = h % 360, h2 = (h1 + 40 + ((h >>> 9) % 140)) % 360, ang = (h >>> 4) % 360, pat = (h >>> 12) % 4;
+  return { animal: ANIMALS[(h >>> 3) % ANIMALS.length], h1, h2, ang, pat };
 }
 
 export default function Avatar({ name, size = 36, ring }) {

@@ -989,22 +989,31 @@ export default function App() {
 
   };
 
+  // Leaving a CBT session (Ready screen, Quit, Result) goes back to subject selection, keeping the chosen
+  // exam type, instead of dumping the student on the exam-type screen.
+  const goSubjects = () => {
+    if (SHOW_ADS) triggerAdRefresh();
+    stopSpeech();
+    setScreen(examType ? 'subjects' : 'examType');
+  };
+
   // ── Back button (installed app / phone back) ────────────────────────────────
   // The app keeps its screens in state, so without this the phone's back button leaves the app for
   // whatever page was open before. We keep a sentinel history entry so back is always ours to handle.
   useEffect(() => { captureNotificationOpen(); }, []);
   const backRef = React.useRef({});
-  backRef.current = { screen, goHome, showToast };
+  backRef.current = { screen, goHome, goSubjects, showToast };
   useEffect(() => {
     try { window.history.pushState({ es: 1 }, ''); } catch { /* ignore */ }
     let lastRootBack = 0;
     const onPop = () => {
-      const { screen: sc, goHome: home, showToast: toastIt } = backRef.current;
+      const { screen: sc, goHome: home, goSubjects: toSubjects, showToast: toastIt } = backRef.current;
       const root = ['splash', 'onboard', 'examType'];
       if (!root.includes(sc)) {
         try { window.history.pushState({ es: 1 }, ''); } catch { /* ignore */ }
         if (sc === 'quiz' || sc === 'ready' || sc === 'adgate' || sc === 'sharegate') { toastIt('Use the Quit button to leave this screen', 'info'); return; }
-        if (sc === 'result' || sc === 'game') { home(); return; }
+        if (sc === 'result') { toSubjects(); return; }
+        if (sc === 'game') { home(); return; }
         if (sc === 'learn' && window.__esLearnBack && window.__esLearnBack()) return;
         if (['flashcards', 'learn', 'leaderboard', 'challenges', 'shop', 'profile', 'school'].includes(sc)) { home(); return; }
         setScreen('examType');
@@ -1776,7 +1785,7 @@ export default function App() {
 
               {screen === 'ready' && (
 
-                <Ready subjectId={subject} onGo={() => setScreen('quiz')} onBack={goHome} />
+                <Ready subjectId={subject} onGo={() => setScreen('quiz')} onBack={goSubjects} />
 
               )}
 
@@ -1804,7 +1813,7 @@ export default function App() {
 
                   setTotalQ={setTotalQ}
 
-                  onHome={goHome}
+                  onHome={goSubjects}
 
                   triggerAdRefresh={triggerAdRefresh}
 
@@ -1852,7 +1861,7 @@ export default function App() {
 
                   totalSessions={sessions}
 
-                  onHome={goHome}
+                  onHome={goSubjects}
 
                   onProfile={() => setScreen('profile')}
 

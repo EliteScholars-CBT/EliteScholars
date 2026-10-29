@@ -15,6 +15,8 @@ export const DEFAULT_CONFIG = {
   sessionMinutes: 0,
   cooldownMinutes: 0,
   global: { active: false, forever: false, until: null, note: "" },
+  // Share-to-unlock: a free student who hits a daily limit may share the app to a WhatsApp group to earn `amount` more uses.
+  shareBonus: { enabled: true, amount: 3, maxClaimsPerDay: 1, verifySeconds: 20 },
 };
 
 // API kind -> config key + whether it resets daily
@@ -42,6 +44,12 @@ export async function getAccessConfig() {
       cbt: clampInt(v.limits?.cbt, 0, 100, DEFAULT_CONFIG.limits.cbt),
       games: clampInt(v.limits?.games, 0, 100, DEFAULT_CONFIG.limits.games),
       fileStudy: clampInt(v.limits?.fileStudy, 0, 100, DEFAULT_CONFIG.limits.fileStudy),
+    },
+    shareBonus: {
+      enabled: v.shareBonus?.enabled === undefined ? DEFAULT_CONFIG.shareBonus.enabled : !!v.shareBonus.enabled,
+      amount: clampInt(v.shareBonus?.amount, 1, 20, DEFAULT_CONFIG.shareBonus.amount),
+      maxClaimsPerDay: clampInt(v.shareBonus?.maxClaimsPerDay, 1, 10, DEFAULT_CONFIG.shareBonus.maxClaimsPerDay),
+      verifySeconds: clampInt(v.shareBonus?.verifySeconds, 0, 300, DEFAULT_CONFIG.shareBonus.verifySeconds),
     },
     global: {
       active: !!v.global?.active,
@@ -80,6 +88,19 @@ export function entitlementFor(row, cfg) {
     return { tier: "trial", unlimited: true, source: "trial", until: row.trial_ends_at, forever: false };
   }
   return { tier: "free", unlimited: false, source: "free", until: null, forever: false };
+}
+
+// Share bonus claims made today, per config key: { topics: 1, cbt: 0, ... }. Stored in usage_counters as
+// kind "share:<kind>" (count = claims today, refs = [start time in ms] while a share is waiting to be claimed).
+export async function shareClaimsToday(sb, email) {
+  const day = lagosDay();
+  const { data } = await sb.from("usage_counters").select("kind,count,refs").eq("email", email).eq("period", day).like("kind", "share:%");
+  const out = {};
+  for (const [kind, meta] of Object.entries(KINDS)) {
+    const row = (data || []).find((r) => r.kind === `share:${kind}`);
+    out[meta.key] = { claims: row?.count || 0, pendingAt: Array.isArray(row?.refs) && row.refs[0] ? Number(row.refs[0]) : 0 };
+  }
+  return out;
 }
 
 // Called once at sign-up: starts the trial if the admin switched it on.

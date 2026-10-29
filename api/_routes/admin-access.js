@@ -94,6 +94,16 @@ export default async function handler(req, res) {
             cfg.limits[k] = n;
           }
         }
+        if (b.shareBonus && typeof b.shareBonus === "object") {
+          const sbn = b.shareBonus;
+          if (sbn.enabled !== undefined) cfg.shareBonus.enabled = !!sbn.enabled;
+          for (const [k, lo, hi, label] of [["amount", 1, 20, "Bonus uses per share"], ["maxClaimsPerDay", 1, 10, "Shares per day"], ["verifySeconds", 0, 300, "Wait time (seconds)"]]) {
+            if (sbn[k] === undefined) continue;
+            const n = Math.floor(Number(sbn[k]));
+            if (!Number.isFinite(n) || n < lo || n > hi) return sendErr(res, `${label} must be ${lo} to ${hi}.`);
+            cfg.shareBonus[k] = n;
+          }
+        }
         await saveAccessConfig(cfg);
         return sendOk(res, { config: cfg });
       }

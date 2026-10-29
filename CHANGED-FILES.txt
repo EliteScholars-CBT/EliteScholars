@@ -1,14 +1,22 @@
-EliteScholars - Updates 10 + 11 + 12 (everything in one zip; only new/changed files; question-pool fix NOT included)
+EliteScholars - Update 13: game result screen, "Legendary" fix, CBT back, share-for-more-uses (admin controlled)
 
-UPDATE 10 - school/centre signup + admin-approved showcase:
-  api/_helpers/schoolProfile.js (NEW), api/_routes/school-portal.js, api/_routes/site-public.js, api/_routes/admin-ops.js, api/data.js, vercel.json,
-  supabase/schema.sql, src/pages/SchoolPortal.js, src/pages/Landing.js, src/components/AdminPrices.js,
-  src/components/SchoolSignupFields.js (NEW), src/components/SchoolShowcase.js (NEW), src/styles/showcase.css (NEW), src/styles/schoolportal.css
-UPDATE 11 - student side on /school and /centre (real app screenshots + real game preview):
-  src/components/StudentTour.js (NEW), src/styles/studenttour.css (NEW), src/pages/AudienceLanding.js (contains updates 10 and 11)
-UPDATE 12 - /partner: schools and centres cards with "Read full details" arrows, FAQ entry, copyable centre link in the partner dashboard:
-  src/pages/Partner.js, src/styles/partner.css
+CHANGED
+  src/components/GameMode.js      result screen: compact header, pinned small "Play again" / "Exit"; grading no longer says "Legendary!" every time
+  src/components/GameBoard.js     ranks 4+ in their own scrolling list (podium stays for the top 3)
+  src/components/Avatar.js        BUG FIX: about half of players had a blank avatar on the board (negative bit-shift); now fixed
+  src/styles/gamemode.css         result screen v2 + scroll list styles
+  src/App.js                      CBT: Ready screen back, Quit and Result "home" now go to subject selection (exam type is kept) instead of the exam-type screen
+  src/components/FreeLimitGate.js "Share a group link, get +N more" on the daily-limit screens (topics / CBT / games)
+  src/utils/entitlement.js        share offer helpers
+  src/styles/premium.css          styles for the share offer
+  src/components/AdminAccess.js   NEW admin card "Share a group link to get more" (on/off, extra uses, times per day, wait seconds)
+  api/_helpers/access.js          shareBonus config + claims
+  api/_routes/entitlement.js      limits now include today's share bonus; new ops share-start / share-claim
+  api/_routes/admin-access.js     saves the share settings
+  api/data.js, vercel.json        register /api/entitlement/share-start and /share-claim
+                                  (these two files ALSO contain the update-10 routes - use these versions over the ones in the earlier zip)
 
-Env vars: none new.
-SQL: supabase/schema.sql is the FULL latest schema (idempotent). Run the whole file, or only the "update 10" block at the end, in the Supabase SQL editor BEFORE deploying.
-Files to delete: none.
+ROUTES (new): POST /api/entitlement/share-start, POST /api/entitlement/share-claim
+ENV VARS: none.   SQL: none (uses the existing usage_counters table).
+FILES TO DELETE: none.
+Admin: Admin > Access > "Share a group link to get more". Defaults: ON, +3 per share, 1 time per day for each of topics/CBT/games, 20-second wait.
