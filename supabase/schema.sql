@@ -692,3 +692,21 @@ alter table school_mocks add column if not exists kind text not null default 'mo
 alter table school_mocks add column if not exists source text not null default 'builtin';   -- builtin (EliteScholars questions) | custom
 alter table school_mocks add column if not exists questions jsonb;                          -- custom: [{q, o:[...], a:index, e}]
 alter table school_mocks add column if not exists duration_min int not null default 0;      -- custom: minutes allowed (0 = no timer)
+
+-- ---------------------------------------- school & centre sign-up details + site showcase (update 10) --
+-- Details a school / centre gives when it registers (all optional in the DB so existing schools keep working).
+alter table schools add column if not exists contact_name  text;
+alter table schools add column if not exists contact_role  text;
+alter table schools add column if not exists phone         text;   -- stored as +234XXXXXXXXXX
+alter table schools add column if not exists state         text;
+alter table schools add column if not exists city          text;
+alter table schools add column if not exists address       text;
+alter table schools add column if not exists size_band     text;   -- under-50 | 50-200 | 200-500 | 500-1000 | 1000+
+-- "Show us on the EliteScholars site": none (not asked) | pending (asked, waiting for you) | approved | rejected.
+-- Only 'approved' schools appear on the public pages. You approve each one in Admin -> Schools.
+alter table schools add column if not exists showcase_status  text not null default 'none';
+alter table schools drop constraint if exists schools_showcase_status_check;
+alter table schools add constraint schools_showcase_status_check check (showcase_status in ('none','pending','approved','rejected'));
+alter table schools add column if not exists showcase_tagline text;          -- one short line shown under the name
+alter table schools add column if not exists showcase_at      timestamptz;   -- when you approved it
+create index if not exists idx_schools_showcase on schools (showcase_status, showcase_at desc);

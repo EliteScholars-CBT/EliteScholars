@@ -872,6 +872,26 @@ export default async function handler(req, res) {
       await audit(sb, who, isCentre ? "centre.settings" : "school.settings", `trial ${trialDays}d, ${tiers.length} tiers`);
       return sendOk(res, {});
     }
+    // Every registered school / centre with the details they gave, and their "show us on the site" request.
+    if (op === "showcase-list") {
+      if (!need("schools")) return deny();
+      const { data } = await sb.from("schools").select("id,name,kind,owner_email,contact_name,contact_role,phone,state,city,size_band,showcase_status,showcase_tagline,showcase_at,logo,created_at").order("created_at", { ascending: false }).limit(300);
+      return sendOk(res, { schools: (data || []).map((s) => ({ id: s.id, name: s.name, kind: s.kind || "school", owner: s.owner_email, contact: s.contact_name || "", role: s.contact_role || "", phone: s.phone || "", state: s.state || "", city: s.city || "", size: s.size_band || "", status: s.showcase_status || "none", tagline: s.showcase_tagline || "", hasLogo: !!s.logo, createdAt: s.created_at })) });
+    }
+    if (op === "showcase-set") {
+      if (!need("schools")) return deny();
+      if (req.method !== "POST") return sendMethodNotAllowed(res);
+      const id = String(b.id || "");
+      const status = String(b.status || "");
+      if (!/^[0-9a-f-]{36}$/i.test(id) || !["approved", "rejected", "pending", "none"].includes(status)) return sendErr(res, "Bad request.");
+      const { data: sc } = await sb.from("schools").select("id,name").eq("id", id).maybeSingle();
+      if (!sc) return sendErr(res, "School not found.", 404);
+      const patch = { showcase_status: status, showcase_at: status === "approved" ? new Date().toISOString() : null };
+      if (typeof b.tagline === "string") patch.showcase_tagline = clean(b.tagline, 110);
+      await sb.from("schools").update(patch).eq("id", id);
+      await audit(sb, who, `showcase.${status}`, sc.name);
+      return sendOk(res, {});
+    }
     if (op === "school-account") {
       if (!need("schools")) return deny();
       if (req.method !== "POST") return sendMethodNotAllowed(res);

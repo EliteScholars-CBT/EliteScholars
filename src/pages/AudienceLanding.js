@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import StudentTour from '../components/StudentTour';
+import '../styles/landing2.css';
+import '../styles/studenttour.css';
+import SchoolShowcase from '../components/SchoolShowcase';
 import SiteShell from '../components/SiteShell';
 import { NoticePhone, QuizPhone, ReportLaptop, UploadLaptop, EditorLaptop, Scene } from '../components/SiteMocks';
 import { captureReferralFromURL } from '../utils/referral';
@@ -83,8 +87,9 @@ export default function AudienceLanding({ kind = 'school' }) {
   return (
     <SiteShell wide eyebrow={kind === 'centre' ? 'For tutorial & JAMB centres' : 'For schools'} title={c.title} intro={c.intro}>
       <div className="scp-cta-row">
-        <button className="scp-btn primary" onClick={start}>Start free trial</button>
+        <button className="scp-btn primary" onClick={start}>Register free</button>
         <button className="scp-btn" onClick={() => { const el = document.getElementById('pricing'); if (el) el.scrollIntoView({ behavior: 'smooth' }); else start(); }}>See pricing</button>
+        <a className="scp-btn" href="/school-portal?mode=login">Sign in</a>
       </div>
 
       <div className="mk-hero"><ReportLaptop school={sName} /><NoticePhone school={sName} initials={ini} /></div>
@@ -119,6 +124,8 @@ export default function AudienceLanding({ kind = 'school' }) {
         <ReportLaptop school={sName} />
       </Scene>
 
+      <StudentTour kind={kind} />
+
       <section className="sp-card">
         <h2>{kind === 'centre' ? 'Why centres use it' : 'What your school gets'}</h2>
         <div className="scp-grid">{c.features.map(([ic, t, d]) => (<div key={t} className="scp-feat"><span aria-hidden="true">{ic}</span><h3>{t}</h3><p>{d}</p></div>))}</div>
@@ -136,6 +143,8 @@ export default function AudienceLanding({ kind = 'school' }) {
         <h2>How it works</h2>
         <ol className="scp-steps">{c.steps.map(([n, t, d]) => (<li key={n}><b>{n}</b><div><h3>{t}</h3><p>{d}</p></div></li>))}</ol>
       </section>
+
+      <SchoolShowcase kind={kind} />
 
       {tiers.length > 0 && (
         <section className="sp-card" id="pricing">

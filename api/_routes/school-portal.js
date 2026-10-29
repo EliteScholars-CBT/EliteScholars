@@ -12,6 +12,8 @@ import { hashPasswordStrong } from "../_helpers/hash.js";
 import { ensureAccount, planSummary, canUseSchool } from "../_helpers/schoolPlan.js";
 import { roleIn, uuidish } from "../_helpers/schoolPortal.js";
 import { pushToEmails } from "../_helpers/push.js";
+import { parseSchoolProfile, cleanTagline } from "../_helpers/schoolProfile.js";
+import { notifyAdmin } from "../_helpers/mail.js";
 
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const code6 = () => Array.from({ length: 6 }, () => ALPHABET[crypto.randomInt(ALPHABET.length)]).join("");
@@ -64,12 +66,19 @@ export default async function handler(req, res) {
       const name = clean(b.name, 80);
       const kind = b.kind === "centre" ? "centre" : "school";
       if (name.length < 3) return sendErr(res, kind === "centre" ? "Enter your centre's name." : "Enter your school's name.");
+      const prof = parseSchoolProfile(b, kind);
+      if (prof.error) return sendErr(res, prof.error);
       const { count } = await sb.from("schools").select("id", { count: "exact", head: true }).eq("owner_email", email);
       if ((count || 0) >= 3) return sendErr(res, "You already have the maximum number of schools.");
-      const { data, error } = await sb.from("schools").insert({ name, owner_email: email, kind }).select("id,name,kind").single();
+      const wantsShowcase = b.showcase === true || b.showcase === "true";
+      const row = { name, owner_email: email, kind, ...prof.value, showcase_status: wantsShowcase ? "pending" : "none", showcase_tagline: cleanTagline(b.tagline) };
+      const { data, error } = await sb.from("schools").insert(row).select("id,name,kind").single();
       if (error || !data) return sendErr(res, "Could not create the school. Try again.", 500);
       await sb.from("school_staff").upsert({ school_id: data.id, email, role: "admin", added_by: email }, { onConflict: "school_id,email" });
       await ensureAccount(sb, email, name, kind); // starts the free trial
+      try { // tell the owner a new school registered (never blocks sign-up)
+        await notifyAdmin(`New ${kind === "centre" ? "centre" : "school"} registered: ${name}`, `${name} (${kind}) in ${prof.value.city}, ${prof.value.state}.\nContact: ${prof.value.contact_name}${prof.value.contact_role ? " (" + prof.value.contact_role + ")" : ""}\nPhone: ${prof.value.phone}\nEmail: ${email}\nSize: ${prof.value.size_band || "not said"}\nWants to be shown on the site: ${wantsShowcase ? "YES (needs your approval in Admin → Schools)" : "no"}`);
+      } catch { /* mail is best-effort */ }
       return sendOk(res, { school: { id: data.id, name: data.name, kind, role: "admin" } });
     }
 
@@ -78,7 +87,7 @@ export default async function handler(req, res) {
     const role = await roleIn(sb, schoolId, email);
     if (!role) return sendErr(res, "You are not part of this school.", 403);
     const isAdmin = role === "admin";
-    const { data: school } = await sb.from("schools").select("id,name,owner_email,kind,logo").eq("id", schoolId).maybeSingle();
+    const { data: school } = await sb.from("schools").select("id,name,owner_email,kind,logo,contact_name,contact_role,phone,state,city,size_band,showcase_status,showcase_tagline").eq("id", schoolId).maybeSingle();
     if (!school) return sendErr(res, "School not found.", 404);
     const planOk = async () => canUseSchool(sb, school.owner_email);
     const PLAN_MSG = "The school plan has ended. Contact EliteScholars to activate it.";
@@ -116,7 +125,7 @@ export default async function handler(req, res) {
       if (!isAdmin) teacherNames = new Map([[email, "You"]]);
       const plan = isAdmin ? await planSummary(sb, school.owner_email, total, school.kind) : null;
       return sendOk(res, {
-        school: { id: school.id, name: school.name, kind: school.kind || "school", logo: school.logo || null }, role, plan,
+        school: { id: school.id, name: school.name, kind: school.kind || "school", logo: school.logo || null, ...(isAdmin ? { contact_name: school.contact_name || "", contact_role: school.contact_role || "", phone: school.phone || "", state: school.state || "", city: school.city || "", size_band: school.size_band || "", showcase_status: school.showcase_status || "none", showcase_tagline: school.showcase_tagline || "" } : {}) }, role, plan,
         totals: { classes: classes.length, students: isAdmin ? total : new Set(mem.map((m) => m.email)).size, staff: staff.length, unassigned },
         classes: classes.map((c) => ({ id: c.id, name: c.name, code: c.code, teacher: c.teacher_email, teacher_name: teacherNames.get(c.teacher_email) || c.teacher_email.split("@")[0], students: counts[c.id] || 0 })),
         staff,
@@ -391,6 +400,22 @@ export default async function handler(req, res) {
         series: series(Math.min(days, 30), rows), weekly, subjects, strengths: subjects.filter((s) => s.attempts >= 2).slice(0, 3), weak: [...subjects].filter((s) => s.attempts >= 2).sort((x, y) => x.avg - y.avg).slice(0, 3),
         recent: rows.slice(0, 15), homework: asg.slice(0, 30).map((a) => ({ title: a.title, due_at: a.due_at, done: doneSet.has(a.id + "|" + em) })),
       });
+    }
+
+    // ── contact details + "show us on the site" (admin) ─────────────────────
+    if (op === "school-profile-save") {
+      if (!isAdmin) return sendErr(res, "Only school admins can do that.", 403);
+      const prof = parseSchoolProfile({ ...school, ...b }, school.kind || "school");
+      if (prof.error) return sendErr(res, prof.error);
+      const patch = { ...prof.value, showcase_tagline: cleanTagline(b.tagline) };
+      const want = b.showcase === true || b.showcase === "true";
+      const cur = school.showcase_status || "none";
+      if (want && cur === "none") patch.showcase_status = "pending";
+      if (!want && cur !== "none" && cur !== "rejected") patch.showcase_status = "none"; // switching off removes it from the site at once
+      const { error } = await sb.from("schools").update(patch).eq("id", schoolId);
+      if (error) return sendErr(res, "Could not save. Try again.", 500);
+      const status = patch.showcase_status || cur;
+      return sendOk(res, { showcase_status: status });
     }
 
     // ── logo ────────────────────────────────────────────────────────────────

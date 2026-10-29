@@ -1,13 +1,11 @@
-QUESTION POOL FIX (WAEC / NECO / GST = 20 questions per quiz)
+EliteScholars - Update 10 + 11 (merged, only new/changed files; question-pool fix NOT included)
 
-NEW      src/utils/questionPool.js      shared pool + console logging
-CHANGED  src/components/Quiz.js         builds the round from getQuestionPool(); removed 4 unused bank imports
-CHANGED  src/components/Subjects.js     hides 0-question subjects, card counts = real pool, console logs
+UPDATE 10 - school/centre signup + admin-approved showcase (api/*, SchoolPortal.js, Landing.js, AdminPrices.js, SchoolSignupFields.js, SchoolShowcase.js, showcase.css, schoolportal.css, vercel.json, supabase/schema.sql)
+UPDATE 11 - "The student side" section on /school and /centre. Uses the REAL app screenshots already on the site (/landing/m-quiz, m-lesson, m-flash, m-games .webp) in the same phone frame, and the real LandingGamePreview for games. Nothing invented.
+  NEW:     src/components/StudentTour.js, src/styles/studenttour.css
+  CHANGED: src/pages/AudienceLanding.js (contains BOTH updates; use this version)
+  (AudienceLanding also imports ../styles/landing2.css, which the landing page already uses.)
 
-Routes: none.  Env vars: none.  SQL: none.  Files to delete: none.
-
-Cause: CBT read only the tiny *_QB files (0-10 questions). The real questions live inside the
-learn topics (WAEC_LEARN / GST_LEARN) and the shared JAMB bank. The pool now merges them
-(de-duplicated by question text).
-
-Quiz.js is based on the version you attached on Oct 28 (16:01).
+Routes/env: no new env vars. Update-10 routes are in api/data.js + vercel.json (replace both).
+SQL: supabase/schema.sql is the FULL latest schema (idempotent). Run the whole file, or only the "update 10" block at the end, in the Supabase SQL editor BEFORE deploying.
+Files to delete: none. (If you already pasted the earlier merged zip from today, SiteMocks.js and sitemocks.css are back to your original versions; keep whatever you had before.)

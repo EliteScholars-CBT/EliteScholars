@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import SchoolShowcase from '../components/SchoolShowcase';
 import { useNavigate } from 'react-router-dom';
 import Icon from '../components/Icon';
 import logo from '../assets/elite-scholars-logo.png';
@@ -552,6 +553,8 @@ export default function Landing() {
           </Reveal>
         </div>
       </section>
+
+      <div className="shw-sec" style={{ margin: '8px auto 40px' }}><SchoolShowcase kind="all" /></div>
 
       {/* ── Parents ─────────────────────────────────────────────────────── */}
       <section className="land-section l3-par" id="parents">

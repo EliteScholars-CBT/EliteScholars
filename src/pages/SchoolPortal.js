@@ -1,4 +1,5 @@
 import { readStudentNames } from '../utils/readSheet';
+import { OrgFields, KindToggle, PasswordInput, EMPTY_DETAILS, validateDetails, detailsPayload } from '../components/SchoolSignupFields';
 import { LogoCard, Notices, Mocks, CentreEarn, PrintBrand, waLink, waStudentText, waClassText } from '../components/PortalExtras';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { saveUser } from '../utils/storage';
@@ -30,52 +31,109 @@ const getUser = () => { try { return JSON.parse(localStorage.getItem('ep_user') 
 const hasToken = (u) => !!(u && typeof u.passwordHash === 'string' && u.passwordHash.startsWith('u1.'));
 
 /* ── sign in / create account ─────────────────────────────────────────────── */
-function Gate({ onDone }) {
-  const [mode, setMode] = useState('signup');
-  const [f, setF] = useState({ name: '', email: '', password: '' });
+const EMAIL_RE = /^[^\s@,()"']+@[^\s@,()"']+\.[^\s@,()"']+$/;
+const qsGet = (k) => { try { return new URLSearchParams(window.location.search).get(k); } catch { return null; } };
+
+function Gate({ onDone, initialKind }) {
+  const [mode, setMode] = useState(() => (qsGet('mode') === 'login' ? 'login' : 'signup'));
+  const [kind, setKind] = useState(initialKind || 'school');
+  const [f, setF] = useState({ ...EMPTY_DETAILS, email: '', password: '', agree: false });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
+  const word = kind === 'centre' ? 'centre' : 'school';
+
+  const login = async (email) => {
+    const r = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: f.password }) });
+    const d = await r.json().catch(() => ({}));
+    if (!d.success) { setErr(d.message || d.error || 'Incorrect email or password.'); return null; }
+    return d.profile;
+  };
+  const register = async (email) => {
+    const parts = f.contact_name.trim().split(/\s+/);
+    let profile = null;
+    for (let i = 0; i < 4 && !profile; i++) {
+      const base = parts[0].toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12) || 'teacher';
+      const username = (/^[a-z]/.test(base) ? base : 't' + base) + Math.floor(100 + Math.random() * 9000);
+      const r = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ firstName: parts[0], lastName: parts.slice(1).join(' ') || '-', email, password: f.password, studentType: 'school_staff', selectedExams: [], username, referredBy: getReferralAttribution() || '', referralClickedAt: getReferralClickedAt() }) });
+      const d = await r.json().catch(() => ({}));
+      if (d.success) { profile = d.profile; try { trackSignupSource(); sendReferralSignup(profile.email, getReferralAttribution()); localStorage.setItem('es_has_account', '1'); } catch { /* tracking only */ } }
+      else if (!/username/i.test(d.error || '')) {
+        if (/already exists/i.test(d.error || '')) { setMode('login'); setErr('That email already has an account. Enter your password to sign in.'); } else setErr(d.error || 'Could not create the account.');
+        return null;
+      }
+    }
+    if (!profile) setErr('Could not create the account. Try again.');
+    return profile;
+  };
+
   const submit = async (e) => {
     e.preventDefault(); setErr('');
     const email = f.email.trim().toLowerCase();
-    if (!email || f.password.length < 8) return setErr('Enter your email and a password of at least 8 characters.');
+    if (mode === 'signup' || mode === 'teacher') {
+      if (f.contact_name.trim().split(/\s+/)[0].length < 2) return setErr('Enter your full name.');
+      if (!EMAIL_RE.test(email)) return setErr('Enter a valid email address.');
+      if (f.password.length < 8) return setErr('Choose a password of at least 8 characters.');
+      if (mode === 'signup') { const bad = validateDetails(f, kind); if (bad) return setErr(bad); }
+      if (!f.agree) return setErr('Please tick the box to accept the Terms and Privacy Policy.');
+    } else if (!EMAIL_RE.test(email) || f.password.length < 8) return setErr('Enter your email and a password of at least 8 characters.');
     setBusy(true);
     try {
-      let profile = null;
-      if (mode === 'login') {
-        const r = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: f.password }) });
-        const d = await r.json().catch(() => ({}));
-        if (!d.success) { setErr(d.message || d.error || 'Incorrect email or password.'); setBusy(false); return; }
-        profile = d.profile;
-      } else {
-        const parts = f.name.trim().split(/\s+/);
-        if (parts.length < 1 || parts[0].length < 2) { setErr('Enter your name.'); setBusy(false); return; }
-        for (let i = 0; i < 4 && !profile; i++) {
-          const base = parts[0].toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12) || 'teacher';
-          const username = (/^[a-z]/.test(base) ? base : 't' + base) + Math.floor(100 + Math.random() * 9000);
-          const r = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ firstName: parts[0], lastName: parts.slice(1).join(' ') || '-', email, password: f.password, studentType: 'school_staff', selectedExams: [], username, referredBy: getReferralAttribution() || '', referralClickedAt: getReferralClickedAt() }) });
-          const d = await r.json().catch(() => ({}));
-          if (d.success) { profile = d.profile; try { trackSignupSource(); sendReferralSignup(profile.email, getReferralAttribution()); localStorage.setItem('es_has_account', '1'); } catch { /* tracking only */ } }
-          else if (!/username/i.test(d.error || '')) { setErr(d.error || 'Could not create the account.'); setBusy(false); return; }
-        }
-        if (!profile) { setErr('Could not create the account. Try again.'); setBusy(false); return; }
-      }
+      const profile = mode === 'login' ? await login(email) : await register(email); // 'teacher' = account only, no school
+      if (!profile) { setBusy(false); return; }
       saveUser({ name: `${profile.firstName} ${profile.lastName}`, firstName: profile.firstName, lastName: profile.lastName, email: profile.email, studentType: profile.studentType, selectedExams: profile.selectedExams || [], passwordHash: profile.passwordHash, username: profile.username || '' });
-      onDone();
+      let note = '';
+      if (mode === 'signup') { const r = await api('school-create', detailsPayload(f, kind)); if (!r.success) note = r.error || 'Your account is ready, but we could not create the ' + word + '. Fill in the details again below.'; }
+      onDone(note, mode === 'signup' && note ? { f, kind } : null);
     } catch { setErr('No connection. Try again.'); }
     setBusy(false);
   };
+
+  if (mode === 'teacher') {
+    return (
+      <form className="spt-card spt-gate" onSubmit={submit} noValidate>
+        <h2>Teacher account</h2>
+        <p>For teachers whose school or centre is already on EliteScholars. Your admin adds this email to the school, then it appears here.</p>
+        <label className="spt-lbl">Your full name<input value={f.contact_name} maxLength={80} onChange={set('contact_name')} autoComplete="name" /></label>
+        <label className="spt-lbl">Email<input type="email" value={f.email} onChange={set('email')} autoComplete="email" inputMode="email" /></label>
+        <label className="spt-lbl">Password<PasswordInput value={f.password} onChange={set('password')} autoComplete="new-password" placeholder="At least 8 characters" /></label>
+        <label className="spt-check spt-terms"><input type="checkbox" checked={f.agree} onChange={(e) => setF({ ...f, agree: e.target.checked })} /><span>I agree to the <a href="/terms" target="_blank" rel="noreferrer">Terms</a> and <a href="/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>.</span></label>
+        {err && <div className="spt-err" role="alert">{err}</div>}
+        <button className="spt-btn" disabled={busy}>{busy ? 'Creating your account…' : 'Create teacher account'}</button>
+        <button type="button" className="spt-link" onClick={() => { setMode('signup'); setErr(''); }}>Registering a school or centre instead?</button>
+        <button type="button" className="spt-link" onClick={() => { setMode('login'); setErr(''); }}>I already have an account</button>
+      </form>
+    );
+  }
+  if (mode === 'login') {
+    return (
+      <form className="spt-card spt-gate" onSubmit={submit}>
+        <h2>Sign in</h2>
+        <p>Use the email you registered with.</p>
+        <input type="email" placeholder="Email" value={f.email} onChange={set('email')} autoComplete="email" />
+        <PasswordInput value={f.password} onChange={set('password')} autoComplete="current-password" />
+        {err && <div className="spt-err" role="alert">{err}</div>}
+        <button className="spt-btn" disabled={busy}>{busy ? 'Please wait…' : 'Sign in'}</button>
+        <button type="button" className="spt-link" onClick={() => { setMode('signup'); setErr(''); }}>New school or centre? Register</button>
+      </form>
+    );
+  }
   return (
-    <form className="spt-card spt-gate" onSubmit={submit}>
-      <h2>{mode === 'login' ? 'Sign in to your school' : 'Create your school account'}</h2>
-      <p>{mode === 'login' ? 'Use the email you registered with.' : 'For school admins and teachers. Free trial, no card needed.'}</p>
-      {mode === 'signup' && <input placeholder="Your full name" value={f.name} onChange={set('name')} autoComplete="name" />}
-      <input type="email" placeholder="Email" value={f.email} onChange={set('email')} autoComplete="email" />
-      <input type="password" placeholder="Password (8+ characters)" value={f.password} onChange={set('password')} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} />
-      {err && <div className="spt-err">{err}</div>}
-      <button className="spt-btn" disabled={busy}>{busy ? 'Please wait…' : mode === 'login' ? 'Sign in' : 'Create account'}</button>
-      <button type="button" className="spt-link" onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setErr(''); }}>{mode === 'login' ? 'New school? Create an account' : 'I already have an account'}</button>
+    <form className="spt-card spt-gate wide" onSubmit={submit} noValidate>
+      <h2>Register your {word}</h2>
+      <p>Free trial, no card needed. Takes about two minutes. You will manage classes, students and results from this account.</p>
+      <KindToggle kind={kind} setKind={setKind} />
+      <h4>About you</h4>
+      <label className="spt-lbl">Your full name<input placeholder="e.g. Ngozi Adeyemi" value={f.contact_name} maxLength={80} onChange={set('contact_name')} autoComplete="name" /></label>
+      <label className="spt-lbl">Email <em>(you will sign in with this)</em><input type="email" placeholder="you@example.com" value={f.email} onChange={set('email')} autoComplete="email" inputMode="email" /></label>
+      <label className="spt-lbl">Password<PasswordInput value={f.password} onChange={set('password')} autoComplete="new-password" placeholder="At least 8 characters" /></label>
+      <h4>About your {word}</h4>
+      <OrgFields f={f} set={set} setF={setF} kind={kind} />
+      <label className="spt-check spt-terms"><input type="checkbox" checked={f.agree} onChange={(e) => setF({ ...f, agree: e.target.checked })} /><span>I agree to the <a href="/terms" target="_blank" rel="noreferrer">Terms</a> and <a href="/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>.</span></label>
+      {err && <div className="spt-err" role="alert">{err}</div>}
+      <button className="spt-btn" disabled={busy}>{busy ? 'Creating your account…' : `Create ${word} account`}</button>
+      <button type="button" className="spt-link" onClick={() => { setMode('teacher'); setErr(''); }}>I am a teacher joining a school that is already here</button>
+      <button type="button" className="spt-link" onClick={() => { setMode('login'); setErr(''); }}>I already have an account</button>
     </form>
   );
 }
@@ -84,6 +142,43 @@ function Gate({ onDone }) {
 const Stat = ({ v, l }) => <div className="spt-stat"><b>{v}</b><span>{l}</span></div>;
 const Empty = ({ children }) => <p className="spt-empty">{children}</p>;
 function Msg({ m }) { return m ? <div className={m.ok ? 'spt-ok' : 'spt-err'}>{m.text}</div> : null; }
+
+/* ── contact details + "show us on the website" ───────────────────────────── */
+const SHOW_BADGE = { none: ['Not listed', 'no'], pending: ['Waiting for approval', 'warn'], approved: ['Showing on our site', 'ok'], rejected: ['Not approved', 'no'] };
+function ProfileCard({ sid, data, reload }) {
+  const sc = data.school, kind = sc.kind || 'school', word = kind === 'centre' ? 'centre' : 'school';
+  const [open, setOpen] = useState(false);
+  const [f, setF] = useState(() => ({ ...EMPTY_DETAILS, orgName: sc.name, contact_name: sc.contact_name || '', contact_role: sc.contact_role || '', phone: sc.phone || '', state: sc.state || '', city: sc.city || '', size_band: sc.size_band || '', showcase: sc.showcase_status === 'pending' || sc.showcase_status === 'approved', tagline: sc.showcase_tagline || '' }));
+  const [msg, setMsg] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
+  const [label, tone] = SHOW_BADGE[sc.showcase_status || 'none'];
+  const incomplete = !sc.phone || !sc.state || !sc.city;
+  const save = async () => {
+    const bad = validateDetails(f, kind); if (bad) return setMsg({ text: bad });
+    setBusy(true); setMsg(null);
+    const r = await api('school-profile-save', { school_id: sid, contact_name: f.contact_name, contact_role: f.contact_role, phone: f.phone, state: f.state, city: f.city, size_band: f.size_band, showcase: f.showcase, tagline: f.tagline });
+    setBusy(false);
+    if (!r.success) return setMsg({ text: r.error });
+    setMsg({ ok: true, text: r.showcase_status === 'pending' ? 'Saved. We will review your listing and it appears on the site once approved.' : 'Saved.' }); reload();
+  };
+  return (
+    <div className="spt-card spt-noprint">
+      <div className="spt-between"><div><h3>Details &amp; website listing</h3><small>Contact details for EliteScholars, and whether your {word} is shown on our site.</small></div><span className={`spt-badge ${tone}`}>{label}</span></div>
+      {incomplete && !open && <div className="spt-banner trial">Please add your phone number, state and town so we can reach you. <button className="spt-link" onClick={() => setOpen(true)}>Add details</button></div>}
+      {!open && <div className="spt-row"><button className="spt-ghost" onClick={() => setOpen(true)}>{incomplete ? 'Add details' : 'Edit details'}</button></div>}
+      {open && (
+        <>
+          <label className="spt-lbl">Contact person<input value={f.contact_name} maxLength={80} onChange={set('contact_name')} /></label>
+          <OrgFields f={f} set={set} setF={setF} kind={kind} hideName />
+          {sc.showcase_status === 'rejected' && <p className="spt-note">We could not list this {word} on the site. Contact EliteScholars if you think this is a mistake.</p>}
+          <Msg m={msg} />
+          <div className="spt-row"><button className="spt-btn" disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save'}</button><button className="spt-ghost" onClick={() => { setOpen(false); setMsg(null); }}>Close</button></div>
+        </>
+      )}
+    </div>
+  );
+}
 
 /* ── classes ──────────────────────────────────────────────────────────────── */
 function Classes({ sid, data, reload, isAdmin }) {
@@ -474,7 +569,8 @@ export default function SchoolPortal() {
   const [data, setData] = useState(null);
   const [tab, setTab] = useState('overview');
   const [err, setErr] = useState('');
-  const [newName, setNewName] = useState('');
+  const [det, setDet] = useState(() => ({ ...EMPTY_DETAILS, contact_name: ((getUser() || {}).name || '').replace(/ -$/, '') }));
+  const [busy, setBusy] = useState(false);
   const [newKind, setNewKind] = useState(() => { try { return new URLSearchParams(window.location.search).get('kind') === 'centre' ? 'centre' : 'school'; } catch { return 'school'; } });
   const me = useMemo(() => (getUser() || {}).email || '', [authed]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -495,7 +591,13 @@ export default function SchoolPortal() {
   }, [sid, me]);
   useEffect(() => { setData(null); reload(); }, [reload]);
 
-  const create = async () => { const r = await api('school-create', { name: newName, kind: newKind }); if (!r.success) return setErr(r.error); setNewName(''); setErr(''); setSid(r.school.id); loadMe(); };
+  const setD = (k) => (e) => setDet({ ...det, [k]: e.target.value });
+  const create = async () => {
+    const bad = validateDetails(det, newKind); if (bad) return setErr(bad);
+    setBusy(true); const r = await api('school-create', detailsPayload(det, newKind)); setBusy(false);
+    if (!r.success) return setErr(r.error);
+    setErr(''); setSid(r.school.id); loadMe();
+  };
   const logout = () => { try { localStorage.removeItem('ep_user'); } catch { /* ignore */ } setAuthed(false); setSchools(null); setSid(''); setData(null); };
   const isAdmin = data && data.role === 'admin';
   const isCentre = !!(data && data.school && data.school.kind === 'centre');
@@ -508,19 +610,17 @@ export default function SchoolPortal() {
         {authed && <button className="spt-ghost" onClick={logout}>Sign out</button>}
       </header>
       <main className="spt-main">
-        {!authed && <Gate onDone={() => setAuthed(true)} />}
+        {!authed && <Gate initialKind={newKind} onDone={(note, keep) => { if (keep) { setDet({ ...EMPTY_DETAILS, ...keep.f }); setNewKind(keep.kind); } if (note) setErr(note); setAuthed(true); }} />}
         {authed && !schools && <Empty>Loading…</Empty>}
         {authed && schools && !schools.length && (
-          <div className="spt-card spt-gate">
+          <div className="spt-card spt-gate wide">
             <h2>Set up your {newKind === 'centre' ? 'centre' : 'school'}</h2>
-            <div className="spt-periods two">
-              <button className={newKind === 'school' ? 'on' : ''} onClick={() => setNewKind('school')}>🏫 School<small>Runs by terms</small></button>
-              <button className={newKind === 'centre' ? 'on' : ''} onClick={() => setNewKind('centre')}>📖 Tutorial centre<small>JAMB / WAEC lessons, monthly</small></button>
-            </div>
+            <KindToggle kind={newKind} setKind={setNewKind} />
             <p>Create it to start your free trial. Teachers: your admin adds you by email, then you will see it here.</p>
-            <input placeholder={newKind === 'centre' ? 'Centre name' : 'School name'} value={newName} onChange={(e) => setNewName(e.target.value)} />
-            {err && <div className="spt-err">{err}</div>}
-            <button className="spt-btn" disabled={newName.trim().length < 3} onClick={create}>Create {newKind === 'centre' ? 'centre' : 'school'}</button>
+            <label className="spt-lbl">Your full name<input value={det.contact_name} maxLength={80} onChange={setD('contact_name')} autoComplete="name" /></label>
+            <OrgFields f={det} set={setD} setF={setDet} kind={newKind} />
+            {err && <div className="spt-err" role="alert">{err}</div>}
+            <button className="spt-btn" disabled={busy} onClick={create}>{busy ? 'Please wait…' : `Create ${newKind === 'centre' ? 'centre' : 'school'}`}</button>
           </div>
         )}
         {authed && schools && schools.length > 0 && (
@@ -537,6 +637,7 @@ export default function SchoolPortal() {
                     {isAdmin && data.plan && data.plan.status !== 'active' && <div className={`spt-banner ${data.plan.status}`}>{data.plan.status === 'trial' ? `Free trial: ${data.plan.daysLeft} day${data.plan.daysLeft === 1 ? '' : 's'} left.` : 'Your plan has ended. Renew to keep adding classes and students.'} <button className="spt-link" onClick={() => setTab('plan')}>See plan</button></div>}
                     <OverviewCharts sid={sid} setTab={setTab} />
                     {isAdmin && <LogoCard sid={sid} data={data} reload={reload} />}
+                    {isAdmin && <ProfileCard key={sid + (data.school.showcase_status || '')} sid={sid} data={data} reload={reload} />}
                     {isAdmin && isCentre && <CentreEarn />}
                     <div className="spt-card"><h3>Get started</h3><ol className="spt-steps">
                       {isAdmin && <li>Add your teachers in <button className="spt-link" onClick={() => setTab('staff')}>Teachers</button>.</li>}

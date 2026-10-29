@@ -1,0 +1,12 @@
+.shw { background: #fff; border: 1px solid rgba(124,58,237,.1); border-radius: 22px; padding: 24px 22px; box-shadow: 0 10px 28px rgba(46,16,101,.05); color: #1B1340; }
+.shw h2 { font-size: 20px; margin: 0 0 4px; } .shw-sub { margin: 0 0 14px; color: #6B6490; font-size: 14px; }
+.shw-grid { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.shw-card { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid #E5E0F7; border-radius: 16px; background: #FBFAFF; min-width: 0; }
+.shw-logo { width: 56px; height: 56px; border-radius: 14px; object-fit: contain; background: #fff; border: 1px solid #E5E0F7; flex: none; }
+.shw-ini { display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 18px; border: 0; }
+.shw-body { display: grid; gap: 2px; min-width: 0; } .shw-body b { font-size: 15px; overflow-wrap: anywhere; } .shw-body small { color: #6B6490; font-size: 12.5px; } .shw-tag { font-size: 12.5px; color: #4C4580; font-style: italic; }
+.shw-join { justify-content: center; border-style: dashed; background: #fff; } .shw-join a { display: grid; text-align: center; text-decoration: none; color: #6D28D9; gap: 2px; padding: 8px; } .shw-join small { color: #6D28D9; font-weight: 800; font-size: 13px; }
+.shw-empty p { margin: 4px 0 14px; color: #4C4580; font-size: 14.5px; line-height: 1.6; }
+.shw-btn { display: inline-block; background: linear-gradient(135deg, #7C3AED, #6D28D9); color: #fff; padding: 12px 18px; border-radius: 12px; font-weight: 800; font-size: 14.5px; text-decoration: none; }
+.shw-sec { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+@media (max-width: 520px) { .shw { padding: 18px 14px; } }

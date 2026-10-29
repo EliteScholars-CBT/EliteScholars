@@ -77,6 +77,64 @@ export function AdminPrices({ token, onAuthFail }) {
 
 const STATUS = { trial: ['Free trial', 'pending'], active: ['Active', 'active'], expired: ['Expired', 'ended'] };
 
+const SHOW_LABEL = { pending: ['Waiting', 'adm-chip pending'], approved: ['Showing', 'adm-chip active'], rejected: ['Declined', 'adm-chip rejected'], none: ['Not asked', 'adm-chip'] };
+const SIZE_TXT = { 'under-50': 'under 50', '50-200': '50–200', '200-500': '200–500', '500-1000': '500–1,000', '1000+': '1,000+' };
+// Every registered school/centre with the details they gave, and their "show us on the website" request. Only approved ones appear publicly.
+function ShowcasePanel({ api }) {
+  const [rows, setRows] = useState(null);
+  const [filter, setFilter] = useState('pending');
+  const [msg, setMsg] = useState('');
+  const [err, setErr] = useState('');
+  const [busy, setBusy] = useState(false);
+  const load = useCallback(async () => { try { setRows((await api('showcase-list')).schools); setErr(''); } catch (e) { if (e.message !== 'auth') setErr(e.message); } }, [api]);
+  useEffect(() => { load(); }, [load]);
+  const set = async (id, status, ok) => { setBusy(true); setErr(''); setMsg(''); try { await api('showcase-set', { method: 'POST', body: { id, status } }); setMsg(ok); await load(); } catch (e) { if (e.message !== 'auth') setErr(e.message); } setBusy(false); };
+  if (!rows) return <div className="adm-card">{err || 'Loading…'}</div>;
+  const n = (st) => rows.filter((r) => r.status === st).length;
+  const shown = rows.filter((r) => (filter === 'all' ? true : filter === 'none' ? r.status === 'none' || r.status === 'rejected' : r.status === filter));
+  const tabs = [['pending', `Waiting (${n('pending')})`], ['approved', `Showing (${n('approved')})`], ['none', 'Not listed'], ['all', `All (${rows.length})`]];
+  return (
+    <section className="adm-card">
+      <h2>Registered schools &amp; centres</h2>
+      <p className="adm-note" style={{ marginTop: 0 }}>Schools that tick “show us on the website” wait here. Nothing appears on the public pages until you tap <b>Approve</b>. The logo shown is the one they uploaded themselves.</p>
+      {msg && <div className="adm-ok">{msg}</div>}
+      {err && <div className="adm-error">{err}</div>}
+      <div className="adm-inline">{tabs.map(([k, l]) => <button key={k} className={`adm-small ${filter === k ? '' : 'adm-ghost'}`} onClick={() => setFilter(k)}>{l}</button>)}</div>
+      <div className="adm-list tight">
+        {shown.map((r) => {
+          const [lab, cls] = SHOW_LABEL[r.status] || SHOW_LABEL.none;
+          return (
+            <div key={r.id} className="adm-item open">
+              <div className="adm-item-head static">
+                <span className="adm-item-main"><b>{r.name}</b><small>{r.kind === 'centre' ? 'Tutorial centre' : 'School'} · {[r.city, r.state].filter(Boolean).join(', ') || 'no location yet'}{r.size ? ` · ${SIZE_TXT[r.size] || r.size} students` : ''}</small></span>
+                <span className={cls}>{lab}</span>
+              </div>
+              <div className="adm-detail">
+                <div className="adm-facts">
+                  <div><span>Contact</span><b>{r.contact || '—'}{r.role ? ` (${r.role})` : ''}</b></div>
+                  <div><span>Phone</span><b>{r.phone ? <a style={{ color: '#a78bfa' }} href={`https://wa.me/${r.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer">{r.phone}</a> : '—'}</b></div>
+                  <div><span>Email</span><b>{r.owner}</b></div>
+                  <div><span>Registered</span><b>{fmtD(r.createdAt)}</b></div>
+                </div>
+                {r.tagline && <p className="adm-note">Their line: “{r.tagline}”</p>}
+                {r.status !== 'none' && !r.hasLogo && <p className="adm-note">No logo uploaded yet, so initials will show.</p>}
+                <div className="adm-inline">
+                  {r.status !== 'approved' && r.status !== 'none' && <button className="adm-small" disabled={busy} onClick={() => set(r.id, 'approved', 'Approved. It is on the site now.')}>Approve</button>}
+                  {r.status === 'pending' && <button className="adm-small adm-danger" disabled={busy} onClick={() => set(r.id, 'rejected', 'Declined.')}>Decline</button>}
+                  {r.status === 'approved' && <button className="adm-small adm-danger" disabled={busy} onClick={() => { if (window.confirm('Remove this from the website?')) set(r.id, 'rejected', 'Removed from the site.'); }}>Remove from site</button>}
+                  {r.status === 'rejected' && <button className="adm-small adm-ghost" disabled={busy} onClick={() => set(r.id, 'pending', 'Back in the waiting list.')}>Reconsider</button>}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        {!shown.length && <p className="adm-empty">{filter === 'pending' ? 'No requests waiting.' : 'Nothing here yet.'}</p>}
+      </div>
+    </section>
+  );
+}
+
+
 export function AdminSchools({ token, onAuthFail }) {
   const api = useMemo(() => makeApi(token, onAuthFail), [token, onAuthFail]);
   const [d, setD] = useState(null);
@@ -104,6 +162,7 @@ export function AdminSchools({ token, onAuthFail }) {
       </section>
       {msg && <div className="adm-ok">{msg}</div>}
       {err && <div className="adm-error">{err}</div>}
+      <ShowcasePanel api={api} />
       <section className="adm-card">
         <h2>Schools — tap one to manage</h2>
         <p className="adm-note" style={{ marginTop: 0 }}>Trial length is <b>{d.settings.trialDays} days</b> (change it under Prices). After the trial a school can't add classes or assignments until you activate it here.</p>

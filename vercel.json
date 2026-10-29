@@ -306,6 +306,14 @@
       "destination": "/api/data?route=site/school-info"
     },
     {
+      "source": "/api/site/showcase",
+      "destination": "/api/data?route=site/showcase"
+    },
+    {
+      "source": "/api/site/showcase-logo",
+      "destination": "/api/data?route=site/showcase-logo"
+    },
+    {
       "source": "/api/site/school-demo",
       "destination": "/api/data?route=site/school-demo"
     },
@@ -468,6 +476,14 @@
     {
       "source": "/api/admin/school-settings",
       "destination": "/api/data?route=admin/school-settings"
+    },
+    {
+      "source": "/api/admin/showcase-list",
+      "destination": "/api/data?route=admin/showcase-list"
+    },
+    {
+      "source": "/api/admin/showcase-set",
+      "destination": "/api/data?route=admin/showcase-set"
     },
     {
       "source": "/api/admin/school-account",

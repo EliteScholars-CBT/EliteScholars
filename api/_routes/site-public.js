@@ -1,6 +1,8 @@
 // Public (no login) endpoints for the marketing pages.
 //   GET/POST /api/site/school-info  -> live school plan: trial days + price tiers
 //   GET      /api/site/config       -> ad settings (what the blog and the app should show)
+//   GET      /api/site/showcase     ?kind=school|centre  -> schools & centres the owner has approved for the site
+//   GET      /api/site/showcase-logo?id=<school id>        -> that school's own logo (approved ones only)
 //   POST     /api/site/school-demo  { name, school, phone, email, students, message } -> emails the admin
 import { sendOk, sendErr, sendMethodNotAllowed, setCors, readBody } from "../_helpers/response.js";
 import { rateLimitOk } from "../_helpers/guard.js";
@@ -102,6 +104,29 @@ export default async function handler(req, res) {
     if (!m) return res.status(404).end();
     res.setHeader("Content-Type", m[1]);
     res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+    return res.status(200).send(Buffer.from(m[2], "base64"));
+  }
+
+  // Schools and centres that chose "show us on the site" AND were approved by the owner in Admin.
+  if (op === "showcase") {
+    res.setHeader("Cache-Control", "public, max-age=120, s-maxage=300, stale-while-revalidate=600");
+    const sb = getSupabase();
+    if (!sb) return sendOk(res, { items: [] });
+    const kind = String(req.query?.kind || "");
+    let q = sb.from("schools").select("id,name,kind,state,city,showcase_tagline,logo,showcase_at").eq("showcase_status", "approved").order("showcase_at", { ascending: false }).limit(60);
+    if (kind === "school" || kind === "centre") q = q.eq("kind", kind);
+    const { data } = await q;
+    return sendOk(res, { items: (data || []).map((s) => ({ id: s.id, name: s.name, kind: s.kind || "school", state: s.state || "", city: s.city || "", tagline: s.showcase_tagline || "", hasLogo: !!s.logo })) });
+  }
+  if (op === "showcase-logo") {
+    const sb = getSupabase();
+    const id = String(req.query?.id || "");
+    if (!sb || !/^[0-9a-f-]{36}$/i.test(id)) return res.status(404).end();
+    const { data: s } = await sb.from("schools").select("logo,showcase_status").eq("id", id).maybeSingle();
+    const m = s && s.showcase_status === "approved" && typeof s.logo === "string" ? s.logo.match(/^data:(image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/=]+)$/) : null;
+    if (!m) return res.status(404).end();
+    res.setHeader("Content-Type", m[1]);
+    res.setHeader("Cache-Control", "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800");
     return res.status(200).send(Buffer.from(m[2], "base64"));
   }
 
