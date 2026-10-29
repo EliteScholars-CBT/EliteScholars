@@ -25,6 +25,8 @@ async function call(path, { method = 'GET', token, body } = {}) {
 export default function Partner() {
   const [token, setToken] = useState(() => { try { return localStorage.getItem(TOKEN_KEY) || ''; } catch { return ''; } });
   const [mode, setMode] = useState('signup');
+  const [trial, setTrial] = useState({ school: 0, centre: 0 }); // trial days for the schools/centres cards (public info)
+  useEffect(() => { let off = false; fetch('/api/site/school-info').then((r) => r.json()).then((j) => { if (!off && j && j.success) setTrial({ school: Number(j.trialDays) || 0, centre: Number(j.centre && j.centre.trialDays) || 0 }); }).catch(() => {}); return () => { off = true; }; }, []);
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '' });
   useReveal('.pt-sec > h2, .pt-sec > p, .pt-steps > div, .pt-grid > div, .pt-faq > div, .pt-calc, .pt-form', token);
   const [busy, setBusy] = useState(false);
@@ -90,6 +92,7 @@ export default function Partner() {
       ['How do I get paid?', `Your commission shows in your dashboard as students pay. Once you reach ${fmtNaira(10000)} you request a payout and we send it to your Nigerian bank account.`],
       ['How are referrals tracked?', 'Every partner gets a personal link. When a student opens it and signs up, they are tied to you, even if they pay a few days later.'],
       ['Who is this for?', 'Social media pages, WhatsApp and Telegram group admins, teachers, school clubs, student leaders, tutors and anyone with students around them.'],
+      ['Do I earn from schools too?', `Yes. Share your school link with principals, proprietors and teachers. When their school or tutorial centre pays for a plan you earn ${rate}% of every payment.`],
       ['What do students get?', 'JAMB, WAEC, NECO and GST practice, CBT mock exams, study notes, 20+ games, squads and challenges. Free to start, with Pro for no limits.'],
     ];
     return (
@@ -133,6 +136,28 @@ export default function Partner() {
             <div><b>🔗 Tracked links</b><span>Add a tag for each place you post to learn which one brings the most students.</span></div>
             <div><b>💸 Real payouts</b><span>Request a payout to your Nigerian bank account once you pass the minimum.</span></div>
           </div>
+        </section>
+
+        <section className="pt-sec">
+          <h2>Also earn from schools and tutorial centres</h2>
+          <p className="pt-muted">Your link works for institutions too. When a school or centre you introduced pays for its plan, you earn <b>{rate}%</b> of what they pay, on every payment.</p>
+          <div className="pt-inst">
+            <a className="pt-inst-card" href="/school">
+              <span className="pt-inst-ico" aria-hidden="true">🏫</span>
+              <b>Schools</b>
+              <span>Teachers create classes, set assignments and notices, and see every student's results in one dashboard. Students keep using the full app for CBT, Learn mode, flashcards and games.</span>
+              <small>{trial.school ? `${trial.school}-day free trial` : 'Free trial to start'} · priced by number of students</small>
+              <em className="pt-inst-go">Read full details <i aria-hidden="true">→</i></em>
+            </a>
+            <a className="pt-inst-card" href="/centre">
+              <span className="pt-inst-ico" aria-hidden="true">📚</span>
+              <b>Tutorial centres</b>
+              <span>Set assignments and practice for your learners, track who is improving, and show parents real progress.</span>
+              <small>{trial.centre ? `${trial.centre}-day free trial` : 'Free trial to start'} · simple plans sized for centres</small>
+              <em className="pt-inst-go">Read full details <i aria-hidden="true">→</i></em>
+            </a>
+          </div>
+          <p className="pt-muted pt-inst-note">Once you are approved, your dashboard gives you a ready link for schools: <b>elitescholars.site/school?ref=YOURCODE</b></p>
         </section>
 
         <section className="pt-sec">
@@ -224,6 +249,9 @@ export default function Partner() {
             <h3 style={{ margin: '14px 0 6px' }}>Your link for schools</h3>
             <div className="adm-linkbox"><span>{`https://elitescholars.site/school?ref=${p.code}`}</span><button className="adm-small" onClick={() => { copy(`https://elitescholars.site/school?ref=${p.code}`); setInfo('School link copied.'); }}>Copy</button></div>
             <p className="adm-note">Share this with school owners, principals and teachers. When a school pays for its plan you earn <b>{p.rate}%</b> of what they pay, on every payment. Your normal link above also works: schools that sign up through either are credited to you.</p>
+            <h3 style={{ margin: '14px 0 6px' }}>Your link for tutorial centres</h3>
+            <div className="adm-linkbox"><span>{`https://elitescholars.site/centre?ref=${p.code}`}</span><button className="adm-small" onClick={() => { copy(`https://elitescholars.site/centre?ref=${p.code}`); setInfo('Centre link copied.'); }}>Copy</button></div>
+            <p className="adm-note">Share this with tutorial centre owners and lesson-teachers. Centres that sign up through it are credited to you, and you earn <b>{p.rate}%</b> of every payment they make. <a href="/school" target="_blank" rel="noreferrer">Read about schools →</a> · <a href="/centre" target="_blank" rel="noreferrer">Read about centres →</a></p>
             <p className="adm-note">You earn <b>{p.rate}%</b> of every Pro payment from students who join through your link, about <b>{fmtNaira(perSale)}</b> on a {fmtNaira(PREMIUM_PRICE)} plan. Your code is <b>{p.code}</b>. The link remembers a visitor for 60 days.</p>
           </section>
 

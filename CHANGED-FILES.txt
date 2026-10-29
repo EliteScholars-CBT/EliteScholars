@@ -1,11 +1,14 @@
-EliteScholars - Update 10 + 11 (merged, only new/changed files; question-pool fix NOT included)
+EliteScholars - Updates 10 + 11 + 12 (everything in one zip; only new/changed files; question-pool fix NOT included)
 
-UPDATE 10 - school/centre signup + admin-approved showcase (api/*, SchoolPortal.js, Landing.js, AdminPrices.js, SchoolSignupFields.js, SchoolShowcase.js, showcase.css, schoolportal.css, vercel.json, supabase/schema.sql)
-UPDATE 11 - "The student side" section on /school and /centre. Uses the REAL app screenshots already on the site (/landing/m-quiz, m-lesson, m-flash, m-games .webp) in the same phone frame, and the real LandingGamePreview for games. Nothing invented.
-  NEW:     src/components/StudentTour.js, src/styles/studenttour.css
-  CHANGED: src/pages/AudienceLanding.js (contains BOTH updates; use this version)
-  (AudienceLanding also imports ../styles/landing2.css, which the landing page already uses.)
+UPDATE 10 - school/centre signup + admin-approved showcase:
+  api/_helpers/schoolProfile.js (NEW), api/_routes/school-portal.js, api/_routes/site-public.js, api/_routes/admin-ops.js, api/data.js, vercel.json,
+  supabase/schema.sql, src/pages/SchoolPortal.js, src/pages/Landing.js, src/components/AdminPrices.js,
+  src/components/SchoolSignupFields.js (NEW), src/components/SchoolShowcase.js (NEW), src/styles/showcase.css (NEW), src/styles/schoolportal.css
+UPDATE 11 - student side on /school and /centre (real app screenshots + real game preview):
+  src/components/StudentTour.js (NEW), src/styles/studenttour.css (NEW), src/pages/AudienceLanding.js (contains updates 10 and 11)
+UPDATE 12 - /partner: schools and centres cards with "Read full details" arrows, FAQ entry, copyable centre link in the partner dashboard:
+  src/pages/Partner.js, src/styles/partner.css
 
-Routes/env: no new env vars. Update-10 routes are in api/data.js + vercel.json (replace both).
+Env vars: none new.
 SQL: supabase/schema.sql is the FULL latest schema (idempotent). Run the whole file, or only the "update 10" block at the end, in the Supabase SQL editor BEFORE deploying.
-Files to delete: none. (If you already pasted the earlier merged zip from today, SiteMocks.js and sitemocks.css are back to your original versions; keep whatever you had before.)
+Files to delete: none.
