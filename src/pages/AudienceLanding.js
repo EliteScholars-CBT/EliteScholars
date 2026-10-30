@@ -102,7 +102,7 @@ export default function AudienceLanding({ kind = 'school' }) {
 
       <Scene flip eyebrow="Tests, quizzes & mock exams" title="Students take them right in the app"
         text="Pick a subject and we use the EliteScholars question bank (selected by default). Timed, marked automatically and ranked, with a score your teacher sees at once."
-        bullets={['JAMB, WAEC, NECO and GST questions', 'Mock exams for practice, tests and quick quizzes', 'First attempt counts, so results are fair']}>
+        bullets={['JAMB, WAEC and NECO questions', 'Mock exams for practice, tests and quick quizzes', 'First attempt counts, so results are fair']}>
         <QuizPhone title={kind === 'centre' ? 'JAMB Mock 3 · Biology' : 'Biology Test · SS3'} />
       </Scene>
 

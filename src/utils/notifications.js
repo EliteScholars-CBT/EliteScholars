@@ -4,6 +4,10 @@ export async function registerSW() {
   if (!('serviceWorker' in navigator)) return null;
   try {
     const reg = await navigator.serviceWorker.register(SW_URL);
+    // Every launch: look for a new service worker, and let it top up the offline copy of the app (new deploys add new files).
+    try { reg.update(); } catch { /* ignore */ }
+    const topUp = () => { try { if (navigator.onLine !== false && reg.active) reg.active.postMessage({ type: 'PRECACHE' }); } catch { /* ignore */ } };
+    if ('requestIdleCallback' in window) window.requestIdleCallback(topUp, { timeout: 8000 }); else setTimeout(topUp, 4000);
     return reg;
   } catch (err) {
     console.warn('[SW] Registration failed:', err);
@@ -63,7 +67,7 @@ export function cancelDailyReminder() {
 export function listenForSWMessages(callback) {
   if (!('serviceWorker' in navigator)) return () => {};
   const handler = (event) => {
-    if (event.data?.type === 'NOTIFICATION_CLICK') callback(event.data);
+    if (event.data?.type === 'NOTIFICATION_CLICK' || event.data?.type === 'PUSH_CHANGED') callback(event.data);
   };
   navigator.serviceWorker.addEventListener('message', handler);
   return () => navigator.serviceWorker.removeEventListener('message', handler);

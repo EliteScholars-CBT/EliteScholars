@@ -4,7 +4,7 @@ import LandingGamePreview from './LandingGamePreview';
 // "What your students get": the SAME real app screenshots and the same animated phone frame used on the
 // main landing page (/landing/m-*.webp, l2-phone, LandingGamePreview), so what visitors see is the real app.
 const TABS = [
-  { key: 'quiz', img: '/landing/m-quiz.webp', title: 'CBT practice', desc: 'Timed, exam-style questions for JAMB, WAEC, NECO and GST, with 50/50 and hint lifelines and a quick take after every answer.' },
+  { key: 'quiz', img: '/landing/m-quiz.webp', title: 'CBT practice', desc: 'Timed, exam-style questions for JAMB, WAEC and NECO, with 50/50 and hint lifelines and a quick take after every answer.' },
   { key: 'lesson', img: '/landing/m-lesson.webp', title: 'Learn mode', desc: 'Bite-sized notes, tables and tips for every topic. Tap Read and a voice reads the lesson aloud.' },
   { key: 'flash', img: '/landing/m-flash.webp', title: 'Flashcards', desc: 'Flip, mark what you know, and revise only what you need. Perfect for the night before an exam.' },
   { key: 'games', img: '/landing/m-games.webp', title: 'Games', desc: 'Word Scramble, Memory Match, Colour Memory and more. Revision that feels like play, and earns XP.' },

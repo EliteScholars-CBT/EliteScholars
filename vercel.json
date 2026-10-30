@@ -286,6 +286,18 @@
       "destination": "/api/data?route=report/submit"
     },
     {
+      "source": "/api/report/crash",
+      "destination": "/api/data?route=report/crash"
+    },
+    {
+      "source": "/api/admin/crash-list",
+      "destination": "/api/data?route=admin/crash-list"
+    },
+    {
+      "source": "/api/admin/crash-action",
+      "destination": "/api/data?route=admin/crash-action"
+    },
+    {
       "source": "/api/admin/reports",
       "destination": "/api/data?route=admin/reports"
     },

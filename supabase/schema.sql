@@ -710,3 +710,24 @@ alter table schools add constraint schools_showcase_status_check check (showcase
 alter table schools add column if not exists showcase_tagline text;          -- one short line shown under the name
 alter table schools add column if not exists showcase_at      timestamptz;   -- when you approved it
 create index if not exists idx_schools_showcase on schools (showcase_status, showcase_at desc);
+
+
+-- ── update 14: app crash reports (shown in Admin > Reports > App crashes) ──
+create table if not exists crash_reports (
+  id              uuid primary key default gen_random_uuid(),
+  email           text,
+  name            text default '',
+  verified        boolean not null default false,   -- true when the report carried a valid login session
+  message         text not null,
+  stack           text default '',
+  component_stack text default '',
+  screen          text default '',
+  url             text default '',
+  device          jsonb not null default '{}'::jsonb,
+  app_version     text default '',
+  fp              text default '',                  -- groups the same crash together
+  status          text not null default 'open',
+  created_at      timestamptz not null default now()
+);
+create index if not exists idx_crash_reports_status on crash_reports (status, created_at desc);
+alter table crash_reports enable row level security;

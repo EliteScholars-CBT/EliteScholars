@@ -52,6 +52,13 @@ const STEPS = [
   { n: '03', title: 'Track your progress', desc: 'Watch your XP, streak and scores climb, and see exactly where you still need work.' },
 ];
 
+const PARTNER_STUDENT = [
+  { img: '/landing/m-quiz.webp', title: 'CBT practice', desc: 'Timed exam-style questions with instant explanations.' },
+  { img: '/landing/m-lesson.webp', title: 'Learn mode', desc: 'Clear notes, tables and tips, read aloud on tap.' },
+  { img: '/landing/m-flash.webp', title: 'Flashcards', desc: 'Flip, mark what you know, revise what you need.' },
+  { img: '/landing/m-games.webp', title: '20+ games', desc: 'Learning that feels like play, with XP and ranks.' },
+];
+
 const EXAMS = ['WAEC', 'NECO', 'JAMB', 'GST'];
 
 const MARQUEE_WORDS = ['English', 'Mathematics', 'Biology', 'Chemistry', 'Physics', 'Economics', 'Government', 'Literature', 'Accounting', 'Geography', 'Commerce', 'Further Maths', 'CRS', 'Visual Arts', 'Food & Nutrition', 'Marketing', 'Agric Science', 'Citizenship', 'GST'];
@@ -99,7 +106,7 @@ const SCHOOL_POINTS = [
   'Post assignments with instructions and pictures. Every student gets a notification.',
   'See each student\'s average score, streak, last active day and weakest subjects.',
   'Know who has finished each assignment, at a glance.',
-  'Free for teachers and students. Works with JAMB, WAEC, NECO and GST practice.',
+  'Free for teachers and students. Works with JAMB, WAEC and NECO practice.',
 ];
 
 const PARENT_POINTS = [
@@ -328,6 +335,7 @@ export default function Landing() {
             <a href="#try">Try it</a>
             <a href="#benefits">Benefits</a>
             <a href="#schools">Schools</a>
+            <a href="/centre">Tutorial centres</a>
             <a href="#parents">Parents</a>
             <a href="#faq">FAQ</a>
             <a href="/blog/">Blog</a>
@@ -483,6 +491,19 @@ export default function Landing() {
             <a className="land-btn-primary" href="/partner?src=landing-banner">Become a partner <Icon name="arrowRight" size={17} /></a>
           </div>
         </Reveal>
+        <Reveal className="l5-pstu">
+          <h3>What the students you bring get</h3>
+          <p>Partners are sharing a real, loved study app. This is what your students use every day.</p>
+          <div className="l5-pstu-grid">
+            {PARTNER_STUDENT.map((f) => (
+              <div key={f.title} className="l5-pstu-item">
+                <PhoneFrame className="l5-pstu-phone" src={f.img} alt={f.title} />
+                <b>{f.title}</b>
+                <span>{f.desc}</span>
+              </div>
+            ))}
+          </div>
+        </Reveal>
       </section>
 
       {/* ── Try it ──────────────────────────────────────────────────────── */}
@@ -543,7 +564,7 @@ export default function Landing() {
             <ul className="l3-list">
               {SCHOOL_POINTS.map((t) => <li key={t}><Icon name="checkCircle" size={18} /><span>{t}</span></li>)}
             </ul>
-            <button className="land-btn-primary" onClick={() => goApp('schools')}>Set up your class <Icon name="arrowRight" size={17} /></button>
+            <a className="land-btn-primary" href="/school">See how schools use it <Icon name="arrowRight" size={17} /></a>
             <p className="l3-note">In the app: Profile, Settings, School &amp; Classes, I'm a teacher.</p>
           </Reveal>
           <Reveal className="l3-phones">
@@ -689,6 +710,7 @@ export default function Landing() {
           </div>
           <div className="land-footer-links">
             <a href="/school">For schools</a>
+            <a href="/centre">For tutorial centres</a>
             <a href="/blog/">Blog</a>
             <a href="/app/about">About</a>
             <a href="/app/terms">Terms</a>

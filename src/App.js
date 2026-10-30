@@ -37,6 +37,8 @@ import Leaderboard from './components/Leaderboard';
 
 import Challenges from './components/Challenges';
 import ScreenGuard from './components/ErrorBoundary';
+import CrashScreen from './components/CrashScreen';
+import { flushCrashQueue } from './utils/crashReport';
 import TipsHost from './components/TipsHost';
 import GuideHost from './components/GuideHost';
 
@@ -87,6 +89,7 @@ import {
 } from './utils/premium';
 
 import { registerSW, scheduleDailyReminder, listenForSWMessages } from './utils/notifications';
+import { syncPush } from './utils/push';
 import NotificationPrompt from './components/NotificationPrompt';
 import { markOpenChat, markOpenSquad, wantsChat, captureChatParam, captureSchoolParam, wantsSchool, clearSchoolWish, wantsShop, clearShopWish } from './utils/chatLink';
 
@@ -143,55 +146,15 @@ import appLogo from './assets/elite-scholars-logo.png';
 
 
 class ErrorBoundary extends React.Component {
-
-  constructor(props) {
-
-    super(props);
-
-    this.state = { hasError: false, error: null };
-
-  }
-
-  static getDerivedStateFromError(error) {
-
-    return { hasError: true, error };
-
-  }
-
-  componentDidCatch(error, info) {
-
-    console.error('App crashed:', error, info);
-
-  }
-
+  constructor(props) { super(props); this.state = { hasError: false, error: null, info: null }; }
+  static getDerivedStateFromError(error) { return { hasError: true, error }; }
+  componentDidCatch(error, info) { console.error('App crashed:', error, info); this.setState({ info }); }
   render() {
-
     if (this.state.hasError) {
-
-      return (
-
-        <div style={{ color: 'white', background: '#1B0A47', padding: 24, minHeight: '100vh' }}>
-
-          <h2>Something went wrong</h2>
-
-          <pre style={{ fontSize: 12 }}>{this.state.error?.message}</pre>
-
-          <button onClick={() => this.setState({ hasError: false, error: null })}>
-
-            Retry
-
-          </button>
-
-        </div>
-
-      );
-
+      return <CrashScreen full error={this.state.error} info={this.state.info} onRetry={() => this.setState({ hasError: false, error: null, info: null })} />;
     }
-
     return this.props.children;
-
   }
-
 }
 
 
@@ -327,10 +290,14 @@ function debouncedSync(payload, delay = 5000) {
 export default function App() {
 
   const [screen, setScreen] = useState('splash');
+  useEffect(() => { window.__esScreen = screen; }, [screen]);
+  useEffect(() => { flushCrashQueue(); }, []);
 
   const [name, setName] = useState('');
 
   const [email, setEmail] = useState('');
+  // Signed-in students: quietly repair the notification subscription each time the app opens (it can expire or go stale).
+  useEffect(() => { if (!email) return undefined; const t = setTimeout(() => { syncPush(); }, 4000); return () => clearTimeout(t); }, [email]);
 
   const [username, setUsername] = useState('');
 
@@ -501,6 +468,7 @@ export default function App() {
     const unsub = listenForSWMessages((data) => {
 
       const kind = (data && data.data && data.data.type) || data.type;
+      if (data && data.type === 'PUSH_CHANGED') { syncPush(); return; }
       if (kind === 'challenge') setScreen('challenges');
       if (kind === 'squad-chat') { markOpenChat(); setScreen('leaderboard'); }
 

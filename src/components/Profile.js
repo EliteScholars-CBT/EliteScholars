@@ -2,7 +2,7 @@ import PremiumModal from './PremiumModal';
 import { getPremiumData, cancelPremium } from '../utils/premium';
 import EliteBadge from './EliteBadge';
 import ShareSheet from './ShareSheet';
-import { pushStatus, enablePush, disablePush } from '../utils/push';
+import { pushStatus, enablePush, disablePush, lastPushError } from '../utils/push';
 import { isDataSaver, setDataSaver } from '../utils/dataSaver';
 import React, { useState, useEffect, useRef } from 'react';
 import { installApp, canInstallNow, onInstallChange, isStandaloneApp, isIosDevice } from '../utils/installApp';
@@ -49,6 +49,7 @@ export default function Profile({
   const premData = getPremiumData(email);
   const navigate = useNavigate();
   const [pushState, setPushState] = useState('off');
+  const [pushNote, setPushNote] = useState('');
   const [saver, setSaver] = useState(isDataSaver());
   const [canInst, setCanInst] = useState(canInstallNow());
   const [instHelp, setInstHelp] = useState(false);
@@ -60,7 +61,12 @@ export default function Profile({
   useEffect(() => { pushStatus().then(setPushState); }, []);
   const togglePush = async () => {
     if (pushState === 'on') setPushState(await disablePush());
-    else setPushState(await enablePush());
+    else {
+      const r = await enablePush();
+      setPushState(r === 'unavailable' ? 'failed' : r);
+      if (r === 'unavailable') setPushNote(lastPushError === 'offline' ? 'No internet connection. Connect and try again.' : lastPushError === 'signed-out' ? 'Please sign in again, then try once more.' : lastPushError === 'server-not-configured' ? 'Notifications are not switched on for the app yet. Please try again later.' : 'Could not turn notifications on. Check your connection and tap again. If it keeps failing, restart the app once.');
+      else setPushNote('');
+    }
   };
   const toggleSaver = () => { const v = !saver; setDataSaver(v); setSaver(v); };
   const { theme, toggleTheme } = useTheme();
@@ -455,18 +461,20 @@ export default function Profile({
               )}
 
               <div className="profile-stats-title" style={{ marginTop: 20 }}><EmojiIcon emoji="🔔" size="1.15em" /> Notifications</div>
-              <div className="settings-card" onClick={pushState === 'unsupported' || pushState === 'blocked' ? undefined : togglePush} style={{ cursor: 'pointer' }}>
+              <div className="settings-card" onClick={pushState === 'unsupported' || pushState === 'blocked' || pushState === 'homescreen' ? undefined : togglePush} style={{ cursor: 'pointer' }}>
                 <div className="settings-item">
                   <div className="settings-icon">🔥</div>
                   <div className="settings-info">
                     <div className="settings-name">Streak &amp; assignment alerts</div>
                     <div className="settings-desc">
-                      {pushState === 'unsupported' ? 'Not supported on this browser. Install the app to your home screen.'
+                      {pushNote ? pushNote
+                        : pushState === 'homescreen' ? 'On iPhone, first add EliteScholars to your Home Screen (Share, then Add to Home Screen), then open it from there to turn this on.'
+                        : pushState === 'unsupported' ? 'Not supported on this browser. Install the app to your home screen.'
                         : pushState === 'blocked' ? 'Blocked. Allow notifications for EliteScholars in your browser settings.'
                         : 'A daily nudge before your streak ends, and alerts when a teacher sets homework'}
                     </div>
                   </div>
-                  {pushState !== 'unsupported' && pushState !== 'blocked' && (
+                  {pushState !== 'unsupported' && pushState !== 'blocked' && pushState !== 'homescreen' && (
                     <div className="settings-toggle"><div className={`toggle-switch ${pushState === 'on' ? 'active' : ''}`}><div className="toggle-slider" /></div></div>
                   )}
                 </div>

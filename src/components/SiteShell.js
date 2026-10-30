@@ -29,6 +29,8 @@ export default function SiteShell({ eyebrow, title, intro, updated, wide, childr
           <div className="land-nav-links">
             <a href="/#tour">Features</a>
             <a href="/#benefits">Benefits</a>
+            <a href="/school">Schools</a>
+            <a href="/centre">Tutorial centres</a>
             <a href="/blog/">Blog</a>
             <a href="/app/about">About</a>
           </div>

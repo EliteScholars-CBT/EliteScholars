@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { enablePush, pushSupported } from '../utils/push';
+import { enablePush, pushSupported, lastPushError } from '../utils/push';
 import { scheduleDailyReminder } from '../utils/notifications';
 import Icon from './Icon';
 import { trackNotif } from '../utils/pushTrack';
@@ -31,7 +31,7 @@ export default function NotificationPrompt({ active, name, reminderTimes }) {
     trackNotif('notif_prompt_allow_tapped');
     const r = await enablePush();
     setBusy(false);
-    trackNotif(r === 'on' ? 'notif_enabled' : r === 'blocked' ? 'notif_blocked' : 'notif_failed');
+    trackNotif(r === 'on' ? 'notif_enabled' : r === 'blocked' ? 'notif_blocked' : 'notif_failed', r === 'on' || r === 'blocked' ? undefined : { why: String(lastPushError || r).slice(0, 80), ua: String(navigator.userAgent || '').slice(0, 160) });
     if (r === 'on') {
       try { scheduleDailyReminder(reminderTimes || [18], name || 'Scholar'); } catch { /* ignore */ }
       write({ n: 99, at: Date.now() });
@@ -39,7 +39,7 @@ export default function NotificationPrompt({ active, name, reminderTimes }) {
     } else if (r === 'blocked') {
       setMsg('Notifications are blocked. You can allow them in your browser settings for EliteScholars.');
       write({ n: 99, at: Date.now() });
-    } else { setMsg('Could not turn them on right now. Try again later in Me → Settings.'); }
+    } else { setMsg(lastPushError === 'offline' ? 'No internet connection. Connect and try again.' : lastPushError === 'signed-out' ? 'Please sign in again, then turn notifications on.' : 'Could not turn them on right now. Check your connection and try again, or use Me → Settings.'); }
   };
 
   const WHY = [

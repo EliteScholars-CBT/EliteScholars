@@ -1,22 +1,32 @@
-EliteScholars - Update 13: game result screen, "Legendary" fix, CBT back, share-for-more-uses (admin controlled)
+EliteScholars - Update 14: GST removed from school/centre, landing + partner changes, crash reporting, notification fix, offline app
 
-CHANGED
-  src/components/GameMode.js      result screen: compact header, pinned small "Play again" / "Exit"; grading no longer says "Legendary!" every time
-  src/components/GameBoard.js     ranks 4+ in their own scrolling list (podium stays for the top 3)
-  src/components/Avatar.js        BUG FIX: about half of players had a blank avatar on the board (negative bit-shift); now fixed
-  src/styles/gamemode.css         result screen v2 + scroll list styles
-  src/App.js                      CBT: Ready screen back, Quit and Result "home" now go to subject selection (exam type is kept) instead of the exam-type screen
-  src/components/FreeLimitGate.js "Share a group link, get +N more" on the daily-limit screens (topics / CBT / games)
-  src/utils/entitlement.js        share offer helpers
-  src/styles/premium.css          styles for the share offer
-  src/components/AdminAccess.js   NEW admin card "Share a group link to get more" (on/off, extra uses, times per day, wait seconds)
-  api/_helpers/access.js          shareBonus config + claims
-  api/_routes/entitlement.js      limits now include today's share bonus; new ops share-start / share-claim
-  api/_routes/admin-access.js     saves the share settings
-  api/data.js, vercel.json        register /api/entitlement/share-start and /share-claim
-                                  (these two files ALSO contain the update-10 routes - use these versions over the ones in the earlier zip)
+CONTENT
+  src/pages/AudienceLanding.js, src/components/StudentTour.js, src/pages/Landing.js
+      GST removed from the school/centre pages and the school section of the landing page.
+  src/pages/Landing.js
+      "Set up your class" is now "See how schools use it" and links to /school; "Tutorial centres" added to the nav and footer;
+      partnership banner now has "What the students you bring get" with the real app screenshots (CBT, Learn mode, Flashcards, Games).
+  src/styles/landing2.css     styles for that block
+  src/components/SiteShell.js "Schools" and "Tutorial centres" added to the nav on /about, /terms etc.
 
-ROUTES (new): POST /api/entitlement/share-start, POST /api/entitlement/share-claim
-ENV VARS: none.   SQL: none (uses the existing usage_counters table).
+CRASH REPORTS
+  src/components/CrashScreen.js (NEW)   friendly crash screen: Try again / Open the EliteScholars website / Reload
+  src/components/ErrorBoundary.js, src/App.js   both crash catchers now use it and report the crash
+  src/utils/crashReport.js (NEW)        collects full device info + who it was, sends it (queued if offline)
+  api/_routes/report.js                 new ops crash, crash-list, crash-action
+  src/components/AdminReports.js        Admin > Reports now has "Reported questions" and "App crashes" (grouped, with who + device)
+  api/data.js, vercel.json              routes /api/report/crash, /api/admin/crash-list, /api/admin/crash-action
+                                        (also contain the update-10 and update-13 routes: use these over earlier copies)
+  supabase/schema.sql                   FULL latest schema; new block "update 14" creates crash_reports
+
+NOTIFICATIONS
+  src/utils/push.js (rewritten), src/utils/notifications.js, src/components/NotificationPrompt.js, src/components/Profile.js, src/App.js, public/sw.js
+
+OFFLINE
+  public/sw.js   downloads the whole app after the first visit and serves it with no network (see notes)
+
+ROUTES (new): POST /api/report/crash, GET /api/admin/crash-list, POST /api/admin/crash-action
+ENV VARS: none new (push still needs VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY, which you already use)
+SQL: run supabase/schema.sql (or only the "update 14" block at the end) BEFORE deploying.
 FILES TO DELETE: none.
-Admin: Admin > Access > "Share a group link to get more". Defaults: ON, +3 per share, 1 time per day for each of topics/CBT/games, 20-second wait.
+NOTE: App.js here also contains the update-13 CBT back fix.
