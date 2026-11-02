@@ -56,3 +56,6 @@ PER-EXAM PRO PLANS (new)
   src/components/PremiumModal.js              pick JAMB / WAEC & NECO / GST, then 6 months or 1 year
   src/components/Shop.js                      the shop shows the three Pro plans with prices, ACTIVE badges and "add more time"
   src/components/Profile.js, src/utils/premium.js, src/pages/Partner.js   labels; partners' Prices tab lists every plan
+
+Shop Pro cards: src/components/Shop.js (copy), src/utils/proPlans.js (3 short feature lines), src/styles/shop.css (compact dark-glass cards, readable text)
+Flyers: public/partner-resources/*.png (12, real app screens)

@@ -766,3 +766,35 @@ body.dark-mode .shop-plans-trust {
 .shop-plan-cta--primary { background: linear-gradient(135deg, #FBBF24, #F59E0B); color: #3B1C00; font-weight: 900; font-size: 16px; border: 0; border-radius: 16px; padding: 14px; box-shadow: 0 8px 22px rgba(245,158,11,.4); }
 .shop-plans-trust { color: rgba(255,255,255,.7); }
 @media (min-width: 700px) { .shop-plan-features { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px; } }
+
+/* ── Compact, readable Pro cards (override: light-on-dark, no white-on-white) ── */
+.shop-plans-card { padding: 18px 14px 14px; }
+.shop-plans-card-title { font-size: 22px; }
+.shop-plans-card-sub { font-size: 13px; margin-top: 2px; }
+.shop-plans-grid { gap: 10px; }
+.shop-plans-grid .shop-plan-col:nth-child(3) { order: 0; }
+.shop-plan-col, .shop-plan-col--highlight {
+  order: 0; padding: 14px 14px 12px; gap: 9px; border-radius: 16px;
+  background: rgba(255,255,255,.10) !important; border: 1px solid rgba(255,255,255,.22) !important;
+  box-shadow: none; color: #fff;
+}
+.shop-plan-col--highlight { border-color: rgba(253,230,138,.75) !important; background: rgba(255,255,255,.16) !important; }
+.shop-plan-col-top { gap: 10px; align-items: flex-start; }
+.shop-plan-icon { font-size: 24px; }
+.shop-plan-name { font-size: 15px; color: #fff !important; }
+.shop-plan-price { flex-direction: row; flex-wrap: wrap; gap: 4px 12px; margin-top: 2px; }
+.shop-plan-price > span { display: inline !important; white-space: nowrap; }
+.shop-plan-amount { font-size: 20px !important; color: #FDE68A !important; }
+.shop-plan-currency { font-size: 13px; color: #FDE68A !important; }
+.shop-plan-period { font-size: 12px; color: rgba(255,255,255,.85) !important; }
+.shop-plan-save { margin-top: 4px; font-size: 11px; padding: 2px 9px; }
+.shop-plan-badge { top: -9px; right: 12px; font-size: 9px; padding: 2px 8px; }
+.shop-plan-features { display: flex !important; flex-direction: column; gap: 3px !important; grid-template-columns: none !important; }
+.shop-plan-feature { font-size: 12.5px; line-height: 1.3; color: rgba(255,255,255,.92) !important; }
+.shop-plan-check { color: #FDE68A !important; }
+.shop-plan-cta { padding: 10px 12px !important; font-size: 14px !important; border-radius: 12px; }
+.shop-plan-cta--primary { background: linear-gradient(135deg,#FBBF24,#F59E0B) !important; color: #3B1C00 !important; }
+.shop-plan-cta--secondary { background: rgba(255,255,255,.14) !important; color: #fff !important; border: 1px solid rgba(255,255,255,.4) !important; }
+.shop-plans-trust { font-size: 11.5px; margin-top: 10px; color: rgba(255,255,255,.75) !important; }
+body.dark-mode .shop-plan-col { background: rgba(255,255,255,.08) !important; }
+@media (min-width: 700px) { .shop-plan-features { display: flex !important; } }

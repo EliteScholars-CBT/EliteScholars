@@ -10,19 +10,19 @@ export const PRO_PRODUCTS = [
     scope: 'jamb', label: 'JAMB Pro', emoji: '🎯', color: '#FFC53D', glow: 'rgba(255,197,61,0.30)',
     pitch: 'Unlimited JAMB practice for a full year.',
     options: [{ id: 'jamb', period: '1 year', fallback: 3000 }],
-    features: ['Unlimited JAMB topics & CBT', 'All JAMB subjects & past questions', 'Unlimited Learn mode & flashcards', 'All games unlocked', 'Zero ads', 'Full offline access'],
+    features: ['Unlimited JAMB CBT & topics', 'Learn, flashcards & games', 'No ads · offline access'],
   },
   {
     scope: 'waec_neco', label: 'WAEC & NECO Pro', emoji: '📘', color: '#38BDF8', glow: 'rgba(56,189,248,0.28)',
     pitch: 'One plan covers both WAEC and NECO.',
     options: [{ id: 'waecneco6', period: '6 months', fallback: 5000 }, { id: 'waecneco12', period: '1 year', fallback: 8000 }],
-    features: ['Unlimited WAEC & NECO topics & CBT', 'All SS1–SS3 subjects & past questions', 'Unlimited Learn mode & flashcards', 'All games unlocked', 'Zero ads', 'Full offline access'],
+    features: ['Unlimited WAEC & NECO CBT', 'Learn, flashcards & games', 'No ads · offline access'],
   },
   {
     scope: 'gst', label: 'GST Pro', emoji: '🎓', color: '#A78BFA', glow: 'rgba(167,139,250,0.30)',
     pitch: 'Protect your CGPA. All GST courses, unlimited.',
     options: [{ id: 'gst6', period: '6 months', fallback: 5000 }, { id: 'gst12', period: '1 year', fallback: 8000 }],
-    features: ['Unlimited GST topics & CBT', 'All GST courses & past questions', 'Unlimited Learn mode & flashcards', 'GST games unlocked', 'Zero ads', 'Full offline access'],
+    features: ['Unlimited GST CBT & topics', 'Learn, flashcards & games', 'No ads · offline access'],
   },
 ];
 
