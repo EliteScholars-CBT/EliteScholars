@@ -30,6 +30,10 @@
       "destination": "/api/data?route=partner/password"
     },
     {
+      "source": "/api/partner/track",
+      "destination": "/api/data?route=partner/track"
+    },
+    {
       "source": "/api/admin/partners",
       "destination": "/api/data?route=admin/partners"
     },

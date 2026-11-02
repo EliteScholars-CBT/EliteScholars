@@ -20,7 +20,8 @@ import useSocialBar from './utils/useSocialBar';
 
 import AuthScreen from './components/AuthScreen';
 
-import { reserve, refreshEntitlement, isUnlimitedCached } from './utils/entitlement';
+import { PLAN_LABEL } from './utils/proPlans';
+import { reserve, refreshEntitlement, isUnlimitedCached, setActiveExam } from './utils/entitlement';
 import GameMode from './components/GameMode';
 
 import ExamTypeSelect from './components/ExamTypeSelect';
@@ -379,7 +380,7 @@ export default function App() {
 
   const [premiumPaid, setPremiumUser] = useState(false);
   const [entUnlimited, setEntUnlimited] = useState(false);
-  // Unlimited = paid Pro, a free trial, or a free-access gift from the admin.
+  // Unlimited = paid Pro for THIS exam (JAMB / WAEC+NECO / GST), old all-exams Pro, a free trial, or a free-access gift from the admin.
   const premiumUser = premiumPaid || entUnlimited;
 
   const [showLimitGate, setShowLimitGate] = useState(false);
@@ -669,18 +670,16 @@ export default function App() {
 
               // ── Sync pro status from server into localStorage ──────────
 
-              if (p.premiumPlan && p.premiumExpiresAt) {
-
-                syncPremiumFromServer(u.email, p.premiumPlan, p.premiumExpiresAt);
-
-                const expiresAt = new Date(p.premiumExpiresAt).getTime();
-
-                if (!isNaN(expiresAt) && Date.now() < expiresAt) {
-
-                  setPremiumUser(true);
-
+              // Old all-exams Pro (proAllUntil) keeps every exam. Per-exam Pro is handled by the entitlement check below.
+              {
+                const allUntil = p.proAllUntil !== undefined ? p.proAllUntil : p.premiumExpiresAt;
+                if (p.premiumPlan && allUntil) {
+                  syncPremiumFromServer(u.email, p.premiumPlan, allUntil);
+                  if (!isNaN(allUntil) && Date.now() < allUntil) setPremiumUser(true);
+                } else {
+                  syncPremiumFromServer(u.email, '', 0);
+                  setPremiumUser(false);
                 }
-
               }
 
 
@@ -908,14 +907,15 @@ export default function App() {
   // ── Trial / free-access / pro status from the server ───────────────────
   useEffect(() => {
     if (!email) { setEntUnlimited(false); return undefined; }
-    setEntUnlimited(isUnlimitedCached(email));
+    setActiveExam(examType);                       // the exam being studied decides which Pro applies
+    setEntUnlimited(isUnlimitedCached(email, examType));
     let alive = true;
     const refresh = () => refreshEntitlement(email).then((e) => { if (alive && e) setEntUnlimited(!!e.unlimited); });
     refresh();
     const onVis = () => { if (document.visibilityState === 'visible') refresh(); };
     document.addEventListener('visibilitychange', onVis);
     return () => { alive = false; document.removeEventListener('visibilitychange', onVis); };
-  }, [email]);
+  }, [email, examType]);
 
   // ── Session expiry check ─────────────────────────────────────────────────────
 
@@ -1352,7 +1352,8 @@ export default function App() {
 
   const handlePremiumActivated = () => {
 
-    setPremiumUser(true);
+    // Pro is per exam now: ask the server what is unlocked instead of unlocking everything locally.
+    refreshEntitlement(email).then((e) => { if (e) setEntUnlimited(!!e.unlimited); });
 
     resetSession(email);
 
@@ -1807,7 +1808,7 @@ export default function App() {
 
               {screen === 'game' && (
 
-                <ScreenGuard onBack={() => setScreen('subjects')}><GameMode onBack={() => setScreen('subjects')} email={email} name={name} onLimit={(reason) => { setLimitReason(reason); setShowLimitGate(true); }} /></ScreenGuard>
+                <ScreenGuard onBack={() => setScreen('subjects')}><GameMode onBack={() => setScreen('subjects')} examType={examType} email={email} name={name} onLimit={(reason) => { setLimitReason(reason); setShowLimitGate(true); }} /></ScreenGuard>
 
               )}
 
@@ -2020,11 +2021,7 @@ export default function App() {
 
               <strong style={{ color: '#c8b4f0' }}>
 
-                {paymentModal.plan === 'annual'
-
-                  ? 'Pro Annual'
-
-                  : 'Pro'}
+                {PLAN_LABEL[paymentModal.plan] || 'Pro'}
 
               </strong>{' '}
 

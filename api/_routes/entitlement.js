@@ -5,7 +5,8 @@ import { sendOk, sendErr, sendMethodNotAllowed, setCors, readBody } from "../_he
 import { requireUser } from "../_helpers/session.js";
 import { rateLimitOk } from "../_helpers/guard.js";
 import { getSupabase } from "../_helpers/supabase.js";
-import { getAccessConfig, entitlementFor, shareClaimsToday, KINDS, lagosDay } from "../_helpers/access.js";
+import { getAccessConfig, entitlementFor, scopesFor, shareClaimsToday, KINDS, lagosDay } from "../_helpers/access.js";
+import { scopeForExam } from "../_helpers/plans.js";
 
 // Limit = the admin's daily limit + whatever the student earned today by sharing.
 const effLimit = (cfg, meta, claims) => cfg.limits[meta.key] + (claims?.[meta.key]?.claims || 0) * cfg.shareBonus.amount;
@@ -22,8 +23,11 @@ async function usageFor(sb, email, cfg, claims) {
 }
 
 async function profileRow(sb, email) {
-  const { data } = await sb.from("profiles")
-    .select("is_premium,expires_at,trial_ends_at,free_access_until,free_access_forever").eq("email", email).maybeSingle();
+  const r = await sb.from("profiles")
+    .select("is_premium,expires_at,trial_ends_at,free_access_until,free_access_forever,pro_exams,pro_all_until").eq("email", email).maybeSingle();
+  if (!r.error) return r.data;
+  // per-exam columns not created yet (update-16 SQL pending): behave exactly like before
+  const { data } = await sb.from("profiles").select("is_premium,expires_at,trial_ends_at,free_access_until,free_access_forever").eq("email", email).maybeSingle();
   return data;
 }
 
@@ -37,16 +41,20 @@ export default async function handler(req, res) {
   const sb = getSupabase();
   const cfg = await getAccessConfig();
   const row = await profileRow(sb, email);
-  const ent = entitlementFor(row, cfg);
+  const baseEnt = entitlementFor(row, cfg);      // unlimited everywhere: old Pro, gifts, trial
+  const scopes = scopesFor(row);                 // unlimited for ONE exam area: per-exam Pro
+  const examScope = scopeForExam(req.query.exam || (req.body && req.body.exam));
+  const scopeHit = examScope && scopes[examScope] && scopes[examScope].unlimited ? scopes[examScope] : null;
+  const ent = !baseEnt.unlimited && scopeHit ? { tier: "premium", unlimited: true, source: "paid", until: scopeHit.until, forever: false, scope: examScope } : baseEnt;
 
   if (op === "get") {
     if (req.method !== "GET") return sendMethodNotAllowed(res);
-    const claims = ent.unlimited ? {} : await shareClaimsToday(sb, email);
+    const claims = baseEnt.unlimited ? {} : await shareClaimsToday(sb, email);
     const limits = {};
     for (const meta of Object.values(KINDS)) limits[meta.key] = effLimit(cfg, meta, claims);
     const sb2 = cfg.shareBonus;
     const share = { enabled: sb2.enabled, amount: sb2.amount, maxClaims: sb2.maxClaimsPerDay, verifySeconds: sb2.verifySeconds, claims: Object.fromEntries(Object.entries(claims).map(([k, v]) => [k, v.claims])) };
-    return sendOk(res, { entitlement: ent, limits, share, session: { minutes: cfg.sessionMinutes, cooldownMinutes: cfg.cooldownMinutes }, usage: ent.unlimited ? null : await usageFor(sb, email, cfg, claims), day: lagosDay() });
+    return sendOk(res, { entitlement: baseEnt, scopes, limits, share, session: { minutes: cfg.sessionMinutes, cooldownMinutes: cfg.cooldownMinutes }, usage: baseEnt.unlimited ? null : await usageFor(sb, email, cfg, claims), day: lagosDay() });
   }
 
   if (op === "use") {

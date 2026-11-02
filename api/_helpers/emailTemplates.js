@@ -80,6 +80,20 @@ export const payoutPaidEmail = ({ name, amount, reference }) => layout({
   cta: { label: "View my earnings", url: `${APP}/partner` },
 });
 
+export const partnerInactivityWarningEmail = ({ name, days, code }) => layout({
+  preheader: "A quick login or a link click keeps your account active", emoji: "🟡", heading: "We haven't seen you in a while",
+  body: `<p style="margin:0 0 12px">Hi ${esc(name)}, it has been about <b>${days} days</b> since you last signed in to your partner dashboard, and nobody has opened your link in that time.</p><p style="margin:0">Partner accounts with no sign-in and no link clicks for <b>3 weeks</b> are suspended automatically. <b>In 7 days from today yours will be suspended</b> unless you sign in or someone opens your link.</p>`,
+  rows: [["Your referral code", code]],
+  cta: { label: "Sign in to keep my account active", url: `${APP}/partner` },
+  note: "Signing in once is enough. If you've decided the programme isn't for you, no action is needed.",
+});
+
+export const partnerSuspendedEmail = ({ name, days }) => layout({
+  preheader: "Your partner account was suspended for inactivity", emoji: "⛔", heading: "Your partner account is suspended",
+  body: `<p style="margin:0 0 12px">Hi ${esc(name)}, your EliteScholars partner account has been suspended because there was no sign-in and no link click for about <b>${days} days</b> (our limit is 3 weeks).</p><p style="margin:0">Your earnings so far are safe. If you'd like to be reactivated, just reply to this email and we'll sort it out.</p>`,
+  cta: { label: "Contact EliteScholars", url: `${APP}/about` },
+});
+
 export const adminAlertEmail = ({ emoji = "🔔", title, lines = [], rows = null, url = `${APP}/admin`, label = "Open admin" }) => layout({
   preheader: title, emoji, heading: title, body: paras(lines.join("\n")), rows, cta: { label, url },
 });

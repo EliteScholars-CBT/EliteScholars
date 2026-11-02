@@ -13,6 +13,24 @@ const DAILY = { topic: true, cbt: true, game: true, file_study: true };
 
 let mem = {};
 
+// ── per-exam Pro ─────────────────────────────────────────────────────────────
+// Pro is bought per exam area: JAMB, WAEC/NECO, GST. The exam the student is working in decides what is unlimited.
+let activeExam = null;
+export const scopeForExam = (exam) => {
+  const e = String(exam || '').toLowerCase();
+  if (e === 'jamb') return 'jamb';
+  if (e === 'waec' || e === 'neco') return 'waec_neco';
+  if (e === 'gst') return 'gst';
+  return null;
+};
+export function setActiveExam(exam) { activeExam = exam || null; }
+export const getActiveExam = () => activeExam;
+const scopeUnlimited = (c, exam) => {
+  const sc = scopeForExam(exam);
+  const x = sc && c && c.scopes && c.scopes[sc];
+  return !!(x && x.unlimited && (!x.until || new Date(x.until).getTime() > Date.now()));
+};
+
 const lagosDay = () => new Date(Date.now() + 3600000).toISOString().slice(0, 10);
 
 function readCache(email) {
@@ -35,26 +53,26 @@ function stillUnlimited(ent) {
   return new Date(ent.until).getTime() > Date.now();
 }
 
-export function isUnlimitedCached(email) {
+export function isUnlimitedCached(email, exam = activeExam) {
   const c = email ? readCache(email) : null;
-  return !!c && stillUnlimited(c.entitlement);
+  return !!c && (stillUnlimited(c.entitlement) || scopeUnlimited(c, exam));
 }
 
 export function getCachedEntitlement(email) {
   const c = email ? readCache(email) : null;
-  return c ? { ...c.entitlement, unlimited: stillUnlimited(c.entitlement) } : null;
+  return c ? { ...c.entitlement, unlimited: stillUnlimited(c.entitlement) || scopeUnlimited(c, activeExam) } : null;
 }
 
 // Fetch the latest from the server (and cache it). Returns the entitlement or null.
 export async function refreshEntitlement(email) {
   if (!email) return null;
   try {
-    const res = await fetch('/api/entitlement/get');
+    const res = await fetch(`/api/entitlement/get${activeExam ? `?exam=${encodeURIComponent(activeExam)}` : ''}`);
     if (!res.ok) return getCachedEntitlement(email);
     const j = await res.json();
     if (!j?.success) return getCachedEntitlement(email);
-    writeCache(email, { entitlement: j.entitlement, limits: j.limits, share: j.share, session: j.session, usage: j.usage, usageDay: j.day, fetchedAt: Date.now() });
-    return { ...j.entitlement, unlimited: stillUnlimited(j.entitlement) };
+    writeCache(email, { entitlement: j.entitlement, scopes: j.scopes || {}, limits: j.limits, share: j.share, session: j.session, usage: j.usage, usageDay: j.day, fetchedAt: Date.now() });
+    return { ...j.entitlement, unlimited: stillUnlimited(j.entitlement) || scopeUnlimited({ scopes: j.scopes }, activeExam) };
   } catch {
     return getCachedEntitlement(email);
   }
@@ -108,7 +126,7 @@ export async function reserve(email, kind, ref = '') {
     const res = await fetch('/api/entitlement/use', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ kind, ref }),
+      body: JSON.stringify({ kind, ref, exam: activeExam }),
     });
     if (res.status === 403) {
       const j = await res.json().catch(() => ({}));

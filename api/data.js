@@ -128,6 +128,7 @@ const ROUTES = {
   "partner/bank": withOp(partner, "bank"),
   "partner/payout": withOp(partner, "payout"),
   "partner/password": withOp(partner, "password"),
+  "partner/track": withOp(partner, "track"),
   "admin/partners": withOp(adminPartners, "partners"),
   "admin/partner": withOp(adminPartners, "partner"),
   "admin/partner-action": withOp(adminPartners, "partner-action"),

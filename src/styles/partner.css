@@ -29,7 +29,7 @@
 
 /* ── logged-out page: one fixed dark theme so text is always readable ── */
 body:has(.pt-page) { background: #0B0720; }
-.pt-page { --pt-bg: #0B0720; --pt-card: rgba(255,255,255,.06); --pt-line: rgba(255,255,255,.12); --pt-txt: #F5F3FF; --pt-sub: #C4B8EA; min-height: 100vh; color: var(--pt-txt); background: var(--pt-bg); max-width: none; padding: 0; overflow-x: hidden; position: relative; }
+.pt-page { --pt-bg: #0B0720; --pt-card: rgba(255,255,255,.06); --pt-line: rgba(255,255,255,.12); --pt-txt: #F5F3FF; --pt-sub: #C4B8EA; min-height: 100vh; color: var(--pt-txt); background: var(--pt-bg); max-width: none; padding: 0; overflow-x: clip; position: relative; }
 .pt-page > * { max-width: 880px; margin-left: auto; margin-right: auto; padding-left: 16px; padding-right: 16px; position: relative; z-index: 1; }
 .pt-page::before, .pt-page::after { content: ''; position: fixed; width: 360px; height: 360px; border-radius: 50%; filter: blur(70px); opacity: .35; z-index: 0; pointer-events: none; animation: ptFloat 14s ease-in-out infinite alternate; }
 .pt-page::before { background: #7C3AED; top: -120px; left: -120px; } .pt-page::after { background: #F59E0B; bottom: -160px; right: -140px; opacity: .18; animation-delay: -6s; }
@@ -83,3 +83,13 @@ body:has(.pt-page) { background: #0B0720; }
 .pt-inst-note { margin-top: 12px; font-size: 13px; }
 @media (max-width: 640px) { .pt-inst { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .pt-inst-go i { animation: none; } }
+
+.pt-res{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.pt-res-card{display:flex;flex-direction:column;gap:6px;background:#150f2c;border:1px solid var(--line,#2c2250);border-radius:14px;padding:10px}
+.pt-res-card img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;background:#0e0920}
+.pt-res-card small{color:var(--mut,#a79fd0);font-size:.74rem;line-height:1.35}
+.pt-res-card .adm-inline{margin-top:auto}
+.pt-res-card .adm-small{text-decoration:none;text-align:center;flex:1}
+
+/* partner page: nav stays at the top, page scrolls under it with a blur */
+.pt-page > .pt-nav { position: sticky; top: 0; z-index: 50; max-width: none; padding: 12px max(16px, calc((100% - 880px) / 2 + 16px)); background: rgba(11,7,32,.62); -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4); border-bottom: 1px solid rgba(255,255,255,.08); }

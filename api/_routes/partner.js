@@ -7,6 +7,9 @@ import {
   encryptText, decryptText, encryptionReady, maskEmail, maskAccount, round2, getSettings, effectiveRate, sumCommissions,
 } from "../_helpers/partners.js";
 import { notifyAdmin } from "../_helpers/mail.js";
+import { logPartnerActivity } from "../_helpers/partnerActivity.js";
+import { getPricing } from "../_helpers/pricing.js";
+import { RESOURCES } from "../_helpers/partnerResources.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ip = (req) => req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
@@ -135,7 +138,8 @@ export default async function handler(req, res) {
     if (!p || !verifyPartnerPassword(b.password, p.password_hash)) return sendErr(res, "Incorrect email or password.", 401);
     if (p.status === "suspended") return sendErr(res, "This account has been suspended. Contact EliteScholars.", 403);
     await clearRateLimit(key);
-    await sb.from("partners").update({ last_login: new Date().toISOString() }).eq("id", p.id);
+    await sb.from("partners").update({ last_login: new Date().toISOString(), last_seen: new Date().toISOString(), inactivity_warned_at: null }).eq("id", p.id);
+    await logPartnerActivity(p, "login");
     return sendOk(res, { token: makePartnerToken(p.id) });
   }
 
@@ -145,8 +149,26 @@ export default async function handler(req, res) {
   if (op === "me") {
     if (req.method !== "GET") return sendMethodNotAllowed(res);
     if (p.status === "pending") return sendOk(res, { pending: true, partner: publicPartner(p, await getSettings()) });
-    try { return sendOk(res, await dashboard(p)); }
+    try {
+      // opening the portal with a saved session counts as being active (at most once every 30 minutes)
+      if (!p.last_seen || Date.now() - new Date(p.last_seen).getTime() > 30 * 60000) {
+        await sb.from("partners").update({ last_seen: new Date().toISOString(), last_login: new Date().toISOString(), inactivity_warned_at: null }).eq("id", p.id);
+        await logPartnerActivity(p, "login", "returned to dashboard");
+      }
+      const dash = await dashboard(p);
+      const pr = await getPricing();
+      return sendOk(res, { ...dash, prices: pr, resources: RESOURCES });
+    }
     catch (e) { console.error("[partner me]", e.message); return sendErr(res, "Could not load your dashboard.", 500); }
+  }
+
+  if (op === "track") { // the portal reports: copied a link, opened/downloaded a resource, checked prices
+    if (req.method !== "POST") return sendMethodNotAllowed(res);
+    const b = readBody(req);
+    const kind = String(b.kind || "");
+    if (!["copy_link", "resource_view", "resource_download", "prices_view"].includes(kind)) return sendErr(res, "Unknown activity.");
+    await logPartnerActivity(p, kind, b.detail);
+    return sendOk(res, {});
   }
 
   if (op === "bank") {

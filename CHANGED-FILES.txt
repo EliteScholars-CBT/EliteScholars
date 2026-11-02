@@ -1,32 +1,58 @@
-EliteScholars - Update 14: GST removed from school/centre, landing + partner changes, crash reporting, notification fix, offline app
+EliteScholars - Update 15: per-exam Pro plans, partner tracking + inactivity auto-suspension, sticky navbar, tip boxes, email tab, GST game terms
 
-CONTENT
-  src/pages/AudienceLanding.js, src/components/StudentTour.js, src/pages/Landing.js
-      GST removed from the school/centre pages and the school section of the landing page.
-  src/pages/Landing.js
-      "Set up your class" is now "See how schools use it" and links to /school; "Tutorial centres" added to the nav and footer;
-      partnership banner now has "What the students you bring get" with the real app screenshots (CBT, Learn mode, Flashcards, Games).
-  src/styles/landing2.css     styles for that block
-  src/components/SiteShell.js "Schools" and "Tutorial centres" added to the nav on /about, /terms etc.
+RUN FIRST (Supabase SQL editor): the blocks "update 15" AND "update 16" at the bottom of supabase/schema.sql. Safe to run twice.
+  update 15 = partner activity columns.  update 16 = per-exam Pro columns, the new plan names, and it GRANDFATHERS everyone who is Pro today to every exam until their plan ends.
+  (If update 16 has not been run when a student pays, the payment still activates Pro the old way, so nobody who paid is ever left locked out.)
 
-CRASH REPORTS
-  src/components/CrashScreen.js (NEW)   friendly crash screen: Try again / Open the EliteScholars website / Reload
-  src/components/ErrorBoundary.js, src/App.js   both crash catchers now use it and report the crash
-  src/utils/crashReport.js (NEW)        collects full device info + who it was, sends it (queued if offline)
-  api/_routes/report.js                 new ops crash, crash-list, crash-action
-  src/components/AdminReports.js        Admin > Reports now has "Reported questions" and "App crashes" (grouped, with who + device)
-  api/data.js, vercel.json              routes /api/report/crash, /api/admin/crash-list, /api/admin/crash-action
-                                        (also contain the update-10 and update-13 routes: use these over earlier copies)
-  supabase/schema.sql                   FULL latest schema; new block "update 14" creates crash_reports
+PARTNER TRACKING (admin)
+  api/_helpers/partnerActivity.js (NEW)  logs partner activity; the 3-week inactivity rule; the daily warn/suspend job
+  api/_routes/partner.js                 login + returning visits are logged; new "track" op (copied a link, opened/downloaded a resource, checked prices); prices + resources sent to the portal
+  api/_routes/admin-partners.js          per-partner last seen, last link click, 30-day activity score, performing / low / not performing, warning state; detail has an activity timeline; reactivating restarts the 3-week clock
+  api/_routes/admin-ops.js               bell: yellow warnings sent + auto-suspensions (last 7 days)
+  api/_helpers/emailTemplates.js         partnerInactivityWarningEmail, partnerSuspendedEmail
+  api/_helpers/partnerResources.js (NEW) the flyers partners can download
+  api/cron/index.js                      runs the partner inactivity job daily at 07:00 UTC (also /api/cron?job=partner-inactivity)
+  api/data.js, vercel.json               route /api/partner/track
+  src/components/AdminPartners.js        search, sort (most active, last active, signups, clicks, earned...), filters (performing / not performing / at risk / pending / suspended), last seen, yellow rows
+  src/pages/Partner.js                   new Resources and Prices tabs; link copies are tracked
+  src/styles/admin.css, src/styles/partner.css
+  public/partner-resources/*.png (NEW)   12 flyers (GST, games, JAMB, parents, centres, schools)
 
-NOTIFICATIONS
-  src/utils/push.js (rewritten), src/utils/notifications.js, src/components/NotificationPrompt.js, src/components/Profile.js, src/App.js, public/sw.js
+HOW THE RULE WORKS
+  Inactive = no partner login AND no click on their link for 14 days -> yellow in admin + warning email + bell notice.
+  A week later, if still inactive (21+ days total) -> suspended automatically, suspension email sent, bell notice.
+  Any login or link click in between clears the warning. Admin "Reactivate" restarts the clock.
 
-OFFLINE
-  public/sw.js   downloads the whole app after the first visit and serves it with no network (see notes)
+NAVBAR
+  src/styles/landing.css, src/styles/partner.css, public/blog/blog-style.css
+      Cause: base.css puts overflow-x:hidden on html/body/#root, which made the page's own scroll box swallow position:sticky.
+      Now clip is used, so the navbar stays at the top on the landing, school, centre, about, terms, privacy and partner pages, with the page blurring underneath.
 
-ROUTES (new): POST /api/report/crash, GET /api/admin/crash-list, POST /api/admin/crash-action
-ENV VARS: none new (push still needs VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY, which you already use)
-SQL: run supabase/schema.sql (or only the "update 14" block at the end) BEFORE deploying.
-FILES TO DELETE: none.
-NOTE: App.js here also contains the update-13 CBT back fix.
+LEARN TIP BOXES
+  src/styles/learn.css   tip text was split into side-by-side flex columns and drifted out of the box. Now one paragraph inside the box (all subjects: GST, WAEC, NECO, JAMB).
+
+EMAIL TAB
+  src/components/AdminMail.js, src/styles/admin.css   audience options are now tidy selectable cards
+
+GST GAMES (from earlier)
+  src/data/gstGameBank.js (NEW), src/data/gkBank.js, src/components/GameMode.js, src/App.js   GST students get games built on GST terms (CGPA, Carryover, Plagiarism...)
+
+PER-EXAM PRO PLANS (new)
+  Plans (all editable in Admin > Prices):
+    JAMB Pro        3,000 / 1 year
+    WAEC & NECO Pro 5,000 / 6 months   or   8,000 / 1 year   (one plan covers both)
+    GST Pro         5,000 / 6 months   or   8,000 / 1 year
+  A plan unlocks that exam only. Every exam is visible to everyone; on an exam they have not paid for, a Pro student gets the same free limits as anyone else.
+  Students who were Pro before this update keep every exam until their plan ends (pro_all_until). Group/squad plans also stay all-exams.
+  Buying again for the same exam adds time on top of what is left.
+  api/_helpers/plans.js (NEW)                 the plan list + exam -> area mapping (neco and waec share one)
+  api/_helpers/pricing.js                     plan prices (defaults above, admin can change)
+  api/_helpers/premium.js                     activation writes pro_exams per exam; status endpoint returns what is unlocked
+  api/_helpers/payments.js, api/payment/initiate.js   new plan ids (jamb, waecneco6, waecneco12, gst6, gst12); old "annual" now means JAMB
+  api/_helpers/access.js, api/_routes/entitlement.js  limits are decided per exam
+  api/_helpers/profileOut.js, api/shop.js     send the plan info + prices to the app
+  api/_routes/admin-ops.js, src/components/AdminPrices.js   edit the new prices
+  src/utils/entitlement.js, src/utils/proPlans.js (NEW), src/App.js   the exam being studied decides if Pro applies
+  src/components/PremiumModal.js              pick JAMB / WAEC & NECO / GST, then 6 months or 1 year
+  src/components/Shop.js                      the shop shows the three Pro plans with prices, ACTIVE badges and "add more time"
+  src/components/Profile.js, src/utils/premium.js, src/pages/Partner.js   labels; partners' Prices tab lists every plan

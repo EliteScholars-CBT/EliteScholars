@@ -74,8 +74,11 @@ const active = (until) => !!until && new Date(until).getTime() > Date.now();
 
 // -> { tier, unlimited, source, until, forever }
 export function entitlementFor(row, cfg) {
-  if (row?.is_premium && active(row.expires_at)) {
-    return { tier: "premium", unlimited: true, source: "paid", until: row.expires_at, forever: false };
+  // "All exams" Pro: everyone who was already Pro before per-exam plans, and group plans.
+  // (If the pro_all_until column is not there yet, fall back to the old is_premium check so nobody is locked out.)
+  const allUntil = row && row.pro_all_until !== undefined ? row.pro_all_until : (row?.is_premium ? row.expires_at : null);
+  if (active(allUntil)) {
+    return { tier: "premium", unlimited: true, source: "paid", until: allUntil, forever: false };
   }
   const g = cfg.global;
   if (g.active && (g.forever || active(g.until))) {
@@ -88,6 +91,14 @@ export function entitlementFor(row, cfg) {
     return { tier: "trial", unlimited: true, source: "trial", until: row.trial_ends_at, forever: false };
   }
   return { tier: "free", unlimited: false, source: "free", until: null, forever: false };
+}
+
+// Per-exam Pro: { jamb: { unlimited, until }, waec_neco: {...}, gst: {...} } (only the exams they paid for are unlimited).
+export function scopesFor(row) {
+  const ex = (row && row.pro_exams) || {};
+  const out = {};
+  for (const k of ["jamb", "waec_neco", "gst"]) out[k] = { unlimited: active(ex[k]), until: active(ex[k]) ? ex[k] : null };
+  return out;
 }
 
 // Share bonus claims made today, per config key: { topics: 1, cbt: 0, ... }. Stored in usage_counters as

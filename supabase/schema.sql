@@ -731,3 +731,21 @@ create table if not exists crash_reports (
 );
 create index if not exists idx_crash_reports_status on crash_reports (status, created_at desc);
 alter table crash_reports enable row level security;
+
+-- ── update 15: partner activity tracking + inactivity auto-suspension ──
+alter table partners add column if not exists last_seen            timestamptz;  -- last time they did anything in the portal
+alter table partners add column if not exists inactivity_warned_at timestamptz;  -- 1-week warning email sent
+alter table partners add column if not exists auto_suspended_at    timestamptz;  -- suspended automatically for inactivity
+alter table partners add column if not exists reactivated_at       timestamptz;  -- admin re-activated them (restarts the 3-week clock)
+-- Activity itself is stored in `events` with type 'partner_activity'
+-- (payload: { partner_id, kind: login|copy_link|resource_view|resource_download|prices_view, detail }).
+create index if not exists idx_events_partner_activity on events ((payload->>'partner_id'), created_at desc) where type = 'partner_activity';
+
+-- ── update 16: per-exam Pro (JAMB / WAEC+NECO / GST) ──
+alter table profiles add column if not exists pro_exams     jsonb not null default '{}'::jsonb;  -- { "jamb": "<expiry iso>", "waec_neco": "...", "gst": "..." }
+alter table profiles add column if not exists pro_all_until timestamptz;                           -- everyone who was already Pro keeps ALL exams until this date
+alter table profiles drop constraint if exists profiles_subscription_plan_check;
+alter table profiles add constraint profiles_subscription_plan_check
+  check (subscription_plan is null or subscription_plan in ('annual','pro','jamb','waecneco6','waecneco12','gst6','gst12'));
+-- grandfather: current paying students keep full access to every exam until their plan ends
+update profiles set pro_all_until = expires_at where is_premium and expires_at > now() and pro_all_until is null;

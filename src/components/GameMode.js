@@ -5,7 +5,7 @@ import { GOLD } from '../utils/colors';
 import Icon, { EmojiIcon } from './Icon';
 import { buildScramble, buildScrambleDeck, normalizeAnswer, buildMatchDeck, buildPictureDeck, buildPictureRound, generateSequence, SIMON_COLORS, topCategories, itemsInCategories, buildSliceDeck, shuffle, rng } from '../utils/gameEngine';
 import GameHud from './GameHud';
-import { bankFor } from '../data/gkBank';
+import { bankFor, setGameExam } from '../data/gkBank';
 import { MoreGames, MORE_GAME_TYPES, MORE_GAME_INFO, buildMoreGame } from './GameMore';
 import GameBoard from './GameBoard';
 import { attachGameSounds } from '../utils/gameSounds';
@@ -724,6 +724,7 @@ function gradeResult(score, total) {
 
 export default function GameMode(props) {
   const { onBack, guest } = props;
+  setGameExam(props.examType); // GST students get GST-themed games
   const [leaving, setLeaving] = useState(false);
   const shellRef = useRef(null);
   useEffect(() => attachGameSounds(shellRef.current), []);

@@ -81,6 +81,9 @@ export default function Partner() {
   };
 
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+  // tell the server what the partner did (admin sees it under Activity); never blocks the UI
+  const track = useCallback((kind, detail) => { if (token) call('track', { method: 'POST', token, body: { kind, detail } }).catch(() => {}); }, [token]);
+  const tcopy = (text, detail) => { copy(text); track('copy_link', detail); };
 
   /* ── logged out: sell the programme first, then the sign-up form ── */
   if (!token) {
@@ -231,8 +234,8 @@ export default function Partner() {
       </header>
 
       <div className="adm-tabs adm-maintabs">
-        {[['overview', 'Overview'], ['referrals', 'Referrals'], ['earnings', 'Earnings & payouts'], ['account', 'Account']].map(([key, label]) =>
-          <button key={key} className={tab === key ? 'on' : ''} onClick={() => { setTab(key); setError(''); setInfo(''); }}>{label}</button>)}
+        {[['overview', 'Overview'], ['referrals', 'Referrals'], ['earnings', 'Earnings & payouts'], ['resources', 'Resources'], ['prices', 'Prices'], ['account', 'Account']].map(([key, label]) =>
+          <button key={key} className={tab === key ? 'on' : ''} onClick={() => { setTab(key); setError(''); setInfo(''); if (key === 'prices') track('prices_view', 'Prices tab'); if (key === 'resources') track('resource_view', 'Resources tab'); }}>{label}</button>)}
       </div>
       {error && <div className="adm-error">{error}</div>}
       {info && <div className="adm-ok">{info}</div>}
@@ -241,16 +244,16 @@ export default function Partner() {
         <>
           <section className="adm-card">
             <h2>Your personal link</h2>
-            <div className="adm-linkbox"><span>{link}</span><button className="adm-small" onClick={() => { copy(link); setInfo('Link copied.'); }}>Copy</button></div>
+            <div className="adm-linkbox"><span>{link}</span><button className="adm-small" onClick={() => { tcopy(link, 'student link'); setInfo('Link copied.'); }}>Copy</button></div>
             <div className="adm-inline adm-gap">
               <a className="adm-btn" href={`https://wa.me/?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noreferrer">Share on WhatsApp</a>
-              <button className="adm-ghost" onClick={() => { copy(shareText); setInfo('Message copied.'); }}>Copy message</button>
+              <button className="adm-ghost" onClick={() => { tcopy(shareText, 'share message'); setInfo('Message copied.'); }}>Copy message</button>
             </div>
             <h3 style={{ margin: '14px 0 6px' }}>Your link for schools</h3>
-            <div className="adm-linkbox"><span>{`https://elitescholars.site/school?ref=${p.code}`}</span><button className="adm-small" onClick={() => { copy(`https://elitescholars.site/school?ref=${p.code}`); setInfo('School link copied.'); }}>Copy</button></div>
+            <div className="adm-linkbox"><span>{`https://elitescholars.site/school?ref=${p.code}`}</span><button className="adm-small" onClick={() => { tcopy(`https://elitescholars.site/school?ref=${p.code}`, 'school link'); setInfo('School link copied.'); }}>Copy</button></div>
             <p className="adm-note">Share this with school owners, principals and teachers. When a school pays for its plan you earn <b>{p.rate}%</b> of what they pay, on every payment. Your normal link above also works: schools that sign up through either are credited to you.</p>
             <h3 style={{ margin: '14px 0 6px' }}>Your link for tutorial centres</h3>
-            <div className="adm-linkbox"><span>{`https://elitescholars.site/centre?ref=${p.code}`}</span><button className="adm-small" onClick={() => { copy(`https://elitescholars.site/centre?ref=${p.code}`); setInfo('Centre link copied.'); }}>Copy</button></div>
+            <div className="adm-linkbox"><span>{`https://elitescholars.site/centre?ref=${p.code}`}</span><button className="adm-small" onClick={() => { tcopy(`https://elitescholars.site/centre?ref=${p.code}`, 'centre link'); setInfo('Centre link copied.'); }}>Copy</button></div>
             <p className="adm-note">Share this with tutorial centre owners and lesson-teachers. Centres that sign up through it are credited to you, and you earn <b>{p.rate}%</b> of every payment they make. <a href="/school" target="_blank" rel="noreferrer">Read about schools →</a> · <a href="/centre" target="_blank" rel="noreferrer">Read about centres →</a></p>
             <p className="adm-note">You earn <b>{p.rate}%</b> of every Pro payment from students who join through your link, about <b>{fmtNaira(perSale)}</b> on a {fmtNaira(PREMIUM_PRICE)} plan. Your code is <b>{p.code}</b>. The link remembers a visitor for 60 days.</p>
           </section>
@@ -354,6 +357,51 @@ export default function Partner() {
           </section>
         </>
       )}
+
+      {tab === 'resources' && (
+        <section className="adm-card">
+          <h2>Resources</h2>
+          <p className="adm-note" style={{ marginTop: 0 }}>Ready-made flyers to share in groups, on your status and on your page. Add your personal link when you post them.</p>
+          <div className="pt-res">
+            {(data.resources || []).map((r) => (
+              <div className="pt-res-card" key={r.id}>
+                <img src={r.file} alt={r.title} loading="lazy" />
+                <b>{r.title}</b><small>{r.audience} · {r.note}</small>
+                <div className="adm-inline">
+                  <a className="adm-small" href={r.file} target="_blank" rel="noreferrer" onClick={() => track('resource_view', r.title)}>View</a>
+                  <a className="adm-small" href={r.file} download={`${r.id}.png`} onClick={() => track('resource_download', r.title)}>Download</a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {tab === 'prices' && data.prices && (() => {
+        const pr = data.prices;
+        const earn = (n) => fmtNaira(Math.round((n * p.rate) / 100));
+        const pl = pr.plans || {};
+        const rowsP = [['JAMB Pro (1 year)', pl.jamb ?? pr.premiumAnnual], ['WAEC & NECO Pro (6 months)', pl.waecneco6], ['WAEC & NECO Pro (1 year)', pl.waecneco12], ['GST Pro (6 months)', pl.gst6], ['GST Pro (1 year)', pl.gst12], ['Squad plan, 50 seats', pr.group50], ['Squad plan, 100 seats', pr.group100]].filter(([, v]) => v > 0);
+        return (
+          <>
+            <section className="adm-card">
+              <h2>Current prices</h2>
+              <p className="adm-note" style={{ marginTop: 0 }}>These are always the latest prices. Your commission is <b>{p.rate}%</b> of every payment.</p>
+              <div className="adm-table">
+                {rowsP.map(([n, v]) => (<div className="adm-tr adm-tr5" key={n}><span><b>{n}</b></span><span>{fmtNaira(v)}</span><span>You earn {earn(v)}</span></div>))}
+              </div>
+            </section>
+            <section className="adm-card">
+              <h2>Schools (per {pr.school.period})</h2>
+              <div className="adm-table">{pr.school.tiers.map((t) => (<div className="adm-tr adm-tr5" key={t.label}><span><b>{t.label}</b></span><span>{fmtNaira(t.price)}</span><span>You earn {earn(t.price)}</span></div>))}</div>
+            </section>
+            <section className="adm-card">
+              <h2>Tutorial centres (per month)</h2>
+              <div className="adm-table">{pr.centre.tiers.map((t) => (<div className="adm-tr adm-tr5" key={t.label}><span><b>{t.label}</b></span><span>{fmtNaira(t.price)}{t.yearPrice ? ` · ${fmtNaira(t.yearPrice)}/yr` : ''}</span><span>You earn {earn(t.price)}</span></div>))}</div>
+            </section>
+          </>
+        );
+      })()}
 
       {tab === 'account' && (
         <section className="adm-grid adm-two">

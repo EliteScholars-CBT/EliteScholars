@@ -75,7 +75,8 @@ export function cancelPremium(email) {
 // with whatever the server says about the user's subscription.
 
 export function syncPremiumFromServer(email, premiumPlan, premiumExpiresAt) {
-  if (!email || !premiumPlan || !premiumExpiresAt) return;
+  if (!email) return;
+  if (!premiumPlan || !premiumExpiresAt) { try { localStorage.removeItem(KEY_PREMIUM(email)); } catch {} return; }
   try {
     const expiresAt = new Date(premiumExpiresAt).getTime();
     if (isNaN(expiresAt) || Date.now() > expiresAt) {

@@ -613,7 +613,7 @@ export default function Profile({
               <div className="premium-active-box">
                 <div className="premium-badge"><EmojiIcon emoji="⭐" size="1.15em" /> Pro Active</div>
                 <div className="premium-active-title" style={{ marginTop: 8 }}>
-                  {premData?.plan === 'annual' ? '👑 Annual Plan' : '💎 Monthly Plan'}
+                  {premData?.plan === 'annual' ? '👑 Pro: all exams' : '💎 Pro'}
                 </div>
                 {premData?.expiresDateStr && (
                   <div className="premium-active-expiry">Expires: {premData.expiresDateStr}</div>

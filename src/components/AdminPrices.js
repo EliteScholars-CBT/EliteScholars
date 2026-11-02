@@ -19,7 +19,7 @@ export function AdminPrices({ token, onAuthFail }) {
   const load = useCallback(async () => {
     try {
       const r = await api('prices');
-      setD(r); setP({ premiumAnnual: String(r.prices.premiumAnnual), premiumAnnualOriginal: String(r.prices.premiumAnnualOriginal), pro: String(r.prices.pro), group50: String(r.prices.group50), group100: String(r.prices.group100) });
+      setD(r); setP({ premiumAnnual: String(r.prices.premiumAnnual), premiumAnnualOriginal: String(r.prices.premiumAnnualOriginal), pro: String(r.prices.pro), group50: String(r.prices.group50), group100: String(r.prices.group100), waecneco6: String(r.prices.waecneco6 || ''), waecneco12: String(r.prices.waecneco12 || ''), gst6: String(r.prices.gst6 || ''), gst12: String(r.prices.gst12 || '') });
       setItems(Object.fromEntries(r.items.map((i) => [i.id, String(i.price)])));
       const mk = (x) => ({ trialDays: String(x.trialDays), period: x.period, tiers: x.tiers.map((t) => ({ ...t, min: String(t.min), price: String(t.price), yearPrice: t.yearPrice ? String(t.yearPrice) : '' })) });
       setSchool(mk(r.school)); if (r.centre) setCentre(mk(r.centre));
@@ -37,13 +37,17 @@ export function AdminPrices({ token, onAuthFail }) {
       {err && <div className="adm-error">{err}</div>}
 
       <section className="adm-card">
-        <h2>Pro prices</h2>
-        <p className="adm-note" style={{ marginTop: 0 }}>Changes apply straight away in the app and at checkout. Anyone already mid-payment still pays the price they were shown.</p>
+        <h2>Pro prices (one plan per exam)</h2>
+        <p className="adm-note" style={{ marginTop: 0 }}>Each plan unlocks Pro for that exam only. Everything else stays on the free tier. Changes apply straight away in the app and at checkout. Anyone already mid-payment still pays the price they were shown. Students who were already Pro before this change keep every exam until their plan ends.</p>
         <div className="adm-fields">
-          <label>Pro (per year)<input inputMode="numeric" value={p.premiumAnnual} onChange={(e) => setP({ ...p, premiumAnnual: num(e.target.value) })} /></label>
-          <label>"Was" price (crossed out)<input inputMode="numeric" value={p.premiumAnnualOriginal} onChange={(e) => setP({ ...p, premiumAnnualOriginal: num(e.target.value) })} /></label>
+          <label>JAMB Pro, 1 year<input inputMode="numeric" value={p.premiumAnnual} onChange={(e) => setP({ ...p, premiumAnnual: num(e.target.value) })} /></label>
+          <label>"Was" price (crossed out, JAMB)<input inputMode="numeric" value={p.premiumAnnualOriginal} onChange={(e) => setP({ ...p, premiumAnnualOriginal: num(e.target.value) })} /></label>
+          <label>WAEC &amp; NECO Pro, 6 months<input inputMode="numeric" value={p.waecneco6 || ''} onChange={(e) => setP({ ...p, waecneco6: num(e.target.value) })} /></label>
+          <label>WAEC &amp; NECO Pro, 1 year<input inputMode="numeric" value={p.waecneco12 || ''} onChange={(e) => setP({ ...p, waecneco12: num(e.target.value) })} /></label>
+          <label>GST Pro, 6 months<input inputMode="numeric" value={p.gst6 || ''} onChange={(e) => setP({ ...p, gst6: num(e.target.value) })} /></label>
+          <label>GST Pro, 1 year<input inputMode="numeric" value={p.gst12 || ''} onChange={(e) => setP({ ...p, gst12: num(e.target.value) })} /></label>
         </div>
-        <button disabled={busy} onClick={() => save(() => api('prices-save', { method: 'POST', body: { premiumAnnual: p.premiumAnnual, premiumAnnualOriginal: p.premiumAnnualOriginal } }), 'Pro prices saved.')}>Save premium prices</button>
+        <button disabled={busy} onClick={() => save(() => api('prices-save', { method: 'POST', body: { premiumAnnual: p.premiumAnnual, premiumAnnualOriginal: p.premiumAnnualOriginal, waecneco6: p.waecneco6, waecneco12: p.waecneco12, gst6: p.gst6, gst12: p.gst12 } }), 'Pro prices saved.')}>Save Pro prices</button>
       </section>
 
       <section className="adm-card">

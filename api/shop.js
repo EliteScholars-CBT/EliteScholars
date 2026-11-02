@@ -27,7 +27,7 @@ async function handler(req, res) {
   try { extra = (await getShopCatalog()).filter((i) => i.show.app); } catch { /* fall back to built-ins */ }
   const shown = new Set(extra.map((i) => i.id));
   const items = [
-    ...SHOP_ITEMS.filter((it) => it.isPremium).map((it) => ({ ...it, price: `${fmtNaira(pr ? pr.premiumAnnual : PREMIUM_ANNUAL_PRICE)}/yr` })),
+    ...SHOP_ITEMS.filter((it) => it.isPremium).map((it) => ({ ...it, price: `from ${fmtNaira(pr ? pr.premiumAnnual : PREMIUM_ANNUAL_PRICE)}` })),
     ...(extra.length ? extra.map(publicItem) : SHOP_ITEMS.filter((it) => !it.isPremium && !shown.has(it.id)).map((it) => ({ ...it, priceNGN: pr ? pr.items[it.id] : undefined, price: pr && pr.items[it.id] ? fmtNaira(pr.items[it.id]) : it.price }))),
   ];
   return sendOk(res, {
@@ -38,6 +38,7 @@ async function handler(req, res) {
       pro:                   pr ? pr.pro : PRO_MONTHLY_PRICE,
       group50:               pr ? pr.group50 : 145000,
       group100:              pr ? pr.group100 : 285000,
+      plans:                 pr ? pr.plans : undefined,
       urls: {
         annual: PAYMENT_URL_ANNUAL,
         pro:    PAYMENT_URL_PRO,

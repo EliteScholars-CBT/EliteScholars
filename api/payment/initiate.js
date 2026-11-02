@@ -10,12 +10,14 @@ import { rateLimitOk } from '../_helpers/guard.js';
 import { getFirstName } from '../_helpers/premium.js';
 import { getPricing } from '../_helpers/pricing.js';
 import { findShopItem } from '../_helpers/shopItems.js';
+import { PLAN_DEFS, normalizePlan } from '../_helpers/plans.js';
 
 const FLW_SECRET_KEY = process.env.FLW_SECRET_KEY;
 
 // Pro is annual-only — no monthly tier. Prices come from the admin-editable settings.
 const PLAN_NAMES   = {
-  annual: 'EliteScholars Pro Annual',
+  annual: 'EliteScholars JAMB Pro (1 year)',
+  ...Object.fromEntries(Object.entries(PLAN_DEFS).map(([id, d]) => [id, `EliteScholars ${d.name}`])),
   group50: 'EliteScholars Squad Plan (up to 50 members, 1 year)',
   group100: 'EliteScholars Squad Plan (up to 100 members, 1 year)',
 };
@@ -29,7 +31,8 @@ async function run(req, res) {
   const email = await requireUser(req, res);
   if (!email) return;
   if (!(await rateLimitOk(req, res, 'payinit', 10, 3600, email))) return;
-  const { plan, item } = req.body || {};
+  const { plan: rawPlan, item } = req.body || {};
+  const plan = typeof rawPlan === 'string' ? normalizePlan(rawPlan) : rawPlan;
   const pricing = await getPricing();
   const shopItem = typeof item === 'string' ? await findShopItem(item) : null;
   if (item && !shopItem) return sendErr(res, 'That item is not available.');
@@ -42,7 +45,7 @@ async function run(req, res) {
     return sendErr(res, 'Payment service is not configured. Please contact support.');
   }
 
-  const amount      = shopItem ? shopItem.priceNGN : plan === 'group50' ? pricing.group50 : plan === 'group100' ? pricing.group100 : pricing.premiumAnnual;
+  const amount      = shopItem ? shopItem.priceNGN : PLAN_DEFS[plan] ? pricing.plans[plan] : plan === 'group50' ? pricing.group50 : plan === 'group100' ? pricing.group100 : pricing.premiumAnnual;
   const kind        = shopItem ? 'shop' : plan;
   const txRef       = `ES-${kind.toUpperCase()}-${Date.now()}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
   const redirectUrl = `https://elitescholars.site/api/payment/verify?tx_ref=${txRef}`;

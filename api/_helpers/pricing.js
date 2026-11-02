@@ -3,6 +3,7 @@
 import { getSupabase, supabaseEnabled } from "./supabase.js";
 import { PREMIUM_ANNUAL_PRICE, PREMIUM_ANNUAL_ORIGINAL_PRICE, PRO_MONTHLY_PRICE } from "./constants/premium.js";
 import { SHOP_ITEMS } from "./constants/shop.js";
+import { PLAN_DEFS } from "./plans.js";
 
 export const DEFAULT_SCHOOL = {
   trialDays: 14,
@@ -75,6 +76,8 @@ export async function getPricing() {
     group50: Number(p.group50) > 0 ? Number(p.group50) : GROUP_DEFAULTS.group50,
     group100: Number(p.group100) > 0 ? Number(p.group100) : GROUP_DEFAULTS.group100,
     items, school, centre,
+    // per-exam Pro plans: id -> price (admin can change them in Admin > Prices)
+    plans: Object.fromEntries(Object.entries(PLAN_DEFS).map(([id, d]) => [id, id === "jamb" ? (Number(p.jamb) > 0 ? Number(p.jamb) : (Number(p.premiumAnnual) > 0 ? Number(p.premiumAnnual) : d.defaultPrice)) : (Number(p[d.priceKey]) > 0 ? Number(p[d.priceKey]) : d.defaultPrice)])),
   };
   cache = { at: Date.now(), v };
   return v;

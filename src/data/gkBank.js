@@ -1,4 +1,5 @@
 import { GK_EXTRA } from './gkBankPlus';
+import { GST_GAME_BANK } from './gstGameBank';
 // A broad general-knowledge bank — deliberately NOT tied to school subjects.
 // Spans sports, geography, science, history, entertainment, nature and
 // Nigeria-specific trivia. Items with an `emoji` are eligible for Picture
@@ -73,8 +74,12 @@ export const GK_BANK = [
 export const GK_ALL = [...GK_BANK.map((x) => ({ ...x, lvl: 'e' })), ...GK_EXTRA];
 
 // The pool a game draws from. Easy: simple + medium. Medium: everything. Hard: hard + medium (nothing easy).
+// University (GST) students get games built on GST and campus terms instead of general knowledge.
+let ACTIVE_EXAM = '';
+export function setGameExam(examType) { ACTIVE_EXAM = examType || ''; }
 export function bankFor(difficulty) {
-  if (difficulty === 'easy') return GK_ALL.filter((x) => x.lvl !== 'h');
-  if (difficulty === 'hard') return GK_ALL.filter((x) => x.lvl !== 'e');
-  return GK_ALL;
+  const all = ACTIVE_EXAM === 'gst' ? GST_GAME_BANK : GK_ALL;
+  if (difficulty === 'easy') return all.filter((x) => x.lvl !== 'h');
+  if (difficulty === 'hard') return all.filter((x) => x.lvl !== 'e');
+  return all;
 }

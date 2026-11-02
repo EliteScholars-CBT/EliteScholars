@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ACHIEVEMENTS } from '../utils/constants';
 import { loadAchievements, saveAchievements } from '../utils/storage';
-import { isPremium, getPremiumData, cancelPremium } from '../utils/premium';
+import { getPremiumData } from '../utils/premium';
 import { fetchShopData, fetchPremiumStatus } from '../utils/profileApi';
 import { initiatePayment } from '../utils/profileApi';
 import PremiumModal from './PremiumModal';
+import { PRO_PRODUCTS, priceOf, SCOPE_NAME } from '../utils/proPlans';
+import { getActiveExam } from '../utils/entitlement';
 import GroupPlans from './GroupPlans';
 import Icon, { EmojiIcon } from './Icon';
 
@@ -37,12 +39,12 @@ function getImageUrl(filename) {
 
 export default function Shop({ userEmail, name, premiumUser, onPremiumActivated }) {
   const [showPremium, setShowPremium]             = useState(false);
-  const [selectedPlan, setSelectedPlan]           = useState('annual');
-  const [localPremium, setLocalPremium]           = useState(premiumUser);
-  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [selectedPlan, setSelectedPlan]           = useState('jamb');
+  const [, setLocalPremium] = useState(premiumUser);
   const [shopItems, setShopItems]                 = useState([]);
   const [pricing, setPricing]                     = useState({});
   const [premData, setPremData]                   = useState(getPremiumData(userEmail));
+  const [proStatus, setProStatus]                 = useState({ all: false, exams: {}, examsStr: {} });
   const [loadingShop, setLoadingShop]             = useState(true);
   const [buying, setBuying]                       = useState('');
   const [buyErr, setBuyErr]                       = useState('');
@@ -65,11 +67,6 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
 
   const FMT = (n) => n?.toLocaleString('en-NG') ?? '0';
 
-  // ── Derived pricing — Pro is annual-only, no monthly tier ─────────────
-  const annualPrice       = pricing.premiumAnnual           ?? 3000;
-  const originalPrice     = pricing.premiumAnnualOriginal   ?? 15000;
-  const annualSavings     = originalPrice - annualPrice;
-  const annualDiscountPct = Math.round((annualSavings / originalPrice) * 100);
 
   // ── Fetch shop data ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -86,6 +83,7 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
   useEffect(() => {
     if (!userEmail) return;
     fetchPremiumStatus(userEmail).then(data => {
+      if (data) setProStatus({ all: !!data.all, exams: data.exams || {}, examsStr: data.examsStr || {} });
       if (data?.isPremium) {
         setLocalPremium(true);
         setPremData({ plan: data.plan, expiresDateStr: data.expiresStr });
@@ -113,12 +111,6 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
     }
   }, [userEmail]);
 
-  const openPlan = (planId) => {
-    if (planId === 'free') return;
-    const subscriptionPlan = planId === 'premium' ? 'annual' : planId;
-    setSelectedPlan(subscriptionPlan);
-    setShowPremium(true);
-  };
 
   const handlePremiumActivated = (data) => {
     setLocalPremium(true);
@@ -126,33 +118,11 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
     if (onPremiumActivated) onPremiumActivated(data);
   };
 
-  const handleCancel = () => {
-    cancelPremium(userEmail);
-    setLocalPremium(false);
-    setShowCancelConfirm(false);
-  };
 
   const regularItems = shopItems.filter((i) => !i.isPremium);
   const categories   = [...new Set(regularItems.map((i) => i.category))];
 
-  const COMPARE_PLANS = [
-    {
-      id: 'premium', label: 'Pro', icon: '👑', tag: `${annualDiscountPct}% OFF`,
-      price: annualPrice, originalPrice, period: '/yr',
-      features: [
-        'Unlimited topics, every exam', 'Unlimited sessions, no time limit', 'Zero cooldown, ever',
-        'Zero ads, completely', 'WAEC, NECO, JAMB & GST', 'All games unlocked',
-        'Unlimited file uploads & study packs', 'Unlimited challenges & squads', 'Full offline access',
-        'Priority support',
-      ],
-      highlight: true,
-    },
-  ];
 
-  const getPlanPricing = (plan) => {
-    if (plan.id === 'free') return { price: 0, period: '', isDisabled: false };
-    return { price: plan.price, period: plan.period, isDisabled: false };
-  };
 
   return (
     <div className="scr fd shop-page">
@@ -166,118 +136,51 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
       </div>
       <div className="shop-body">
 
-        {/* ── Pro active ── */}
-        {localPremium ? (
-          <div className="shop-premium-active">
-            <div className="shop-premium-active-glow" />
-            <div className="shop-premium-active-badge"><EmojiIcon emoji="⭐" size="1.15em" /> Pro Active</div>
-            <div className="shop-premium-active-plan">
-              {premData?.plan === 'pro' ? 'Pro Plan' : 'Pro Annual Plan'}
+        {/* ── Pro: one plan per exam (JAMB / WAEC & NECO / GST) ── */}
+        <div className="shop-plans-section">
+          <div className="shop-plans-card">
+            <div className="shop-plans-card-header">
+              <div className="shop-plans-card-title">Go Pro</div>
+              <div className="shop-plans-card-sub">Pick the exam you are preparing for. Each plan unlocks that exam only; the others stay free.</div>
             </div>
-            {premData?.expiresDateStr && (
-              <div className="shop-premium-active-expiry">
-                Expires: {premData.expiresDateStr}
-              </div>
+            {proStatus.all && (
+              <div className="shop-footer-note" style={{ marginBottom: 10 }}>⭐ You have Pro for <b>every exam</b>{premData?.expiresDateStr ? ` until ${premData.expiresDateStr}` : ''}. You can still add time to a single exam below.</div>
             )}
-            <div className="shop-premium-active-perks">
-              <span><EmojiIcon emoji="✅" size="1.15em" /> Ad-free</span>
-              <span><EmojiIcon emoji="✅" size="1.15em" /> Unlimited practice</span>
-              <span><EmojiIcon emoji="✅" size="1.15em" /> All subjects</span>
-            </div>
-            {!showCancelConfirm ? (
-              <button
-                className="shop-premium-manage-btn"
-                onClick={() => setShowCancelConfirm(true)}
-              >
-                Manage Subscription
-              </button>
-            ) : (
-              <div className="shop-cancel-confirm">
-                <button className="shop-cancel-yes" onClick={handleCancel}>
-                  Cancel Pro
-                </button>
-                <button className="shop-cancel-no" onClick={() => setShowCancelConfirm(false)}>
-                  Keep Pro
-                </button>
-              </div>
-            )}
-          </div>
-
-        ) : (
-
-          /* ── Plans section ── */
-          <div className="shop-plans-section">
-            <div className="shop-plans-card">
-
-              {/* Header row */}
-              <div className="shop-plans-card-header">
-                <div className="shop-plans-card-title">Go Pro</div>
-                <div className="shop-plans-card-sub">Everything unlocked for a full year.</div>
-              </div>
-
-              {/* Plans grid */}
-              <div className="shop-plans-grid">
-                {COMPARE_PLANS.map(plan => {
-                  const { price, period } = getPlanPricing(plan);
-                  return (
-                    <div
-                      key={plan.id}
-                      className={`shop-plan-col ${plan.highlight ? 'shop-plan-col--highlight' : ''}`}
-                    >
-                      {plan.tag && (
-                        <div className="shop-plan-badge">{plan.tag}</div>
-                      )}
-                      <div className="shop-plan-col-top">
-                        <div className="shop-plan-icon">{plan.icon}</div>
-                        <div>
-                          <div className="shop-plan-name">{plan.label}</div>
-                          <div className="shop-plan-price">
-                            {plan.id === 'free' ? (
-                              <span className="shop-plan-free">Free</span>
-                            ) : (
-                              <>
-                                {plan.originalPrice && (
-                                  <span className="shop-plan-was">₦{FMT(plan.originalPrice)}</span>
-                                )}
-                                <span>
-                                  <span className="shop-plan-currency">₦</span>
-                                  <span className="shop-plan-amount">{FMT(price)}</span>
-                                  <span className="shop-plan-period">{period}</span>
-                                </span>
-                              </>
-                            )}
-                          </div>
-                          {plan.originalPrice && plan.originalPrice > price && <div className="shop-plan-save">You save ₦{FMT(plan.originalPrice - price)}</div>}
+            <div className="shop-plans-grid">
+              {PRO_PRODUCTS.map((prod) => {
+                const mine = proStatus.exams[prod.scope];
+                const isCurrent = prod.scope === (getActiveExam() === 'jamb' ? 'jamb' : ['waec', 'neco'].includes(getActiveExam()) ? 'waec_neco' : getActiveExam() === 'gst' ? 'gst' : '');
+                return (
+                  <div key={prod.scope} className={`shop-plan-col ${isCurrent ? 'shop-plan-col--highlight' : ''}`}>
+                    {mine && <div className="shop-plan-badge">ACTIVE</div>}
+                    {!mine && isCurrent && <div className="shop-plan-badge">YOUR EXAM</div>}
+                    <div className="shop-plan-col-top">
+                      <div className="shop-plan-icon">{prod.emoji}</div>
+                      <div>
+                        <div className="shop-plan-name">{prod.label}</div>
+                        <div className="shop-plan-price">
+                          {prod.options.map((o, i) => (
+                            <span key={o.id} style={{ display: 'block' }}>
+                              <span className="shop-plan-currency">₦</span><span className="shop-plan-amount">{FMT(priceOf(pricing, o))}</span><span className="shop-plan-period"> / {o.period}</span>
+                            </span>
+                          ))}
                         </div>
+                        {mine && <div className="shop-plan-save">Active until {proStatus.examsStr[prod.scope] || new Date(mine).toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })}</div>}
                       </div>
-
-                      <div className="shop-plan-features">
-                        {plan.features.map((f, i) => (
-                          <div key={i} className="shop-plan-feature">
-                            <span className="shop-plan-check">✓</span>
-                            <span>{f}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      <button
-                        className={`shop-plan-cta ${plan.highlight ? 'shop-plan-cta--primary' : 'shop-plan-cta--secondary'}`}
-                        disabled={plan.id === 'free'}
-                        onClick={() => openPlan(plan.id)}
-                      >
-                        {plan.id === 'free' ? 'Current' : `Get ${plan.label}`}
-                      </button>
                     </div>
-                  );
-                })}
-              </div>
-
-              <div className="shop-plans-trust">
-                🔒 Secured by Flutterwave · Cancel anytime · No hidden fees
-              </div>
+                    <div className="shop-plan-features">
+                      {prod.features.map((f, i) => (<div key={i} className="shop-plan-feature"><span className="shop-plan-check">✓</span><span>{f}</span></div>))}
+                    </div>
+                    <button className={`shop-plan-cta ${isCurrent || !mine ? 'shop-plan-cta--primary' : 'shop-plan-cta--secondary'}`} onClick={() => { setSelectedPlan(prod.options[0].id); setShowPremium(true); }}>
+                      {mine ? `Add more time · ${SCOPE_NAME[prod.scope]}` : `Get ${prod.label}`}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
+            <div className="shop-plans-trust">🔒 Secured by Flutterwave · No hidden fees</div>
           </div>
-        )}
+        </div>
 
         <GroupPlans userEmail={userEmail} name={name} pricing={pricing} />
 

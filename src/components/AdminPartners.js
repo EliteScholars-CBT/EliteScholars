@@ -6,6 +6,23 @@ const dt = (s) => (s ? new Date(s).toLocaleDateString('en-NG', { day: 'numeric',
 const copy = (t) => { try { navigator.clipboard?.writeText(t); } catch { /* ignore */ } };
 const linkFor = (code) => `https://elitescholars.site/?ref=${code}`;
 
+const agoS = (s) => {
+  if (!s) return 'never';
+  const m = Math.floor((Date.now() - new Date(s).getTime()) / 60000);
+  if (m < 2) return 'just now'; if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60); if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24); return d < 60 ? `${d}d ago` : dt(s);
+};
+const PERF = { performing: ['Performing', 'active'], low: ['Low activity', 'pending'], dormant: ['Not performing', 'suspended'], suspended: ['Suspended', 'suspended'], new: ['New', ''] };
+const SORTS = [
+  ['activity', 'Most active'], ['lastActive', 'Last active'], ['signups', 'Signups'], ['signups30', 'Signups (30 days)'], ['clicks', 'Link clicks'],
+  ['earned', 'Commission earned'], ['paying', 'Paying students'], ['name', 'Name (A–Z)'], ['inactive', 'Least active'],
+];
+const sortVal = {
+  activity: (p) => p.activity.score, lastActive: (p) => (p.lastActive ? new Date(p.lastActive).getTime() : 0), signups: (p) => p.signups,
+  signups30: (p) => p.activity.signups30, clicks: (p) => p.clicks, earned: (p) => p.earnedTotal, paying: (p) => p.paying, inactive: (p) => -p.activity.score,
+};
+
 function Chip({ status }) {
   return <span className={`adm-chip ${status}`}>{status.replace('_', ' ')}</span>;
 }
@@ -20,6 +37,9 @@ export default function AdminPartners({ token, onAuthFail }) {
   const [msg, setMsg] = useState('');
   const [err, setErr] = useState('');
   const [metric, setMetric] = useState('signups');
+  const [q, setQ] = useState('');
+  const [sort, setSort] = useState('activity');
+  const [filter, setFilter] = useState('all');
 
   const api = useCallback(async (path, method = 'GET', body) => {
     const r = await fetch(`/api/admin/${path}`, {
@@ -88,6 +108,7 @@ export default function AdminPartners({ token, onAuthFail }) {
           <section className="adm-grid adm-stats">
             <Kpi label="Partners" value={fmtN(data.summary.partners)} sub={`${data.summary.active} active · ${data.summary.pending} pending`} />
             <Kpi label="Referred students" value={fmtN(data.summary.referredStudents)} sub={`${fmtN(data.summary.clicks)} link clicks`} />
+            <Kpi label="Performing partners" value={fmtN(data.summary.performing)} sub={`${data.summary.low + data.summary.dormant} not performing`} />
             <Kpi label="Paying referrals" value={fmtN(data.summary.payingReferred)} />
             <Kpi label="Commission earned" value={fmtNaira(data.summary.earnedTotal)} />
             <Kpi label="Owed to partners" value={fmtNaira(data.summary.available + data.summary.inPayout)} sub={`${fmtNaira(data.summary.paid)} already paid`} />
@@ -107,27 +128,61 @@ export default function AdminPartners({ token, onAuthFail }) {
 
           <section className="adm-card">
             <h2>All partners</h2>
-            {!data.partners.length && <p className="adm-empty">No partners yet. Share <b>elitescholars.site/partner</b> with the people you want as affiliates.</p>}
-            <div className="adm-ptable">
-              {data.partners.map((p) => (
-                <div className={`adm-prow ${p.status}`} key={p.id}>
-                  <button className="adm-plink" onClick={() => setDetailId(p.id)}>
-                    <b>{p.name}</b> <Chip status={p.status} />
-                    <small>{p.email} · code {p.code}</small>
-                  </button>
-                  <div className="adm-pnums">
-                    <span><b>{p.rate}%</b>{p.customRate !== null && p.customRate !== undefined ? ' custom' : ' default'}</span>
-                    <span><b>{fmtN(p.signups)}</b> signups</span>
-                    <span><b>{fmtN(p.paying)}</b> paying</span>
-                    <span><b>{fmtNaira(p.earnedTotal)}</b> earned</span>
-                    <span><b>{fmtNaira(p.available + p.inPayout)}</b> owed</span>
+            {data.summary.atRisk > 0 && <div className="adm-warnbar">🟡 {data.summary.atRisk} partner{data.summary.atRisk === 1 ? ' is' : 's are'} close to automatic suspension (no login and no link click for 2+ weeks). They have been emailed.</div>}
+            {(() => {
+              const all = data.partners;
+              const filters = [['all', 'All', all.length], ['performing', 'Performing', data.summary.performing], ['nonperf', 'Not performing', data.summary.low + data.summary.dormant], ['atrisk', 'At risk 🟡', data.summary.atRisk], ['pending', 'Pending', data.summary.pending], ['suspended', 'Suspended', data.summary.suspended]];
+              const needle = q.trim().toLowerCase();
+              let list = all.filter((p) => {
+                if (needle && !`${p.name} ${p.email} ${p.phone} ${p.code}`.toLowerCase().includes(needle)) return false;
+                if (filter === 'performing') return p.perf === 'performing';
+                if (filter === 'nonperf') return p.perf === 'low' || p.perf === 'dormant';
+                if (filter === 'atrisk') return !!p.warning;
+                if (filter === 'pending') return p.status === 'pending';
+                if (filter === 'suspended') return p.status === 'suspended';
+                return true;
+              });
+              list = [...list].sort(sort === 'name' ? (x, y) => x.name.localeCompare(y.name) : (x, y) => (sortVal[sort](y) - sortVal[sort](x)) || (y.activity.score - x.activity.score));
+              return (
+                <>
+                  <div className="adm-ptools">
+                    <input className="adm-search" placeholder="Search by name, email, phone or code" value={q} onChange={(e) => setQ(e.target.value)} />
+                    <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort partners">{SORTS.map(([v, l]) => <option key={v} value={v}>Sort: {l}</option>)}</select>
                   </div>
-                  {p.status === 'pending' && (
-                    <button className="adm-small" onClick={() => act('partner-action', { action: 'approve', id: p.id }, `${p.name} approved.`)}>Approve</button>
-                  )}
-                </div>
-              ))}
-            </div>
+                  <div className="adm-tabs adm-pfilters">{filters.map(([v, l, n]) => <button key={v} className={filter === v ? 'on' : ''} onClick={() => setFilter(v)}>{l} ({n})</button>)}</div>
+                  {!all.length && <p className="adm-empty">No partners yet. Share <b>elitescholars.site/partner</b> with the people you want as affiliates.</p>}
+                  {!!all.length && !list.length && <p className="adm-empty">No partners match.</p>}
+                  <div className="adm-ptable">
+                    {list.map((p) => {
+                      const [plabel, pcls] = PERF[p.perf] || ['', ''];
+                      return (
+                        <div className={`adm-prow ${p.status}${p.warning ? ' warn' : ''}`} key={p.id}>
+                          <button className="adm-plink" onClick={() => setDetailId(p.id)}>
+                            <b>{p.name}</b> <Chip status={p.status} /> {p.status !== 'pending' && <span className={`adm-chip ${pcls}`} title={p.perfWhy}>{plabel}</span>}
+                            <small>{p.email} · code {p.code}</small>
+                            <small className="adm-seen">Last seen {agoS(p.lastSeen)} · last link click {agoS(p.lastClickAt)}</small>
+                            {p.warning && <small className="adm-warntxt">🟡 Idle {p.warning.idleDays} days. Auto-suspends in {p.warning.suspendInDays} day{p.warning.suspendInDays === 1 ? '' : 's'}{p.warning.warnedAt ? ' · warning email sent' : ''}</small>}
+                            {p.autoSuspendedAt && <small className="adm-warntxt">⛔ Auto-suspended {agoS(p.autoSuspendedAt)} for inactivity</small>}
+                          </button>
+                          <div className="adm-pnums">
+                            <span title="logins + link copies + resources + clicks + signups, last 30 days"><b>{fmtN(p.activity.score)}</b> activity</span>
+                            <span><b>{fmtN(p.activity.login)}</b> logins</span>
+                            <span><b>{fmtN(p.clicks)}</b> clicks</span>
+                            <span><b>{fmtN(p.signups)}</b> signups</span>
+                            <span><b>{fmtN(p.paying)}</b> paying</span>
+                            <span><b>{fmtNaira(p.earnedTotal)}</b> earned</span>
+                            <span><b>{p.rate}%</b>{p.customRate !== null && p.customRate !== undefined ? ' custom' : ' default'}</span>
+                          </div>
+                          {p.status === 'pending' && (
+                            <button className="adm-small" onClick={() => act('partner-action', { action: 'approve', id: p.id }, `${p.name} approved.`)}>Approve</button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              );
+            })()}
           </section>
 
           {data.partners.some((p) => p.signups) && (
@@ -244,7 +299,9 @@ function PartnerDetail({ d, err, msg, back, act }) {
       <section className="adm-card">
         <div className="adm-card-head">
           <div><h2 className="adm-name">{p.name} <Chip status={p.status} /></h2>
-            <small className="adm-sub">{p.email} · {p.phone} · joined {dt(p.joined)} · last seen {dtt(p.lastLogin)}</small></div>
+            <small className="adm-sub">{p.email} · {p.phone} · joined {dt(p.joined)} · last seen {dtt(p.lastSeen || p.lastLogin)} · last link click {dtt(p.lastClickAt)}</small>
+            {p.warnedAt && p.status === 'active' && <small className="adm-warntxt" style={{ display: 'block' }}>🟡 Idle {p.idleDays} days. Warning email sent, auto-suspends at 21 days.</small>}
+            {p.autoSuspendedAt && p.status === 'suspended' && <small className="adm-warntxt" style={{ display: 'block' }}>⛔ Auto-suspended for inactivity ({dtt(p.autoSuspendedAt)}).</small>}</div>
           <div className="adm-tabs">
             {p.status === 'pending' && <button className="on" onClick={() => act('partner-action', { action: 'approve', id }, 'Approved. They were emailed.')}>Approve</button>}
             {p.status === 'active' && <button className="adm-ghost" onClick={() => window.confirm('Suspend this partner? They will not earn new commission.') && act('partner-action', { action: 'suspend', id }, 'Suspended.')}>Suspend</button>}
@@ -261,6 +318,17 @@ function PartnerDetail({ d, err, msg, back, act }) {
         <Kpi label="Available" value={fmtNaira(k.available)} />
         <Kpi label="In payout" value={fmtNaira(k.inPayout)} />
         <Kpi label="Paid out" value={fmtNaira(k.paid)} />
+      </section>
+
+      <section className="adm-card">
+        <h2>Activity</h2>
+        <p className="adm-note" style={{ marginTop: 0 }}>Logins, links they copied, resources they opened or downloaded, and prices they checked. Inactivity (no login and no link click for 3 weeks) leads to automatic suspension.</p>
+        {!(d.activity || []).length && <p className="adm-empty">Nothing recorded yet.</p>}
+        <div className="adm-actlist">
+          {(d.activity || []).map((a, i) => (
+            <div className="adm-actrow" key={i}><span>{({ login: '🔑', copy_link: '📋', resource_view: '👀', resource_download: '⬇️', prices_view: '💰', partner_auto_suspended: '⛔', partner_inactivity_warned: '🟡' })[a.kind] || '•'} {a.text}{a.detail ? <small> · {a.detail}</small> : null}</span><small>{dtt(a.at)}</small></div>
+          ))}
+        </div>
       </section>
 
       <section className="adm-grid adm-two">

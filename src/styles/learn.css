@@ -1293,3 +1293,40 @@ body.dark-mode .learn-tip-warn {
 .tts-w.tts-sent { background: rgba(124, 58, 237, .14); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 .tts-w.tts-read { background: rgba(124, 58, 237, .07); }
 .tts-w.tts-now { background: linear-gradient(135deg, #7c3aed, #f5b400); color: #fff !important; padding: 1px 3px; margin: 0 -3px; box-shadow: 0 2px 8px rgba(124, 58, 237, .35); }
+
+/* ── Tip boxes: keep ALL the text inside the box ─────────────────────────────
+   The tip markup is  <div class="learn-tip-box"><span icon/> <strong>Title</strong> text <em>…</em> …</div>.
+   With display:flex every piece (the bold title, each italic word, each run of plain text) became its own flex
+   column, so the sentence got chopped into side-by-side strips that drifted out of the box. The box is now a normal
+   block with the icon pinned to the left, so the text flows as one paragraph and wraps inside the box. */
+.learn-content-html .learn-tip-box,
+.learn-content-html .learn-tip-warn {
+  display: block !important;
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 14px 16px 14px 52px !important;
+  line-height: 1.65;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  overflow: hidden;
+}
+.learn-content-html .learn-tip-box > .learn-tip-icon,
+.learn-content-html .learn-tip-warn > .learn-tip-icon {
+  position: absolute;
+  left: 14px;
+  top: 13px;
+  margin: 0 !important;
+  line-height: 1;
+}
+.learn-content-html .learn-tip-box strong,
+.learn-content-html .learn-tip-warn strong,
+.learn-content-html .learn-tip-box em,
+.learn-content-html .learn-tip-warn em { display: inline; }
+.learn-content-html .learn-tip-box ul, .learn-content-html .learn-tip-box ol,
+.learn-content-html .learn-tip-warn ul, .learn-content-html .learn-tip-warn ol { margin: 6px 0 0; padding-left: 20px; }
+.learn-content-html .learn-tip-box table, .learn-content-html .learn-tip-warn table { display: block; max-width: 100%; overflow-x: auto; }

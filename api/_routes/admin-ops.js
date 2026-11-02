@@ -267,6 +267,17 @@ export default async function handler(req, res) {
           for (const p of data || []) items.push({ kind: "partner", text: `${p.full_name} wants to be a partner`, at: p.created_at, tab: "partners" });
         }
       }
+      if (need("partners")) {
+        // inactivity: yellow warnings sent + recent auto-suspensions (last 7 days)
+        const wk = new Date(Date.now() - 7 * 86400000).toISOString();
+        const { data: ev } = await sb.from("events").select("type,created_at,payload").in("type", ["partner_inactivity_warned", "partner_auto_suspended"]).gte("created_at", wk).order("created_at", { ascending: false }).limit(30);
+        const { data: atRisk } = await sb.from("partners").select("full_name,inactivity_warned_at").eq("status", "active").not("inactivity_warned_at", "is", null);
+        counts.partnerRisk = (atRisk || []).length;
+        for (const e of ev || []) {
+          if (e.type === "partner_auto_suspended") items.push({ kind: "partner", text: `⛔ ${e.payload.name} was suspended for inactivity${e.payload.email_sent ? " (email sent)" : ""}`, at: e.created_at, tab: "partners" });
+          else if ((atRisk || []).some((p) => p.full_name === e.payload.name)) items.push({ kind: "partner", text: `🟡 ${e.payload.name} warned: suspension in 7 days (email ${e.payload.email_sent ? "sent" : "NOT sent"})`, at: e.created_at, tab: "partners" });
+        }
+      }
       if (need("payouts")) {
         counts.payouts = await cnt("partner_payouts", (x) => x.eq("status", "requested"));
         if (counts.payouts) items.push({ kind: "payout", text: `${counts.payouts} payout request${counts.payouts === 1 ? "" : "s"} waiting`, at: null, tab: "partners" });
@@ -814,7 +825,7 @@ export default async function handler(req, res) {
       if (!need("prices")) return deny();
       const pr = await getPricing();
       return sendOk(res, {
-        prices: { premiumAnnual: pr.premiumAnnual, premiumAnnualOriginal: pr.premiumAnnualOriginal, pro: pr.pro, group50: pr.group50, group100: pr.group100 },
+        prices: { premiumAnnual: pr.premiumAnnual, premiumAnnualOriginal: pr.premiumAnnualOriginal, pro: pr.pro, group50: pr.group50, group100: pr.group100, ...pr.plans },
         items: SHOP_ITEMS.filter((i) => !i.isPremium).map((i) => ({ id: i.id, title: i.title, category: i.category, price: pr.items[i.id] })),
         school: pr.school, centre: pr.centre,
       });
@@ -825,7 +836,8 @@ export default async function handler(req, res) {
       const num = (v) => { const n = Math.round(Number(v)); return Number.isFinite(n) && n > 0 && n <= 10000000 ? n : null; };
       const { data: cur } = await sb.from("settings").select("value").eq("key", "prices").maybeSingle();
       const next = { ...(cur && cur.value) };
-      for (const k of ["premiumAnnual", "premiumAnnualOriginal", "pro", "group50", "group100"]) if (b[k] !== undefined) { const n = num(b[k]); if (!n) return sendErr(res, "Prices must be whole naira amounts above 0."); next[k] = n; }
+      for (const k of ["premiumAnnual", "premiumAnnualOriginal", "pro", "group50", "group100", "waecneco6", "waecneco12", "gst6", "gst12"]) if (b[k] !== undefined) { const n = num(b[k]); if (!n) return sendErr(res, "Prices must be whole naira amounts above 0."); next[k] = n; }
+      if (next.premiumAnnual) next.jamb = next.premiumAnnual;
       if (b.items && typeof b.items === "object") {
         next.items = { ...(next.items || {}) };
         for (const it of SHOP_ITEMS) if (b.items[it.id] !== undefined) { const n = num(b.items[it.id]); if (!n) return sendErr(res, `Invalid price for ${it.title}.`); next.items[it.id] = n; }

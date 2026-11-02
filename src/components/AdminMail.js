@@ -93,9 +93,13 @@ export default function AdminMail({ token, onAuthFail }) {
           <button className={kind === 'students' ? 'on' : ''} onClick={() => setKind('students')}>Students</button>
           <button className={kind === 'partners' ? 'on' : ''} onClick={() => setKind('partners')}>Partners</button>
         </div>
-        <div className="adm-mail-opts">
+        <div className="adm-mail-opts" role="radiogroup" aria-label="Who should get this email">
           {FILTERS[kind].map(([id, label]) => (
-            <label key={id}><input type="radio" name="aud" checked={mode === id} onChange={() => setMode(id)} /> {label}</label>
+            <label key={id} className={`adm-mail-opt${mode === id ? ' on' : ''}`}>
+              <input type="radio" name="aud" checked={mode === id} onChange={() => setMode(id)} />
+              <span className="adm-mail-dot" aria-hidden="true" />
+              <span className="adm-mail-lbl">{label}</span>
+            </label>
           ))}
         </div>
 

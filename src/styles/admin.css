@@ -121,8 +121,7 @@ body:has(.adm-wrap){background:#0f0b1f}
 
 /* Email centre */
 .adm-input{width:100%;box-sizing:border-box;background:var(--bg,#0f0b1f);color:inherit;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;margin-bottom:10px}
-.adm-mail-opts{display:flex;flex-direction:column;gap:8px;margin:10px 0}
-.adm-mail-opts label{display:flex;gap:8px;align-items:center;font-size:.92rem}
+.adm-mail-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin:12px 0}
 .adm-mail-results{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;max-height:240px;overflow:auto}
 .adm-mail-results button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:transparent;color:inherit;border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;position:relative}
 .adm-mail-results button small{opacity:.65}
@@ -252,3 +251,29 @@ body:has(.adm-wrap){background:#0f0b1f}
 .adm-switch { display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 13px; } 
 .adm-link-danger { border: 0; background: none; color: #DC2626; font-weight: 800; font-size: 12.5px; cursor: pointer; padding: 6px 0; font-family: inherit; }
 .adm-btn-ghost { border: 1.5px dashed rgba(124,58,237,.4); background: none; color: #7C3AED; font-weight: 800; border-radius: 12px; padding: 10px 14px; cursor: pointer; font-family: inherit; }
+
+/* partners: search, sort, activity, yellow warning */
+.adm-ptools{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.adm-ptools .adm-search{flex:1 1 220px;min-width:0}
+.adm-ptools select{flex:0 1 200px;min-width:0}
+.adm-pfilters{flex-wrap:wrap;margin-bottom:10px}
+.adm-prow.warn{background:#2e2608;border-color:#e0b72a}
+.adm-seen{display:block;color:var(--mut)}
+.adm-warntxt{display:block;color:#ffd24a;font-weight:600}
+.adm-warnbar{background:#2e2608;border:1px solid #e0b72a;color:#ffe08a;border-radius:10px;padding:9px 12px;font-size:.82rem;margin:6px 0 10px}
+.adm-prow.suspended .adm-warntxt{color:#fb7185}
+.adm-chip.low{background:#3a2c0a;color:var(--gold)}
+.adm-chip.dormant{background:#3b1230;color:#fb7185}
+.adm-actlist{display:flex;flex-direction:column;max-height:340px;overflow:auto}
+.adm-actrow{display:flex;justify-content:space-between;gap:10px;padding:7px 2px;border-bottom:1px solid var(--line);font-size:.85rem}
+.adm-actrow small{color:var(--mut);white-space:nowrap}
+
+/* email: audience options as tidy selectable cards (native radio hidden; it was being stretched by the global input style) */
+.adm-mail-opt{position:relative;display:flex;align-items:center;gap:10px;min-width:0;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#150f2c;cursor:pointer;font-size:.88rem;line-height:1.25;transition:border-color .15s,background .15s}
+.adm-mail-opt input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.adm-mail-dot{flex:0 0 18px;width:18px;height:18px;border-radius:50%;border:2px solid var(--mut);box-sizing:border-box;display:grid;place-items:center}
+.adm-mail-opt.on{border-color:#8B5CF6;background:rgba(139,92,246,.16)}
+.adm-mail-opt.on .adm-mail-dot{border-color:#8B5CF6}
+.adm-mail-opt.on .adm-mail-dot::after{content:'';width:8px;height:8px;border-radius:50%;background:#8B5CF6}
+.adm-mail-opt input:focus-visible ~ .adm-mail-dot{outline:2px solid #c4b5fd;outline-offset:2px}
+.adm-mail-lbl{min-width:0;overflow-wrap:anywhere}
