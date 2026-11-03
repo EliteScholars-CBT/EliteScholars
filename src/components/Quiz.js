@@ -1,6 +1,6 @@
 import ReportQuestion from './ReportQuestion';
 import React, { useState, useEffect, useRef } from 'react';
-import { SUBJ } from '../data/subjects';
+import { getSubjectMeta } from '../data/subjectMeta';
 import { ROUND_SIZE, getTimerSecs, SHOW_ADS } from '../utils/constants';
 import {
   DPURP,
@@ -97,7 +97,7 @@ export default function Quiz({
   const isRoundEnd = (qi + 1) % effectiveRoundSize === 0;
   const isLast = isLastQ || isRoundEnd;
   const roundNum = Math.floor(qi / effectiveRoundSize);
-  const meta = SUBJ[subjectId] || SUBJ.economics;
+  const meta = getSubjectMeta(subjectId);
 
   // Reset per-question state
   useEffect(() => {
