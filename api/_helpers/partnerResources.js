@@ -1,5 +1,5 @@
 // Promo material partners can open and download (files live in /public/partner-resources).
-const f = (file, title, audience, note) => ({ id: file.replace(/\.png$/, ""), file: `/partner-resources/${file}`, title, audience, note });
+const f = (file, title, audience, note) => ({ id: file.replace(/\.[a-z0-9]+$/i, ""), file: `/partner-resources/${file}`, kind: /\.mp4$/i.test(file) ? "video" : "image", title, audience, note });
 export const RESOURCES = [
   f("01_GST_a.png", "GST flyer (A)", "University students", "Share in course groups and class WhatsApp groups."),
   f("02_GST_b.png", "GST flyer (B)", "University students", "Alternative design for status posts."),
@@ -13,4 +13,8 @@ export const RESOURCES = [
   f("10_CENTRES_b.png", "Tutorial centres flyer (B)", "Centre owners", "Alternative design."),
   f("11_SCHOOLS_a.png", "Schools flyer (A)", "School owners", "Use with your school link."),
   f("12_SCHOOLS_b.png", "Schools flyer (B)", "School owners", "Alternative design."),
+  f("EliteScholars_GST_30s.mp4", "GST video (30 s)", "University students", "Post on status and reels, and in course groups. Add your link in the caption."),
+  f("EliteScholars_Student_30s.mp4", "Student video (30 s)", "Students", "Post on your status and reels. Add your link in the caption."),
+  f("EliteScholars_Parent_30s.mp4", "Parents video (30 s)", "Parents", "Share in parents' groups. Add your link in the caption."),
+  f("EliteScholars_School_30s.mp4", "Schools video (30 s)", "School and centre owners", "Send to school owners and tutorial centres with your link."),
 ];

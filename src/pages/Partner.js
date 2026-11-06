@@ -361,15 +361,17 @@ export default function Partner() {
       {tab === 'resources' && (
         <section className="adm-card">
           <h2>Resources</h2>
-          <p className="adm-note" style={{ marginTop: 0 }}>Ready-made flyers to share in groups, on your status and on your page. Add your personal link when you post them.</p>
+          <p className="adm-note" style={{ marginTop: 0 }}>Ready-made flyers and videos to share in groups, on your status and on your page. Add your personal link when you post them.</p>
           <div className="pt-res">
             {(data.resources || []).map((r) => (
               <div className="pt-res-card" key={r.id}>
-                <img src={r.file} alt={r.title} loading="lazy" />
+                {r.kind === 'video'
+                  ? <video src={r.file} controls playsInline preload="metadata" style={{ width: '100%', aspectRatio: '9 / 16', objectFit: 'cover', borderRadius: 10, background: '#0e0920' }} onPlay={() => track('resource_view', r.title)} />
+                  : <img src={r.file} alt={r.title} loading="lazy" />}
                 <b>{r.title}</b><small>{r.audience} · {r.note}</small>
                 <div className="adm-inline">
                   <a className="adm-small" href={r.file} target="_blank" rel="noreferrer" onClick={() => track('resource_view', r.title)}>View</a>
-                  <a className="adm-small" href={r.file} download={`${r.id}.png`} onClick={() => track('resource_download', r.title)}>Download</a>
+                  <a className="adm-small" href={r.file} download={`${r.id}${r.kind === 'video' ? '.mp4' : '.png'}`} onClick={() => track('resource_download', r.title)}>Download</a>
                 </div>
               </div>
             ))}
