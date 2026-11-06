@@ -13,6 +13,7 @@ export const RESOURCES = [
   f("10_CENTRES_b.png", "Tutorial centres flyer (B)", "Centre owners", "Alternative design."),
   f("11_SCHOOLS_a.png", "Schools flyer (A)", "School owners", "Use with your school link."),
   f("12_SCHOOLS_b.png", "Schools flyer (B)", "School owners", "Alternative design."),
+  f("EliteScholars_GST_30s.mp4", "GST video (30 s)", "University students", "Post on status and reels, and in course groups. Add your link in the caption."),
   f("EliteScholars_Student_30s.mp4", "Student video (30 s)", "Students", "Post on your status and reels. Add your link in the caption."),
   f("EliteScholars_Parent_30s.mp4", "Parents video (30 s)", "Parents", "Share in parents' groups. Add your link in the caption."),
   f("EliteScholars_School_30s.mp4", "Schools video (30 s)", "School and centre owners", "Send to school owners and tutorial centres with your link."),
