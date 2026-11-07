@@ -37,6 +37,7 @@ import schoolPortal from "./_routes/school-portal.js";
 import report from "./_routes/report.js";
 import adminOps from "./_routes/admin-ops.js";
 import squadChat from "./_routes/squad-chat.js";
+import hiring from "./_routes/hiring.js";
 
 // Several routes share one handler and are told which operation via ?op=
 function withOp(fn, op) {
@@ -136,6 +137,14 @@ const ROUTES = {
   "admin/payouts": withOp(adminPartners, "payouts"),
   "admin/payout-action": withOp(adminPartners, "payout-action"),
   "admin/settings": withOp(adminPartners, "settings"),
+  "hire/job": withOp(hiring, "job"),
+  "hire/apply": withOp(hiring, "apply"),
+  "hire/research": withOp(hiring, "research"),
+  "admin/hiring": withOp(hiring, "admin-list"),
+  "admin/hiring-save": withOp(hiring, "admin-save"),
+  "admin/hiring-delete": withOp(hiring, "admin-delete"),
+  "admin/hiring-job-action": withOp(hiring, "admin-job-action"),
+  "admin/hiring-app": withOp(hiring, "admin-app"),
   "admin/me": withOp(adminOps, "me"),
   "admin/alerts": withOp(adminOps, "alerts"),
   "admin/students": withOp(adminOps, "students"),

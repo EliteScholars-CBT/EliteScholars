@@ -114,15 +114,27 @@ export default async function handler(req, res) {
 
     const { data: exists } = await sb.from("partners").select("id").eq("email", email).maybeSingle();
     if (exists) return sendErr(res, "A partner account with this email already exists.");
+    // Someone we approved through Hiring signs up with their personal link and is activated straight away.
+    let hired = null;
+    const hireTok = String(b.hire || "").trim().slice(0, 60);
+    if (hireTok) {
+      const { data: ha } = await sb.from("hiring_applications").select("id,email,status,job_id").eq("token", hireTok).maybeSingle();
+      if (ha && ha.status === "approved" && String(ha.email).toLowerCase() === email) hired = ha;
+    }
     let created = null;
     for (let i = 0; i < 6 && !created; i++) {
       const { data, error } = await sb.from("partners").insert({
-        email, full_name: name, phone, password_hash: hashPartnerPassword(b.password), referral_code: makePartnerCode(), status: "pending",
+        email, full_name: name, phone, password_hash: hashPartnerPassword(b.password), referral_code: makePartnerCode(), status: hired ? "active" : "pending",
+        ...(hired ? { approved_at: new Date().toISOString() } : {}),
       }).select("id").maybeSingle();
       if (error) { if (error.code === "23505" && !/email/.test(error.message)) continue; return sendErr(res, "Could not create account.", 500); }
       created = data;
     }
     if (!created) return sendErr(res, "Could not create account. Try again.", 500);
+    if (hired) {
+      await sb.from("hiring_applications").update({ status: "joined" }).eq("id", hired.id);
+      return sendOk(res, { message: "Your partner account is ready. Sign in to get your link." });
+    }
     await notifyAdmin("New partner waiting for your approval", "A new affiliate partner has signed up and is waiting for you to approve them.", { emoji: "🤝", heading: "New partner to approve", rows: [["Name", name], ["Email", email], ["Phone", phone || "—"]], cta: { label: "Review in admin", url: "https://elitescholars.site/admin" } });
     return sendOk(res, { message: "Account created. We will review and approve it shortly, and email you." });
   }

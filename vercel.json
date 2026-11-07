@@ -438,6 +438,38 @@
       "destination": "/api/data?route=admin/me"
     },
     {
+      "source": "/api/hire/job",
+      "destination": "/api/data?route=hire/job"
+    },
+    {
+      "source": "/api/hire/apply",
+      "destination": "/api/data?route=hire/apply"
+    },
+    {
+      "source": "/api/hire/research",
+      "destination": "/api/data?route=hire/research"
+    },
+    {
+      "source": "/api/admin/hiring",
+      "destination": "/api/data?route=admin/hiring"
+    },
+    {
+      "source": "/api/admin/hiring-save",
+      "destination": "/api/data?route=admin/hiring-save"
+    },
+    {
+      "source": "/api/admin/hiring-delete",
+      "destination": "/api/data?route=admin/hiring-delete"
+    },
+    {
+      "source": "/api/admin/hiring-job-action",
+      "destination": "/api/data?route=admin/hiring-job-action"
+    },
+    {
+      "source": "/api/admin/hiring-app",
+      "destination": "/api/data?route=admin/hiring-app"
+    },
+    {
       "source": "/api/admin/alerts",
       "destination": "/api/data?route=admin/alerts"
     },

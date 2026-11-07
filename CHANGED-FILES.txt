@@ -1,2 +1,6 @@
-Fix: CBT quiz header showed "Economics" for subjects missing from the JAMB list (GST, WAEC/NECO-only ids).
-src/components/Quiz.js - now uses getSubjectMeta(subjectId) (same lookup as Ready/Result screens) instead of falling back to SUBJ.economics.
+Update 17
+- Blog navbar: purple brand + links on scroll (public/blog/blog-style.css, _blog-ads.js). Blog pages are static: rebuild/redeploy blog so the CSS+JS reach them (the template already links both).
+- Pro cards: swipeable, ordered by student type (ProCards.js, PremiumModal.js, Shop.js, proPlans.js, shop.css)
+- Admin: bell badge clears, roomy popup, partners pending first, analytics defaults to Today + 12-month chips + 1 year, coloured activity incl. status views/comments/squads
+- Hiring: admin tab, public /hire/<slug>, /hire/r/<token>, auto emails, partner signup via hire link
+- SQL: supabase/update17_hiring.sql (already applied to elite-supabase)

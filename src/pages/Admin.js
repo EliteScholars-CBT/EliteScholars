@@ -18,13 +18,14 @@ import AdminGames from '../components/AdminGames';
 import AdminShop from '../components/AdminShop';
 import AdminSources from '../components/AdminSources';
 import { AdminPrices, AdminSchools } from '../components/AdminPrices';
+import AdminHiring from '../components/AdminHiring';
 import { makeApi, ago } from '../components/adminApi';
 import '../styles/admin.css';
 
 const TOKEN_KEY = 'es_admin_token';
 const RANGES = [
   ['today', 'Today'], ['7d', '7 days'], ['30d', '30 days'], ['90d', '90 days'],
-  ['thismonth', 'This month'], ['thisyear', 'This year'], ['all', 'All time'],
+  ['thismonth', 'This month'], ['365d', '1 year'], ['thisyear', 'This year'], ['all', 'All time'],
 ];
 
 const METRICS = {
@@ -51,6 +52,7 @@ const TABS = [
   { id: 'earnings', label: 'Adsterra earnings', perms: ['ads'] },
   { id: 'shop', label: 'Shop', perms: ['shop'] },
   { id: 'partners', label: 'Partners', perms: ['partners', 'payouts'], badge: ['partners', 'payouts'] },
+  { id: 'hiring', label: 'Hiring', perms: ['partners'], badge: ['hiring'] },
   { id: 'schools', label: 'Schools', perms: ['schools'], badge: ['schools'] },
   { id: 'prices', label: 'Prices', perms: ['prices'] },
   { id: 'access', label: 'Access & trials', perms: ['access'] },
@@ -69,7 +71,7 @@ export default function Admin() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [stats, setStats] = useState(null);
-  const [range, setRange] = useState('30d');
+  const [range, setRange] = useState('today');
   const [month, setMonth] = useState('');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
@@ -79,6 +81,8 @@ export default function Admin() {
   const [me, setMe] = useState(null);
   const [alerts, setAlerts] = useState({ counts: {}, total: 0, items: [] });
   const [bell, setBell] = useState(false);
+  // What the admin has already looked at: red badges show only what is new since then.
+  const [seen, setSeen] = useState(() => { try { return JSON.parse(localStorage.getItem('adm_alert_seen') || '{}') || {}; } catch { return {}; } });
   const [teamMode, setTeamMode] = useState(false);
   const [email, setEmail] = useState('');
 
@@ -102,6 +106,23 @@ export default function Admin() {
     let secSince = ''; try { secSince = localStorage.getItem('adm_sec_seen') || ''; } catch { /* ignore */ }
     api('alerts', secSince ? { query: { secSince } } : undefined).then(setAlerts).catch(() => {});
   }, [token, api]);
+  const markSeen = useCallback((keys) => {
+    setSeen((prev) => {
+      const next = { ...prev };
+      (keys || []).forEach((k) => { next[k] = alerts.counts[k] || 0; });
+      try { localStorage.setItem('adm_alert_seen', JSON.stringify(next)); } catch { /* ignore */ }
+      return next;
+    });
+  }, [alerts]);
+  const unseen = useCallback((k) => Math.max(0, (alerts.counts[k] || 0) - (seen[k] || 0)), [alerts, seen]);
+  const unseenTotal = Object.keys(alerts.counts).reduce((a, k) => a + unseen(k), 0);
+  // if a count dropped (e.g. a trial was renewed), lower the remembered number so the next new one shows again
+  useEffect(() => {
+    if (!Object.keys(alerts.counts).length) return;
+    const lower = Object.keys(seen).filter((k) => (alerts.counts[k] || 0) < seen[k]);
+    if (!lower.length) return;
+    setSeen((prev) => { const n = { ...prev }; lower.forEach((k) => { n[k] = alerts.counts[k] || 0; }); try { localStorage.setItem('adm_alert_seen', JSON.stringify(n)); } catch { /* ignore */ } return n; });
+  }, [alerts, seen]);
   useEffect(() => {
     if (!token) return undefined;
     refreshAlerts();
@@ -181,12 +202,12 @@ export default function Admin() {
         </div>
         <div className="adm-head-actions">
           <div className="adm-bellwrap">
-            <button className="adm-ghost adm-bell" onClick={() => { setBell(!bell); refreshAlerts(); }} aria-label="Things needing attention">🔔{alerts.total > 0 && <i className="adm-dot">{alerts.total > 9 ? '9+' : alerts.total}</i>}</button>
+            <button className="adm-ghost adm-bell" onClick={() => { const o = !bell; setBell(o); refreshAlerts(); if (o) markSeen(Object.keys(alerts.counts)); }} aria-label="Things needing attention">🔔{unseenTotal > 0 && <i className="adm-dot">{unseenTotal > 9 ? '9+' : unseenTotal}</i>}</button>
             {bell && (
               <div className="adm-pop">
-                <b>Needs your attention</b>
+                <div className="adm-pop-head"><b>Needs your attention</b><button type="button" className="adm-pop-x" onClick={() => setBell(false)} aria-label="Close">✕</button></div>
                 {alerts.items.length ? alerts.items.map((it, i) => (
-                  <button key={i} className="adm-pop-row" onClick={() => { setView(it.tab); setBell(false); }}><span>{it.text}</span>{it.at && <small>{ago(it.at)}</small>}</button>
+                  <button key={i} className="adm-pop-row" onClick={() => { setView(it.tab); setBell(false); }}><span className="adm-pop-text">{it.text}</span>{it.at && <small>{ago(it.at)}</small>}</button>
                 )) : <p className="adm-empty">All clear 🎉</p>}
               </div>
             )}
@@ -200,8 +221,8 @@ export default function Admin() {
       {me && (
       <div className="adm-tabs adm-maintabs adm-scroll" role="tablist">
         {visibleTabs.map((t) => {
-          const n = t.badge ? t.badge.reduce((a, k) => a + (alerts.counts[k] || 0), 0) : 0;
-          return <button key={t.id} role="tab" className={cur === t.id ? 'on' : ''} onClick={() => setView(t.id)}>{t.label}{n > 0 && <i className="adm-dot">{n > 9 ? '9+' : n}</i>}</button>;
+          const n = t.badge ? t.badge.reduce((a, k) => a + unseen(k), 0) : 0;
+          return <button key={t.id} role="tab" className={cur === t.id ? 'on' : ''} onClick={() => { setView(t.id); if (t.badge) markSeen(t.badge); }}>{t.label}{n > 0 && <i className="adm-dot">{n > 9 ? '9+' : n}</i>}</button>;
         })}
       </div>
       )}
@@ -225,12 +246,16 @@ export default function Admin() {
       {cur === 'access' && <AdminAccess token={token} onAuthFail={authFail} />}
       {cur === 'reports' && <AdminReports token={token} onAuthFail={authFail} />}
       {cur === 'mail' && <AdminMail token={token} onAuthFail={authFail} />}
+      {cur === 'hiring' && <AdminHiring token={token} onAuthFail={authFail} />}
       {cur === 'partners' && <AdminPartners token={token} onAuthFail={authFail} />}
 
       {cur === 'analytics' && (<>
       <section className="adm-controls">
         <div className="adm-pills">
           {RANGES.map(([k, l]) => <button key={k} className={range === k ? 'on' : ''} onClick={() => { setMonth(''); setRange(k); }}>{l}</button>)}
+        </div>
+        <div className="adm-pills adm-months" aria-label="Previous months">
+          {Array.from({ length: 12 }, (_, i) => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); const v = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; return [v, d.toLocaleDateString('en-GB', { month: 'short', year: '2-digit' })]; }).map(([v, l]) => <button key={v} className={range === `month:${v}` ? 'on' : ''} onClick={() => pickMonth(v)}>{l}</button>)}
         </div>
         <div className="adm-pickers">
           <label>Month <input type="month" value={month} max={new Date().toISOString().slice(0, 7)} onChange={(e) => pickMonth(e.target.value)} /></label>

@@ -143,6 +143,7 @@ export default function AdminPartners({ token, onAuthFail }) {
                 return true;
               });
               list = [...list].sort(sort === 'name' ? (x, y) => x.name.localeCompare(y.name) : (x, y) => (sortVal[sort](y) - sortVal[sort](x)) || (y.activity.score - x.activity.score));
+              list = [...list.filter((p) => p.status === 'pending'), ...list.filter((p) => p.status !== 'pending')]; // pending approvals always on top
               return (
                 <>
                   <div className="adm-ptools">

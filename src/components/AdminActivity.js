@@ -1,13 +1,25 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { makeApi, fmtDT, ago } from './adminApi';
 
+// Colour groups so the feed can be scanned at a glance.
+const CATS = [
+  ['learn', 'Learning', /^(quiz|learn|flash|file_upload|topic)/],
+  ['game', 'Games', /^(game|challenge)/],
+  ['social', 'Status & squads', /^(status_view|status_comment|status_reply|status_post|squad|status_react)/],
+  ['money', 'Pro & payments', /^(premium|payment|prices|plan)/],
+  ['join', 'Sign-ups & logins', /^(signup|register|login|referral|pwa|visit)/],
+  ['warn', 'Blocked / security', /(blocked|bypass|anomaly|suspicious|multi_account)/],
+  ['xp', 'XP', /^xp$/],
+];
+const catOf = (t) => (CATS.find((c) => c[2].test(String(t || ''))) || ['other'])[0];
+
 // A live feed of what students are doing, newest first.
 export default function AdminActivity({ token, onAuthFail }) {
   const api = useMemo(() => makeApi(token, onAuthFail), [token, onAuthFail]);
   const [items, setItems] = useState([]);
   const [types, setTypes] = useState([]);
   const [next, setNext] = useState(null);
-  const [f, setF] = useState({ q: '', type: '', days: '2' });
+  const [f, setF] = useState({ q: '', type: '', days: '1' });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [auto, setAuto] = useState(true);
@@ -39,11 +51,12 @@ export default function AdminActivity({ token, onAuthFail }) {
           <label>Period<select value={f.days} onChange={(e) => setF({ ...f, days: e.target.value })}><option value="1">Last 24 hours</option><option value="2">Last 2 days</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select></label>
         </div>
       </section>
+      <div className="adm-legend">{CATS.map((c) => <span key={c[0]} className={`cat-${c[0]}`}><i />{c[1]}</span>)}</div>
       {err && <div className="adm-error">{err}</div>}
       <section className="adm-card">
         {items.length ? (
           <ul className="adm-timeline wide">
-            {items.map((a, i) => <li key={i} className={a.kind}><time>{fmtDT(a.at)}<em>{ago(a.at)}</em></time><span><b>{a.who}</b> · {a.text}</span></li>)}
+            {items.map((a, i) => <li key={i} className={`${a.kind} cat-${catOf(a.type)}`}><time>{fmtDT(a.at)}<em>{ago(a.at)}</em></time><span><b>{a.who}</b> · {a.text}</span></li>)}
           </ul>
         ) : <p className="adm-empty">{busy ? 'Loading…' : 'No activity in this period.'}</p>}
         {next && <button className="adm-more" disabled={busy} onClick={() => load(next)}>{busy ? 'Loading…' : 'Show older'}</button>}

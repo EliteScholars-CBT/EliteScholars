@@ -910,3 +910,19 @@ body.es-has-sticky { padding-bottom: 74px; }
 .es-shop-card div { padding: 12px; display: grid; gap: 2px; }
 .es-shop-card b { font-size: 14.5px; line-height: 1.3; }
 .es-shop-card span { font-weight: 800; color: var(--brand-dark); }
+
+/* Scrolled state: light glass bar with purple brand text and links (readable over white content) */
+.blog-topbar { transition: background .25s ease, box-shadow .25s ease; }
+.blog-topbar-logo, .blog-topbar-nav a { transition: color .25s ease, background .25s ease; }
+.blog-topbar.scrolled {
+  background: rgba(255,255,255,0.82);
+  background: color-mix(in srgb, #ffffff 82%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6); backdrop-filter: blur(16px) saturate(1.6);
+  box-shadow: 0 2px 14px rgba(124,58,237,0.14);
+  border-bottom: 1px solid rgba(139,92,246,0.18);
+}
+.blog-topbar.scrolled .blog-topbar-logo { color: var(--brand-dark); }
+.blog-topbar.scrolled .blog-topbar-nav a { color: var(--brand-dark); }
+.blog-topbar.scrolled .blog-topbar-nav a:hover { background: var(--brand-light); color: var(--brand-dark); }
+.blog-topbar.scrolled .blog-topbar-cta { background: var(--brand); color: #fff !important; }
+.blog-topbar.scrolled .blog-topbar-cta:hover { background: var(--brand-dark); }

@@ -35,3 +35,13 @@ export function priceOf(pricing, opt) {
 }
 export const SCOPE_NAME = { jamb: 'JAMB', waec_neco: 'WAEC & NECO', gst: 'GST' };
 export const PLAN_LABEL = { annual: 'JAMB Pro (1 year)', jamb: 'JAMB Pro (1 year)', waecneco6: 'WAEC & NECO Pro (6 months)', waecneco12: 'WAEC & NECO Pro (1 year)', gst6: 'GST Pro (6 months)', gst12: 'GST Pro (1 year)' };
+
+// Cards are shown in the order that suits the student: their own exam first.
+//   JAMB candidate      -> JAMB, WAEC & NECO, GST
+//   WAEC / NECO student -> WAEC & NECO, JAMB, GST
+//   University (GST)    -> GST, JAMB, WAEC & NECO
+export function orderedProducts(exam) {
+  const first = scopeForExam(exam) || 'waec_neco';
+  const rest = { jamb: ['waec_neco', 'gst'], waec_neco: ['jamb', 'gst'], gst: ['jamb', 'waec_neco'] }[first];
+  return [first, ...rest].map((sc) => PRO_PRODUCTS.find((p) => p.scope === sc)).filter(Boolean);
+}

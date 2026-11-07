@@ -278,6 +278,11 @@ export default async function handler(req, res) {
           else if ((atRisk || []).some((p) => p.full_name === e.payload.name)) items.push({ kind: "partner", text: `🟡 ${e.payload.name} warned: suspension in 7 days (email ${e.payload.email_sent ? "sent" : "NOT sent"})`, at: e.created_at, tab: "partners" });
         }
       }
+      if (need("partners")) {
+        const sub = await cnt("hiring_applications", (x) => x.eq("status", "submitted")).catch(() => 0);
+        counts.hiring = sub;
+        if (sub) items.push({ kind: "hiring", text: `${sub} hiring research submission${sub === 1 ? "" : "s"} to review`, at: null, tab: "hiring" });
+      }
       if (need("payouts")) {
         counts.payouts = await cnt("partner_payouts", (x) => x.eq("status", "requested"));
         if (counts.payouts) items.push({ kind: "payout", text: `${counts.payouts} payout request${counts.payouts === 1 ? "" : "s"} waiting`, at: null, tab: "partners" });
@@ -381,7 +386,36 @@ export default async function handler(req, res) {
       if (before) xq = xq.lt("created_at", before);
       if (email) xq = xq.in("email", email);
       const [evRes, xpRes] = await Promise.all([type === "xp" ? Promise.resolve({ data: [] }) : evq, !type || type === "xp" ? xq : Promise.resolve({ data: [] })]);
+      // Extra social signals: who viewed / commented on a status, new squads, and squads that are chatting (counts only, never the messages).
+      const extra = [];
+      const want = (t) => !type || type === t;
+      const lim = (x) => { let y = x.gte("created_at", since).order("created_at", { ascending: false }).limit(80); if (before) y = y.lt("created_at", before); if (email) y = y.in("email", email); return y; };
+      try {
+        const [vw, rp, sq, sm] = await Promise.all([
+          want("status_view") ? lim(sb.from("status_views").select("status_id,email,display_name,created_at")) : Promise.resolve({ data: [] }),
+          want("status_comment") ? lim(sb.from("status_replies").select("status_id,email,display_name,text,created_at")) : Promise.resolve({ data: [] }),
+          want("squad_created") && !email ? (() => { let y = sb.from("squads").select("name,owner_email,created_at").gte("created_at", since).order("created_at", { ascending: false }).limit(40); if (before) y = y.lt("created_at", before); return y; })() : Promise.resolve({ data: [] }),
+          want("squad_chat") ? lim(sb.from("squad_messages").select("squad_id,email,display_name,created_at")) : Promise.resolve({ data: [] }),
+        ]);
+        const sids = [...new Set([...(vw.data || []), ...(rp.data || [])].map((r) => r.status_id))];
+        const owner = {};
+        for (let i = 0; i < sids.length; i += 100) {
+          const { data } = await sb.from("statuses").select("id,display_name").in("id", sids.slice(i, i + 100));
+          for (const r of data || []) owner[r.id] = r.display_name || "someone";
+        }
+        for (const v of vw.data || []) extra.push({ at: v.created_at, email: v.email, kind: "event", type: "status_view", text: `Viewed ${owner[v.status_id] || "someone"}'s status` });
+        for (const r of rp.data || []) extra.push({ at: r.created_at, email: r.email, kind: "event", type: "status_comment", text: `Commented on ${owner[r.status_id] || "someone"}'s status${r.text ? ` — "${String(r.text).slice(0, 60)}"` : ""}` });
+        for (const r of sq.data || []) extra.push({ at: r.created_at, email: r.owner_email, kind: "event", type: "squad_created", text: `Created a study squad${r.name ? ` — ${r.name}` : ""}` });
+        // chat: one line per person per squad per hour ("is chatting"), so a busy chat does not flood the feed
+        const seenChat = new Set();
+        for (const m of sm.data || []) {
+          const k = `${m.squad_id}|${m.email}|${String(m.created_at).slice(0, 13)}`;
+          if (seenChat.has(k)) continue; seenChat.add(k);
+          extra.push({ at: m.created_at, email: m.email, kind: "event", type: "squad_chat", text: "Is chatting in a squad" });
+        }
+      } catch (e) { console.error("[admin activity extra]", e && e.message); }
       let merged = [
+        ...extra,
         ...(evRes.data || []).map((e) => ({ at: e.created_at, email: e.email, kind: "event", type: e.type, text: labelEvent(e) })),
         ...(xpRes.data || []).map((x) => ({ at: x.created_at, email: x.email, kind: "xp", type: "xp", text: `${x.amount >= 0 ? "+" : ""}${x.amount} XP${x.reason ? ` — ${x.reason}` : ""}` })),
       ].sort((a, b) => new Date(b.at) - new Date(a.at)).slice(0, 120);
@@ -394,7 +428,8 @@ export default async function handler(req, res) {
       merged = merged.map((m) => ({ ...m, who: names[m.email] || m.email.split("@")[0] }));
       const { data: types } = await sb.from("events").select("type").not("email", "is", null).gte("created_at", since).limit(2000);
       const tc = {}; for (const t of types || []) tc[t.type] = (tc[t.type] || 0) + 1;
-      return sendOk(res, { items: merged, next: merged.length >= 120 ? merged[merged.length - 1].at : null, types: top(tc, 20) });
+      const typeList = [...top(tc, 20), ...["status_view", "status_comment", "squad_created", "squad_chat"].map((name) => ({ name, count: extra.filter((x) => x.type === name).length }))];
+      return sendOk(res, { items: merged, next: merged.length >= 120 ? merged[merged.length - 1].at : null, types: typeList });
     }
 
     // ── blog ──

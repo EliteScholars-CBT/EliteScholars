@@ -28,6 +28,7 @@ export default function Partner() {
   const [trial, setTrial] = useState({ school: 0, centre: 0 }); // trial days for the schools/centres cards (public info)
   useEffect(() => { let off = false; fetch('/api/site/school-info').then((r) => r.json()).then((j) => { if (!off && j && j.success) setTrial({ school: Number(j.trialDays) || 0, centre: Number(j.centre && j.centre.trialDays) || 0 }); }).catch(() => {}); return () => { off = true; }; }, []);
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '' });
+  const [hire] = useState(() => { try { return new URLSearchParams(window.location.search).get('hire') || ''; } catch { return ''; } }); // personal link from the hiring email
   useReveal('.pt-sec > h2, .pt-sec > p, .pt-steps > div, .pt-grid > div, .pt-faq > div, .pt-calc, .pt-form', token);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -61,7 +62,7 @@ export default function Partner() {
 
   const submit = async (e) => {
     e.preventDefault(); setBusy(true); setError(''); setInfo('');
-    const d = await call(mode === 'login' ? 'login' : 'signup', { method: 'POST', body: mode === 'login' ? { email: form.email, password: form.password } : form });
+    const d = await call(mode === 'login' ? 'login' : 'signup', { method: 'POST', body: mode === 'login' ? { email: form.email, password: form.password } : { ...form, hire } });
     setBusy(false);
     if (!d.success) { setError(d.error || 'Something went wrong.'); return; }
     if (mode === 'signup') { setInfo(d.message); setMode('login'); setForm({ ...form, password: '' }); return; }
@@ -179,6 +180,7 @@ export default function Partner() {
           <form className="pt-form" onSubmit={submit}>
             <h2 key={mode} className="pt-swap">{mode === 'login' ? 'Partner sign in' : 'Create your partner account'}</h2>
             <p>{mode === 'login' ? 'See your referrals and earnings.' : `Free. Start earning ${rate}% today.`}</p>
+            {mode === 'signup' && hire && <p style={{ background: 'rgba(34,197,94,.15)', border: '1px solid rgba(34,197,94,.4)', borderRadius: 12, padding: '8px 12px', fontWeight: 700 }}>You passed the hiring stage. Sign up with the same email you applied with and your account activates straight away.</p>}
             {mode === 'signup' && <input placeholder="Full name" value={form.name} onChange={set('name')} autoComplete="name" />}
             <input type="email" placeholder="Email" value={form.email} onChange={set('email')} autoComplete="email" />
             {mode === 'signup' && <input type="tel" placeholder="Phone number" value={form.phone} onChange={set('phone')} autoComplete="tel" />}
@@ -361,17 +363,15 @@ export default function Partner() {
       {tab === 'resources' && (
         <section className="adm-card">
           <h2>Resources</h2>
-          <p className="adm-note" style={{ marginTop: 0 }}>Ready-made flyers and videos to share in groups, on your status and on your page. Add your personal link when you post them.</p>
+          <p className="adm-note" style={{ marginTop: 0 }}>Ready-made flyers to share in groups, on your status and on your page. Add your personal link when you post them.</p>
           <div className="pt-res">
             {(data.resources || []).map((r) => (
               <div className="pt-res-card" key={r.id}>
-                {r.kind === 'video'
-                  ? <video src={r.file} controls playsInline preload="metadata" style={{ width: '100%', aspectRatio: '9 / 16', objectFit: 'cover', borderRadius: 10, background: '#0e0920' }} onPlay={() => track('resource_view', r.title)} />
-                  : <img src={r.file} alt={r.title} loading="lazy" />}
+                <img src={r.file} alt={r.title} loading="lazy" />
                 <b>{r.title}</b><small>{r.audience} · {r.note}</small>
                 <div className="adm-inline">
                   <a className="adm-small" href={r.file} target="_blank" rel="noreferrer" onClick={() => track('resource_view', r.title)}>View</a>
-                  <a className="adm-small" href={r.file} download={`${r.id}${r.kind === 'video' ? '.mp4' : '.png'}`} onClick={() => track('resource_download', r.title)}>Download</a>
+                  <a className="adm-small" href={r.file} download={`${r.id}.png`} onClick={() => track('resource_download', r.title)}>Download</a>
                 </div>
               </div>
             ))}

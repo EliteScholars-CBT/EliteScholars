@@ -11,7 +11,7 @@ function allowed(e) {
 
 export function installContentGuard() {
   if (typeof document === 'undefined' || document.documentElement.dataset.guard) return;
-  if (/^\/(admin|partner)/.test(window.location.pathname)) return; // staff pages keep normal copy
+  if (/^\/(admin|partner|hire)/.test(window.location.pathname)) return; // staff pages keep normal copy
   document.documentElement.dataset.guard = '1';
   const block = (e) => { if (!allowed(e)) e.preventDefault(); };
   ['copy', 'cut', 'contextmenu', 'dragstart', 'selectstart'].forEach((t) => document.addEventListener(t, block));

@@ -23,6 +23,8 @@ applyDataSaver();
 // Loaded on demand so students never download the admin dashboard code.
 const Admin = lazy(() => import('./pages/Admin'));
 const Partner = lazy(() => import('./pages/Partner'));
+const HireApply = lazy(() => import('./pages/Hire').then((m) => ({ default: m.HireApply })));
+const HireResearch = lazy(() => import('./pages/Hire').then((m) => ({ default: m.HireResearch })));
 const GamePage = lazy(() => import('./pages/GamePage'));
 const SchoolPortal = lazy(() => import('./pages/SchoolPortal'));
 
@@ -56,6 +58,9 @@ root.render(
           <Route path="/school-portal" element={<Suspense fallback={null}><SchoolPortal /></Suspense>} />
 
           {/* Affiliate partner portal */}
+          {/* Hiring: public application link and the research page sent by email */}
+          <Route path="/hire/r/:token" element={<Suspense fallback={null}><HireResearch /></Suspense>} />
+          <Route path="/hire/:slug" element={<Suspense fallback={null}><HireApply /></Suspense>} />
           <Route path="/partner" element={<Suspense fallback={null}><Partner /></Suspense>} />
 
           {/* Old top-level links kept alive so nothing already shared or
