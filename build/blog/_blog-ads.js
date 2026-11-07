@@ -1,3 +1,14 @@
+/* Navbar: add .scrolled once the page moves, so the bar turns light with purple text. */
+(function () {
+  function init() {
+    var bar = document.querySelector('.blog-topbar');
+    if (!bar) return;
+    function upd() { var y = window.pageYOffset || document.documentElement.scrollTop || 0; if (y > 10) bar.classList.add('scrolled'); else bar.classList.remove('scrolled'); }
+    window.addEventListener('scroll', upd, { passive: true });
+    upd();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
 /* EliteScholars blog ads loader.
    Reads window.ES_ADS_CONFIG (see ads-config.js), shows the consent choice, and
    fills every <div class="es-ad" data-slot="..."> either with an Adsterra unit
