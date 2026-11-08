@@ -35,7 +35,7 @@ export default function StudentTour({ kind }) {
             <button key={f.key} type="button" role="tab" aria-selected={i === tab} className={`st-tab ${i === tab ? 'on' : ''}`} onClick={() => pick(i)}>
               <b>{f.title}</b>
               <em>{f.desc}</em>
-              {i === tab && auto && <i key={tab} className="st-bar" style={{ animationDuration: `${f.key === 'games' ? 6800 : 3800}ms` }} />}
+              {i === tab && auto && <i key={tab} className="stour-bar" style={{ animationDuration: `${f.key === 'games' ? 6800 : 3800}ms` }} />}
             </button>
           ))}
         </div>
