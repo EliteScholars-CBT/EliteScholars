@@ -23,3 +23,15 @@ export const scopeForExam = (exam) => {
   if (e === "gst") return "gst";
   return null;
 };
+
+// Squad plans: one payer, one year, up to `seats` people, Pro for ONE exam area. group50 / group100 are the JAMB squads
+// (their price is the base); WAEC & NECO and GST squads follow the same discount JAMB gets over its individual price.
+export const GROUP_DEFS = {
+  group50:      { scope: "jamb",      seats: 50,  base: "jamb",       label: "JAMB" },
+  group100:     { scope: "jamb",      seats: 100, base: "jamb",       label: "JAMB" },
+  group50_waec: { scope: "waec_neco", seats: 50,  base: "waecneco12", label: "WAEC & NECO" },
+  group100_waec:{ scope: "waec_neco", seats: 100, base: "waecneco12", label: "WAEC & NECO" },
+  group50_gst:  { scope: "gst",       seats: 50,  base: "gst12",      label: "GST" },
+  group100_gst: { scope: "gst",       seats: 100, base: "gst12",      label: "GST" },
+};
+export const isGroupPlan = (p) => !!GROUP_DEFS[p];

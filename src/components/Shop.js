@@ -130,10 +130,6 @@ export default function Shop({ userEmail, name, premiumUser, onPremiumActivated 
         {/* ── Pro: one plan per exam (JAMB / WAEC & NECO / GST) ── */}
         <div className="shop-plans-section">
           <div className="shop-plans-card">
-            <div className="shop-plans-card-header">
-              <div className="shop-plans-card-title">Go Pro</div>
-              <div className="shop-plans-card-sub">Pro unlocks one exam. The others stay free.</div>
-            </div>
             {proStatus.all && (
               <div className="shop-footer-note" style={{ marginBottom: 10 }}>⭐ You have Pro for <b>every exam</b>{premData?.expiresDateStr ? ` until ${premData.expiresDateStr}` : ''}. You can still add time to a single exam below.</div>
             )}

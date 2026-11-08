@@ -326,3 +326,12 @@ body:has(.adm-wrap){background:#0f0b1f}
 .hire-read{margin-top:8px;padding:10px;background:#0f0a22;border-radius:10px;font-size:.86rem;line-height:1.5;white-space:pre-wrap}
 .hire-read h4{margin:0 0 4px;font-size:.78rem;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
 .hire-read p{margin:0 0 10px}
+
+/* Hiring: pickers */
+.hire-adm-form input[type=date],.hire-adm-form input[type=time]{color-scheme:dark}
+.hire-adm-form input[type=date]::-webkit-calendar-picker-indicator,.hire-adm-form input[type=time]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:1;cursor:pointer}
+.hire-adm-form select{background:#150f2c;border:1px solid var(--line);border-radius:10px;color:var(--txt);padding:10px;font:inherit;width:100%;box-sizing:border-box}
+.hire-seg{display:inline-flex;gap:4px;padding:3px;border-radius:10px;background:#150f2c;border:1px solid var(--line);align-self:flex-start}
+.adm-wrap .hire-seg button{padding:6px 11px;border-radius:8px;border:0;background:transparent;color:var(--mut);font-size:.8rem;font-weight:700}
+.adm-wrap .hire-seg button.on{background:#7c3aed;color:#fff}
+.hire-prev{color:#c4b5fd;font-weight:700}

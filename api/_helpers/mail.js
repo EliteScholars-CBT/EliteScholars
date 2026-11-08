@@ -7,9 +7,9 @@ let resend = null;
 const client = () => (resend ||= new Resend(process.env.RESEND_API_KEY));
 
 // Send ready-made HTML (see emailTemplates.js).
-export async function sendHtml(to, subject, html) {
+export async function sendHtml(to, subject, html, opts = {}) {
   if (!to || !process.env.RESEND_API_KEY || !FROM) return false;
-  try { await client().emails.send({ from: `EliteScholars <${FROM}>`, to, subject, html }); return true; }
+  try { await client().emails.send({ from: `EliteScholars <${FROM}>`, to, subject, html, ...(opts.bcc ? { bcc: opts.bcc } : {}) }); return true; }
   catch (e) { console.warn("[mail]", e?.message); return false; }
 }
 

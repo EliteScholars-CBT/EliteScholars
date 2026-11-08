@@ -10,7 +10,7 @@ import { rateLimitOk } from '../_helpers/guard.js';
 import { getFirstName } from '../_helpers/premium.js';
 import { getPricing } from '../_helpers/pricing.js';
 import { findShopItem } from '../_helpers/shopItems.js';
-import { PLAN_DEFS, normalizePlan } from '../_helpers/plans.js';
+import { PLAN_DEFS, GROUP_DEFS, normalizePlan } from '../_helpers/plans.js';
 
 const FLW_SECRET_KEY = process.env.FLW_SECRET_KEY;
 
@@ -18,8 +18,7 @@ const FLW_SECRET_KEY = process.env.FLW_SECRET_KEY;
 const PLAN_NAMES   = {
   annual: 'EliteScholars JAMB Pro (1 year)',
   ...Object.fromEntries(Object.entries(PLAN_DEFS).map(([id, d]) => [id, `EliteScholars ${d.name}`])),
-  group50: 'EliteScholars Squad Plan (up to 50 members, 1 year)',
-  group100: 'EliteScholars Squad Plan (up to 100 members, 1 year)',
+  ...Object.fromEntries(Object.entries(GROUP_DEFS).map(([id, d]) => [id, `EliteScholars ${d.label} Squad Plan (up to ${d.seats} people, 1 year)`])),
 };
 
 async function run(req, res) {
@@ -45,7 +44,7 @@ async function run(req, res) {
     return sendErr(res, 'Payment service is not configured. Please contact support.');
   }
 
-  const amount      = shopItem ? shopItem.priceNGN : PLAN_DEFS[plan] ? pricing.plans[plan] : plan === 'group50' ? pricing.group50 : plan === 'group100' ? pricing.group100 : pricing.premiumAnnual;
+  const amount      = shopItem ? shopItem.priceNGN : PLAN_DEFS[plan] ? pricing.plans[plan] : GROUP_DEFS[plan] ? pricing.groups[plan] : pricing.premiumAnnual;
   const kind        = shopItem ? 'shop' : plan;
   const txRef       = `ES-${kind.toUpperCase()}-${Date.now()}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
   const redirectUrl = `https://elitescholars.site/api/payment/verify?tx_ref=${txRef}`;

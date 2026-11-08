@@ -787,3 +787,8 @@ create table if not exists hiring_applications (
 create index if not exists idx_hiring_apps_job on hiring_applications (job_id, status, created_at desc);
 alter table hiring_jobs enable row level security;
 alter table hiring_applications enable row level security;
+
+-- ── update 18: hiring CV uploads ──
+alter table hiring_applications add column if not exists cv_path text not null default '';
+alter table hiring_applications add column if not exists cv_name text not null default '';
+insert into storage.buckets (id, name, public, file_size_limit) values ('hiring-cvs', 'hiring-cvs', false, 3145728) on conflict (id) do nothing;

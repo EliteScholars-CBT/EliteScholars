@@ -3,7 +3,7 @@
 import { getSupabase, supabaseEnabled } from "./supabase.js";
 import { PREMIUM_ANNUAL_PRICE, PREMIUM_ANNUAL_ORIGINAL_PRICE, PRO_MONTHLY_PRICE } from "./constants/premium.js";
 import { SHOP_ITEMS } from "./constants/shop.js";
-import { PLAN_DEFS } from "./plans.js";
+import { PLAN_DEFS, GROUP_DEFS } from "./plans.js";
 
 export const DEFAULT_SCHOOL = {
   trialDays: 14,
@@ -79,6 +79,16 @@ export async function getPricing() {
     // per-exam Pro plans: id -> price (admin can change them in Admin > Prices)
     plans: Object.fromEntries(Object.entries(PLAN_DEFS).map(([id, d]) => [id, id === "jamb" ? (Number(p.jamb) > 0 ? Number(p.jamb) : (Number(p.premiumAnnual) > 0 ? Number(p.premiumAnnual) : d.defaultPrice)) : (Number(p[d.priceKey]) > 0 ? Number(p[d.priceKey]) : d.defaultPrice)])),
   };
+  // Squad prices for the other exams: same % saving as the JAMB squad has over buying JAMB one by one, rounded to ₦1,000.
+  const jambOne = v.plans.jamb;
+  v.groups = {};
+  for (const [id, d] of Object.entries(GROUP_DEFS)) {
+    const jambSquad = d.seats === 50 ? v.group50 : v.group100;
+    if (d.scope === "jamb") { v.groups[id] = jambSquad; continue; }
+    const own = Number(p[id]) > 0 ? Number(p[id]) : 0;
+    const ratio = jambOne > 0 ? jambSquad / (jambOne * d.seats) : 1;
+    v.groups[id] = own || Math.max(1000, Math.round((v.plans[d.base] * d.seats * ratio) / 1000) * 1000);
+  }
   cache = { at: Date.now(), v };
   return v;
 }

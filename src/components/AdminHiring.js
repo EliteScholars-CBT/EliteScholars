@@ -10,7 +10,30 @@ const fromParts = (p) => (p && p.d ? new Date(`${p.d}T${p.t || '00:00'}`).toISOS
 const left = (iso, now) => { if (!iso) return ''; const ms = new Date(iso).getTime() - now; if (ms <= 0) return 'passed'; const h = Math.floor(ms / 3600000); return h >= 48 ? `in ${Math.floor(h / 24)} days` : h >= 1 ? `in ${h}h` : `in ${Math.max(1, Math.floor(ms / 60000))} min`; };
 const copy = (t) => { try { navigator.clipboard && navigator.clipboard.writeText(t); } catch { /* ignore */ } };
 
-const EMPTY = { title: 'Promoter', description: '', commission_pct: 40, open: true, apply: { d: '', t: '18:00' }, research: { d: '', t: '18:00' }, auto_email: true, auto_approve: false, group_url: '' };
+const UNIT_MS = { hours: 3600000, days: 86400000 };
+// A deadline is either a picked date + time, or "N days/hours" (from now for applications, after applications close for research).
+const mkDl = (iso) => ({ mode: 'date', ...toParts(iso), n: 2, unit: 'days' });
+const EMPTY = { title: 'Promoter', description: '', commission_pct: 40, open: true, apply: { mode: 'rel', d: '', t: '18:00', n: 3, unit: 'days' }, research: { mode: 'rel', d: '', t: '18:00', n: 2, unit: 'days' }, auto_email: true, auto_approve: false, group_url: '' };
+const calcApply = (a) => (a.mode === 'rel' ? new Date(Date.now() + (Number(a.n) || 0) * UNIT_MS[a.unit]).toISOString() : fromParts(a));
+const calcResearch = (r, applyIso) => (r.mode === 'rel' ? (applyIso ? new Date(new Date(applyIso).getTime() + (Number(r.n) || 0) * UNIT_MS[r.unit]).toISOString() : '') : fromParts(r));
+const prettyDt = (iso) => (iso ? new Date(iso).toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true }) : 'not set');
+function DeadlinePicker({ label, value, onChange, relLabel, preview }) {
+  const set = (k, v) => onChange({ ...value, [k]: v });
+  return (
+    <div className="adm-field">{label}
+      <div className="hire-seg">
+        <button type="button" className={value.mode === 'date' ? 'on' : ''} onClick={() => set('mode', 'date')}>Pick date</button>
+        <button type="button" className={value.mode === 'rel' ? 'on' : ''} onClick={() => set('mode', 'rel')}>{relLabel}</button>
+      </div>
+      {value.mode === 'date' ? (
+        <div className="hire-dt"><input type="date" value={value.d} onChange={(e) => set('d', e.target.value)} /><input type="time" value={value.t} onChange={(e) => set('t', e.target.value)} /></div>
+      ) : (
+        <div className="hire-dt"><input type="number" min="0" max="365" value={value.n} onChange={(e) => set('n', e.target.value)} /><select value={value.unit} onChange={(e) => set('unit', e.target.value)}><option value="days">days</option><option value="hours">hours</option></select></div>
+      )}
+      <small className="hire-prev">{preview}</small>
+    </div>
+  );
+}
 
 export default function AdminHiring({ token, onAuthFail }) {
   const api = useMemo(() => makeApi(token, onAuthFail), [token, onAuthFail]);
@@ -35,13 +58,18 @@ export default function AdminHiring({ token, onAuthFail }) {
     finally { setBusy(false); }
   };
 
+  const applyIso = form ? calcApply(form.apply) : '';
+  const researchIso = form ? calcResearch(form.research, applyIso) : '';
   const save = async () => {
-    const body = { id: form.id, title: form.title, description: form.description, commission_pct: form.commission_pct, open: form.open, apply_deadline: fromParts(form.apply), research_deadline: fromParts(form.research), auto_email: form.auto_email, auto_approve: form.auto_approve, group_url: form.group_url, slug: form.slug };
+    const body = { id: form.id, title: form.title, description: form.description, commission_pct: form.commission_pct, open: form.open, apply_deadline: applyIso, research_deadline: researchIso, auto_email: form.auto_email, auto_approve: form.auto_approve, group_url: form.group_url, slug: form.slug };
     const d = await run('hiring-save', body);
     if (d) setForm(null);
   };
 
-  const edit = (j) => setForm({ id: j.id, slug: j.slug, title: j.title, description: j.description, commission_pct: j.commission_pct, open: j.open, apply: toParts(j.apply_deadline), research: toParts(j.research_deadline), auto_email: j.auto_email, auto_approve: j.auto_approve, group_url: j.group_url });
+  const openCv = async (id) => {
+    try { const d = await api(`hiring-cv?id=${encodeURIComponent(id)}`); if (d.url) window.open(d.url, '_blank', 'noopener'); } catch (e) { if (e.message !== 'auth') setErr(e.message); }
+  };
+  const edit = (j) => setForm({ id: j.id, slug: j.slug, title: j.title, description: j.description, commission_pct: j.commission_pct, open: j.open, apply: mkDl(j.apply_deadline), research: mkDl(j.research_deadline), auto_email: j.auto_email, auto_approve: j.auto_approve, group_url: j.group_url });
 
   if (!data) return <div className="adm-card">{err || 'Loading…'}</div>;
   const now = new Date(data.now).getTime();
@@ -66,10 +94,8 @@ export default function AdminHiring({ token, onAuthFail }) {
             <label className="adm-field">Group chat link (sent when approved)<input placeholder="https://chat.whatsapp.com/…" value={form.group_url} onChange={(e) => setForm({ ...form, group_url: e.target.value })} /></label>
           </div>
           <div className="hire-adm-grid">
-            <div className="adm-field">Applications close
-              <div className="hire-dt"><input type="date" value={form.apply.d} onChange={(e) => setForm({ ...form, apply: { ...form.apply, d: e.target.value } })} /><input type="time" value={form.apply.t} onChange={(e) => setForm({ ...form, apply: { ...form.apply, t: e.target.value } })} /></div></div>
-            <div className="adm-field">Research must be in by
-              <div className="hire-dt"><input type="date" value={form.research.d} onChange={(e) => setForm({ ...form, research: { ...form.research, d: e.target.value } })} /><input type="time" value={form.research.t} onChange={(e) => setForm({ ...form, research: { ...form.research, t: e.target.value } })} /></div></div>
+            <DeadlinePicker label="Applications close" value={form.apply} onChange={(v) => setForm({ ...form, apply: v })} relLabel="From now" preview={`Closes: ${prettyDt(applyIso)}`} />
+            <DeadlinePicker label="Research must be in by" value={form.research} onChange={(v) => setForm({ ...form, research: v })} relLabel="After applications close" preview={`Due: ${prettyDt(researchIso)}`} />
           </div>
           <label className="adm-check"><input type="checkbox" checked={form.auto_email} onChange={(e) => setForm({ ...form, auto_email: e.target.checked })} /> Email the research task to everyone automatically when applications close</label>
           <label className="adm-check"><input type="checkbox" checked={form.auto_approve} onChange={(e) => setForm({ ...form, auto_approve: e.target.checked })} /> Approve everyone who sent research automatically when the research deadline passes</label>
@@ -116,6 +142,7 @@ export default function AdminHiring({ token, onAuthFail }) {
                     {seeApp === a.id && (
                       <div className="hire-read">
                         <h4>Why we should choose them</h4><p>{a.why}</p>
+                        {a.cv_name && <p><button type="button" className="adm-btn" onClick={() => openCv(a.id)}>📄 Download CV ({a.cv_name})</button></p>}
                         <h4>Research{a.submitted_at ? '' : ' (not sent yet)'}</h4><p>{a.research || '—'}</p>
                       </div>
                     )}

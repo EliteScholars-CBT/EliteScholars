@@ -6,12 +6,12 @@ import { Resend } from 'resend';
 import { getFirstName, activatePremiumAndLog, activateGroupAndLog, logShopPurchase } from './premium.js';
 import { getPricing } from './pricing.js';
 import { findShopItem } from './shopItems.js';
-import { PLAN_DEFS } from './plans.js';
+import { PLAN_DEFS, GROUP_DEFS } from './plans.js';
 
 const APP_URL = 'https://elitescholars.site';
-const PLAN_AMOUNT = { annual: 3000, pro: 3000, jamb: 3000, waecneco6: 5000, waecneco12: 8000, gst6: 5000, gst12: 8000, shop: 1, group50: 1, group100: 1, school: 1 }; // real prices come from admin settings (see getPricing)
-const PLAN_NAMES = { annual: 'JAMB Pro (1 year)', jamb: 'JAMB Pro (1 year)', waecneco6: 'WAEC & NECO Pro (6 months)', waecneco12: 'WAEC & NECO Pro (1 year)', gst6: 'GST Pro (6 months)', gst12: 'GST Pro (1 year)', pro: 'Pro Monthly', group50: 'Squad Plan (50 members)', group100: 'Squad Plan (100 members)' };
-const PLAN_DAYS = { annual: 365, pro: 30, jamb: 365, waecneco6: 183, waecneco12: 365, gst6: 183, gst12: 365, group50: 365, group100: 365 };
+const PLAN_AMOUNT = { annual: 3000, pro: 3000, jamb: 3000, waecneco6: 5000, waecneco12: 8000, gst6: 5000, gst12: 8000, shop: 1, group50: 1, group100: 1, group50_waec: 1, group100_waec: 1, group50_gst: 1, group100_gst: 1, school: 1 }; // real prices come from admin settings (see getPricing)
+const PLAN_NAMES = { annual: 'JAMB Pro (1 year)', jamb: 'JAMB Pro (1 year)', waecneco6: 'WAEC & NECO Pro (6 months)', waecneco12: 'WAEC & NECO Pro (1 year)', gst6: 'GST Pro (6 months)', gst12: 'GST Pro (1 year)', pro: 'Pro Monthly', ...Object.fromEntries(Object.entries(GROUP_DEFS).map(([id, d]) => [id, `${d.label} Squad Plan (${d.seats} people)`])) };
+const PLAN_DAYS = { annual: 365, pro: 30, jamb: 365, waecneco6: 183, waecneco12: 365, gst6: 183, gst12: 365, group50: 365, group100: 365, group50_waec: 365, group100_waec: 365, group50_gst: 365, group100_gst: 365 };
 const fmt = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
 export const planFromTxRef = (txRef) => {
@@ -111,7 +111,7 @@ export async function verifyWithFlutterwave(txRef) {
       need = Number(t.meta?.expected); // set by the server when the payment was started
       if (!(need > 0) || !t.meta?.school_id) return null;
     } else {
-      need = Number(t.meta?.expected) || (PLAN_DEFS[plan] ? pr.plans[plan] : plan === 'pro' ? pr.pro : plan === 'group50' ? pr.group50 : plan === 'group100' ? pr.group100 : pr.premiumAnnual);
+      need = Number(t.meta?.expected) || (PLAN_DEFS[plan] ? pr.plans[plan] : plan === 'pro' ? pr.pro : GROUP_DEFS[plan] ? pr.groups[plan] : pr.premiumAnnual);
     }
     if (!(need > 0) || Number(t.amount) < need) return null;
     const email = String(t.customer?.email || '').toLowerCase().trim();

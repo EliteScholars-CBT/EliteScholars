@@ -39,6 +39,7 @@ async function handler(req, res) {
       group50:               pr ? pr.group50 : 145000,
       group100:              pr ? pr.group100 : 285000,
       plans:                 pr ? pr.plans : undefined,
+      groups:                pr ? pr.groups : undefined,
       urls: {
         annual: PAYMENT_URL_ANNUAL,
         pro:    PAYMENT_URL_PRO,

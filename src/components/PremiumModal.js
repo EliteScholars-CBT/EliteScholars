@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { fetchShopData, fetchPremiumStatus } from '../utils/profileApi';
 import ProCards from './ProCards';
-import Icon, { EmojiIcon } from './Icon';
+import Icon from './Icon';
 
 // "Go Pro" popup: swipeable cards, the student's own exam first. Payment starts from the card.
 export default function PremiumModal({ email, name, onClose, initialPlan, pricing: pricingProp = {}, examType }) {
@@ -23,11 +23,6 @@ export default function PremiumModal({ email, name, onClose, initialPlan, pricin
     <div className="pm-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="pm-sheet">
         <button className="pm-close" onClick={onClose} aria-label="Close"><Icon name="x" size={16} /></button>
-        <div className="pm-header">
-          <span className="pm-crown"><EmojiIcon emoji="👑" size="1.1em" /></span>
-          <div className="pm-title">Go Pro</div>
-          <div className="pm-subtitle">Pick the exam you are preparing for.</div>
-        </div>
         <ProCards email={email} name={name} pricing={pricing} status={status} exam={examType} startScope={startScope} compact />
       </div>
     </div>,

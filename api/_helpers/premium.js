@@ -1,7 +1,7 @@
 // api/_helpers/premium.js — pro activation + payment logging (Supabase only).
 import { getSupabase, supabaseEnabled } from "./supabase.js";
 import { recordCommission } from "./partners.js";
-import { PLAN_DEFS, normalizePlan } from "./plans.js";
+import { PLAN_DEFS, GROUP_DEFS, normalizePlan } from "./plans.js";
 
 const PLANS = ["annual", "pro"];
 
@@ -62,6 +62,18 @@ export async function activatePremiumAndLog({ email, plan, txRef, expiresAt, amo
   }
 }
 
+// Give one person Pro for ONE exam area until `untilIso` (never shortens what they already have).
+export async function grantScope(sb, email, scope, untilIso, tag) {
+  const cur = await sb.from("profiles").select("pro_exams,pro_all_until,expires_at").eq("email", email).maybeSingle();
+  const exams = { ...((cur.data && cur.data.pro_exams) || {}) };
+  const have = exams[scope] ? new Date(exams[scope]).getTime() : 0;
+  if (have < new Date(untilIso).getTime()) exams[scope] = untilIso;
+  const latest = Math.max(...Object.values(exams).map((x) => new Date(x).getTime()), cur.data?.pro_all_until ? new Date(cur.data.pro_all_until).getTime() : 0, cur.data?.expires_at ? new Date(cur.data.expires_at).getTime() : 0);
+  const upd = { pro_exams: exams, is_premium: true, expires_at: new Date(latest).toISOString() };
+  if (have < new Date(untilIso).getTime()) { upd.subscription_plan = "jamb"; upd.subscribed_at = new Date().toISOString(); upd.subscription_tx_ref = tag; }
+  return sb.from("profiles").update(upd).eq("email", email);
+}
+
 // A group plan: the payer gets Pro for the year AND a group they can add members to
 // (50 or 100 seats). Idempotent per transaction like activatePremiumAndLog.
 export async function activateGroupAndLog({ email, plan, txRef, expiresAt, amount }) {
@@ -73,12 +85,14 @@ export async function activateGroupAndLog({ email, plan, txRef, expiresAt, amoun
       if (claim.error.code === "23505" || /duplicate/i.test(claim.error.message || "")) return { activated: false, duplicate: true };
       throw claim.error;
     }
-    const seats = plan === "group100" ? 100 : 50;
+    const gd = GROUP_DEFS[plan] || GROUP_DEFS.group50;
+    const seats = gd.seats;
     const g = await sb.from("group_plans").insert({ owner_email: email, seats, plan, tx_ref: txRef, expires_at: expiresAt, amount: Number(amount) || 0 });
     if (g.error) throw g.error;
-    await sb.from("profiles").update({
-      is_premium: true, subscription_plan: "annual", subscribed_at: new Date().toISOString(), expires_at: expiresAt, pro_all_until: expiresAt, subscription_tx_ref: txRef,
-    }).eq("email", email);
+    const gr = await grantScope(sb, email, gd.scope, expiresAt, txRef);
+    if (gr.error) { // update-16 columns missing: keep the old all-exams behaviour rather than lose a paid plan
+      await sb.from("profiles").update({ is_premium: true, subscription_plan: "annual", subscribed_at: new Date().toISOString(), expires_at: expiresAt, subscription_tx_ref: txRef }).eq("email", email);
+    }
     await recordCommission({ email, txRef, amount });
     return { activated: true };
   } catch (e) {

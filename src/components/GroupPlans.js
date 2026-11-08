@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { initiatePayment } from '../utils/profileApi';
 import Icon from './Icon';
+import { getActiveExam, scopeForExam } from '../utils/entitlement';
 
 const FMT = (n) => Number(n || 0).toLocaleString('en-NG');
 const when = (iso) => { try { return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); } catch { return ''; } };
@@ -14,10 +15,19 @@ export default function GroupPlans({ userEmail, name, pricing }) {
   const [busy, setBusy] = useState('');
   const [note, setNote] = useState('');
 
-  const PLANS = [
-    { id: 'group50', seats: 50, price: pricing.group50 ?? 145000, hue: '#8B5CF6' },
-    { id: 'group100', seats: 100, price: pricing.group100 ?? 285000, hue: '#F59E0B', best: true },
-  ];
+  const exam = getActiveExam();
+  const mine = scopeForExam(exam) || 'waec_neco';
+  const ORDER = [mine, ...['jamb', 'waec_neco', 'gst'].filter((x) => x !== mine)];
+  const EXAMS = {
+    jamb: { label: 'JAMB', ids: ['group50', 'group100'], one: (pricing.plans && pricing.plans.jamb) || pricing.premiumAnnual || 3000 },
+    waec_neco: { label: 'WAEC & NECO', ids: ['group50_waec', 'group100_waec'], one: (pricing.plans && pricing.plans.waecneco12) || 8000 },
+    gst: { label: 'GST', ids: ['group50_gst', 'group100_gst'], one: (pricing.plans && pricing.plans.gst12) || 8000 },
+  };
+  const [tab, setTab] = useState(mine);
+  const ex = EXAMS[tab];
+  const fallback = { group50: 145000, group100: 285000 };
+  const priceOfId = (id) => (pricing.groups && pricing.groups[id]) || pricing[id] || fallback[id] || 0;
+  const PLANS = ex.ids.map((id, i) => ({ id, seats: i === 0 ? 50 : 100, price: priceOfId(id), hue: i === 0 ? '#8B5CF6' : '#F59E0B', best: i === 1 }));
 
   const load = useCallback(() => {
     fetch('/api/group/get').then((r) => (r.ok ? r.json() : null)).then((j) => { if (j && j.groups) setGroups(j.groups); }).catch(() => {});
@@ -46,24 +56,28 @@ export default function GroupPlans({ userEmail, name, pricing }) {
     setBusy('');
   };
 
-  const solo = Number(pricing.premiumAnnual) || 3000; // what one person pays for Pro alone
   return (
     <section className="grp">
       <div className="grp-head">
         <div className="grp-title"><Icon name="users" size={18} /> Squad plan</div>
-        <div className="grp-sub">Form a squad, get Pro together and invite them. Everyone studies without limits.</div>
+        <div className="grp-sub">Get Pro for a whole squad at a lower price per person. Pick the exam your squad is preparing for.</div>
+      </div>
+      <div className="grp-tabs" role="tablist">
+        {ORDER.map((k) => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{EXAMS[k].label}</button>)}
       </div>
 
       <div className="grp-cards">
         {PLANS.map((p) => {
-          const save = p.seats * solo - p.price;
+          const save = p.seats * ex.one - p.price;
           return (
             <div key={p.id} className={`grp-card${p.best ? ' best' : ''}`} style={{ '--hue': p.hue }}>
               {p.best && <span className="grp-flag">Best value</span>}
               <div className="grp-seats">{p.seats}<small>people</small></div>
+              <div className="grp-term">{ex.label} Pro · 1 year</div>
               <div className="grp-price"><span>₦</span>{FMT(p.price)}<em> / year</em></div>
+              <div className="grp-per">₦{FMT(Math.round(p.price / p.seats))} per person</div>
               {save > 0 && <div className="grp-save">You save ₦{FMT(save)}</div>}
-              <button className="grp-buy" disabled={!!buying} onClick={() => buy(p.id)}>{buying === p.id ? 'Opening payment…' : 'Get Squad plan'}</button>
+              <button className="grp-buy" disabled={!!buying} onClick={() => buy(p.id)}>{buying === p.id ? 'Opening payment…' : `Get ${ex.label} squad`}</button>
             </div>
           );
         })}
@@ -72,7 +86,7 @@ export default function GroupPlans({ userEmail, name, pricing }) {
 
       {groups.map((g) => (
         <div key={g.id} className="grp-mine">
-          <div className="grp-mine-top"><b>Your squad of {g.seats}</b><span>{g.used}/{g.seats} used · {g.active ? `until ${when(g.expiresAt)}` : 'expired'}</span></div>
+          <div className="grp-mine-top"><b>Your {g.label ? `${g.label} ` : ''}squad of {g.seats}</b><span>{g.used}/{g.seats} used · {g.active ? `until ${when(g.expiresAt)}` : 'expired'}</span></div>
           {g.active && (
             <div className="grp-add">
               <input value={email[g.id] || ''} onChange={(e) => setEmail((x) => ({ ...x, [g.id]: e.target.value }))} placeholder="Member's email (they must have signed up)" inputMode="email" autoCapitalize="off" />

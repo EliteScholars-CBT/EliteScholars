@@ -52,10 +52,6 @@ export default function ProCards({ email, name, pricing, exam, status, startScop
 
   return (
     <div className={`pcs${compact ? ' pcs--compact' : ''}`}>
-      <div className="pcs-hint">
-        <span>Swipe to see more</span>
-        <span className="pcs-hint-arrow" aria-hidden>→</span>
-      </div>
       <div className="pcs-wrap">
         <button type="button" className="pcs-nav pcs-nav--l" onClick={() => go(idx - 1)} disabled={idx === 0} aria-label="Previous plan">‹</button>
         <div className="pcs-track" ref={track} onScroll={onScroll}>
@@ -79,7 +75,7 @@ export default function ProCards({ email, name, pricing, exam, status, startScop
                   </div>
                 )}
                 <div className="pcs-price"><span className="pcs-cur">₦</span><span className="pcs-amt">{FMT(price)}</span><span className="pcs-per"> / {chosen.period}</span></div>
-                {save > 0 && <div className="pcs-save">Save ₦{FMT(save)} vs 2 × 6 months</div>}
+                {save > 0 && <div className="pcs-save">Save ₦{FMT(save)}</div>}
                 {until && <div className="pcs-until">Active until {untilStr}</div>}
                 <div className="pcs-pitch">{p.pitch}</div>
                 <ul className="pcs-feats">{p.features.map((f, i) => (<li key={i}><span>✓</span>{f}</li>))}</ul>
@@ -94,7 +90,6 @@ export default function ProCards({ email, name, pricing, exam, status, startScop
       </div>
       <div className="pcs-dots" aria-hidden>{products.map((p, i) => (<i key={p.scope} className={i === idx ? 'on' : ''} />))}</div>
       {err && <div className="pcs-err">{err}</div>}
-      <div className="pcs-note">Pro unlocks one exam. The others stay free. 🔒 Secured by Flutterwave</div>
     </div>
   );
 }

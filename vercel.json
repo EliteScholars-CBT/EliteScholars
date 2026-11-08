@@ -466,6 +466,10 @@
       "destination": "/api/data?route=admin/hiring-job-action"
     },
     {
+      "source": "/api/admin/hiring-cv",
+      "destination": "/api/data?route=admin/hiring-cv"
+    },
+    {
       "source": "/api/admin/hiring-app",
       "destination": "/api/data?route=admin/hiring-app"
     },

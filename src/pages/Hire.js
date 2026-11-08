@@ -30,12 +30,24 @@ export function HireApply() {
   const [f, setF] = useState({ name: '', email: '', whatsapp: '', why: '', accept: false });
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState('');
+  const [cv, setCv] = useState(null); // { name, data(base64) }
 
   useEffect(() => { call('job', { query: { slug } }).then((d) => { if (d.success) setJob(d.job); else setErr(d.error || 'This job link is not valid.'); }); }, [slug]);
   const set = (k) => (e) => setF({ ...f, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value });
+  const pickCv = (e) => {
+    const file = e.target.files && e.target.files[0];
+    setErr('');
+    if (!file) { setCv(null); return; }
+    if (!/\.(pdf|docx?)$/i.test(file.name)) { setErr('Upload your CV as a PDF or Word file.'); e.target.value = ''; setCv(null); return; }
+    if (file.size > 2.5 * 1024 * 1024) { setErr('Your CV must be smaller than 2.5 MB.'); e.target.value = ''; setCv(null); return; }
+    const rd = new FileReader();
+    rd.onload = () => setCv({ name: file.name, data: String(rd.result).split(',')[1] || '' });
+    rd.onerror = () => setErr('Could not read that file.');
+    rd.readAsDataURL(file);
+  };
   const submit = async (e) => {
     e.preventDefault(); setBusy(true); setErr('');
-    const d = await call('apply', { method: 'POST', body: { slug, ...f } });
+    const d = await call('apply', { method: 'POST', body: { slug, ...f, cv } });
     setBusy(false);
     if (!d.success) { setErr(d.error || 'Something went wrong.'); return; }
     setDone(d.message);
@@ -61,6 +73,7 @@ export function HireApply() {
           <label>Email<input type="email" value={f.email} onChange={set('email')} autoComplete="email" required /></label>
           <label>WhatsApp number<input type="tel" value={f.whatsapp} onChange={set('whatsapp')} placeholder="e.g. 0803 000 0000" autoComplete="tel" required /></label>
           <label>Why should we choose you?<textarea rows={5} value={f.why} onChange={set('why')} maxLength={1500} required /><small>{f.why.length}/1500</small></label>
+          <label>Your CV (PDF or Word, up to 2.5 MB)<input type="file" accept=".pdf,.doc,.docx,application/pdf" onChange={pickCv} />{cv && <small>✓ {cv.name}</small>}</label>
           <label className="hire-check"><input type="checkbox" checked={f.accept} onChange={set('accept')} /> I accept the {job.commissionPct}% commission</label>
           {err && <div className="hire-err">{err}</div>}
           <button className="hire-btn" disabled={busy}>{busy ? 'Sending…' : 'Submit application'}</button>

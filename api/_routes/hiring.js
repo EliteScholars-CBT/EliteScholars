@@ -4,7 +4,7 @@ import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { checkRateLimit } from "../_helpers/rateLimit.js";
 import { adminFromToken } from "./admin.js";
 import { sendHtml, notifyAdmin } from "../_helpers/mail.js";
-import { newToken, processDue, sendInvite, sendApproval, rejectedEmail, applicationReceivedEmail } from "../_helpers/hiring.js";
+import { newToken, processDue, sendInvite, sendApproval, rejectedEmail, applicationReceivedEmail, sendWithCopy } from "../_helpers/hiring.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ip = (req) => req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
@@ -52,9 +52,25 @@ export default async function handler(req, res) {
     if (b.accept !== true) return sendErr(res, `Please confirm that you accept the ${j.commission_pct}% commission.`);
     const { data: ex } = await sb.from("hiring_applications").select("id").eq("job_id", j.id).eq("email", email).maybeSingle();
     if (ex) return sendErr(res, "You have already applied with this email.");
-    const { error } = await sb.from("hiring_applications").insert({ job_id: j.id, name, email, whatsapp, why, accepts_commission: true, token: newToken() });
+    // Optional CV (PDF / Word, up to 2.5 MB), stored privately
+    let cvPath = "", cvName = "";
+    const token = newToken();
+    if (b.cv && b.cv.data) {
+      const ext = (String(b.cv.name || "").toLowerCase().match(/\.(pdf|docx?)$/) || [])[1];
+      if (!ext) return sendErr(res, "Upload your CV as a PDF or Word file.");
+      let buf;
+      try { buf = Buffer.from(String(b.cv.data), "base64"); } catch { return sendErr(res, "That CV file could not be read."); }
+      if (!buf.length || buf.length > 2.5 * 1024 * 1024) return sendErr(res, "Your CV must be smaller than 2.5 MB.");
+      const head = buf.subarray(0, 4).toString("latin1");
+      const okMagic = ext === "pdf" ? head === "%PDF" : (head.startsWith("PK") || buf.subarray(0, 4).toString("hex") === "d0cf11e0");
+      if (!okMagic) return sendErr(res, "That file does not look like a real PDF or Word document.");
+      cvPath = `${j.id}/${token}.${ext}`; cvName = clean(b.cv.name, 120).replace(/[^\w .()\-]/g, "_");
+      const up = await sb.storage.from("hiring-cvs").upload(cvPath, buf, { contentType: ext === "pdf" ? "application/pdf" : ext === "docx" ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document" : "application/msword", upsert: true });
+      if (up.error) { console.error("[hiring] cv upload", up.error.message); return sendErr(res, "Could not upload your CV. Try again, or apply without it.", 500); }
+    }
+    const { error } = await sb.from("hiring_applications").insert({ job_id: j.id, name, email, whatsapp, why, accepts_commission: true, token, cv_path: cvPath, cv_name: cvName });
     if (error) return sendErr(res, "Could not save your application. Try again.", 500);
-    await sendHtml(email, `We received your application: ${j.title}`, applicationReceivedEmail({ name, job: j }));
+    await sendWithCopy(email, `We received your application: ${j.title}`, applicationReceivedEmail({ name, job: j }));
     return sendOk(res, { message: "Application received. Check your email for what happens next." });
   }
 
@@ -89,7 +105,7 @@ export default async function handler(req, res) {
     await processDue(sb);
     const [{ data: jobs }, { data: apps }] = await Promise.all([
       sb.from("hiring_jobs").select("*").order("created_at", { ascending: false }),
-      sb.from("hiring_applications").select("id,job_id,name,email,whatsapp,why,accepts_commission,status,research,invited_at,submitted_at,approved_at,created_at").order("created_at", { ascending: false }).limit(1500),
+      sb.from("hiring_applications").select("id,job_id,name,email,whatsapp,why,accepts_commission,status,research,cv_name,invited_at,submitted_at,approved_at,created_at").order("created_at", { ascending: false }).limit(1500),
     ]);
     return sendOk(res, { jobs: jobs || [], applications: apps || [], now: new Date().toISOString() });
   }
@@ -147,6 +163,14 @@ export default async function handler(req, res) {
     return sendErr(res, "Unknown action.");
   }
 
+  if (op === "admin-cv") {
+    const { data: a } = await sb.from("hiring_applications").select("cv_path,cv_name").eq("id", clean(req.query.id || b.id, 60)).maybeSingle();
+    if (!a || !a.cv_path) return sendErr(res, "No CV on file.", 404);
+    const { data: u, error } = await sb.storage.from("hiring-cvs").createSignedUrl(a.cv_path, 300, { download: a.cv_name || true });
+    if (error || !u) return sendErr(res, "Could not open the CV.", 500);
+    return sendOk(res, { url: u.signedUrl });
+  }
+
   if (op === "admin-app") {
     if (req.method !== "POST") return sendMethodNotAllowed(res);
     const { data: a } = await sb.from("hiring_applications").select("*").eq("id", clean(b.id, 60)).maybeSingle();
@@ -158,7 +182,7 @@ export default async function handler(req, res) {
     if (act === "approve") { const ok = await sendApproval(sb, j, a); return sendOk(res, { message: ok ? "Approved. They were emailed the partner signup link and group chat." : "Approved, but the email could not be sent." }); }
     if (act === "reject") {
       await sb.from("hiring_applications").update({ status: "rejected" }).eq("id", a.id);
-      if (b.email !== false) await sendHtml(a.email, `Update on your ${j.title} application`, rejectedEmail({ name: a.name, job: j }));
+      if (b.email !== false) await sendWithCopy(a.email, `Update on your ${j.title} application`, rejectedEmail({ name: a.name, job: j }));
       return sendOk(res, { message: "Marked as not taken forward." });
     }
     if (act === "reset") { await sb.from("hiring_applications").update({ status: "applied" }).eq("id", a.id); return sendOk(res, { message: "Moved back to applied." }); }
