@@ -27,7 +27,7 @@ export default async function handler(req, res) {
     const PAGES = {
       partner: { title: "Partner with EliteScholars: earn commission on every student", desc: "Share your own link and earn commission each time a student you bring goes Pro. Free to join, track every referral.", img: "og/og-partner.jpg", path: "/partner" },
       school: { title: "EliteScholars for Schools: exam prep, assignments and progress", desc: "CBT practice, class assignments and progress tracking for every student in your school. Start with a free trial.", img: "og/og-school.jpg", path: "/school" },
-      centre: { title: "EliteScholars for Tutorial & JAMB Centres: practice, mock exams and reports", desc: "Keep your students, give them JAMB/WAEC practice between lessons, run mock exam nights and show parents real progress. Free trial for your centre.", img: "og/og-school.jpg", path: "/centre" },
+      centre: { title: "EliteScholars for Tutorial & JAMB Centres: assignments, mock exams and reports", desc: "Give your students assignments in the app, set JAMB, WAEC and NECO quizzes that mark themselves, run mock exam nights and show parents real progress. Free trial for your centre.", img: "og/og-school.jpg", path: "/centre" },
     };
     const pq = String(req.query?.p || "");
     const key = pq === "school" ? "school" : pq === "centre" ? "centre" : "partner";

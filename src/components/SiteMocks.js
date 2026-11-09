@@ -75,6 +75,29 @@ export function NoticePhone({ school = 'Greenfield College', initials = 'GC', te
   );
 }
 
+/* ── phone: homework the student sees, and the "done" count the teacher sees ─────── */
+export function HomeworkPhone({ title = 'Assignment: Organic Chemistry, Q1 to 10', due = 'Due Friday', done = 18, total = 25 }) {
+  const pct = Math.round((done / total) * 100);
+  return (
+    <Phone>
+      <div className="mk-app">
+        <div className="mk-apphead"><img src={logo} alt="" /><b>EliteScholars</b></div>
+        <div style={{ margin: '10px 4px 0', padding: 12, borderRadius: 16, background: '#fff', boxShadow: '0 8px 22px rgba(76,29,149,.16)', border: '1px solid #EDE9FE' }}>
+          <div style={{ fontSize: 10, fontWeight: 800, color: '#7C3AED', letterSpacing: '.05em' }}>NEW ASSIGNMENT · {due.toUpperCase()}</div>
+          <div style={{ fontSize: 14, fontWeight: 800, color: '#1B0A47', margin: '4px 0 6px', lineHeight: 1.3 }}>{title}</div>
+          <div style={{ fontSize: 11.5, color: '#4B4570', lineHeight: 1.45 }}>Read the notes on page 42, then answer the questions in your exercise book. Photo of the board attached. 📷</div>
+          <div style={{ marginTop: 10, padding: '9px 0', borderRadius: 11, background: 'linear-gradient(135deg,#8B5CF6,#6D28D9)', color: '#fff', textAlign: 'center', fontWeight: 800, fontSize: 12.5 }}>Mark as done</div>
+        </div>
+        <div style={{ margin: '12px 4px 0', padding: 12, borderRadius: 16, background: '#F5F3FF' }}>
+          <div style={{ fontSize: 10, fontWeight: 800, color: '#6B6490', letterSpacing: '.05em' }}>WHAT YOU SEE AS THE TEACHER</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, fontWeight: 800, color: '#1B0A47', margin: '6px 0 5px' }}><span>{done} of {total} done</span><span>{pct}%</span></div>
+          <div style={{ height: 8, borderRadius: 99, background: '#DDD6FE', overflow: 'hidden' }}><div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg,#8B5CF6,#22C55E)' }} /></div>
+        </div>
+      </div>
+    </Phone>
+  );
+}
+
 /* ── phone: a test the student takes ──────────────────────────────────────── */
 export function QuizPhone({ title = 'JAMB Mock 3 · Biology', q = 'Which gas do plants take in for photosynthesis?', opts = ['Oxygen', 'Carbon dioxide', 'Nitrogen', 'Hydrogen'], score = 86 }) {
   return (

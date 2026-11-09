@@ -1,5 +1,2 @@
-Update 18
-- Pro cards: removed Go Pro / swipe / Flutterwave lines; 'Save X' only
-- Squad plan: per exam (JAMB, WAEC & NECO, GST), prices follow JAMB's squad discount, dark-mode text fixed. Squad members now get Pro for that exam only.
-- Hiring: date icon white, 'N days/hours' deadlines, CV upload (private bucket hiring-cvs), prettier emails, every hiring email is BCC'd to HIRING_COPY_EMAIL / ADMIN_NOTIFY_EMAIL / elitescholars.site@gmail.com
-- SQL update 18 already applied to elite-supabase
+Update 19
+- /centre page: assignments + auto-marked quizzes explained up front (title, intro, features, steps, new Assignments section with phone mock). Nothing removed.

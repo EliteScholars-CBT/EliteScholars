@@ -4,7 +4,7 @@ import '../styles/landing2.css';
 import '../styles/studenttour.css';
 import SchoolShowcase from '../components/SchoolShowcase';
 import SiteShell from '../components/SiteShell';
-import { NoticePhone, QuizPhone, ReportLaptop, UploadLaptop, EditorLaptop, Scene } from '../components/SiteMocks';
+import { NoticePhone, HomeworkPhone, QuizPhone, ReportLaptop, UploadLaptop, EditorLaptop, Scene } from '../components/SiteMocks';
 import { captureReferralFromURL } from '../utils/referral';
 import { captureTrafficSource } from '../utils/trafficSource';
 import useReveal from '../utils/useReveal';
@@ -34,20 +34,21 @@ const COPY = {
     cross: ['Run a tutorial or JAMB centre instead?', 'See the centre plans', '/centre'],
   },
   centre: {
-    title: 'Keep your students. Give them practice that gets results.',
-    intro: 'EliteScholars is the homework and mock-exam layer for tutorial and JAMB centres. Your students stay yours; you get the proof it works.',
-    docTitle: 'EliteScholars for Tutorial & JAMB Centres: mock exams, practice and reports',
+    title: 'Give your students assignments and mock exams in the app. Quizzes are marked for you.',
+    intro: 'Post homework with a due date, set JAMB, WAEC and NECO quizzes that mark themselves, and see who has done what. Your students stay yours.',
+    docTitle: 'EliteScholars for Tutorial & JAMB Centres: assignments, mock exams and reports',
     portal: '/school-portal?kind=centre&src=centre-page',
     unit: 'student', group: 'batch', groups: 'batches', who: 'centre',
     features: [
+      ['📚', 'Assignments in the app', 'Write the homework or snap a photo of the board, add a due date, and post it to a batch. Students are notified, tap "Mark as done", and you see who has finished.'],
+      ['📝', 'Quizzes marked automatically', 'Set JAMB, WAEC and NECO quizzes after every class. Students answer on their phones and each score is marked and recorded for you.'],
       ['🤝', 'Your students stay yours', 'We never contact your students or recruit them. They sit under your batch and only you see their scores.'],
-      ['📝', 'Practice between lessons', 'Set JAMB, WAEC and NECO topic quizzes after every class so lessons turn into scores.'],
       ['🏆', 'Mock exam nights', 'One timed CBT for the whole centre, then a ranked list you can share on WhatsApp.'],
       ['📊', 'Show parents real progress', 'Branded reports and a one-tap WhatsApp summary that make your centre look serious.'],
       ['🗓️', 'Built for batches, not terms', 'A batch per exam or timetable. Pay monthly, or take a full year.'],
       ['💰', 'Earn from the app', 'Join the partner programme and earn when students you refer upgrade to Pro.'],
     ],
-    steps: [['1', 'Start your free trial', 'Create your centre and add your logo.'], ['2', 'Create a batch', 'For example "JAMB 2027 Evening". Add students from Excel.'], ['3', 'Run a mock night', 'Pick the subject, set the time. Students get notified.'], ['4', 'Share the results', 'Rankings and reports, by WhatsApp or print.']],
+    steps: [['1', 'Start your free trial', 'Create your centre and add your logo.'], ['2', 'Create a batch', 'For example "JAMB 2027 Evening". Add students from Excel.'], ['3', 'Give assignments and quizzes', 'Post homework with a due date, set a quiz, or run a timed mock night. Students get notified.'], ['4', 'Track and share results', 'See who has done the work, check scores and rankings, share reports by WhatsApp or print.']],
     cross: ['Run a school that works by terms?', 'See the school plans', '/school'],
   },
 };
@@ -100,25 +101,31 @@ export default function AudienceLanding({ kind = 'school' }) {
         <NoticePhone school={sName} initials={ini} />
       </Scene>
 
-      <Scene flip eyebrow="Tests, quizzes & mock exams" title="Students take them right in the app"
-        text="Pick a subject and we use the EliteScholars question bank (selected by default). Timed, marked automatically and ranked, with a score your teacher sees at once."
+      <Scene flip eyebrow="Assignments" title="Give homework in the app and see who has done it"
+        text={`Post an assignment to the whole ${c.who} or one ${c.group}: type the instructions or add photos of the board, and set a due date. Students are notified, open it on their phones and tap "Mark as done". You see how many have finished.`}
+        bullets={['Text and photos, with a due date', 'Students get a notification', 'See who is done and who is not']}>
+        <HomeworkPhone />
+      </Scene>
+
+      <Scene eyebrow="Tests, quizzes & mock exams" title="Quizzes and mock exams marked for you"
+        text="Pick a subject and we use the EliteScholars question bank (selected by default). Students take it on their phones. It is timed, marked automatically and ranked, and you see each score at once."
         bullets={['JAMB, WAEC and NECO questions', 'Mock exams for practice, tests and quick quizzes', 'First attempt counts, so results are fair']}>
         <QuizPhone title={kind === 'centre' ? 'JAMB Mock 3 · Biology' : 'Biology Test · SS3'} />
       </Scene>
 
-      <Scene eyebrow="Your own questions" title="Or set your own test in minutes"
+      <Scene flip eyebrow="Your own questions" title="Or set your own test in minutes"
         text="Switch to My own questions and type them, paste many at once, or upload an Excel sheet. Add a time limit and an explanation for each answer."
         bullets={['Type, paste or upload from Excel', 'Optional timer and explanations', 'Graded on our server, never on the phone']}>
         <EditorLaptop school={sName} />
       </Scene>
 
-      <Scene flip eyebrow="Easy setup" title={`Add a whole ${c.group} from Excel`}
+      <Scene eyebrow="Easy setup" title={`Add a whole ${c.group} from Excel`}
         text="Upload your class list (Excel or CSV). Every student gets a username and password to print and hand out. No emails needed."
         bullets={['Hundreds of students in one upload', 'Printable login slips', 'Students already on EliteScholars can be added by username']}>
         <UploadLaptop school={sName} />
       </Scene>
 
-      <Scene eyebrow="Results" title="Charts and reports parents understand"
+      <Scene flip eyebrow="Results" title="Charts and reports parents understand"
         text="See averages, trends, participation and who needs help. Print a report with your logo on top, or share a summary on WhatsApp in one tap."
         bullets={['Per-student and per-class reports', 'Download CSV or print', 'One-tap WhatsApp summaries']}>
         <ReportLaptop school={sName} />
