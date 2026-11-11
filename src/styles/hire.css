@@ -1,17 +1,30 @@
-.hire-page{min-height:100vh;min-height:100dvh;background:linear-gradient(160deg,#1E1147,#3B1C8C 60%,#5B21B6);display:flex;justify-content:center;padding:20px 14px 40px;font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1B0A47;box-sizing:border-box}
-.hire-card{width:100%;max-width:560px;background:#fff;border-radius:24px;padding:24px 22px 28px;box-shadow:0 18px 50px rgba(0,0,0,.35);height:fit-content;box-sizing:border-box}
-.hire-logo{display:inline-flex;align-items:center;gap:8px;font-weight:900;color:#6D28D9;text-decoration:none;margin-bottom:14px}
-.hire-card h1{font-size:26px;line-height:1.2;margin:6px 0 8px;color:#1B0A47}
-.hire-tag{display:inline-block;background:#EDE9FE;color:#6D28D9;font-weight:800;font-size:12px;padding:4px 12px;border-radius:99px}
-.hire-desc{color:#3F3A5C;line-height:1.55;white-space:pre-wrap}
+.hire-page{min-height:100vh;min-height:100dvh;background:linear-gradient(160deg,#1E1147,#3B1C8C 60%,#5B21B6);display:flex;justify-content:center;align-items:flex-start;padding:18px 14px 40px;font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1B0A47;box-sizing:border-box}
+.hire-page *{box-sizing:border-box}
+.hire-card{width:100%;max-width:560px;background:#fff;border-radius:24px;padding:20px 20px 28px;box-shadow:0 18px 50px rgba(0,0,0,.35);overflow:hidden}
+.hire-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;margin-bottom:16px;border-bottom:1px solid #EFEAFB}
+.hire-logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px;color:#6D28D9;text-decoration:none;line-height:1}
+.hire-logo img{display:block;width:32px;height:32px;border-radius:8px;object-fit:contain}
+.hire-stepper{list-style:none;display:flex;gap:8px;padding:0;margin:0 0 18px}
+.hire-stepper li{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:8px 6px;border-radius:12px;background:#F5F2FD;color:#8A83AD;font-weight:700;font-size:13px;min-width:0}
+.hire-stepper li span{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#E4DDF8;color:#6B6490;font-size:12px;font-weight:800;flex:none}
+.hire-stepper li.on{background:#FEF3C7;color:#78350F}.hire-stepper li.on span{background:#F59E0B;color:#fff}
+.hire-stepper li.done{background:#DCFCE7;color:#166534}.hire-stepper li.done span{background:#22C55E;color:#fff}
+.hire-tagrow{margin:0 0 8px}
+.hire-tag{display:inline-block;background:#EDE9FE;color:#6D28D9;font-weight:800;font-size:12px;padding:5px 12px;border-radius:99px;letter-spacing:.03em}
+.hire-card h1{font-size:26px;line-height:1.2;margin:0 0 10px;color:#1B0A47;overflow-wrap:anywhere}
+.hire-desc{color:#3F3A5C;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;margin:0 0 14px}
 .hire-mute{color:#6B6490;line-height:1.5}
-.hire-big{font-size:48px;margin:10px 0}
-.hire-facts{list-style:none;padding:0;margin:14px 0;display:flex;flex-direction:column;gap:8px;color:#2A2350;font-size:14.5px}
+.hire-big{font-size:48px;margin:6px 0}
+.hire-facts{list-style:none;padding:0;margin:14px 0 18px;display:flex;flex-direction:column;gap:8px}
+.hire-facts li{display:flex;gap:12px;align-items:flex-start;background:#FAF8FF;border:1px solid #ECE7FB;border-radius:14px;padding:11px 13px;color:#2A2350;font-size:14.5px;line-height:1.45}
+.hire-facts li i{font-style:normal;font-size:18px;line-height:1.2;flex:none}
 .hire-form{display:flex;flex-direction:column;gap:14px;margin-top:10px}
 .hire-form label{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:14px;color:#2A2350}
-.hire-form input,.hire-form textarea{border:1.5px solid #D9D2F3;border-radius:12px;padding:12px;font:inherit;font-weight:500;color:#1B0A47;background:#fff;box-sizing:border-box;width:100%}
+.hire-form input,.hire-form textarea{border:1.5px solid #D9D2F3;border-radius:12px;padding:12px;font:inherit;font-weight:500;color:#1B0A47;background:#fff;width:100%}
+.hire-form textarea{resize:vertical;min-height:110px}
 .hire-form input:focus,.hire-form textarea:focus{outline:none;border-color:#8B5CF6;box-shadow:0 0 0 3px rgba(139,92,246,.2)}
 .hire-form small{color:#8A83AD;font-weight:500;align-self:flex-end}
+.hire-form small.hire-file{align-self:flex-start;color:#166534;font-weight:700;overflow-wrap:anywhere}
 .hire-form label.hire-check{flex-direction:row;align-items:center;gap:10px}
 .hire-form label.hire-check input{width:20px;height:20px;flex:none}
 .hire-btn{background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#3B1C00;font-weight:900;font-size:16px;border:0;border-radius:14px;padding:14px;cursor:pointer;box-shadow:0 8px 20px rgba(245,158,11,.35)}
@@ -22,6 +35,6 @@
 .hire-closed{background:#F3F0FF;color:#4C1D95;border-radius:12px;padding:14px;font-weight:700;margin-top:12px}
 .hire-steps{color:#2A2350;line-height:1.6;padding-left:20px}
 .hire-steps a{color:#6D28D9;font-weight:700}
-
 .hire-form input[type=file]{padding:10px;background:#FAF8FF}
 .hire-form input[type=file]::file-selector-button{background:#6D28D9;color:#fff;border:0;border-radius:8px;padding:8px 12px;margin-right:10px;font-weight:700;cursor:pointer}
+@media (max-width:400px){.hire-card{padding:16px 14px 24px}.hire-card h1{font-size:22px}.hire-stepper li{font-size:12px;padding:7px 4px}}

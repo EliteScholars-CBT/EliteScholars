@@ -72,9 +72,13 @@ export default function AdminHiring({ token, onAuthFail }) {
     if (d) setForm(null);
   };
 
-  const openCv = async (id) => {
-    try { const d = await api(`hiring-cv?id=${encodeURIComponent(id)}`); if (d.url) window.open(d.url, '_blank', 'noopener'); } catch (e) { if (e.message !== 'auth') setErr(e.message); }
-  };
+  // The CV opens inside the applicant card (PDF directly, Word through the Office viewer), no download needed.
+  const [cvs, setCvs] = useState({});
+  useEffect(() => {
+    const a = data && data.applications.find((x) => x.id === seeApp);
+    if (!a || !a.cv_name || cvs[a.id]) return;
+    api(`hiring-cv?id=${encodeURIComponent(a.id)}`).then((d) => { if (d.url) setCvs((c) => ({ ...c, [a.id]: d })); }).catch((e) => { if (e.message !== 'auth') setCvs((c) => ({ ...c, [a.id]: { error: e.message } })); });
+  }, [seeApp, data, api]); // eslint-disable-line
   const edit = (j) => setForm({ id: j.id, slug: j.slug, title: j.title, description: j.description, commission_pct: j.commission_pct, open: j.open, apply: j.apply_duration_h ? mkRel(j.apply_duration_h, EMPTY.apply) : mkDl(j.apply_deadline), research: j.apply_duration_h ? mkRel(j.research_duration_h, EMPTY.research) : mkDl(j.research_deadline), auto_email: j.auto_email, auto_approve: j.auto_approve, group_url: j.group_url });
 
   if (!data) return <div className="adm-card">{err || 'Loading…'}</div>;
@@ -151,21 +155,30 @@ export default function AdminHiring({ token, onAuthFail }) {
                 {[...shown].sort((a, b) => (a.status === 'submitted' ? -1 : 0) - (b.status === 'submitted' ? -1 : 0)).map((a) => (
                   <div className="hire-app" key={a.id} style={{ '--c': STAGE_COLOR[a.status] }}>
                     <div className="hire-app-top">
-                      <div><b>{a.name}</b> <span className="hire-chip">{(STAGES.find((s) => s[0] === a.status) || [0, a.status])[1]}</span>
+                      <div><b>{a.name}</b> {a.status === 'submitted' && <span className="hire-new">NEW</span>} <span className="hire-chip">{(STAGES.find((s) => s[0] === a.status) || [0, a.status])[1]}</span>
                         <small>{a.email} · <a href={`https://wa.me/${String(a.whatsapp).replace(/\D/g, '').replace(/^0/, '234')}`} target="_blank" rel="noreferrer">WhatsApp {a.whatsapp}</a> · applied {ago(a.created_at)}{a.submitted_at ? ` · research ${ago(a.submitted_at)}` : ''}</small></div>
                       <button className="adm-ghost" onClick={() => setSeeApp(seeApp === a.id ? '' : a.id)}>{seeApp === a.id ? 'Close' : 'Read'}</button>
                     </div>
                     {seeApp === a.id && (
                       <div className="hire-read">
-                        <h4>Why we should choose them</h4><p>{a.why}</p>
-                        {a.cv_name && <p><button type="button" className="adm-btn" onClick={() => openCv(a.id)}>📄 Download CV ({a.cv_name})</button></p>}
-                        <h4>Research{a.submitted_at ? '' : ' (not sent yet)'}</h4><p>{a.research || '—'}</p>
+                        <h4>Why we should choose them</h4><div className="hire-text">{a.why}</div>
+                        {a.cv_name && (() => { const c = cvs[a.id]; return (
+                          <div className="hire-cv">
+                            <h4>CV · {a.cv_name}</h4>
+                            {!c && <p className="adm-note">Loading CV…</p>}
+                            {c && c.error && <p className="adm-note">{c.error}</p>}
+                            {c && c.url && (<>
+                              <iframe title={`CV of ${a.name}`} className="hire-cv-frame" src={c.kind === 'pdf' ? c.url : `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(c.url)}`} />
+                              <a className="adm-ghost hire-cv-open" href={c.kind === 'pdf' ? c.url : `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(c.url)}`} target="_blank" rel="noreferrer">Open full screen ↗</a>
+                            </>)}
+                          </div>); })()}
+                        <h4>Research{a.submitted_at ? '' : ' (not sent yet)'}</h4><div className="hire-text">{a.research || '—'}</div>
                       </div>
                     )}
                     <div className="adm-inline pad">
                       {a.status === 'applied' && <button className="adm-btn" disabled={busy} onClick={() => run('hiring-app', { id: a.id, action: 'invite' })}>Send research task</button>}
                       {a.status === 'invited' && <button className="adm-ghost" disabled={busy} onClick={() => run('hiring-app', { id: a.id, action: 'invite' })}>Send task again</button>}
-                      {['submitted', 'invited', 'applied'].includes(a.status) && a.status === 'submitted' && <button className="adm-btn" disabled={busy} onClick={() => window.confirm(`Approve ${a.name}? They get the partner signup link and the group chat by email.`) && run('hiring-app', { id: a.id, action: 'approve' })}>Approve and email</button>}
+                      {['submitted', 'invited', 'applied'].includes(a.status) && a.status === 'submitted' && <button className="adm-btn" disabled={busy} onClick={() => window.confirm(`Approve ${a.name}? They get the partner signup link by email. The group chat link and welcome email follow automatically once they register.`) && run('hiring-app', { id: a.id, action: 'approve' })}>Approve and email</button>}
                       {a.status === 'approved' && <button className="adm-ghost" disabled={busy} onClick={() => run('hiring-app', { id: a.id, action: 'approve' })}>Resend approval email</button>}
                       {!['rejected', 'joined'].includes(a.status) && <button className="adm-ghost" disabled={busy} onClick={() => window.confirm(`Not take ${a.name} forward? They get a polite email.`) && run('hiring-app', { id: a.id, action: 'reject' })}>Not this time</button>}
                       {a.status === 'rejected' && <button className="adm-ghost" disabled={busy} onClick={() => run('hiring-app', { id: a.id, action: 'reset' })}>Move back to applied</button>}
@@ -189,7 +202,7 @@ export default function AdminHiring({ token, onAuthFail }) {
 const EV = {
   link_opened: ['🔗', '#a78bfa', 'Link opened'], apply: ['📨', '#60a5fa', 'Application'], invite: ['✉️', '#c084fc', 'Research task sent'],
   research: ['📝', '#f59e0b', 'Research'], approved: ['✅', '#34d399', 'Approved'], rejected: ['🚫', '#94a3b8', 'Not taken'],
-  joined: ['🎉', '#22c55e', 'Joined as partner'], auto: ['⚙️', '#38bdf8', 'Automatic step'], job: ['💼', '#e2e8f0', 'Job'],
+  joined: ['🎉', '#22c55e', 'Joined as partner'], signup_click: ['👆', '#2dd4bf', 'Opened signup link'], group_sent: ['💬', '#38bdf8', 'Group link sent'], group_click: ['✅', '#4ade80', 'Opened group chat'], welcomed: ['🤝', '#fb923c', 'Welcome sent'], auto: ['⚙️', '#38bdf8', 'Automatic step'], job: ['💼', '#e2e8f0', 'Job'],
 };
 function HireActivity({ data, jobId, setJobId }) {
   const jobName = (id) => (data.jobs.find((j) => j.id === id) || {}).title || 'Job';
@@ -230,7 +243,7 @@ function HireAnalytics({ data, jobId, setJobId }) {
     approved: apps.filter((a) => a.approved_at).length,
     joined: n('joined'),
   };
-  const funnel = [['Opened the link', reached.views, '#a78bfa'], ['Applied', reached.applied, '#60a5fa'], ['Got research task', reached.invited, '#c084fc'], ['Sent research', reached.submitted, '#f59e0b'], ['Approved', reached.approved, '#34d399'], ['Joined as partner', reached.joined, '#22c55e']];
+  const funnel = [['Opened the link', reached.views, '#a78bfa'], ['Applied', reached.applied, '#60a5fa'], ['Got research task', reached.invited, '#c084fc'], ['Sent research', reached.submitted, '#f59e0b'], ['Approved', reached.approved, '#34d399'], ['Joined as partner', reached.joined, '#22c55e'], ['Opened group chat', apps.filter((a) => a.group_clicked_at).length, '#4ade80']];
   const top = Math.max(1, ...funnel.map((f) => f[1]));
   const pct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : '—');
   const days = Array.from({ length: 14 }, (_, i) => { const d = new Date(Date.now() - (13 - i) * 86400000); return d.toISOString().slice(0, 10); });

@@ -807,3 +807,6 @@ create table if not exists hiring_events (
 );
 create index if not exists idx_hiring_events_job on hiring_events (job_id, created_at desc);
 alter table hiring_events enable row level security;
+
+-- update21: hiring onboarding tracking
+alter table hiring_applications add column if not exists joined_at timestamptz, add column if not exists group_sent_at timestamptz, add column if not exists group_clicked_at timestamptz, add column if not exists welcomed_at timestamptz, add column if not exists signup_clicked_at timestamptz;

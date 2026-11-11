@@ -17,6 +17,7 @@ const PURPLE = "#6d28d9";
 // 1 Apply → 2 Research → 3 Join, with the current step lit
 const progress = (n) => {
   const steps = ["Apply", "Research", "Join the team"];
+  if (n === 4) n = 3;
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px"><tr>${steps.map((t, i) => {
     const on = i + 1 === n, done = i + 1 < n;
     const bg = on ? "linear-gradient(135deg,#f5b400,#f59e0b)" : done ? "#22c55e" : "#ece7fb";
@@ -56,10 +57,30 @@ export const approvedEmail = ({ name, job, signupLink }) => layout({
 ${bigPct(job.commission_pct)}
 ${stepCards([
     "Create your partner account with the button below. <b>Use the same email you applied with</b> and it activates straight away.",
-    job.group_url ? `Join the team group chat: <a href="${esc(job.group_url)}" style="color:${PURPLE};font-weight:700">${esc(job.group_url)}</a>` : "Join the team group chat (we will send you the link shortly).",
+    "As soon as your account is created, we email you the link to the team group chat.",
     "Copy your partner link, share it, and watch your earnings grow in your partner dashboard.",
   ])}`,
   cta: { label: "Create my partner account", url: signupLink },
+});
+
+export const groupEmail = ({ name, job, link }) => layout({
+  preheader: "Your account is ready. Join the team group chat", emoji: "💬", heading: "Your account is ready",
+  body: `${progress(4)}${hi(name)}<p style="margin:0 0 12px">Your partner account is active. One last step: join the team group chat, where announcements and tips are shared.</p>
+${callout("Tap the button below to join. Please join today so we know you are in.", "#22c55e", "#f0fdf4")}`,
+  cta: { label: "Join the group chat", url: link },
+});
+
+export const welcomeEmail = ({ name, job }) => layout({
+  preheader: "Welcome to the team. Here is how we work", emoji: "🤝", heading: "Welcome to the team!",
+  body: `${hi(name)}<p style="margin:0 0 12px">You are officially part of the EliteScholars team as a <b>${esc(job.title)}</b>. We are glad to have you.</p>
+${stepCards([
+    "Open your <a href=\"" + APP + "/partner\" style=\"color:" + PURPLE + ";font-weight:700\">partner dashboard</a>, copy your link and start sharing.",
+    "<b>Stay active.</b> We do not chase partners one by one. Partners who go inactive are suspended automatically.",
+    "Have a question about your own account? Send the admin a direct message (DM).",
+    "Have a general question? Ask it in the group chat so everyone can learn from the answer.",
+  ])}
+${callout("<b>Please note:</b> we will not message you individually to remind you to work. Everything runs automatically, so keep your activity up.", "#f5b400", "#fffbeb")}`,
+  cta: { label: "Open my dashboard", url: `${APP}/partner` },
 });
 
 export const rejectedEmail = ({ name, job }) => layout({
@@ -80,11 +101,31 @@ export async function sendInvite(sb, job, app) {
 }
 
 export async function sendApproval(sb, job, app) {
-  const signupLink = `${APP}/partner?hire=${app.token}`;
+  const signupLink = `${APP}/api/hire/go?t=${app.token}&to=signup`;
   const ok = await sendWithCopy(app.email, `You passed: welcome to the EliteScholars team 🎉`, approvedEmail({ name: app.name, job, signupLink }));
   await sb.from("hiring_applications").update({ status: "approved", approved_at: new Date().toISOString() }).eq("id", app.id);
   await logEvent(sb, job.id, app.id, "approved", `${app.name} approved, partner signup link ${ok ? "emailed" : "could not be emailed"}`);
   return ok;
+}
+
+// After they register: send the group chat link through a tracked redirect, so we can see when they open it.
+export async function sendGroupInvite(sb, job, app) {
+  const link = `${APP}/api/hire/go?t=${app.token}`;
+  const ok = await sendWithCopy(app.email, "Your account is ready: join the team group chat", groupEmail({ name: app.name, job, link }));
+  await sb.from("hiring_applications").update({ group_sent_at: new Date().toISOString() }).eq("id", app.id);
+  await logEvent(sb, job.id, app.id, "group_sent", `Group chat link ${ok ? "emailed to" : "could not be emailed to"} ${app.name}`);
+  return ok;
+}
+
+// Opening the group link: log it, send the welcome email once, then forward to the group.
+export async function onGroupClick(sb, job, app) {
+  const now = new Date().toISOString();
+  const claim = await sb.from("hiring_applications").update({ group_clicked_at: now, welcomed_at: now }).eq("id", app.id).is("welcomed_at", null).select("id");
+  if (claim.data && claim.data.length) {
+    await logEvent(sb, job.id, app.id, "group_click", `${app.name} opened the group chat link`);
+    const ok = await sendWithCopy(app.email, "Welcome to the EliteScholars team 🤝", welcomeEmail({ name: app.name, job }));
+    await logEvent(sb, job.id, app.id, "welcomed", `Welcome email ${ok ? "sent to" : "could not be sent to"} ${app.name}`);
+  }
 }
 
 // Called from the cron and whenever the admin opens Hiring (so it also works between cron runs).

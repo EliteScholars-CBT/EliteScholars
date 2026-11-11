@@ -11,11 +11,23 @@ async function call(path, { method = 'GET', body, query } = {}) {
 }
 const when = (s) => (s ? new Date(s).toLocaleString('en-NG', { weekday: 'short', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Africa/Lagos' }) + ' (Lagos time)' : '');
 
-function Shell({ children }) {
+function Stepper({ at }) {
+  const steps = ['Apply', 'Research', 'Join'];
+  return (
+    <ol className="hire-stepper" aria-label="Hiring steps">
+      {steps.map((t, i) => (<li key={t} className={i + 1 === at ? 'on' : i + 1 < at ? 'done' : ''}><span>{i + 1 < at ? '✓' : i + 1}</span>{t}</li>))}
+    </ol>
+  );
+}
+
+function Shell({ children, step }) {
   return (
     <div className="hire-page">
       <div className="hire-card">
-        <a href="/" className="hire-logo"><img src={logo} alt="" width="34" height="34" /> EliteScholars</a>
+        <header className="hire-head">
+          <a href="/" className="hire-logo"><img src={logo} alt="" width="32" height="32" /><span>EliteScholars</span></a>
+        </header>
+        {step ? <Stepper at={step} /> : null}
         {children}
       </div>
     </div>
@@ -57,17 +69,17 @@ export function HireApply() {
 
   if (!job && !err) return <Shell><p className="hire-mute">Loading…</p></Shell>;
   if (!job) return <Shell><h1>Link not valid</h1><p className="hire-mute">{err}</p></Shell>;
-  if (done) return <Shell><div className="hire-big">✅</div><h1>Application received</h1><p className="hire-mute">{done}</p><p className="hire-mute">Next, we email you a short research task. Check your spam folder too.</p></Shell>;
+  if (done) return <Shell step={2}><div className="hire-big">✅</div><h1>Application received</h1><p className="hire-mute">{done}</p><div className="hire-closed">Next: open the email we sent and complete the short research task.</div></Shell>;
   const open = job.phase === 'applying';
   return (
-    <Shell>
-      <span className="hire-tag">We are hiring</span>
+    <Shell step={1}>
+      <div className="hire-tagrow"><span className="hire-tag">We are hiring</span></div>
       <h1>{job.title}</h1>
       {job.description && <p className="hire-desc">{job.description}</p>}
       <ul className="hire-facts">
-        <li>💰 <b>{job.commissionPct}% commission</b> on every paying student you bring</li>
-        <li>📝 Step 1: apply here. Step 2: a short research task. Step 3: join the team</li>
-        {job.applyDeadline && <li>⏰ Applications {open ? 'close' : 'closed'}: <b>{when(job.applyDeadline)}</b></li>}
+        <li><i>💰</i><span><b>{job.commissionPct}% commission</b> on every paying student you bring</span></li>
+        <li><i>📝</i><span>Apply here, then complete a short research task we email you</span></li>
+        {job.applyDeadline && <li><i>⏰</i><span>Applications {open ? 'close' : 'closed'}: <b>{when(job.applyDeadline)}</b></span></li>}
       </ul>
       {!open ? <div className="hire-closed">Applications for this role are closed.</div> : (
         <form onSubmit={submit} className="hire-form">
@@ -75,7 +87,7 @@ export function HireApply() {
           <label>Email<input type="email" value={f.email} onChange={set('email')} autoComplete="email" required /></label>
           <label>WhatsApp number<input type="tel" value={f.whatsapp} onChange={set('whatsapp')} placeholder="e.g. 0803 000 0000" autoComplete="tel" required /></label>
           <label>Why should we choose you?<textarea rows={5} value={f.why} onChange={set('why')} maxLength={1500} required /><small>{f.why.length}/1500</small></label>
-          <label>Your CV (PDF or Word, up to 2.5 MB)<input type="file" accept=".pdf,.doc,.docx,application/pdf" onChange={pickCv} />{cv && <small>✓ {cv.name}</small>}</label>
+          <label>Your CV (PDF or Word only, up to 2.5 MB)<input type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={pickCv} />{cv && <small className="hire-file">✓ {cv.name}</small>}</label>
           <label className="hire-check"><input type="checkbox" checked={f.accept} onChange={set('accept')} /> I accept the {job.commissionPct}% commission</label>
           {err && <div className="hire-err">{err}</div>}
           <button className="hire-btn" disabled={busy}>{busy ? 'Sending…' : 'Submit application'}</button>
@@ -109,8 +121,7 @@ export function HireResearch() {
   if (!d) return <Shell><h1>Link not valid</h1><p className="hire-mute">{err}</p></Shell>;
   const can = ['invited', 'submitted'].includes(d.status) && !d.closed;
   return (
-    <Shell>
-      <span className="hire-tag">Step 2 of 3</span>
+    <Shell step={['approved', 'joined'].includes(d.status) ? 3 : 2}>
       <h1>Research task</h1>
       <p className="hire-mute">Hi {d.name.split(' ')[0]}, for <b>{d.job.title}</b>.</p>
       {d.status === 'applied' && <div className="hire-closed">This stage has not opened for you yet. We will email you when it does.</div>}

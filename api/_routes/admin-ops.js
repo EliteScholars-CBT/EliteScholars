@@ -280,7 +280,8 @@ export default async function handler(req, res) {
       }
       if (need("partners")) {
         const sub = await cnt("hiring_applications", (x) => x.eq("status", "submitted")).catch(() => 0);
-        counts.hiring = sub;
+        // the badge counts every submission ever received, so a new one always lights it up even after others were approved
+        counts.hiring = await cnt("hiring_applications", (x) => x.not("submitted_at", "is", null)).catch(() => sub);
         if (sub) items.push({ kind: "hiring", text: `${sub} hiring research submission${sub === 1 ? "" : "s"} to review`, at: null, tab: "hiring" });
       }
       if (need("payouts")) {

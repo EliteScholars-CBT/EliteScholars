@@ -132,8 +132,14 @@ export default async function handler(req, res) {
     }
     if (!created) return sendErr(res, "Could not create account. Try again.", 500);
     if (hired) {
-      await sb.from("hiring_applications").update({ status: "joined" }).eq("id", hired.id);
+      await sb.from("hiring_applications").update({ status: "joined", joined_at: new Date().toISOString() }).eq("id", hired.id);
       try { await sb.from("hiring_events").insert({ job_id: hired.job_id, app_id: hired.id, type: "joined", text: `${email} signed up as a partner and is active` }); } catch { /* ignore */ }
+      try {
+        const { sendGroupInvite } = await import("../_helpers/hiring.js");
+        const { data: hj } = await sb.from("hiring_jobs").select("*").eq("id", hired.job_id).maybeSingle();
+        const { data: hf } = await sb.from("hiring_applications").select("*").eq("id", hired.id).maybeSingle();
+        if (hj && hf && hj.group_url) await sendGroupInvite(sb, hj, hf);
+      } catch (e) { console.warn("[hire] group invite", e && e.message); }
       return sendOk(res, { message: "Your partner account is ready. Sign in to get your link." });
     }
     await notifyAdmin("New partner waiting for your approval", "A new affiliate partner has signed up and is waiting for you to approve them.", { emoji: "🤝", heading: "New partner to approve", rows: [["Name", name], ["Email", email], ["Phone", phone || "—"]], cta: { label: "Review in admin", url: "https://elitescholars.site/admin" } });

@@ -446,6 +446,10 @@
       "destination": "/api/data?route=hire/apply"
     },
     {
+      "source": "/api/hire/go",
+      "destination": "/api/data?route=hire/go"
+    },
+    {
       "source": "/api/hire/research",
       "destination": "/api/data?route=hire/research"
     },

@@ -140,6 +140,7 @@ const ROUTES = {
   "hire/job": withOp(hiring, "job"),
   "hire/apply": withOp(hiring, "apply"),
   "hire/research": withOp(hiring, "research"),
+  "hire/go": withOp(hiring, "go"),
   "admin/hiring": withOp(hiring, "admin-list"),
   "admin/hiring-save": withOp(hiring, "admin-save"),
   "admin/hiring-delete": withOp(hiring, "admin-delete"),

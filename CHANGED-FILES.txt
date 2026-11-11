@@ -1,3 +1,14 @@
-Update 20 + study content
-APP: hiring timers (start when the link is first opened), Hiring Activity + Analytics, partner dashboard (analytics before links). SQL update 20 already applied.
-STUDY CONTENT: src/data/waec/learn/ (agric, citizenship, economics, food nutrition, commerce rewritten, biology, chemistry, government, mathematics, physics)
+Update 21 - hiring onboarding
+SQL already applied to Supabase (update21_hiring_onboarding); supabase/schema.sql updated for the record.
+
+api/_helpers/hiring.js
+api/_routes/hiring.js
+api/_routes/partner.js
+api/_routes/admin-ops.js
+api/data.js
+vercel.json
+src/pages/Hire.js
+src/components/AdminHiring.js
+src/styles/hire.css
+src/styles/admin.css
+supabase/schema.sql

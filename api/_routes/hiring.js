@@ -4,7 +4,7 @@ import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { checkRateLimit } from "../_helpers/rateLimit.js";
 import { adminFromToken } from "./admin.js";
 import { sendHtml, notifyAdmin } from "../_helpers/mail.js";
-import { newToken, processDue, sendInvite, sendApproval, rejectedEmail, applicationReceivedEmail, sendWithCopy, logEvent } from "../_helpers/hiring.js";
+import { onGroupClick, newToken, processDue, sendInvite, sendApproval, rejectedEmail, applicationReceivedEmail, sendWithCopy, logEvent } from "../_helpers/hiring.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ip = (req) => req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
@@ -51,6 +51,26 @@ export default async function handler(req, res) {
     return sendOk(res, { job: pubJob(j) });
   }
 
+  // Tracked links from the emails: ?to=signup → partner signup, otherwise the team group chat.
+  if (op === "go") {
+    const t = clean(req.query.t, 60);
+    const bot = /bot|crawl|spider|preview|scanner|curl|facebookexternalhit|slurp/i.test(String(req.headers["user-agent"] || ""));
+    const { data: a } = await sb.from("hiring_applications").select("*").eq("token", t).maybeSingle();
+    const go = (url) => { res.statusCode = 302; res.setHeader("Location", url); res.end(); };
+    if (!a) return go("https://elitescholars.site/");
+    const { data: j } = await sb.from("hiring_jobs").select("*").eq("id", a.job_id).maybeSingle();
+    if (String(req.query.to) === "signup") {
+      if (!bot && j && !a.signup_clicked_at) {
+        await sb.from("hiring_applications").update({ signup_clicked_at: new Date().toISOString() }).eq("id", a.id);
+        await logEvent(sb, j.id, a.id, "signup_click", `${a.name} opened the partner signup link`);
+      }
+      return go(`https://elitescholars.site/partner?hire=${encodeURIComponent(a.token)}`);
+    }
+    if (!j || !j.group_url) return go("https://elitescholars.site/partner");
+    if (!bot && ["joined"].includes(a.status)) await onGroupClick(sb, j, a);
+    return go(j.group_url);
+  }
+
   if (op === "apply") {
     if (req.method !== "POST") return sendMethodNotAllowed(res);
     const { allowed } = await checkRateLimit(`hire-apply:${ip(req)}`, 6, 3600);
@@ -86,6 +106,12 @@ export default async function handler(req, res) {
     const { error } = await sb.from("hiring_applications").insert({ job_id: j.id, name, email, whatsapp, why, accepts_commission: true, token, cv_path: cvPath, cv_name: cvName });
     if (error) return sendErr(res, "Could not save your application. Try again.", 500);
     { const { data: na } = await sb.from("hiring_applications").select("id").eq("job_id", j.id).eq("email", email).maybeSingle(); await logEvent(sb, j.id, na && na.id, "apply", `${name} applied${cvName ? " (CV attached)" : ""}`); }
+    // Automatic: the research task goes out straight away (no waiting for the deadline) when auto-email is on.
+    const { data: na2 } = await sb.from("hiring_applications").select("*").eq("job_id", j.id).eq("email", email).maybeSingle();
+    if (j.auto_email && na2) {
+      const sent = await sendInvite(sb, j, na2);
+      return sendOk(res, { message: sent ? "Application received. We have emailed you your research task. Check your inbox and spam folder." : "Application received. Check your email for what happens next.", taskSent: !!sent });
+    }
     await sendWithCopy(email, `We received your application: ${j.title}`, applicationReceivedEmail({ name, job: j }));
     return sendOk(res, { message: "Application received. Check your email for what happens next." });
   }
@@ -122,7 +148,7 @@ export default async function handler(req, res) {
     await processDue(sb);
     const [{ data: jobs }, { data: apps }] = await Promise.all([
       sb.from("hiring_jobs").select("*").order("created_at", { ascending: false }),
-      sb.from("hiring_applications").select("id,job_id,name,email,whatsapp,why,accepts_commission,status,research,cv_name,invited_at,submitted_at,approved_at,created_at").order("created_at", { ascending: false }).limit(1500),
+      sb.from("hiring_applications").select("id,job_id,name,email,whatsapp,why,accepts_commission,status,research,cv_name,invited_at,submitted_at,approved_at,joined_at,group_sent_at,group_clicked_at,welcomed_at,signup_clicked_at,created_at").order("created_at", { ascending: false }).limit(1500),
     ]);
     const since = new Date(Date.now() - 60 * 86400000).toISOString();
     const [{ data: evs }, { data: vws }] = await Promise.all([
@@ -202,9 +228,10 @@ export default async function handler(req, res) {
   if (op === "admin-cv") {
     const { data: a } = await sb.from("hiring_applications").select("cv_path,cv_name").eq("id", clean(req.query.id || b.id, 60)).maybeSingle();
     if (!a || !a.cv_path) return sendErr(res, "No CV on file.", 404);
-    const { data: u, error } = await sb.storage.from("hiring-cvs").createSignedUrl(a.cv_path, 300, { download: a.cv_name || true });
+    const { data: u, error } = await sb.storage.from("hiring-cvs").createSignedUrl(a.cv_path, 3600);
     if (error || !u) return sendErr(res, "Could not open the CV.", 500);
-    return sendOk(res, { url: u.signedUrl });
+    const kind = /\.pdf$/i.test(a.cv_path) ? "pdf" : "doc";
+    return sendOk(res, { url: u.signedUrl, kind, name: a.cv_name || "CV" });
   }
 
   if (op === "admin-app") {
@@ -215,7 +242,7 @@ export default async function handler(req, res) {
     if (!j) return sendErr(res, "Job not found.", 404);
     const act = String(b.action || "");
     if (act === "invite") { const ok = await sendInvite(sb, j, a); return sendOk(res, { message: ok ? "Research brief emailed." : "Moved on, but the email could not be sent." }); }
-    if (act === "approve") { const ok = await sendApproval(sb, j, a); return sendOk(res, { message: ok ? "Approved. They were emailed the partner signup link and group chat." : "Approved, but the email could not be sent." }); }
+    if (act === "approve") { const ok = await sendApproval(sb, j, a); return sendOk(res, { message: ok ? "Approved. They were emailed the partner signup link. The group chat link follows automatically when they register." : "Approved, but the email could not be sent." }); }
     if (act === "reject") {
       await sb.from("hiring_applications").update({ status: "rejected" }).eq("id", a.id);
       await logEvent(sb, j.id, a.id, "rejected", `${a.name} not taken forward`);
