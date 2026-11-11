@@ -32,7 +32,9 @@ export function HireApply() {
   const [done, setDone] = useState('');
   const [cv, setCv] = useState(null); // { name, data(base64) }
 
-  useEffect(() => { call('job', { query: { slug } }).then((d) => { if (d.success) setJob(d.job); else setErr(d.error || 'This job link is not valid.'); }); }, [slug]);
+  useEffect(() => {
+    let first = '1'; try { if (localStorage.getItem(`hire_seen_${slug}`)) first = '0'; else localStorage.setItem(`hire_seen_${slug}`, '1'); } catch { /* ignore */ }
+    call('job', { query: { slug, f: first } }).then((d) => { if (d.success) setJob(d.job); else setErr(d.error || 'This job link is not valid.'); }); }, [slug]);
   const set = (k) => (e) => setF({ ...f, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value });
   const pickCv = (e) => {
     const file = e.target.files && e.target.files[0];

@@ -1,2 +1,3 @@
-Update 19
-- /centre page: assignments + auto-marked quizzes explained up front (title, intro, features, steps, new Assignments section with phone mock). Nothing removed.
+Update 20 + study content
+APP: hiring timers (start when the link is first opened), Hiring Activity + Analytics, partner dashboard (analytics before links). SQL update 20 already applied.
+STUDY CONTENT: src/data/waec/learn/ (agric, citizenship, economics, food nutrition, commerce rewritten, biology, chemistry, government, mathematics, physics)

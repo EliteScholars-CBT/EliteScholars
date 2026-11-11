@@ -5,6 +5,10 @@ import { layout, esc } from "./emailTemplates.js";
 import { sendHtml } from "./mail.js";
 
 const APP = "https://elitescholars.site";
+// Activity log shown in the admin Hiring tab.
+export async function logEvent(sb, jobId, appId, type, text) {
+  try { await sb.from("hiring_events").insert({ job_id: jobId || null, app_id: appId || null, type, text: String(text || "").slice(0, 300) }); } catch { /* logging must never break the flow */ }
+}
 export const newToken = () => crypto.randomBytes(18).toString("base64url");
 const fmtWhen = (iso) => (iso ? new Date(iso).toLocaleString("en-NG", { weekday: "long", day: "numeric", month: "long", hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Africa/Lagos" }) + " (Lagos time)" : "");
 
@@ -71,6 +75,7 @@ export async function sendInvite(sb, job, app) {
   const link = `${APP}/hire/r/${app.token}`;
   const ok = await sendWithCopy(app.email, `Next step for ${job.title}: your research task`, researchBriefEmail({ name: app.name, job, link }));
   await sb.from("hiring_applications").update({ status: "invited", invited_at: new Date().toISOString() }).eq("id", app.id);
+  await logEvent(sb, job.id, app.id, "invite", `Research task ${ok ? "emailed to" : "could not be emailed to"} ${app.name}`);
   return ok;
 }
 
@@ -78,6 +83,7 @@ export async function sendApproval(sb, job, app) {
   const signupLink = `${APP}/partner?hire=${app.token}`;
   const ok = await sendWithCopy(app.email, `You passed: welcome to the EliteScholars team 🎉`, approvedEmail({ name: app.name, job, signupLink }));
   await sb.from("hiring_applications").update({ status: "approved", approved_at: new Date().toISOString() }).eq("id", app.id);
+  await logEvent(sb, job.id, app.id, "approved", `${app.name} approved, partner signup link ${ok ? "emailed" : "could not be emailed"}`);
   return ok;
 }
 
@@ -93,6 +99,7 @@ export async function processDue(sb) {
         if (claim.data && claim.data.length) {
           const { data: apps } = await sb.from("hiring_applications").select("*").eq("job_id", job.id).eq("status", "applied");
           for (const a of apps || []) { if (await sendInvite(sb, job, a)) out.invited++; }
+          await logEvent(sb, job.id, null, "auto", `Applications closed. Research task sent automatically to ${out.invited} of ${(apps || []).length} applicant(s)`);
         }
       }
       if (job.auto_approve && job.research_deadline && job.research_deadline <= now && !job.approvals_run_at) {
@@ -100,6 +107,7 @@ export async function processDue(sb) {
         if (claim.data && claim.data.length) {
           const { data: apps } = await sb.from("hiring_applications").select("*").eq("job_id", job.id).eq("status", "submitted");
           for (const a of apps || []) { if (await sendApproval(sb, job, a)) out.approved++; }
+          await logEvent(sb, job.id, null, "auto", `Research deadline passed. ${out.approved} submission(s) approved automatically`);
         }
       }
     }

@@ -13,19 +13,22 @@ const copy = (t) => { try { navigator.clipboard && navigator.clipboard.writeText
 const UNIT_MS = { hours: 3600000, days: 86400000 };
 // A deadline is either a picked date + time, or "N days/hours" (from now for applications, after applications close for research).
 const mkDl = (iso) => ({ mode: 'date', ...toParts(iso), n: 2, unit: 'days' });
+const mkRel = (h, dflt) => (h ? (h % 24 === 0 ? { mode: 'rel', d: '', t: '18:00', n: h / 24, unit: 'days' } : { mode: 'rel', d: '', t: '18:00', n: h, unit: 'hours' }) : { ...dflt });
+const toHours = (r) => Math.max(1, Math.round((Number(r.n) || 0) * (r.unit === 'days' ? 24 : 1)));
 const EMPTY = { title: 'Promoter', description: '', commission_pct: 40, open: true, apply: { mode: 'rel', d: '', t: '18:00', n: 3, unit: 'days' }, research: { mode: 'rel', d: '', t: '18:00', n: 2, unit: 'days' }, auto_email: true, auto_approve: false, group_url: '' };
-const calcApply = (a) => (a.mode === 'rel' ? new Date(Date.now() + (Number(a.n) || 0) * UNIT_MS[a.unit]).toISOString() : fromParts(a));
-const calcResearch = (r, applyIso) => (r.mode === 'rel' ? (applyIso ? new Date(new Date(applyIso).getTime() + (Number(r.n) || 0) * UNIT_MS[r.unit]).toISOString() : '') : fromParts(r));
+// Timer mode ("rel" on applications): nothing is dated yet. The clock starts when the link is first opened.
+const calcApply = (a) => (a.mode === 'rel' ? '' : fromParts(a));
+const calcResearch = (r, applyIso, applyMode) => (applyMode === 'rel' ? '' : r.mode === 'rel' ? (applyIso ? new Date(new Date(applyIso).getTime() + (Number(r.n) || 0) * UNIT_MS[r.unit]).toISOString() : '') : fromParts(r));
 const prettyDt = (iso) => (iso ? new Date(iso).toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true }) : 'not set');
-function DeadlinePicker({ label, value, onChange, relLabel, preview }) {
+function DeadlinePicker({ label, value, onChange, relLabel, preview, relOnly }) {
   const set = (k, v) => onChange({ ...value, [k]: v });
   return (
     <div className="adm-field">{label}
       <div className="hire-seg">
-        <button type="button" className={value.mode === 'date' ? 'on' : ''} onClick={() => set('mode', 'date')}>Pick date</button>
+        {!relOnly && <button type="button" className={value.mode === 'date' ? 'on' : ''} onClick={() => set('mode', 'date')}>Pick date</button>}
         <button type="button" className={value.mode === 'rel' ? 'on' : ''} onClick={() => set('mode', 'rel')}>{relLabel}</button>
       </div>
-      {value.mode === 'date' ? (
+      {value.mode === 'date' && !relOnly ? (
         <div className="hire-dt"><input type="date" value={value.d} onChange={(e) => set('d', e.target.value)} /><input type="time" value={value.t} onChange={(e) => set('t', e.target.value)} /></div>
       ) : (
         <div className="hire-dt"><input type="number" min="0" max="365" value={value.n} onChange={(e) => set('n', e.target.value)} /><select value={value.unit} onChange={(e) => set('unit', e.target.value)}><option value="days">days</option><option value="hours">hours</option></select></div>
@@ -42,6 +45,9 @@ export default function AdminHiring({ token, onAuthFail }) {
   const [open, setOpen] = useState('');       // job id whose applicants are showing
   const [filter, setFilter] = useState({});   // job id -> stage filter
   const [seeApp, setSeeApp] = useState('');
+  const [sub, setSub] = useState('jobs');
+  const [actJob, setActJob] = useState('all');
+  const [anJob, setAnJob] = useState('all');
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
   const [err, setErr] = useState('');
@@ -59,9 +65,9 @@ export default function AdminHiring({ token, onAuthFail }) {
   };
 
   const applyIso = form ? calcApply(form.apply) : '';
-  const researchIso = form ? calcResearch(form.research, applyIso) : '';
+  const researchIso = form ? calcResearch(form.research, applyIso, form.apply.mode) : '';
   const save = async () => {
-    const body = { id: form.id, title: form.title, description: form.description, commission_pct: form.commission_pct, open: form.open, apply_deadline: applyIso, research_deadline: researchIso, auto_email: form.auto_email, auto_approve: form.auto_approve, group_url: form.group_url, slug: form.slug };
+    const body = { id: form.id, title: form.title, description: form.description, commission_pct: form.commission_pct, open: form.open, apply_deadline: applyIso, research_deadline: researchIso, apply_duration_h: form.apply.mode === 'rel' ? toHours(form.apply) : null, research_duration_h: form.apply.mode === 'rel' ? toHours(form.research) : (form.research.mode === 'rel' ? null : null), auto_email: form.auto_email, auto_approve: form.auto_approve, group_url: form.group_url, slug: form.slug };
     const d = await run('hiring-save', body);
     if (d) setForm(null);
   };
@@ -69,7 +75,7 @@ export default function AdminHiring({ token, onAuthFail }) {
   const openCv = async (id) => {
     try { const d = await api(`hiring-cv?id=${encodeURIComponent(id)}`); if (d.url) window.open(d.url, '_blank', 'noopener'); } catch (e) { if (e.message !== 'auth') setErr(e.message); }
   };
-  const edit = (j) => setForm({ id: j.id, slug: j.slug, title: j.title, description: j.description, commission_pct: j.commission_pct, open: j.open, apply: mkDl(j.apply_deadline), research: mkDl(j.research_deadline), auto_email: j.auto_email, auto_approve: j.auto_approve, group_url: j.group_url });
+  const edit = (j) => setForm({ id: j.id, slug: j.slug, title: j.title, description: j.description, commission_pct: j.commission_pct, open: j.open, apply: j.apply_duration_h ? mkRel(j.apply_duration_h, EMPTY.apply) : mkDl(j.apply_deadline), research: j.apply_duration_h ? mkRel(j.research_duration_h, EMPTY.research) : mkDl(j.research_deadline), auto_email: j.auto_email, auto_approve: j.auto_approve, group_url: j.group_url });
 
   if (!data) return <div className="adm-card">{err || 'Loading…'}</div>;
   const now = new Date(data.now).getTime();
@@ -77,6 +83,14 @@ export default function AdminHiring({ token, onAuthFail }) {
 
   return (
     <div>
+      <div className="adm-pills hire-sub">
+        {[['jobs', 'Jobs'], ['activity', 'Activity'], ['analytics', 'Analytics']].map(([k, l]) => <button key={k} className={sub === k ? 'on' : ''} onClick={() => setSub(k)}>{l}{k === 'activity' && data.events.length ? <i>{data.events.length > 99 ? '99+' : data.events.length}</i> : null}</button>)}
+      </div>
+      {msg && sub !== 'jobs' && <div className="adm-ok">{msg}</div>}
+      {sub === 'activity' && <HireActivity data={data} jobId={actJob} setJobId={setActJob} />}
+      {sub === 'analytics' && <HireAnalytics data={data} jobId={anJob} setJobId={setAnJob} />}
+      {sub === 'jobs' && (
+        <>
       <section className="adm-card">
         <div className="adm-card-head"><h2>Hiring</h2><button className="adm-btn" onClick={() => { setForm({ ...EMPTY }); setMsg(''); setErr(''); }}>+ New job</button></div>
         <p className="adm-note">Create a job, share its link (LinkedIn, WhatsApp). Applicants apply, get the research task by email at your deadline, send in their research, and you approve the ones you want. Approved people get the partner signup link and your group chat.</p>
@@ -94,8 +108,8 @@ export default function AdminHiring({ token, onAuthFail }) {
             <label className="adm-field">Group chat link (sent when approved)<input placeholder="https://chat.whatsapp.com/…" value={form.group_url} onChange={(e) => setForm({ ...form, group_url: e.target.value })} /></label>
           </div>
           <div className="hire-adm-grid">
-            <DeadlinePicker label="Applications close" value={form.apply} onChange={(v) => setForm({ ...form, apply: v })} relLabel="From now" preview={`Closes: ${prettyDt(applyIso)}`} />
-            <DeadlinePicker label="Research must be in by" value={form.research} onChange={(v) => setForm({ ...form, research: v })} relLabel="After applications close" preview={`Due: ${prettyDt(researchIso)}`} />
+            <DeadlinePicker label="Applications stay open" value={form.apply} onChange={(v) => setForm({ ...form, apply: v, research: v.mode === 'rel' && form.research.mode !== 'rel' ? { ...form.research, mode: 'rel' } : form.research })} relLabel="Timer: starts when link is first opened" preview={form.apply.mode === 'rel' ? `The clock starts the moment someone first opens the link. Applications then stay open ${toHours(form.apply) % 24 === 0 ? `${toHours(form.apply) / 24} day(s)` : `${toHours(form.apply)} hour(s)`}.` : `Closes: ${prettyDt(applyIso)}`} />
+            <DeadlinePicker label="Research must be in" value={form.research} onChange={(v) => setForm({ ...form, research: v })} relLabel="After applications close" relOnly={form.apply.mode === 'rel'} preview={form.apply.mode === 'rel' ? `Due ${toHours(form.research) % 24 === 0 ? `${toHours(form.research) / 24} day(s)` : `${toHours(form.research)} hour(s)`} after applications close.` : `Due: ${prettyDt(researchIso)}`} />
           </div>
           <label className="adm-check"><input type="checkbox" checked={form.auto_email} onChange={(e) => setForm({ ...form, auto_email: e.target.checked })} /> Email the research task to everyone automatically when applications close</label>
           <label className="adm-check"><input type="checkbox" checked={form.auto_approve} onChange={(e) => setForm({ ...form, auto_approve: e.target.checked })} /> Approve everyone who sent research automatically when the research deadline passes</label>
@@ -118,6 +132,8 @@ export default function AdminHiring({ token, onAuthFail }) {
                 <button className="adm-ghost" disabled={busy} onClick={() => window.confirm('Delete this job and all its applications?') && run('hiring-delete', { id: j.id }, 'Deleted.')}>Delete</button></div></div>
             <div className="hire-link"><code>{link}</code><button className="adm-btn" onClick={() => { copy(link); setMsg('Link copied. Share it on LinkedIn.'); }}>Copy link</button></div>
             <div className="hire-dates">
+              {j.apply_duration_h && !j.opened_at && <span>⏳ <b>Timer not started.</b> It starts the moment someone first opens the link ({j.apply_duration_h % 24 === 0 ? `${j.apply_duration_h / 24} day(s)` : `${j.apply_duration_h}h`} to apply{j.research_duration_h ? `, then ${j.research_duration_h % 24 === 0 ? `${j.research_duration_h / 24} day(s)` : `${j.research_duration_h}h`} for research` : ''}).</span>}
+              {j.opened_at && <span>🔗 Link first opened: <b>{fmtDT(j.opened_at)}</b></span>}
               <span>⏰ Applications close: <b>{j.apply_deadline ? `${fmtDT(j.apply_deadline)} (${left(j.apply_deadline, now)})` : 'no deadline'}</b></span>
               <span>📝 Research due: <b>{j.research_deadline ? `${fmtDT(j.research_deadline)} (${left(j.research_deadline, now)})` : 'no deadline'}</b></span>
               <span>✉️ Auto email: <b>{j.auto_email ? (j.invites_sent_at ? 'sent' : 'on') : 'off'}</b> · Auto approve: <b>{j.auto_approve ? 'on' : 'off'}</b> · {j.commission_pct}%</span>
@@ -163,6 +179,97 @@ export default function AdminHiring({ token, onAuthFail }) {
         );
       })}
       {!data.jobs.length && !form && <section className="adm-card"><p className="adm-empty">No jobs yet. Tap “New job” to create the promoter role and get its link.</p></section>}
+        </>
+      )}
     </div>
+  );
+}
+
+/* ── Activity: everything that happens, newest first, colour-coded ── */
+const EV = {
+  link_opened: ['🔗', '#a78bfa', 'Link opened'], apply: ['📨', '#60a5fa', 'Application'], invite: ['✉️', '#c084fc', 'Research task sent'],
+  research: ['📝', '#f59e0b', 'Research'], approved: ['✅', '#34d399', 'Approved'], rejected: ['🚫', '#94a3b8', 'Not taken'],
+  joined: ['🎉', '#22c55e', 'Joined as partner'], auto: ['⚙️', '#38bdf8', 'Automatic step'], job: ['💼', '#e2e8f0', 'Job'],
+};
+function HireActivity({ data, jobId, setJobId }) {
+  const jobName = (id) => (data.jobs.find((j) => j.id === id) || {}).title || 'Job';
+  const list = data.events.filter((e) => jobId === 'all' || e.job_id === jobId);
+  return (
+    <section className="adm-card">
+      <div className="adm-card-head"><h2>Hiring activity</h2>
+        <select className="hire-sel" value={jobId} onChange={(e) => setJobId(e.target.value)}><option value="all">All jobs</option>{data.jobs.map((j) => <option key={j.id} value={j.id}>{j.title}</option>)}</select></div>
+      <div className="hire-legend">{Object.entries(EV).map(([k, v]) => <span key={k}><i style={{ background: v[1] }} />{v[2]}</span>)}</div>
+      {!list.length && <p className="adm-empty">Nothing yet. Activity appears here as soon as someone opens the link.</p>}
+      <ul className="hire-feed">
+        {list.map((e) => { const m = EV[e.type] || ['•', '#94a3b8', e.type]; return (
+          <li key={e.id} style={{ '--c': m[1] }}><span className="hire-feed-ic">{m[0]}</span><div><b>{e.text}</b><small>{data.jobs.length > 1 ? `${jobName(e.job_id)} · ` : ''}{fmtDT(e.created_at)} · {ago(e.created_at)}</small></div></li>); })}
+      </ul>
+    </section>
+  );
+}
+
+/* ── Analytics: funnel, daily trend, timing ── */
+function Bars({ labels, values, color }) {
+  const max = Math.max(1, ...values);
+  return (
+    <div className="hire-bars">
+      {values.map((v, i) => (<div key={i} className="hire-bar" title={`${labels[i]}: ${v}`}><span style={{ height: `${Math.max(v ? 8 : 2, (v / max) * 100)}%`, background: color }} /><em>{labels[i].slice(8)}</em></div>))}
+    </div>
+  );
+}
+function HireAnalytics({ data, jobId, setJobId }) {
+  const apps = data.applications.filter((a) => jobId === 'all' || a.job_id === jobId);
+  const vws = Object.entries(data.views || {}).filter(([id]) => jobId === 'all' || id === jobId);
+  const views = vws.reduce((a, [, v]) => a + v.total, 0);
+  const n = (...st) => apps.filter((a) => st.includes(a.status)).length;
+  const applied = apps.length;
+  const reached = {
+    views, applied,
+    invited: apps.filter((a) => a.invited_at).length,
+    submitted: apps.filter((a) => a.submitted_at).length,
+    approved: apps.filter((a) => a.approved_at).length,
+    joined: n('joined'),
+  };
+  const funnel = [['Opened the link', reached.views, '#a78bfa'], ['Applied', reached.applied, '#60a5fa'], ['Got research task', reached.invited, '#c084fc'], ['Sent research', reached.submitted, '#f59e0b'], ['Approved', reached.approved, '#34d399'], ['Joined as partner', reached.joined, '#22c55e']];
+  const top = Math.max(1, ...funnel.map((f) => f[1]));
+  const pct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : '—');
+  const days = Array.from({ length: 14 }, (_, i) => { const d = new Date(Date.now() - (13 - i) * 86400000); return d.toISOString().slice(0, 10); });
+  const perDay = (fn) => days.map((d) => fn(d));
+  const appsByDay = perDay((d) => apps.filter((a) => String(a.created_at).slice(0, 10) === d).length);
+  const viewsByDay = perDay((d) => vws.reduce((a, [, v]) => a + (v.byDay[d] || 0), 0));
+  const took = apps.filter((a) => a.invited_at && a.submitted_at).map((a) => (new Date(a.submitted_at) - new Date(a.invited_at)) / 3600000);
+  const avgH = took.length ? took.reduce((a, b) => a + b, 0) / took.length : 0;
+  const withCv = apps.filter((a) => a.cv_name).length;
+  return (
+    <>
+      <section className="adm-card">
+        <div className="adm-card-head"><h2>Hiring analytics</h2>
+          <select className="hire-sel" value={jobId} onChange={(e) => setJobId(e.target.value)}><option value="all">All jobs</option>{data.jobs.map((j) => <option key={j.id} value={j.id}>{j.title}</option>)}</select></div>
+        <div className="hire-kpis">
+          <div><b>{views}</b><span>Link opens (60 days)</span></div>
+          <div><b>{applied}</b><span>Applications</span></div>
+          <div><b>{pct(applied, views)}</b><span>Opened → applied</span></div>
+          <div><b>{pct(reached.submitted, reached.invited)}</b><span>Finished the research</span></div>
+          <div><b>{avgH ? (avgH < 48 ? `${avgH.toFixed(1)}h` : `${(avgH / 24).toFixed(1)}d`) : '—'}</b><span>Avg time to send research</span></div>
+          <div><b>{pct(withCv, applied)}</b><span>Attached a CV</span></div>
+        </div>
+      </section>
+      <section className="adm-card">
+        <h2>Funnel</h2>
+        <div className="hire-funnel">
+          {funnel.map(([l, v, c], i) => (
+            <div key={l} className="hire-fn"><span className="hire-fn-l">{l}</span>
+              <div className="hire-fn-bar"><div style={{ width: `${Math.max(v ? 4 : 0, (v / top) * 100)}%`, background: c }} /></div>
+              <b>{v}</b><small>{i ? pct(v, funnel[i - 1][1]) : ''}</small></div>
+          ))}
+        </div>
+        <p className="adm-note">The percentage on each row is how many of the row above reached that step.</p>
+      </section>
+      <section className="adm-card">
+        <h2>Last 14 days</h2>
+        <h4 className="hire-h4">Link opens</h4><Bars labels={days} values={viewsByDay} color="#a78bfa" />
+        <h4 className="hire-h4">New applications</h4><Bars labels={days} values={appsByDay} color="#60a5fa" />
+      </section>
+    </>
   );
 }

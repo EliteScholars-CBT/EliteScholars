@@ -4,7 +4,7 @@ import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { checkRateLimit } from "../_helpers/rateLimit.js";
 import { adminFromToken } from "./admin.js";
 import { sendHtml, notifyAdmin } from "../_helpers/mail.js";
-import { newToken, processDue, sendInvite, sendApproval, rejectedEmail, applicationReceivedEmail, sendWithCopy } from "../_helpers/hiring.js";
+import { newToken, processDue, sendInvite, sendApproval, rejectedEmail, applicationReceivedEmail, sendWithCopy, logEvent } from "../_helpers/hiring.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ip = (req) => req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
@@ -31,8 +31,23 @@ export default async function handler(req, res) {
 
   // ───────────── public ─────────────
   if (op === "job") {
-    const { data: j } = await sb.from("hiring_jobs").select("*").eq("slug", clean(req.query.slug, 60)).maybeSingle();
+    let { data: j } = await sb.from("hiring_jobs").select("*").eq("slug", clean(req.query.slug, 60)).maybeSingle();
     if (!j) return sendErr(res, "This job link is not valid.", 404);
+    // The timer starts the first time anyone opens the link, so nothing needs doing by hand.
+    if (!j.opened_at) {
+      const now = new Date();
+      const upd = { opened_at: now.toISOString() };
+      if (j.apply_duration_h) {
+        upd.apply_deadline = new Date(now.getTime() + j.apply_duration_h * 3600000).toISOString();
+        if (j.research_duration_h) upd.research_deadline = new Date(new Date(upd.apply_deadline).getTime() + j.research_duration_h * 3600000).toISOString();
+      }
+      const claim = await sb.from("hiring_jobs").update(upd).eq("id", j.id).is("opened_at", null).select("*");
+      if (claim.data && claim.data.length) {
+        j = claim.data[0];
+        await logEvent(sb, j.id, null, "link_opened", j.apply_deadline ? `Link opened for the first time. Timer started: applications close ${new Date(j.apply_deadline).toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short", timeZone: "Africa/Lagos" })}` : "Link opened for the first time");
+      } else { const again = await sb.from("hiring_jobs").select("*").eq("id", j.id).maybeSingle(); if (again.data) j = again.data; }
+    }
+    if (String(req.query.f) === "1") await logEvent(sb, j.id, null, "view", "Page viewed");
     return sendOk(res, { job: pubJob(j) });
   }
 
@@ -70,6 +85,7 @@ export default async function handler(req, res) {
     }
     const { error } = await sb.from("hiring_applications").insert({ job_id: j.id, name, email, whatsapp, why, accepts_commission: true, token, cv_path: cvPath, cv_name: cvName });
     if (error) return sendErr(res, "Could not save your application. Try again.", 500);
+    { const { data: na } = await sb.from("hiring_applications").select("id").eq("job_id", j.id).eq("email", email).maybeSingle(); await logEvent(sb, j.id, na && na.id, "apply", `${name} applied${cvName ? " (CV attached)" : ""}`); }
     await sendWithCopy(email, `We received your application: ${j.title}`, applicationReceivedEmail({ name, job: j }));
     return sendOk(res, { message: "Application received. Check your email for what happens next." });
   }
@@ -90,6 +106,7 @@ export default async function handler(req, res) {
     const text = clean(readBody(req).text, 8000);
     if (text.length < 300) return sendErr(res, "Write a little more. Aim for at least 300 characters.");
     await sb.from("hiring_applications").update({ research: text, status: "submitted", submitted_at: new Date().toISOString() }).eq("id", a.id);
+    await logEvent(sb, j.id, a.id, "research", `${a.name} ${a.status === "submitted" ? "updated" : "submitted"} their research`);
     await notifyAdmin("New hiring research submitted", `${a.name} sent in their research for ${j.title}.`, { emoji: "📝", heading: "Research submitted", rows: [["Name", a.name], ["Role", j.title]], cta: { label: "Review in admin", url: "https://elitescholars.site/admin" } });
     return sendOk(res, { message: "Received. We will email you after we have read everything." });
   }
@@ -107,7 +124,14 @@ export default async function handler(req, res) {
       sb.from("hiring_jobs").select("*").order("created_at", { ascending: false }),
       sb.from("hiring_applications").select("id,job_id,name,email,whatsapp,why,accepts_commission,status,research,cv_name,invited_at,submitted_at,approved_at,created_at").order("created_at", { ascending: false }).limit(1500),
     ]);
-    return sendOk(res, { jobs: jobs || [], applications: apps || [], now: new Date().toISOString() });
+    const since = new Date(Date.now() - 60 * 86400000).toISOString();
+    const [{ data: evs }, { data: vws }] = await Promise.all([
+      sb.from("hiring_events").select("id,job_id,app_id,type,text,created_at").neq("type", "view").order("created_at", { ascending: false }).limit(400),
+      sb.from("hiring_events").select("job_id,created_at").eq("type", "view").gte("created_at", since).order("created_at", { ascending: false }).limit(5000),
+    ]);
+    const views = {};
+    for (const v of vws || []) { const o = (views[v.job_id] = views[v.job_id] || { total: 0, byDay: {} }); o.total++; const d = String(v.created_at).slice(0, 10); o.byDay[d] = (o.byDay[d] || 0) + 1; }
+    return sendOk(res, { jobs: jobs || [], applications: apps || [], events: evs || [], views, now: new Date().toISOString() });
   }
 
   if (op === "admin-save") {
@@ -117,26 +141,38 @@ export default async function handler(req, res) {
     const groupUrl = clean(b.group_url, 300);
     if (groupUrl && !URL_RE.test(groupUrl)) return sendErr(res, "The group chat link must start with https://");
     const pct = Math.min(90, Math.max(1, Math.round(Number(b.commission_pct) || 40)));
+    const durH = (v) => { const n = Math.round(Number(v)); return Number.isFinite(n) && n > 0 && n <= 24 * 365 ? n : null; };
     const row = {
+      apply_duration_h: durH(b.apply_duration_h), research_duration_h: durH(b.research_duration_h),
       title, description: clean(b.description, 3000), commission_pct: pct, open: b.open !== false,
       apply_deadline: isoOrNull(b.apply_deadline), research_deadline: isoOrNull(b.research_deadline),
       auto_email: b.auto_email !== false, auto_approve: !!b.auto_approve, group_url: groupUrl,
     };
     if (row.apply_deadline && row.research_deadline && row.research_deadline <= row.apply_deadline) return sendErr(res, "The research deadline must be after the application deadline.");
+    // timer mode: the deadlines are worked out from the moment the link is first opened
+    if (row.apply_duration_h) { row.apply_deadline = null; row.research_deadline = null; } else row.research_duration_h = null;
     if (b.id) {
       const upd = { ...row };
+      if (row.apply_duration_h) {
+        const { data: cur } = await sb.from("hiring_jobs").select("opened_at").eq("id", b.id).maybeSingle();
+        if (cur && cur.opened_at) {
+          upd.apply_deadline = new Date(new Date(cur.opened_at).getTime() + row.apply_duration_h * 3600000).toISOString();
+          if (row.research_duration_h) upd.research_deadline = new Date(new Date(upd.apply_deadline).getTime() + row.research_duration_h * 3600000).toISOString();
+        }
+      }
       // changing a deadline re-arms the automatic step for it
       const { data: old } = await sb.from("hiring_jobs").select("apply_deadline,research_deadline").eq("id", b.id).maybeSingle();
       if (old && old.apply_deadline !== row.apply_deadline) upd.invites_sent_at = null;
       if (old && old.research_deadline !== row.research_deadline) upd.approvals_run_at = null;
       const { error } = await sb.from("hiring_jobs").update(upd).eq("id", b.id);
       if (error) return sendErr(res, "Could not save.", 500);
+      await logEvent(sb, b.id, null, "job", `Job "${title}" edited`);
       return sendOk(res, { message: "Saved." });
     }
     let slug = slugify(b.slug) || slugify(title) || "job";
     for (let i = 0; i < 6; i++) {
-      const { error } = await sb.from("hiring_jobs").insert({ ...row, slug });
-      if (!error) return sendOk(res, { message: "Job created.", slug });
+      const { data: ins, error } = await sb.from("hiring_jobs").insert({ ...row, slug }).select("id").maybeSingle();
+      if (!error) { await logEvent(sb, ins && ins.id, null, "job", `Job "${title}" created${row.apply_duration_h ? `. Timer starts when the link is first opened (applications ${row.apply_duration_h}h${row.research_duration_h ? `, research ${row.research_duration_h}h after` : ""})` : ""}`); return sendOk(res, { message: "Job created.", slug }); }
       if (error.code === "23505") { slug = `${slugify(title).slice(0, 40)}-${newToken().slice(0, 4).toLowerCase().replace(/[^a-z0-9]/g, "x")}`; continue; }
       return sendErr(res, "Could not create the job.", 500);
     }
@@ -182,6 +218,7 @@ export default async function handler(req, res) {
     if (act === "approve") { const ok = await sendApproval(sb, j, a); return sendOk(res, { message: ok ? "Approved. They were emailed the partner signup link and group chat." : "Approved, but the email could not be sent." }); }
     if (act === "reject") {
       await sb.from("hiring_applications").update({ status: "rejected" }).eq("id", a.id);
+      await logEvent(sb, j.id, a.id, "rejected", `${a.name} not taken forward`);
       if (b.email !== false) await sendWithCopy(a.email, `Update on your ${j.title} application`, rejectedEmail({ name: a.name, job: j }));
       return sendOk(res, { message: "Marked as not taken forward." });
     }

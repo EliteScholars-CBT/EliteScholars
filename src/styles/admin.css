@@ -335,3 +335,27 @@ body:has(.adm-wrap){background:#0f0b1f}
 .adm-wrap .hire-seg button{padding:6px 11px;border-radius:8px;border:0;background:transparent;color:var(--mut);font-size:.8rem;font-weight:700}
 .adm-wrap .hire-seg button.on{background:#7c3aed;color:#fff}
 .hire-prev{color:#c4b5fd;font-weight:700}
+
+/* Hiring: sub-tabs, activity, analytics */
+.hire-sub{margin-bottom:12px;display:flex;gap:6px;flex-wrap:wrap}
+.hire-sub i{font-style:normal;margin-left:6px;font-size:.7rem;background:#7c3aed;color:#fff;border-radius:99px;padding:1px 7px}
+.hire-sel{background:#150f2c;border:1px solid var(--line);border-radius:10px;color:var(--txt);padding:8px 10px;font:inherit;max-width:100%}
+.hire-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.76rem;color:var(--mut);margin:4px 0 10px}
+.hire-legend span{display:inline-flex;align-items:center;gap:6px}.hire-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.hire-feed{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.hire-feed li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:#150f2c;border-left:4px solid var(--c)}
+.hire-feed-ic{font-size:1.15rem;line-height:1.3}
+.hire-feed b{display:block;font-size:.9rem;color:var(--txt);font-weight:600;line-height:1.4;word-break:break-word}
+.hire-feed small{color:var(--mut);font-size:.74rem}
+.hire-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.hire-kpis div{background:#150f2c;border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:3px}
+.hire-kpis b{font-size:1.5rem;color:#c4b5fd}.hire-kpis span{font-size:.74rem;color:var(--mut)}
+.hire-funnel{display:flex;flex-direction:column;gap:10px}
+.hire-fn{display:grid;grid-template-columns:120px 1fr 34px 44px;gap:8px;align-items:center;font-size:.82rem}
+.hire-fn-l{color:var(--txt);font-weight:600}.hire-fn b{text-align:right;color:var(--txt)}.hire-fn small{color:var(--mut)}
+.hire-fn-bar{height:12px;border-radius:99px;background:#150f2c;overflow:hidden}.hire-fn-bar div{height:100%;border-radius:99px}
+@media (max-width:520px){.hire-fn{grid-template-columns:92px 1fr 28px 38px;font-size:.76rem}}
+.hire-h4{margin:12px 0 4px;font-size:.78rem;color:var(--mut);text-transform:uppercase;letter-spacing:.05em}
+.hire-bars{display:flex;align-items:flex-end;gap:4px;height:90px}
+.hire-bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.hire-bar span{display:block;width:100%;border-radius:4px 4px 0 0}.hire-bar em{font-style:normal;font-size:.6rem;color:var(--mut);margin-top:3px}

@@ -244,20 +244,26 @@ export default function Partner() {
 
       {tab === 'overview' && (
         <>
+
+
+          <section className="adm-grid adm-stats">
+            <Kpi label="Link clicks" value={fmtN(k.clicks)} />
+            <Kpi label="Signups" value={fmtN(k.signups)} />
+            <Kpi label="Paying students" value={fmtN(k.paying)} sub={`${k.conversion}% of signups`} />
+            <Kpi label="Total earned" value={fmtNaira(k.earnedTotal)} />
+            <Kpi label="Available now" value={fmtNaira(k.available)} />
+            <Kpi label="Paid to you" value={fmtNaira(k.paid)} />
+          </section>
+
           <section className="adm-card">
-            <h2>Your personal link</h2>
-            <div className="adm-linkbox"><span>{link}</span><button className="adm-small" onClick={() => { tcopy(link, 'student link'); setInfo('Link copied.'); }}>Copy</button></div>
-            <div className="adm-inline adm-gap">
-              <a className="adm-btn" href={`https://wa.me/?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noreferrer">Share on WhatsApp</a>
-              <button className="adm-ghost" onClick={() => { tcopy(shareText, 'share message'); setInfo('Message copied.'); }}>Copy message</button>
+            <div className="adm-card-head">
+              <h2>Last 30 days</h2>
+              <div className="adm-tabs">
+                {[['clicks', 'Clicks'], ['signups', 'Signups'], ['earnings', 'Earnings']].map(([key, l]) =>
+                  <button key={key} className={metric === key ? 'on' : ''} onClick={() => setMetric(key)}>{l}</button>)}
+              </div>
             </div>
-            <h3 style={{ margin: '14px 0 6px' }}>Your link for schools</h3>
-            <div className="adm-linkbox"><span>{`https://elitescholars.site/school?ref=${p.code}`}</span><button className="adm-small" onClick={() => { tcopy(`https://elitescholars.site/school?ref=${p.code}`, 'school link'); setInfo('School link copied.'); }}>Copy</button></div>
-            <p className="adm-note">Share this with school owners, principals and teachers. When a school pays for its plan you earn <b>{p.rate}%</b> of what they pay, on every payment. Your normal link above also works: schools that sign up through either are credited to you.</p>
-            <h3 style={{ margin: '14px 0 6px' }}>Your link for tutorial centres</h3>
-            <div className="adm-linkbox"><span>{`https://elitescholars.site/centre?ref=${p.code}`}</span><button className="adm-small" onClick={() => { tcopy(`https://elitescholars.site/centre?ref=${p.code}`, 'centre link'); setInfo('Centre link copied.'); }}>Copy</button></div>
-            <p className="adm-note">Share this with tutorial centre owners and lesson-teachers. Centres that sign up through it are credited to you, and you earn <b>{p.rate}%</b> of every payment they make. <a href="/school" target="_blank" rel="noreferrer">Read about schools →</a> · <a href="/centre" target="_blank" rel="noreferrer">Read about centres →</a></p>
-            <p className="adm-note">You earn <b>{p.rate}%</b> of every Pro payment from students who join through your link, about <b>{fmtNaira(perSale)}</b> on a {fmtNaira(PREMIUM_PRICE)} plan. Your code is <b>{p.code}</b>. The link remembers a visitor for 60 days.</p>
+            <TrendChart labels={data.series.labels} values={data.series[metric]} fmt={metric === 'earnings' ? fmtNaira : fmtN} color={metric === 'earnings' ? '#f5b400' : '#8b5cf6'} />
           </section>
 
           <section className="adm-card">
@@ -286,24 +292,20 @@ export default function Partner() {
             })()}
           </section>
 
-          <section className="adm-grid adm-stats">
-            <Kpi label="Link clicks" value={fmtN(k.clicks)} />
-            <Kpi label="Signups" value={fmtN(k.signups)} />
-            <Kpi label="Paying students" value={fmtN(k.paying)} sub={`${k.conversion}% of signups`} />
-            <Kpi label="Total earned" value={fmtNaira(k.earnedTotal)} />
-            <Kpi label="Available now" value={fmtNaira(k.available)} />
-            <Kpi label="Paid to you" value={fmtNaira(k.paid)} />
-          </section>
-
           <section className="adm-card">
-            <div className="adm-card-head">
-              <h2>Last 30 days</h2>
-              <div className="adm-tabs">
-                {[['clicks', 'Clicks'], ['signups', 'Signups'], ['earnings', 'Earnings']].map(([key, l]) =>
-                  <button key={key} className={metric === key ? 'on' : ''} onClick={() => setMetric(key)}>{l}</button>)}
-              </div>
+            <h2>Your personal link</h2>
+            <div className="adm-linkbox"><span>{link}</span><button className="adm-small" onClick={() => { tcopy(link, 'student link'); setInfo('Link copied.'); }}>Copy</button></div>
+            <div className="adm-inline adm-gap">
+              <a className="adm-btn" href={`https://wa.me/?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noreferrer">Share on WhatsApp</a>
+              <button className="adm-ghost" onClick={() => { tcopy(shareText, 'share message'); setInfo('Message copied.'); }}>Copy message</button>
             </div>
-            <TrendChart labels={data.series.labels} values={data.series[metric]} fmt={metric === 'earnings' ? fmtNaira : fmtN} color={metric === 'earnings' ? '#f5b400' : '#8b5cf6'} />
+            <h3 style={{ margin: '14px 0 6px' }}>Your link for schools</h3>
+            <div className="adm-linkbox"><span>{`https://elitescholars.site/school?ref=${p.code}`}</span><button className="adm-small" onClick={() => { tcopy(`https://elitescholars.site/school?ref=${p.code}`, 'school link'); setInfo('School link copied.'); }}>Copy</button></div>
+            <p className="adm-note">Share this with school owners, principals and teachers. When a school pays for its plan you earn <b>{p.rate}%</b> of what they pay, on every payment. Your normal link above also works: schools that sign up through either are credited to you.</p>
+            <h3 style={{ margin: '14px 0 6px' }}>Your link for tutorial centres</h3>
+            <div className="adm-linkbox"><span>{`https://elitescholars.site/centre?ref=${p.code}`}</span><button className="adm-small" onClick={() => { tcopy(`https://elitescholars.site/centre?ref=${p.code}`, 'centre link'); setInfo('Centre link copied.'); }}>Copy</button></div>
+            <p className="adm-note">Share this with tutorial centre owners and lesson-teachers. Centres that sign up through it are credited to you, and you earn <b>{p.rate}%</b> of every payment they make. <a href="/school" target="_blank" rel="noreferrer">Read about schools →</a> · <a href="/centre" target="_blank" rel="noreferrer">Read about centres →</a></p>
+            <p className="adm-note">You earn <b>{p.rate}%</b> of every Pro payment from students who join through your link, about <b>{fmtNaira(perSale)}</b> on a {fmtNaira(PREMIUM_PRICE)} plan. Your code is <b>{p.code}</b>. The link remembers a visitor for 60 days.</p>
           </section>
         </>
       )}

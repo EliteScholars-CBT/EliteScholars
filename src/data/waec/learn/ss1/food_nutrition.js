@@ -1,6 +1,5 @@
 // ============================================================================
-// SS1 FOOD AND NUTRITION — COMPLETE LEARNING MODULE (24 TOPICS)
-// NERDC Scheme of Work — First Term to Third Term
+// WAEC/NECO Learn — SS1/FOOD_NUTRITION (NERDC 2025 scheme) — 28 topics
 // ============================================================================
 
 export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
@@ -13,7 +12,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "Food is best defined as:",
-        "o": ["Only solid substances eaten for pleasure", "Any substance taken into the body that provides nutrients for energy, growth, repair, and regulation of body processes", "Only plant-based products", "Substances containing calories only"],
+        "o": [
+          "Only solid substances eaten for pleasure",
+          "Any substance taken into the body that provides nutrients for energy, growth, repair, and regulation of body processes",
+          "Only plant-based products",
+          "Substances containing calories only"
+        ],
         "a": 1,
         "e": "Food is any substance (solid, liquid, or semi-solid) consumed to provide the body with nutrients needed for energy production, growth, tissue repair, and regulation of metabolic processes. It includes both plant and animal products.",
         "h": "Food = any substance providing nutrients for energy, growth, repair, and regulation.",
@@ -21,7 +25,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Malnutrition refers to:",
-        "o": ["Only eating too little food", "Only eating too much food", "An inadequate, excessive, or imbalanced intake of nutrients", "Only diseases caused by vitamin deficiency"],
+        "o": [
+          "Only eating too little food",
+          "Only eating too much food",
+          "An inadequate, excessive, or imbalanced intake of nutrients",
+          "Only diseases caused by vitamin deficiency"
+        ],
         "a": 2,
         "e": "Malnutrition is an umbrella term covering any state of poor nutrition — including undernutrition (too little food/nutrients), overnutrition (too much, leading to obesity), and specific nutrient imbalances. It is not limited to eating too little.",
         "h": "Malnutrition = inadequate, excessive, OR imbalanced nutrient intake (includes both under and over).",
@@ -29,7 +38,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "An antinutrient is a substance that:",
-        "o": ["Provides extra nutrients beyond daily needs", "Is a type of vitamin supplement", "Interferes with the absorption or utilisation of nutrients in the body", "Converts into vitamins in the body"],
+        "o": [
+          "Provides extra nutrients beyond daily needs",
+          "Is a type of vitamin supplement",
+          "Interferes with the absorption or utilisation of nutrients in the body",
+          "Converts into vitamins in the body"
+        ],
         "a": 2,
         "e": "Antinutrients (e.g., phytates in grains/legumes, oxalates in spinach, tannins in tea) reduce the bioavailability of nutrients by binding to them and preventing their absorption. Proper cooking, soaking, or fermentation can reduce antinutrient content.",
         "h": "Antinutrient = substance interfering with nutrient absorption (phytates, oxalates, tannins).",
@@ -37,7 +51,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A pro-vitamin is:",
-        "o": ["A synthetic vitamin supplement", "A substance that can be converted into a vitamin within the body — e.g., beta-carotene (pro-vitamin A)", "A type of antinutrient", "A vitamin that has lost its activity"],
+        "o": [
+          "A synthetic vitamin supplement",
+          "A substance that can be converted into a vitamin within the body — e.g., beta-carotene (pro-vitamin A)",
+          "A type of antinutrient",
+          "A vitamin that has lost its activity"
+        ],
         "a": 1,
         "e": "Pro-vitamins are precursors to vitamins — they are not vitamins themselves but are converted to active vitamins in the body. Beta-carotene (found in orange/yellow vegetables) is converted to Vitamin A (retinol) in the intestinal wall and liver.",
         "h": "Pro-vitamin = converted to vitamin in the body (e.g., beta-carotene → Vitamin A).",
@@ -45,7 +64,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Nutrition is defined as:",
-        "o": ["The cooking and preparation of food", "The science of food and how the body takes in and uses nutrients to support life processes", "The buying and selling of food products", "The agricultural production of food crops"],
+        "o": [
+          "The cooking and preparation of food",
+          "The science of food and how the body takes in and uses nutrients to support life processes",
+          "The buying and selling of food products",
+          "The agricultural production of food crops"
+        ],
         "a": 1,
         "e": "Nutrition is the scientific study of food — its composition, how it is digested and absorbed, and how nutrients are used by the body for energy, growth, repair, and regulation of physiological processes.",
         "h": "Nutrition = science of food and how the body uses nutrients.",
@@ -53,7 +77,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which factor most directly limits food choices for a family with very low income?",
-        "o": ["Cultural practices", "Religious beliefs", "Available income — limits access to diverse, nutritious foods", "Educational level"],
+        "o": [
+          "Cultural practices",
+          "Religious beliefs",
+          "Available income — limits access to diverse, nutritious foods",
+          "Educational level"
+        ],
         "a": 2,
         "e": "Available income is the most immediate economic determinant of food access. Low-income families may only afford the cheapest staple foods and lack access to more expensive nutritious foods (fruits, vegetables, animal proteins), leading to nutritional deficiencies.",
         "h": "Low income = limited food variety and nutritional quality (most direct economic factor).",
@@ -61,7 +90,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "How does food availability affect nutrition?",
-        "o": ["It has no effect on nutrition", "Foods that are not available locally or seasonally cannot be consumed, directly limiting nutritional intake", "Only imported foods affect nutrition", "Food availability only matters in rural areas"],
+        "o": [
+          "It has no effect on nutrition",
+          "Foods that are not available locally or seasonally cannot be consumed, directly limiting nutritional intake",
+          "Only imported foods affect nutrition",
+          "Food availability only matters in rural areas"
+        ],
         "a": 1,
         "e": "Food availability is a prerequisite for consumption — if a nutritious food is not physically available (not grown locally, out of season, supply disrupted), it cannot be consumed regardless of income or knowledge. This is why food security is fundamental to good nutrition.",
         "h": "Food must be available before it can be consumed — unavailability directly limits nutritional intake.",
@@ -69,7 +103,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Overnutrition refers to:",
-        "o": ["Eating too little food over a long period", "Deficiency of specific vitamins", "Excessive intake of nutrients beyond the body's needs — leading to obesity and related diseases", "An inability to absorb nutrients"],
+        "o": [
+          "Eating too little food over a long period",
+          "Deficiency of specific vitamins",
+          "Excessive intake of nutrients beyond the body's needs — leading to obesity and related diseases",
+          "An inability to absorb nutrients"
+        ],
         "a": 2,
         "e": "Overnutrition is one form of malnutrition — excessive intake of energy (calories) and/or specific nutrients beyond the body's requirements. It leads to obesity, type 2 diabetes, cardiovascular disease, and other diet-related chronic diseases.",
         "h": "Overnutrition = excessive nutrient intake → obesity and diet-related chronic diseases.",
@@ -77,7 +116,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The primary importance of food for the human body is to:",
-        "o": ["Provide pleasure and social enjoyment only", "Provide nutrients for energy, growth, tissue repair, and regulation of body processes", "Supply water to the body", "Prevent all diseases automatically"],
+        "o": [
+          "Provide pleasure and social enjoyment only",
+          "Provide nutrients for energy, growth, tissue repair, and regulation of body processes",
+          "Supply water to the body",
+          "Prevent all diseases automatically"
+        ],
         "a": 1,
         "e": "The biological importance of food is to supply nutrients that: provide energy for all bodily activities (carbohydrates, fats), supply building materials for growth and repair (proteins), and regulate body processes (vitamins, minerals, water).",
         "h": "Primary food importance: nutrients for energy, growth, repair, and regulation of body processes.",
@@ -85,7 +129,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Culture and religion affect food and nutrition by:",
-        "o": ["Having no effect on food choices", "Determining which foods are eaten or avoided based on cultural practices and religious dietary laws", "Only affecting celebration foods", "Only in developing countries"],
+        "o": [
+          "Having no effect on food choices",
+          "Determining which foods are eaten or avoided based on cultural practices and religious dietary laws",
+          "Only affecting celebration foods",
+          "Only in developing countries"
+        ],
         "a": 1,
         "e": "Cultural practices (traditional foods, food taboos) and religious dietary laws (halal, kosher, vegetarianism, fasting) significantly influence what people eat. For example, Muslims avoid pork; some Buddhists are vegetarian; certain Nigerian cultures avoid specific animals.",
         "h": "Culture and religion: determine which foods are eaten or avoided (dietary laws, taboos, traditions).",
@@ -93,7 +142,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Undernutrition specifically refers to:",
-        "o": ["Eating too many calories", "Excessive intake of fat-soluble vitamins", "Insufficient intake of nutrients — the body receives less than it needs for health and normal function", "A type of food allergy"],
+        "o": [
+          "Eating too many calories",
+          "Excessive intake of fat-soluble vitamins",
+          "Insufficient intake of nutrients — the body receives less than it needs for health and normal function",
+          "A type of food allergy"
+        ],
         "a": 2,
         "e": "Undernutrition is insufficient intake of nutrients — whether overall calories (starvation), specific nutrients (micronutrient deficiency), or protein (kwashiorkor). It leads to growth failure, weakened immunity, and increased disease susceptibility.",
         "h": "Undernutrition = insufficient nutrient intake (less than body needs) — includes starvation and deficiencies.",
@@ -101,7 +155,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Phytates in grains and legumes are examples of antinutrients because they:",
-        "o": ["Provide extra vitamins", "Are toxic to all humans", "Bind to minerals (iron, zinc) and prevent their absorption in the gut", "Break down proteins"],
+        "o": [
+          "Provide extra vitamins",
+          "Are toxic to all humans",
+          "Bind to minerals (iron, zinc) and prevent their absorption in the gut",
+          "Break down proteins"
+        ],
         "a": 2,
         "e": "Phytic acid (phytates) in grains, legumes, and seeds binds to iron, zinc, calcium, and magnesium, forming insoluble complexes that the body cannot absorb. Soaking, fermenting, or cooking reduces phytate content, improving mineral bioavailability.",
         "h": "Phytates bind to iron/zinc/calcium → prevent absorption = antinutrient effect in grains and legumes.",
@@ -109,7 +168,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Education improves nutrition outcomes because:",
-        "o": ["Educated people always have more money for food", "Education provides knowledge about nutritional needs, healthy food choices, and proper food preparation — enabling better dietary decisions", "Education has no direct effect on eating habits", "Only nutrition education affects food choices"],
+        "o": [
+          "Educated people always have more money for food",
+          "Education provides knowledge about nutritional needs, healthy food choices, and proper food preparation — enabling better dietary decisions",
+          "Education has no direct effect on eating habits",
+          "Only nutrition education affects food choices"
+        ],
         "a": 1,
         "e": "Nutritional knowledge enables better food choices — educated individuals understand the importance of dietary diversity, recognize deficiency symptoms, can read food labels, and know how to prepare food to preserve nutrients.",
         "h": "Education: provides nutritional knowledge → enables better food choices and food preparation.",
@@ -117,7 +181,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The science of applying nutrition to planning and promoting healthy diets is called:",
-        "o": ["Biochemistry", "Dietetics", "Food technology", "Microbiology"],
+        "o": [
+          "Biochemistry",
+          "Dietetics",
+          "Food technology",
+          "Microbiology"
+        ],
         "a": 1,
         "e": "Dietetics is the application of nutrition science to help individuals and groups meet their nutritional needs and maintain health. A registered dietitian/dietician translates nutritional science into practical food guidance.",
         "h": "Dietetics = applying nutrition science to plan and promote healthy diets for individuals/groups.",
@@ -125,7 +194,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "How does season affect food and nutrition?",
-        "o": ["Seasons have no effect on nutrition", "Certain foods are only available or affordable during specific seasons, affecting dietary variety and nutrient intake throughout the year", "Only tropical countries experience seasonal food changes", "Seasons only affect agricultural workers"],
+        "o": [
+          "Seasons have no effect on nutrition",
+          "Certain foods are only available or affordable during specific seasons, affecting dietary variety and nutrient intake throughout the year",
+          "Only tropical countries experience seasonal food changes",
+          "Seasons only affect agricultural workers"
+        ],
         "a": 1,
         "e": "Seasonality affects food supply and prices — certain fruits, vegetables, and crops are only available during their growing season. During off-season, prices rise or substitutes must be used. In regions with food insecurity, the 'hungry season' (before harvest) is associated with nutritional deficiencies.",
         "h": "Season affects nutrition: some foods only available in season → prices rise off-season → dietary variety affected.",
@@ -133,7 +207,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A nutrient is best defined as:",
-        "o": ["Any substance found in food", "A chemical substance in food that the body needs for growth, energy, repair, or regulation of body processes", "Only protein and carbohydrate", "A calorie-containing substance only"],
+        "o": [
+          "Any substance found in food",
+          "A chemical substance in food that the body needs for growth, energy, repair, or regulation of body processes",
+          "Only protein and carbohydrate",
+          "A calorie-containing substance only"
+        ],
         "a": 1,
         "e": "Nutrients are specific chemical substances obtained from food that the body requires for normal functioning: macronutrients (carbohydrates, proteins, fats — needed in large amounts) and micronutrients (vitamins and minerals — needed in small amounts), plus water.",
         "h": "Nutrient = specific chemical substance in food needed for growth, energy, repair, or regulation.",
@@ -141,7 +220,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Beta-carotene (found in orange and yellow vegetables) is classified as a pro-vitamin because:",
-        "o": ["It is a form of Vitamin A itself", "The body can convert it into active Vitamin A (retinol) — making it a precursor to Vitamin A", "It prevents the absorption of Vitamin A", "It is a type of carbohydrate"],
+        "o": [
+          "It is a form of Vitamin A itself",
+          "The body can convert it into active Vitamin A (retinol) — making it a precursor to Vitamin A",
+          "It prevents the absorption of Vitamin A",
+          "It is a type of carbohydrate"
+        ],
         "a": 1,
         "e": "Beta-carotene is a pro-vitamin A — it is the orange pigment in carrots, mangoes, and sweet potatoes. In the intestine and liver, enzymes convert beta-carotene into retinol (Vitamin A). It is safer than preformed Vitamin A because conversion is regulated by need.",
         "h": "Beta-carotene = pro-vitamin A (converted to retinol/Vitamin A in the body).",
@@ -149,7 +233,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The physiological state of a person (pregnancy, lactation, illness) affects nutrition because:",
-        "o": ["Physiological state has no effect on nutritional needs", "These states alter the body's nutritional requirements — pregnancy and lactation increase needs; illness may alter absorption and utilisation", "Only children's physiological states matter", "Illness always reduces nutrient requirements"],
+        "o": [
+          "Physiological state has no effect on nutritional needs",
+          "These states alter the body's nutritional requirements — pregnancy and lactation increase needs; illness may alter absorption and utilisation",
+          "Only children's physiological states matter",
+          "Illness always reduces nutrient requirements"
+        ],
         "a": 1,
         "e": "Physiological states dramatically change nutritional needs: pregnant women need more folic acid, iron, and calcium; lactating mothers need extra calories and nutrients; sick individuals may have altered digestion, absorption, and metabolism, requiring diet modifications.",
         "h": "Physiological state alters nutritional needs (pregnancy/lactation increase; illness may alter absorption).",
@@ -157,7 +246,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Poor food storage and processing affect nutrition by:",
-        "o": ["Increasing the nutritional value of food", "Causing contamination only without affecting nutrients", "Reducing nutritional value through nutrient loss — vitamins degrade, proteins denature, fats oxidise", "Only affecting the taste of food"],
+        "o": [
+          "Increasing the nutritional value of food",
+          "Causing contamination only without affecting nutrients",
+          "Reducing nutritional value through nutrient loss — vitamins degrade, proteins denature, fats oxidise",
+          "Only affecting the taste of food"
+        ],
         "a": 2,
         "e": "Improper storage (exposure to light, heat, oxygen) and processing (overcooking, milling grains removing the bran) destroy or reduce nutrients: Vitamin C is lost in overcooked vegetables; refining removes B vitamins from grains; fats become rancid when oxidised.",
         "h": "Poor storage/processing: reduces nutritional value (Vitamin C lost in overcooked veg; B vitamins lost in refining).",
@@ -165,7 +259,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which of the following best explains the relationship between good nutrition and disease prevention?",
-        "o": ["Good nutrition prevents all diseases", "Adequate nutrition of specific nutrients (Vitamin C, zinc, iron) supports immune function, reducing susceptibility to infections and deficiency diseases", "Only expensive foods prevent diseases", "Disease prevention requires medication, not nutrition"],
+        "o": [
+          "Good nutrition prevents all diseases",
+          "Adequate nutrition of specific nutrients (Vitamin C, zinc, iron) supports immune function, reducing susceptibility to infections and deficiency diseases",
+          "Only expensive foods prevent diseases",
+          "Disease prevention requires medication, not nutrition"
+        ],
         "a": 1,
         "e": "Adequate nutrition supports the immune system — sufficient Vitamin C, zinc, iron, and protein maintain immune cell function. Deficiencies impair immunity, increasing susceptibility to infections. Good nutrition also prevents specific deficiency diseases (scurvy, rickets, anaemia).",
         "h": "Good nutrition supports immunity: adequate Vitamin C/zinc/iron/protein reduce disease susceptibility.",
@@ -182,7 +281,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "A dietitian working in a hospital and planning therapeutic diets for patients with diabetes is practising which career in food and nutrition?",
-        "o": ["Food Science and Technology", "Community Nutrition", "Dietetics", "Hotel and Catering Management"],
+        "o": [
+          "Food Science and Technology",
+          "Community Nutrition",
+          "Dietetics",
+          "Hotel and Catering Management"
+        ],
         "a": 2,
         "e": "Dietetics involves the clinical assessment and treatment of nutrition-related health problems. Hospital dietitians plan therapeutic diets for patients with specific conditions (diabetes, kidney disease, cardiovascular disease) and provide medical nutrition therapy.",
         "h": "Dietetics = clinical nutrition assessment and therapeutic diet planning in healthcare settings.",
@@ -190,7 +294,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A food scientist working for Nestlé to develop new food products and test their nutritional content is in which career?",
-        "o": ["Dietetics", "Food Science and Technology", "Community Nutrition", "Clinical Nutrition"],
+        "o": [
+          "Dietetics",
+          "Food Science and Technology",
+          "Community Nutrition",
+          "Clinical Nutrition"
+        ],
         "a": 1,
         "e": "Food Science and Technology involves research and development of food products, studying food composition and safety, developing processing methods, and ensuring product quality. Food scientists work in food manufacturing companies and research institutions.",
         "h": "Food Science and Technology = research, develop, and test food products in food industry/research.",
@@ -198,7 +307,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Community nutrition involves:",
-        "o": ["Treating individual patients in hospital wards", "Planning and implementing nutrition programmes for communities to improve public health at population level", "Managing hotel restaurant menus", "Designing food processing machinery"],
+        "o": [
+          "Treating individual patients in hospital wards",
+          "Planning and implementing nutrition programmes for communities to improve public health at population level",
+          "Managing hotel restaurant menus",
+          "Designing food processing machinery"
+        ],
         "a": 1,
         "e": "Community nutrition focuses on population-level nutrition interventions: assessing community nutritional status, planning and implementing public health nutrition programmes, managing supplementary feeding, and promoting healthy eating at community level.",
         "h": "Community nutrition = population-level nutrition programmes (public health focus, not individual patients).",
@@ -206,7 +320,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A professional managing the food and beverage department of a 5-star hotel in Abuja is in which career?",
-        "o": ["Clinical Nutrition", "Food Engineering", "Food Science and Technology", "Hotel and Catering Management"],
+        "o": [
+          "Clinical Nutrition",
+          "Food Engineering",
+          "Food Science and Technology",
+          "Hotel and Catering Management"
+        ],
         "a": 3,
         "e": "Hotel and Catering Management involves managing food and beverage services in hotels, restaurants, catering companies, and event venues — including menu planning, food service operations, staff management, and maintaining food service quality standards.",
         "h": "Hotel and Catering Management = manages food and beverage services in hospitality industry.",
@@ -214,7 +333,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Clinical nutrition as a career focuses on:",
-        "o": ["Research and development of new food products", "Providing nutritional support for seriously ill patients — including tube feeding and intravenous nutrition", "Teaching nutrition at universities", "Community-level nutrition campaigns"],
+        "o": [
+          "Research and development of new food products",
+          "Providing nutritional support for seriously ill patients — including tube feeding and intravenous nutrition",
+          "Teaching nutrition at universities",
+          "Community-level nutrition campaigns"
+        ],
         "a": 1,
         "e": "Clinical nutrition involves providing specialised nutritional support for patients with serious illness, particularly when they cannot eat normally. This includes enteral nutrition (tube feeding) and parenteral nutrition (intravenous feeding) in intensive care and specialised ward settings.",
         "h": "Clinical nutrition = specialised patient nutritional support (tube/IV feeding) for seriously ill patients.",
@@ -222,7 +346,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Food Engineering as a career differs from Food Science and Technology in that food engineers primarily:",
-        "o": ["Study the nutritional composition of foods", "Develop recipes and new food products", "Design and manage food processing equipment, plants, and production systems", "Work with patients in hospitals"],
+        "o": [
+          "Study the nutritional composition of foods",
+          "Develop recipes and new food products",
+          "Design and manage food processing equipment, plants, and production systems",
+          "Work with patients in hospitals"
+        ],
         "a": 2,
         "e": "Food engineers apply engineering principles to food processing — designing machinery, optimising production lines, ensuring efficient and safe processing systems, managing energy use, and scaling laboratory formulations to industrial production.",
         "h": "Food Engineering = design and manage food processing equipment, plants, and production systems.",
@@ -230,7 +359,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which Nigerian agency regulates food safety and would employ food and nutrition professionals in quality control?",
-        "o": ["CBN (Central Bank of Nigeria)", "NAFDAC (National Agency for Food and Drug Administration and Control)", "INEC", "NTA"],
+        "o": [
+          "CBN (Central Bank of Nigeria)",
+          "NAFDAC (National Agency for Food and Drug Administration and Control)",
+          "INEC",
+          "NTA"
+        ],
         "a": 1,
         "e": "NAFDAC regulates and controls the manufacture, importation, exportation, advertisement, distribution, sale, and use of food, drugs, and cosmetics in Nigeria. Food scientists, nutritionists, and food technology professionals work with NAFDAC in food quality control and safety regulation.",
         "h": "NAFDAC = Nigerian agency regulating food safety; employs food scientists and nutritionists.",
@@ -238,7 +372,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A teaching career in food and nutrition at secondary schools requires:",
-        "o": ["Only a vocational certificate in cooking", "An academic degree in Food and Nutrition or related subject, along with a teaching qualification", "No formal qualifications", "A medical degree"],
+        "o": [
+          "Only a vocational certificate in cooking",
+          "An academic degree in Food and Nutrition or related subject, along with a teaching qualification",
+          "No formal qualifications",
+          "A medical degree"
+        ],
         "a": 1,
         "e": "Teaching Food and Nutrition at secondary school level requires a B.Sc. or B.Tech. in Food Science, Human Nutrition, or a related discipline, plus professional teaching qualifications (PGDE or B.Ed.). At university level, postgraduate degrees are required.",
         "h": "Food Nutrition teaching: relevant degree + teaching qualification (at secondary level).",
@@ -246,7 +385,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The Dietitians Association of Nigeria (DAN) is relevant to which career?",
-        "o": ["Hotel and Catering Management", "Food Engineering", "Dietetics — providing professional regulation, standards, and continuing education for dietitians", "Teaching"],
+        "o": [
+          "Hotel and Catering Management",
+          "Food Engineering",
+          "Dietetics — providing professional regulation, standards, and continuing education for dietitians",
+          "Teaching"
+        ],
         "a": 2,
         "e": "DAN is the professional body for dietitians in Nigeria — it registers qualified dietitians, maintains professional standards, promotes dietetics practice, and provides continuing professional development for members.",
         "h": "DAN (Dietitians Association of Nigeria) = professional body for dietitians.",
@@ -254,7 +398,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Working with UNICEF or WHO to develop national nutrition policies and reduce childhood malnutrition is characteristic of which career?",
-        "o": ["Hotel management", "Food engineering", "Public Health Nutrition / Community Nutrition", "Clinical nutrition in a hospital"],
+        "o": [
+          "Hotel management",
+          "Food engineering",
+          "Public Health Nutrition / Community Nutrition",
+          "Clinical nutrition in a hospital"
+        ],
         "a": 2,
         "e": "Public health/community nutrition professionals develop and implement nutrition policies and programmes at national and international levels — working with government ministries, WHO, UNICEF, USAID, and NGOs on food security, malnutrition prevention, and public nutrition education.",
         "h": "Public Health Nutrition = nutrition policies, national programmes, work with WHO/UNICEF/government.",
@@ -262,7 +411,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which career would best suit a person who enjoys both science and cooking and wants to create innovative food products?",
-        "o": ["Dietetics (clinical focus)", "Clinical Nutrition", "Food Science and Technology (combines science with food product development)", "Community Nutrition"],
+        "o": [
+          "Dietetics (clinical focus)",
+          "Clinical Nutrition",
+          "Food Science and Technology (combines science with food product development)",
+          "Community Nutrition"
+        ],
         "a": 2,
         "e": "Food Science and Technology combines scientific knowledge (chemistry, microbiology) with food product innovation — developing new flavours, textures, nutritional profiles, and shelf-life improvements. It suits people who love the science of food and product creativity.",
         "h": "Food Science and Technology = combines science with food product innovation and development.",
@@ -270,7 +424,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The Institute of Food Science and Technology of Nigeria (IFSTN) serves professionals in which career area?",
-        "o": ["Only dietetics", "Hotel management only", "Food Science and Technology — providing professional standards and recognition", "Clinical nutrition"],
+        "o": [
+          "Only dietetics",
+          "Hotel management only",
+          "Food Science and Technology — providing professional standards and recognition",
+          "Clinical nutrition"
+        ],
         "a": 2,
         "e": "IFSTN is the professional body for food scientists and food technologists in Nigeria. It certifies qualified food science professionals, promotes food technology research, sets standards, and provides continuing professional development.",
         "h": "IFSTN = professional body for food scientists and food technologists in Nigeria.",
@@ -278,7 +437,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A career in food quality control would involve:",
-        "o": ["Planning diets for hospital patients", "Testing food products for safety, quality, and compliance with standards — ensuring they are safe for consumption", "Teaching nutrition at schools", "Managing restaurant kitchens"],
+        "o": [
+          "Planning diets for hospital patients",
+          "Testing food products for safety, quality, and compliance with standards — ensuring they are safe for consumption",
+          "Teaching nutrition at schools",
+          "Managing restaurant kitchens"
+        ],
         "a": 1,
         "e": "Food quality control professionals test raw materials, food products, and finished goods for: microbial contamination, chemical composition, nutrient content, presence of adulterants, and compliance with regulatory standards (NAFDAC, SON, international standards).",
         "h": "Food quality control = testing food for safety, quality, and regulatory compliance.",
@@ -286,7 +450,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which career in food and nutrition requires the strongest knowledge of engineering and physics?",
-        "o": ["Dietetics", "Community Nutrition", "Food Engineering — applies engineering principles to food processing design", "Teaching"],
+        "o": [
+          "Dietetics",
+          "Community Nutrition",
+          "Food Engineering — applies engineering principles to food processing design",
+          "Teaching"
+        ],
         "a": 2,
         "e": "Food Engineering applies physics, mathematics, thermodynamics, fluid mechanics, and chemical engineering to food processing. Food engineers design pasteurisers, drying systems, extraction equipment, and food production lines.",
         "h": "Food Engineering requires most engineering/physics knowledge (thermodynamics, fluid mechanics, machinery design).",
@@ -294,7 +463,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Supplementary feeding programmes for malnourished children in communities are managed by professionals in which career?",
-        "o": ["Hotel and Catering Management", "Food Engineering", "Community Nutrition", "Food Science and Technology"],
+        "o": [
+          "Hotel and Catering Management",
+          "Food Engineering",
+          "Community Nutrition",
+          "Food Science and Technology"
+        ],
         "a": 2,
         "e": "Community nutritionists plan and manage community-based feeding programmes (therapeutic feeding centres, school feeding, supplementary nutrition programmes) targeting vulnerable groups — young children, pregnant women, and the elderly in communities.",
         "h": "Community nutrition manages supplementary feeding and malnutrition prevention programmes.",
@@ -302,7 +476,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Menu planning for a large airline catering to thousands of passengers daily falls under which career?",
-        "o": ["Clinical Nutrition", "Community Nutrition", "Hotel and Catering Management", "Food Science and Technology"],
+        "o": [
+          "Clinical Nutrition",
+          "Community Nutrition",
+          "Hotel and Catering Management",
+          "Food Science and Technology"
+        ],
         "a": 2,
         "e": "Airline catering and large-scale food service operations fall under Hotel and Catering Management — managing institutional food service at scale requires catering management skills, menu planning, food safety in bulk preparation, and logistics.",
         "h": "Airline/institutional catering = Hotel and Catering Management (large-scale food service).",
@@ -310,7 +489,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A researcher developing more drought-resistant crops with higher nutritional value works at the intersection of which fields?",
-        "o": ["Dietetics and medicine", "Food Science/Nutrition and Agricultural Science", "Hotel management and engineering", "Clinical nutrition and community nutrition"],
+        "o": [
+          "Dietetics and medicine",
+          "Food Science/Nutrition and Agricultural Science",
+          "Hotel management and engineering",
+          "Clinical nutrition and community nutrition"
+        ],
         "a": 1,
         "e": "Biofortification (developing nutritionally enhanced crops) combines food science and nutrition with agricultural science and biotechnology. This interdisciplinary work involves understanding both plant science and human nutritional requirements.",
         "h": "Nutritionally enhanced crops = Food Science/Nutrition + Agricultural Science (biofortification).",
@@ -318,7 +502,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "To qualify as a registered dietitian in Nigeria, a person must:",
-        "o": ["Only complete a 6-month cooking course", "Complete a university degree in dietetics or nutrition, followed by an internship, and register with the relevant professional body (DAN)", "Only have work experience in a hospital", "Complete only a secondary school Home Economics programme"],
+        "o": [
+          "Only complete a 6-month cooking course",
+          "Complete a university degree in dietetics or nutrition, followed by an internship, and register with the relevant professional body (DAN)",
+          "Only have work experience in a hospital",
+          "Complete only a secondary school Home Economics programme"
+        ],
         "a": 1,
         "e": "Becoming a registered dietitian requires: a B.Sc. in Dietetics, Human Nutrition and Dietetics, or equivalent; completion of a supervised internship/clinical training; and registration with the Dietitians Association of Nigeria (DAN) to practise legally.",
         "h": "Registered dietitian: B.Sc. in Dietetics + supervised internship + DAN registration.",
@@ -326,7 +515,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Food Safety inspectors working to enforce food hygiene regulations in restaurants and food markets are performing work related to which career area?",
-        "o": ["Dietetics", "Hotel management", "Public Health Nutrition/Food Quality Control", "Food Engineering"],
+        "o": [
+          "Dietetics",
+          "Hotel management",
+          "Public Health Nutrition/Food Quality Control",
+          "Food Engineering"
+        ],
         "a": 2,
         "e": "Food safety inspection and enforcement falls under Public Health Nutrition and Food Quality Control — ensuring that food sold to consumers is safe, properly stored, prepared hygienically, and meets regulatory standards.",
         "h": "Food safety inspection = Public Health Nutrition/Food Quality Control.",
@@ -334,7 +528,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which career in food and nutrition is most likely to work in intensive care units providing parenteral (intravenous) nutrition?",
-        "o": ["Community Nutritionist", "Food Scientist", "Clinical Nutritionist", "Hotel and Catering Manager"],
+        "o": [
+          "Community Nutritionist",
+          "Food Scientist",
+          "Clinical Nutritionist",
+          "Hotel and Catering Manager"
+        ],
         "a": 2,
         "e": "Clinical nutritionists work in hospital settings — including ICUs — providing specialised nutrition support. Parenteral nutrition (nutrients delivered directly into the bloodstream) is used for patients who cannot digest or absorb nutrients through the gut.",
         "h": "Clinical nutritionist: works in ICU providing parenteral (IV) nutrition for patients who cannot eat.",
@@ -351,7 +550,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "The study of how the digestive system breaks down food demonstrates the interrelationship of Food and Nutrition with:",
-        "o": ["Mathematics", "Economics", "Biology (anatomy and physiology of the digestive system)", "Agriculture"],
+        "o": [
+          "Mathematics",
+          "Economics",
+          "Biology (anatomy and physiology of the digestive system)",
+          "Agriculture"
+        ],
         "a": 2,
         "e": "Understanding digestion requires knowledge of biology — specifically the anatomy (structure) and physiology (function) of the digestive tract. Biology explains how enzymes break down macronutrients and how the intestinal wall absorbs nutrients into the bloodstream.",
         "h": "Digestive system and nutrient absorption = Biology (anatomy and physiology).",
@@ -359,7 +563,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Food and Nutrition relates to Chemistry through:",
-        "o": ["Understanding food prices and availability", "Knowledge of food crop production and harvesting", "Understanding the chemical composition of nutrients and reactions that occur during cooking", "Planning of hospital menus"],
+        "o": [
+          "Understanding food prices and availability",
+          "Knowledge of food crop production and harvesting",
+          "Understanding the chemical composition of nutrients and reactions that occur during cooking",
+          "Planning of hospital menus"
+        ],
         "a": 2,
         "e": "Chemistry underpins food composition (carbohydrates, proteins, fats, vitamins are chemical compounds), food analysis (testing for nutrients and contaminants), and cooking reactions (Maillard reaction, caramelisation, denaturation of proteins) are all chemical processes.",
         "h": "Food and Nutrition relates to Chemistry: nutrient composition, food testing, cooking reactions.",
@@ -367,7 +576,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Biofortification — developing crops with enhanced nutritional content — shows the interrelationship between Food and Nutrition and:",
-        "o": ["Mathematics only", "Economics only", "Agricultural Science (crop breeding combined with nutritional knowledge)", "History"],
+        "o": [
+          "Mathematics only",
+          "Economics only",
+          "Agricultural Science (crop breeding combined with nutritional knowledge)",
+          "History"
+        ],
         "a": 2,
         "e": "Biofortification combines agricultural science (plant breeding, agronomy) with nutritional science (understanding which nutrients are deficient and beneficial) to develop crop varieties with enhanced nutritional profiles (e.g., orange-flesh sweet potato for Vitamin A).",
         "h": "Biofortification = Agriculture + Food Science/Nutrition (nutrient-enhanced crop varieties).",
@@ -375,7 +589,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "How does Economics relate to Food and Nutrition?",
-        "o": ["Economics only relates to business, not nutrition", "Economic factors (income, poverty, food prices) directly determine food access and dietary quality", "Only economic analysis of food companies matters", "Economics relates only to food trade"],
+        "o": [
+          "Economics only relates to business, not nutrition",
+          "Economic factors (income, poverty, food prices) directly determine food access and dietary quality",
+          "Only economic analysis of food companies matters",
+          "Economics relates only to food trade"
+        ],
         "a": 1,
         "e": "Economics explains food access: income determines purchasing power; food prices determine affordability; poverty is the leading cause of food insecurity. Economic policies (subsidies, price controls) affect what foods people can afford and their nutritional status.",
         "h": "Economics and nutrition: income/poverty/food prices determine dietary quality and food access.",
@@ -383,7 +602,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Calculating the total calorie content of a recipe with multiple ingredients demonstrates the relationship of Food and Nutrition with:",
-        "o": ["Biology", "Chemistry", "Mathematics", "Agriculture"],
+        "o": [
+          "Biology",
+          "Chemistry",
+          "Mathematics",
+          "Agriculture"
+        ],
         "a": 2,
         "e": "Mathematics is essential in food and nutrition for: calculating nutrient content of diets (using food composition tables), measuring and weighing ingredients, computing nutritional analyses, calculating dietary requirements, and statistical analysis of nutrition data.",
         "h": "Calculating nutrient content of recipes = Mathematics (arithmetic, percentage calculations).",
@@ -391,7 +615,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Understanding drug-nutrient interactions (e.g., how certain medications affect vitamin absorption) shows the relationship of Food and Nutrition with:",
-        "o": ["Agriculture", "Mathematics", "Health Science and Medicine/Pharmacology", "Economics"],
+        "o": [
+          "Agriculture",
+          "Mathematics",
+          "Health Science and Medicine/Pharmacology",
+          "Economics"
+        ],
         "a": 2,
         "e": "Drug-nutrient interactions are at the intersection of pharmacology and nutrition science. Some drugs (e.g., antacids, antibiotics) reduce nutrient absorption; some nutrients affect drug metabolism. Clinical dietitians and pharmacists must understand these interactions.",
         "h": "Drug-nutrient interactions = Food and Nutrition + Medicine/Pharmacology.",
@@ -399,7 +628,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The Maillard reaction (browning of bread crust during baking) is best understood through the relationship of Food and Nutrition with:",
-        "o": ["Agriculture", "Chemistry (a chemical reaction between amino acids and reducing sugars)", "Economics", "Social Studies"],
+        "o": [
+          "Agriculture",
+          "Chemistry (a chemical reaction between amino acids and reducing sugars)",
+          "Economics",
+          "Social Studies"
+        ],
         "a": 1,
         "e": "The Maillard reaction is a chemical reaction — amino groups react with carbonyl groups (reducing sugars) when heated, producing the brown colour and flavour of baked bread, roasted meat, and fried foods. Understanding it requires organic chemistry knowledge.",
         "h": "Maillard reaction (bread browning) = Chemistry (amino acids + reducing sugars under heat).",
@@ -407,7 +641,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Post-harvest handling (drying, storage conditions) affecting nutrient loss in cassava shows the link between Food and Nutrition and:",
-        "o": ["Only Chemistry", "Agriculture and Food Science — post-harvest technology", "Mathematics", "History"],
+        "o": [
+          "Only Chemistry",
+          "Agriculture and Food Science — post-harvest technology",
+          "Mathematics",
+          "History"
+        ],
         "a": 1,
         "e": "Post-harvest technology — how food crops are handled after harvest to preserve their nutritional quality — bridges agriculture (production, harvesting) and food science (preserving nutritional content during drying, storage, and processing).",
         "h": "Post-harvest handling and nutrient preservation = Agriculture + Food Science interface.",
@@ -415,7 +654,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Understanding how bacteria cause food poisoning (e.g., Salmonella) demonstrates the relationship of Food and Nutrition with:",
-        "o": ["Mathematics", "Economics", "Biology — specifically Microbiology", "Physical Education"],
+        "o": [
+          "Mathematics",
+          "Economics",
+          "Biology — specifically Microbiology",
+          "Physical Education"
+        ],
         "a": 2,
         "e": "Food microbiology is a branch of biology — understanding how bacteria, yeasts, fungi, and viruses contaminate and spoil food, cause foodborne illness, and how they can be controlled (through heat, cold, pH, food safety practices) requires microbiology knowledge.",
         "h": "Food poisoning bacteria = Biology (Microbiology).",
@@ -423,7 +667,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Government food subsidy programmes and their effect on the nutritional status of poor populations reflect the relationship between Food and Nutrition and:",
-        "o": ["Biology", "Chemistry", "Economics and Social Sciences/Public Policy", "Agriculture only"],
+        "o": [
+          "Biology",
+          "Chemistry",
+          "Economics and Social Sciences/Public Policy",
+          "Agriculture only"
+        ],
         "a": 2,
         "e": "Food subsidies, poverty reduction programmes, and national food policies are economic and social policy decisions that directly affect nutritional outcomes. This intersection is the domain of food policy analysis, health economics, and social science.",
         "h": "Food subsidy programmes affecting nutrition = Economics and Social Sciences/Public Policy.",
@@ -431,7 +680,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The iodine test for starch (iodine turning blue-black when starch is present) demonstrates the interrelationship of Food and Nutrition with:",
-        "o": ["Biology", "Chemistry — food analysis and testing", "Economics", "Physical Education"],
+        "o": [
+          "Biology",
+          "Chemistry — food analysis and testing",
+          "Economics",
+          "Physical Education"
+        ],
         "a": 1,
         "e": "Food analysis tests (iodine test for starch, Biuret test for protein, Sudan III for fat) are chemical tests — they use chemical reactions to identify the presence of specific nutrients. These are practical applications of chemistry in food and nutrition science.",
         "h": "Iodine test for starch = Chemistry (food analysis using chemical reactions).",
@@ -439,7 +693,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Statistical analysis of a national nutrition survey to determine the prevalence of vitamin A deficiency shows the link with:",
-        "o": ["Agriculture", "Chemistry", "Mathematics and Statistics", "Physical Education"],
+        "o": [
+          "Agriculture",
+          "Chemistry",
+          "Mathematics and Statistics",
+          "Physical Education"
+        ],
         "a": 2,
         "e": "Nutrition research relies heavily on mathematics and statistics: collecting nutritional data, calculating prevalence of deficiencies, analyzing dietary survey results, drawing conclusions from data, and presenting findings require statistical methods.",
         "h": "Nutrition survey analysis = Mathematics and Statistics.",
@@ -447,7 +706,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Food and Nutrition relates to Agriculture because:",
-        "o": ["Both involve cooking and preparation", "Agriculture produces the food crops and livestock that are the primary sources of nutrients", "Agriculture only produces non-nutritious crops", "Agriculture has no relationship with nutrition"],
+        "o": [
+          "Both involve cooking and preparation",
+          "Agriculture produces the food crops and livestock that are the primary sources of nutrients",
+          "Agriculture only produces non-nutritious crops",
+          "Agriculture has no relationship with nutrition"
+        ],
         "a": 1,
         "e": "Agriculture is the foundation of food production — it produces the plants and animals that provide all our nutrients. Understanding food composition and nutritional quality helps farmers grow more nutritious food; nutritional knowledge guides agricultural research priorities.",
         "h": "Agriculture produces food crops and livestock = primary sources of all nutrients (fundamental link).",
@@ -455,7 +719,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The process of industrial fermentation used to make yogurt requires knowledge from which related field?",
-        "o": ["Only economics", "Biology (microbiology) and Chemistry (biochemistry of fermentation)", "Mathematics only", "Agricultural crop production only"],
+        "o": [
+          "Only economics",
+          "Biology (microbiology) and Chemistry (biochemistry of fermentation)",
+          "Mathematics only",
+          "Agricultural crop production only"
+        ],
         "a": 1,
         "e": "Yogurt fermentation involves: microbiology (knowledge of Lactobacillus bacteria that ferment lactose to lactic acid) and biochemistry/chemistry (chemical reactions of fermentation, pH changes, protein coagulation). Both biology and chemistry are essential.",
         "h": "Yogurt fermentation = Biology (microbiology — Lactobacillus) + Chemistry (fermentation biochemistry).",
@@ -463,7 +732,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Understanding how socio-cultural factors (food taboos, religious restrictions) affect nutritional status demonstrates the link between Food and Nutrition and:",
-        "o": ["Chemistry", "Biology", "Social Studies/Cultural Studies", "Mathematics"],
+        "o": [
+          "Chemistry",
+          "Biology",
+          "Social Studies/Cultural Studies",
+          "Mathematics"
+        ],
         "a": 2,
         "e": "Social and cultural factors — food taboos (pregnant women not eating eggs in some cultures), religious restrictions (Muslims avoiding pork; Hindus avoiding beef), gender-based food allocation — affect nutritional status through Social Studies, Anthropology, and Cultural Studies.",
         "h": "Food taboos and religious restrictions affecting nutrition = Social Studies/Cultural Studies.",
@@ -471,7 +745,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Converting the energy content of food (kilojoules to kilocalories) requires which related knowledge?",
-        "o": ["Biology", "Chemistry", "Mathematics (conversion calculations)", "Agriculture"],
+        "o": [
+          "Biology",
+          "Chemistry",
+          "Mathematics (conversion calculations)",
+          "Agriculture"
+        ],
         "a": 2,
         "e": "Nutritional energy calculations — converting between joules and calories, calculating the energy value of foods using Atwater factors (4 kcal/g carb, 4 kcal/g protein, 9 kcal/g fat) — are mathematical operations.",
         "h": "Energy unit conversions (kJ to kcal) and Atwater calculations = Mathematics.",
@@ -479,7 +758,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Food and Nutrition relates to the study of genetics through:",
-        "o": ["No relationship exists", "Nutritional genomics — how genes influence nutrient requirements and how diet influences gene expression", "Agricultural crop breeding only", "Food labelling regulations"],
+        "o": [
+          "No relationship exists",
+          "Nutritional genomics — how genes influence nutrient requirements and how diet influences gene expression",
+          "Agricultural crop breeding only",
+          "Food labelling regulations"
+        ],
         "a": 1,
         "e": "Nutritional genomics (nutrigenomics) studies how individual genetic differences affect nutrient metabolism and requirements. For example, some people cannot tolerate lactose (lactase persistence gene) or phenylalanine (PKU — phenylketonuria), requiring personalised nutrition.",
         "h": "Food, Nutrition, and Genetics: nutritional genomics — genes affect nutrient needs; diet affects gene expression.",
@@ -487,7 +771,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The study of how food additives (e.g., preservatives, colouring agents) are approved for safety is relevant to Food and Nutrition in relation to:",
-        "o": ["Social Studies only", "Biology and Chemistry (toxicology, chemical safety testing)", "Mathematics only", "Agricultural Science only"],
+        "o": [
+          "Social Studies only",
+          "Biology and Chemistry (toxicology, chemical safety testing)",
+          "Mathematics only",
+          "Agricultural Science only"
+        ],
         "a": 1,
         "e": "Food additive safety evaluation requires: chemistry (understanding chemical structure and reactivity), biology/toxicology (testing for harmful effects on cells, organs, and organisms), and regulatory science. Approved additives appear on Acceptable Daily Intake (ADI) lists.",
         "h": "Food additive safety = Chemistry (structure, reactivity) + Biology/Toxicology (safety testing).",
@@ -495,7 +784,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Public health campaigns using media to promote healthy eating demonstrate the relationship of Food and Nutrition with:",
-        "o": ["Only Agriculture", "Only Mathematics", "Social Sciences, Communication Studies, and Media Studies", "Only Chemistry"],
+        "o": [
+          "Only Agriculture",
+          "Only Mathematics",
+          "Social Sciences, Communication Studies, and Media Studies",
+          "Only Chemistry"
+        ],
         "a": 2,
         "e": "Public health nutrition communication requires skills from communication studies (message design), social sciences (understanding behaviour change), media studies (using appropriate channels), and psychology (motivation and health behaviour theories).",
         "h": "Nutrition public health campaigns = Social Sciences + Communication/Media Studies.",
@@ -503,7 +797,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "How does Physical Education relate to Food and Nutrition?",
-        "o": ["No relationship exists", "Physical activity and exercise affect energy requirements, metabolism, and hydration — connecting sports nutrition to physical education", "Physical Education only concerns fitness tests", "Physical Education only relates to Biology"],
+        "o": [
+          "No relationship exists",
+          "Physical activity and exercise affect energy requirements, metabolism, and hydration — connecting sports nutrition to physical education",
+          "Physical Education only concerns fitness tests",
+          "Physical Education only relates to Biology"
+        ],
         "a": 1,
         "e": "Physical Education and Food and Nutrition intersect in sports nutrition — active individuals and athletes have higher energy, carbohydrate, protein, and fluid requirements. Understanding the metabolic demands of exercise and how nutrition supports performance connects both subjects.",
         "h": "Physical Education and Food/Nutrition: exercise increases energy/nutrient needs → sports nutrition.",
@@ -520,7 +819,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "Local foods are classified as 'energy foods' based on which primary nutrient?",
-        "o": ["Protein", "Vitamins", "Carbohydrates", "Minerals"],
+        "o": [
+          "Protein",
+          "Vitamins",
+          "Carbohydrates",
+          "Minerals"
+        ],
         "a": 2,
         "e": "Energy foods primarily provide carbohydrates as the body's main energy source. Nigerian staple energy foods include yam, cassava, garri, rice, maize (corn), plantain, millet, and sorghum.",
         "h": "Energy foods = primarily carbohydrates (yam, cassava, rice, maize, plantain).",
@@ -528,7 +832,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Ugwu (fluted pumpkin leaves) is classified as a 'protective food' because it is rich in:",
-        "o": ["Starch and carbohydrates", "Fat and oil", "Vitamins (A, C, folate) and minerals (iron, calcium) that protect against deficiency diseases", "Saturated fatty acids"],
+        "o": [
+          "Starch and carbohydrates",
+          "Fat and oil",
+          "Vitamins (A, C, folate) and minerals (iron, calcium) that protect against deficiency diseases",
+          "Saturated fatty acids"
+        ],
         "a": 2,
         "e": "Ugwu (Telfairia occidentalis) is one of Nigeria's most nutritious vegetables — rich in iron (important for blood), Vitamin A (from beta-carotene), Vitamin C, folate, and calcium. These micronutrients protect against anaemia, night blindness, and other deficiency conditions.",
         "h": "Ugwu = protective food (Vitamin A, C, iron, folate, calcium) — one of Nigeria's most nutritious vegetables.",
@@ -536,7 +845,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Red palm oil is unusual among Nigerian cooking oils because it provides:",
-        "o": ["Only saturated fat with no other nutrients", "Beta-carotene (pro-vitamin A) in addition to fat — giving it its characteristic red colour and making it a source of Vitamin A", "Mainly Vitamin C", "Protein in addition to fat"],
+        "o": [
+          "Only saturated fat with no other nutrients",
+          "Beta-carotene (pro-vitamin A) in addition to fat — giving it its characteristic red colour and making it a source of Vitamin A",
+          "Mainly Vitamin C",
+          "Protein in addition to fat"
+        ],
         "a": 1,
         "e": "Red palm oil contains high levels of beta-carotene (pro-vitamin A) — the carotenoid pigment that gives it its distinctive orange-red colour. When consumed, beta-carotene is converted to Vitamin A in the body, making red palm oil an important vitamin A source in Nigeria.",
         "h": "Red palm oil = fat + beta-carotene (pro-vitamin A) — distinctive red colour from carotenoid pigments.",
@@ -544,7 +858,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Beans and cowpeas are classified as 'body-building foods' because they are excellent sources of:",
-        "o": ["Carbohydrates and starch", "Saturated fats and oils", "Plant protein, iron, and B vitamins", "Vitamin A and Vitamin D"],
+        "o": [
+          "Carbohydrates and starch",
+          "Saturated fats and oils",
+          "Plant protein, iron, and B vitamins",
+          "Vitamin A and Vitamin D"
+        ],
         "a": 2,
         "e": "Beans (Vigna unguiculata — cowpea; Phaseolus vulgaris — various beans) are the primary plant protein source in Nigerian diets. They also provide iron (important for blood formation), B vitamins (particularly folate and thiamine), and fibre.",
         "h": "Beans = body-building food (plant protein, iron, B vitamins — primary plant protein in Nigerian diet).",
@@ -552,7 +871,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Cassava contains cyanogenic glucosides. These are best reduced by:",
-        "o": ["Adding salt to cassava", "Eating cassava raw", "Fermentation, peeling, soaking, and thorough cooking — these processes remove or destroy cyanogenic compounds", "Refrigerating cassava"],
+        "o": [
+          "Adding salt to cassava",
+          "Eating cassava raw",
+          "Fermentation, peeling, soaking, and thorough cooking — these processes remove or destroy cyanogenic compounds",
+          "Refrigerating cassava"
+        ],
         "a": 2,
         "e": "Cyanogenic glucosides in cassava can release hydrogen cyanide (HCN) which is toxic. Traditional processing (peeling, grating, fermentation, soaking, sun-drying, thorough cooking) releases and destroys the HCN. Garri and fufu production effectively removes these compounds.",
         "h": "Cassava cyanogenic compounds reduced by: fermentation, peeling, soaking, thorough cooking.",
@@ -560,7 +884,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Crayfish is considered highly nutritious despite being used in small amounts because it provides:",
-        "o": ["Mainly carbohydrates", "Vitamin C and folate primarily", "Concentrated protein, calcium, and iron in small quantities", "Mainly saturated fats"],
+        "o": [
+          "Mainly carbohydrates",
+          "Vitamin C and folate primarily",
+          "Concentrated protein, calcium, and iron in small quantities",
+          "Mainly saturated fats"
+        ],
         "a": 2,
         "e": "Crayfish (dried shrimp) is a nutrient-dense condiment — small amounts provide significant protein, calcium (from the shells), iron, and other minerals. It is widely used in Nigerian soups and stews as a nutritious flavouring that enriches the diet's micronutrient content.",
         "h": "Crayfish = nutrient-dense (protein, calcium, iron) in small quantities — important condiment in Nigerian cooking.",
@@ -568,7 +897,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Groundnuts (peanuts) are unusual among Nigerian local foods because they provide both:",
-        "o": ["Carbohydrates and vitamins", "Protein and fat (plus B vitamins and minerals)", "Minerals and carbohydrates", "Vitamins only"],
+        "o": [
+          "Carbohydrates and vitamins",
+          "Protein and fat (plus B vitamins and minerals)",
+          "Minerals and carbohydrates",
+          "Vitamins only"
+        ],
         "a": 1,
         "e": "Groundnuts are exceptional in providing both protein (24-28% protein) and fat (45-50% oil content), plus B vitamins, niacin, and zinc. This dual role means groundnuts are both a protein source (body-building) and an oil source (energy from fat).",
         "h": "Groundnuts: dual source of protein AND fat (plus B vitamins, zinc) — both body-building and energy food.",
@@ -576,7 +910,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which of the following is an example of a Nigerian 'protective food'?",
-        "o": ["Cassava", "Yam", "Tomatoes, peppers, ugwu, and oranges", "Groundnut oil"],
+        "o": [
+          "Cassava",
+          "Yam",
+          "Tomatoes, peppers, ugwu, and oranges",
+          "Groundnut oil"
+        ],
         "a": 2,
         "e": "Protective foods are rich in vitamins and minerals that protect against deficiency diseases and support immune function. Nigerian protective foods include green leafy vegetables (ugwu, bitter leaf), coloured vegetables (tomatoes, peppers, carrots), and fruits (oranges, mangoes).",
         "h": "Protective foods: vegetables and fruits rich in vitamins/minerals (tomatoes, ugwu, oranges, carrots).",
@@ -584,7 +923,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The concept of 'protein complementation' using local Nigerian foods means:",
-        "o": ["Eating only animal proteins", "Combining plant proteins that are individually incomplete (beans + rice/yam) to provide all essential amino acids together", "Avoiding plant proteins in favour of meat", "Eating protein foods at separate meals"],
+        "o": [
+          "Eating only animal proteins",
+          "Combining plant proteins that are individually incomplete (beans + rice/yam) to provide all essential amino acids together",
+          "Avoiding plant proteins in favour of meat",
+          "Eating protein foods at separate meals"
+        ],
         "a": 1,
         "e": "Plant proteins are often incomplete (missing some essential amino acids). Combining legumes (beans — low in methionine, high in lysine) with cereals (rice — low in lysine, high in methionine) creates a complementary mixture providing all essential amino acids. Beans and rice is a perfect complementary combination.",
         "h": "Protein complementation: beans + cereals (rice/yam) = complete protein (all essential amino acids).",
@@ -592,7 +936,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Plantain is classified primarily as which type of local food?",
-        "o": ["Protective food (vitamins)", "Body-building food (protein)", "Energy food (carbohydrate — particularly starch)", "Fat food (oils)"],
+        "o": [
+          "Protective food (vitamins)",
+          "Body-building food (protein)",
+          "Energy food (carbohydrate — particularly starch)",
+          "Fat food (oils)"
+        ],
         "a": 2,
         "e": "Plantain (cooking banana) is primarily an energy food — it is rich in carbohydrates (starch when unripe; more sugars when ripe). It also provides Vitamin A (from beta-carotene), Vitamin C, potassium, and some fibre.",
         "h": "Plantain = energy food (primarily carbohydrate/starch); also provides Vitamin A, C, potassium.",
@@ -600,7 +949,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Using local Nigerian foods instead of imported foods has which primary advantage?",
-        "o": ["Imported foods are always less nutritious", "Local foods are more affordable, available, familiar, and support local agriculture and the economy", "Local foods contain more additives", "Imported foods are always of lower quality"],
+        "o": [
+          "Imported foods are always less nutritious",
+          "Local foods are more affordable, available, familiar, and support local agriculture and the economy",
+          "Local foods contain more additives",
+          "Imported foods are always of lower quality"
+        ],
         "a": 1,
         "e": "Local foods are more affordable (no import costs), seasonally available, familiar in taste and preparation to local populations, adapted to local climate, and their purchase supports local farmers and the Nigerian economy. Many local foods are nutritionally excellent.",
         "h": "Local foods: affordable, available, familiar, support local agriculture and economy.",
@@ -608,7 +962,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Bitter leaf (Vernonia amygdalina) is consumed in soups in Nigeria and classified as a protective food because:",
-        "o": ["It is a major source of starch", "It provides significant Vitamin A, Vitamin C, iron, and other micronutrients", "It provides primarily fat and oil", "It is mainly a protein source"],
+        "o": [
+          "It is a major source of starch",
+          "It provides significant Vitamin A, Vitamin C, iron, and other micronutrients",
+          "It provides primarily fat and oil",
+          "It is mainly a protein source"
+        ],
         "a": 1,
         "e": "Bitter leaf is rich in vitamins (A, C) and minerals (iron, calcium) — making it a protective food. It also has medicinal properties (anti-inflammatory, antimalarial) and is a important ingredient in Nigerian soups (ofe onugbu, bitterleaf soup).",
         "h": "Bitter leaf = protective food (Vitamin A, C, iron, calcium, medicinal properties).",
@@ -616,7 +975,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Egusi (melon seeds) provides which primary nutrient in Nigerian soups?",
-        "o": ["Carbohydrates (starch)", "Mainly Vitamin C", "Protein and fat (both)", "Mainly water"],
+        "o": [
+          "Carbohydrates (starch)",
+          "Mainly Vitamin C",
+          "Protein and fat (both)",
+          "Mainly water"
+        ],
         "a": 2,
         "e": "Egusi (Citrullus lanatus seed) provides both protein (25-35%) and fat (45-55%), plus Vitamin B1 and B3, iron, and zinc. It is added to Nigerian soups to thicken them and contribute significant nutrition.",
         "h": "Egusi = protein AND fat (both), plus B vitamins and minerals.",
@@ -624,7 +988,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Millet (fonio/guinea corn) is classified as which type of Nigerian local food?",
-        "o": ["Protective food", "Body-building food", "Energy food (cereal grain — primarily carbohydrate)", "Fat food"],
+        "o": [
+          "Protective food",
+          "Body-building food",
+          "Energy food (cereal grain — primarily carbohydrate)",
+          "Fat food"
+        ],
         "a": 2,
         "e": "Millet (fonio, sorghum, guinea corn) is a cereal grain — primarily a carbohydrate source providing energy. It is a staple food in northern Nigeria, used to make tuwo, fura, and kunu. It also provides some protein, B vitamins, and minerals.",
         "h": "Millet/sorghum/guinea corn = energy food (cereal grain, primarily carbohydrate).",
@@ -632,7 +1001,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The orange colour of carrots and ripe palm oil indicates high content of which nutrient precursor?",
-        "o": ["Iron", "Vitamin C", "Beta-carotene (pro-vitamin A) — the orange/yellow pigment", "Calcium"],
+        "o": [
+          "Iron",
+          "Vitamin C",
+          "Beta-carotene (pro-vitamin A) — the orange/yellow pigment",
+          "Calcium"
+        ],
         "a": 2,
         "e": "Beta-carotene is the orange-yellow carotenoid pigment found in orange/yellow vegetables and fruits (carrots, pumpkin, ripe palm fruit, sweet potato flesh). It is converted to Vitamin A in the body, making these foods important pro-vitamin A sources.",
         "h": "Orange colour in vegetables/palm oil = beta-carotene (pro-vitamin A).",
@@ -640,7 +1014,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Soybeans are increasingly promoted as a Nigerian local food because they:",
-        "o": ["Have the lowest protein content of all legumes", "Provide complete protein (all essential amino acids) and are a versatile food for making milk, tofu, and vegetable oil", "Only provide carbohydrates", "Are mainly consumed for their fat content only"],
+        "o": [
+          "Have the lowest protein content of all legumes",
+          "Provide complete protein (all essential amino acids) and are a versatile food for making milk, tofu, and vegetable oil",
+          "Only provide carbohydrates",
+          "Are mainly consumed for their fat content only"
+        ],
         "a": 1,
         "e": "Soybeans are exceptional — they provide complete protein (all essential amino acids), making them equivalent to animal proteins. They also provide fat (soybean oil), calcium, iron, and can be processed into diverse products: soy milk, tofu, soy flour, and cooking oil.",
         "h": "Soybeans = complete plant protein + fat + calcium + versatile processing (milk, tofu, oil).",
@@ -648,7 +1027,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A Nigerian child who never eats fruits or vegetables is at risk of deficiency of:",
-        "o": ["Carbohydrates", "Protein", "Vitamins (A, C, folate) and minerals (iron, calcium) — found primarily in fruits and vegetables", "Saturated fats"],
+        "o": [
+          "Carbohydrates",
+          "Protein",
+          "Vitamins (A, C, folate) and minerals (iron, calcium) — found primarily in fruits and vegetables",
+          "Saturated fats"
+        ],
         "a": 2,
         "e": "Fruits and vegetables are the primary sources of Vitamin C, Vitamin A (as beta-carotene), folate, potassium, calcium, and iron. A child who avoids them risks Vitamin A deficiency (night blindness), Vitamin C deficiency (scurvy), and anaemia.",
         "h": "No fruits/vegetables → risk of Vitamin A, C, folate, iron, calcium deficiency.",
@@ -656,7 +1040,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Ogiri, dawadawa, and iru are fermented local condiments in Nigeria. Their fermentation increases which nutrient group?",
-        "o": ["Starch content", "Fat content", "B vitamins and protein digestibility (fermentation by microorganisms produces B vitamins and breaks down antinutrients)", "Vitamin C content"],
+        "o": [
+          "Starch content",
+          "Fat content",
+          "B vitamins and protein digestibility (fermentation by microorganisms produces B vitamins and breaks down antinutrients)",
+          "Vitamin C content"
+        ],
         "a": 2,
         "e": "Fermentation of locust beans and other seeds (to make dawadawa, iru, ogiri) produces B vitamins, increases protein digestibility, reduces antinutrients (phytates), and develops flavour. These condiments are excellent protein and B vitamin sources.",
         "h": "Fermented condiments (dawadawa, iru): increased B vitamins, improved protein digestibility, reduced antinutrients.",
@@ -664,7 +1053,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "What is the nutritional advantage of eating unrefined (whole grain) garri compared to heavily processed garri?",
-        "o": ["Whole grain garri has more fat", "Whole grain/less refined garri retains more B vitamins and fibre than heavily refined/bleached garri", "Refined garri has more protein", "Processing improves garri's nutritional quality"],
+        "o": [
+          "Whole grain garri has more fat",
+          "Whole grain/less refined garri retains more B vitamins and fibre than heavily refined/bleached garri",
+          "Refined garri has more protein",
+          "Processing improves garri's nutritional quality"
+        ],
         "a": 1,
         "e": "Cassava naturally contains modest B vitamins and fibre. Excessive processing (over-fermentation, bleaching) further reduces these already limited nutrients. Traditional processing that retains more of the cassava retains more nutrients than over-refined versions.",
         "h": "Less refined garri retains more B vitamins and fibre (excessive processing reduces nutrients).",
@@ -672,7 +1066,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which combination of local Nigerian foods best provides a nutritionally balanced meal?",
-        "o": ["Garri only", "Rice only with palm oil", "Beans and rice with ugwu soup and palm oil (protein + carbohydrate + vegetables + fat)", "Only meat with no vegetables"],
+        "o": [
+          "Garri only",
+          "Rice only with palm oil",
+          "Beans and rice with ugwu soup and palm oil (protein + carbohydrate + vegetables + fat)",
+          "Only meat with no vegetables"
+        ],
         "a": 2,
         "e": "A balanced Nigerian meal combines: energy food (rice — carbohydrate), body-building food (beans — protein), protective food (ugwu soup — vitamins and minerals), and fat (palm oil — energy and Vitamin A). This provides all macronutrients and key micronutrients.",
         "h": "Balanced Nigerian meal: beans + rice + ugwu + palm oil = protein + carb + vitamins/minerals + fat.",
@@ -689,7 +1088,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "Carbohydrates are composed of which three chemical elements?",
-        "o": ["Carbon, Hydrogen, Nitrogen", "Carbon, Hydrogen, Oxygen", "Carbon, Oxygen, Phosphorus", "Hydrogen, Oxygen, Nitrogen"],
+        "o": [
+          "Carbon, Hydrogen, Nitrogen",
+          "Carbon, Hydrogen, Oxygen",
+          "Carbon, Oxygen, Phosphorus",
+          "Hydrogen, Oxygen, Nitrogen"
+        ],
         "a": 1,
         "e": "Carbohydrates contain only three elements: Carbon (C), Hydrogen (H), and Oxygen (O). Their general formula is Cn(H₂O)n — 'hydrates of carbon.' This distinguishes them from proteins and nucleic acids (which also contain nitrogen) and fats (which also contain no nitrogen but have a different H:O ratio).",
         "h": "Carbohydrates = C, H, O ONLY (no nitrogen or sulphur).",
@@ -697,7 +1101,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The simplest form of carbohydrate that can be directly absorbed into the bloodstream is:",
-        "o": ["Disaccharide", "Polysaccharide (starch)", "Monosaccharide (e.g., glucose)", "Cellulose"],
+        "o": [
+          "Disaccharide",
+          "Polysaccharide (starch)",
+          "Monosaccharide (e.g., glucose)",
+          "Cellulose"
+        ],
         "a": 2,
         "e": "Monosaccharides are the simplest carbohydrates — single sugar units that require no further digestion and can be directly absorbed through the intestinal wall into the bloodstream. Glucose, fructose, and galactose are the three main dietary monosaccharides.",
         "h": "Monosaccharides (glucose, fructose, galactose) = simplest; directly absorbed (no digestion needed).",
@@ -705,7 +1114,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Lactose is a disaccharide found in milk. It is composed of which two monosaccharides?",
-        "o": ["Glucose + Glucose", "Glucose + Fructose", "Glucose + Galactose", "Fructose + Galactose"],
+        "o": [
+          "Glucose + Glucose",
+          "Glucose + Fructose",
+          "Glucose + Galactose",
+          "Fructose + Galactose"
+        ],
         "a": 2,
         "e": "Lactose (milk sugar) is a disaccharide formed from glucose + galactose, linked by a β-glycosidic bond. The enzyme lactase (in the small intestine) splits lactose into glucose and galactose for absorption. Lack of lactase causes lactose intolerance.",
         "h": "Lactose = Glucose + Galactose (disaccharide found in milk).",
@@ -713,7 +1127,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Sucrose (table sugar) is a disaccharide composed of:",
-        "o": ["Glucose + Glucose", "Glucose + Fructose", "Galactose + Fructose", "Glucose + Galactose"],
+        "o": [
+          "Glucose + Glucose",
+          "Glucose + Fructose",
+          "Galactose + Fructose",
+          "Glucose + Galactose"
+        ],
         "a": 1,
         "e": "Sucrose is glucose + fructose linked by an α,β-glycosidic bond. The enzyme sucrase (invertase) splits sucrose into glucose and fructose. Sucrose is found in sugar cane, sugar beet, and many fruits.",
         "h": "Sucrose = Glucose + Fructose (table sugar from sugar cane/beet).",
@@ -721,7 +1140,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Starch and cellulose are both polysaccharides made of glucose units, but differ because:",
-        "o": ["They have different chemical elements", "Starch is digestible by humans (cooked form — alpha linkages); cellulose has beta linkages humans cannot digest — it is dietary fibre", "Cellulose is sweet; starch is not", "Starch is found in animals; cellulose in plants"],
+        "o": [
+          "They have different chemical elements",
+          "Starch is digestible by humans (cooked form — alpha linkages); cellulose has beta linkages humans cannot digest — it is dietary fibre",
+          "Cellulose is sweet; starch is not",
+          "Starch is found in animals; cellulose in plants"
+        ],
         "a": 1,
         "e": "Both starch and cellulose are glucose polymers, but they differ in the glycosidic linkage: starch has α-1,4 (and α-1,6) linkages that human amylase can break; cellulose has β-1,4 linkages that human enzymes cannot break. This makes cellulose indigestible (dietary fibre).",
         "h": "Starch = α linkages (digestible); cellulose = β linkages (indigestible = dietary fibre).",
@@ -729,7 +1153,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Glycogen is an important polysaccharide because it is:",
-        "o": ["The main carbohydrate in plant food", "The storage form of carbohydrate in animal tissues (liver and muscle)", "A type of dietary fibre", "The building block of cell walls"],
+        "o": [
+          "The main carbohydrate in plant food",
+          "The storage form of carbohydrate in animal tissues (liver and muscle)",
+          "A type of dietary fibre",
+          "The building block of cell walls"
+        ],
         "a": 1,
         "e": "Glycogen is the animal's storage form of carbohydrate — excess glucose is converted to glycogen and stored in the liver (for blood glucose regulation) and muscles (for immediate energy during exercise). It is rapidly mobilised when blood glucose falls.",
         "h": "Glycogen = storage carbohydrate in animal tissues (liver and muscles).",
@@ -737,7 +1166,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Cellulose is important in the diet even though humans cannot digest it because it:",
-        "o": ["Provides energy when digested", "Acts as dietary fibre — adding bulk to faeces, stimulating peristalsis, preventing constipation, and reducing cholesterol absorption", "Provides protein for body building", "Is converted to glycogen for energy storage"],
+        "o": [
+          "Provides energy when digested",
+          "Acts as dietary fibre — adding bulk to faeces, stimulating peristalsis, preventing constipation, and reducing cholesterol absorption",
+          "Provides protein for body building",
+          "Is converted to glycogen for energy storage"
+        ],
         "a": 1,
         "e": "Although cellulose is not digested, it is valuable dietary fibre: it adds bulk to intestinal contents, stimulates peristalsis (preventing constipation), reduces transit time, binds cholesterol (reducing blood cholesterol), and fermented by gut bacteria producing short-chain fatty acids.",
         "h": "Cellulose (dietary fibre): indigestible but adds bulk, prevents constipation, reduces cholesterol.",
@@ -745,7 +1179,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The 'protein-sparing' function of carbohydrates means that:",
-        "o": ["Carbohydrates replace protein in all body functions", "When adequate carbohydrate is available for energy, protein is spared from being used as fuel and can be used for its primary role in growth and repair", "Carbohydrates prevent the body from needing protein", "Protein is stored as carbohydrate"],
+        "o": [
+          "Carbohydrates replace protein in all body functions",
+          "When adequate carbohydrate is available for energy, protein is spared from being used as fuel and can be used for its primary role in growth and repair",
+          "Carbohydrates prevent the body from needing protein",
+          "Protein is stored as carbohydrate"
+        ],
         "a": 1,
         "e": "When carbohydrate intake is adequate, the body preferentially uses carbohydrate for energy — 'sparing' protein from being broken down as fuel. When carbohydrate is inadequate, protein is catabolised for energy, diverting it from its essential roles in growth, repair, and immune function.",
         "h": "Protein-sparing: adequate carbohydrate means protein is used for growth/repair, not burned for energy.",
@@ -753,7 +1192,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Ketosis, a condition that can result from severe carbohydrate deficiency, is caused by:",
-        "o": ["Excess glucose in the blood", "The body breaking down fats incompletely due to insufficient carbohydrate — producing ketone bodies", "Too much protein in the diet", "Excess water intake"],
+        "o": [
+          "Excess glucose in the blood",
+          "The body breaking down fats incompletely due to insufficient carbohydrate — producing ketone bodies",
+          "Too much protein in the diet",
+          "Excess water intake"
+        ],
         "a": 1,
         "e": "Ketosis occurs when carbohydrate intake is very low — the body mobilises fat for energy, but fat cannot be fully oxidised without carbohydrate ('fat burns in the flame of carbohydrate'). Incomplete fat oxidation produces ketone bodies (acetoacetate, beta-hydroxybutyrate, acetone).",
         "h": "Ketosis: insufficient carbohydrate → incomplete fat oxidation → ketone bodies accumulate.",
@@ -761,7 +1205,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The energy yield of carbohydrates is approximately:",
-        "o": ["2 kcal per gram", "4 kcal per gram", "7 kcal per gram", "9 kcal per gram"],
+        "o": [
+          "2 kcal per gram",
+          "4 kcal per gram",
+          "7 kcal per gram",
+          "9 kcal per gram"
+        ],
         "a": 1,
         "e": "Carbohydrates (both sugars and starch) yield approximately 4 kilocalories (kcal) or 17 kilojoules (kJ) per gram when metabolised. This is the same energy yield as protein (4 kcal/g) and less than fat (9 kcal/g).",
         "h": "Carbohydrates = 4 kcal/g (same as protein; less than fat at 9 kcal/g).",
@@ -769,7 +1218,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which of the following is a monosaccharide found naturally in fruits?",
-        "o": ["Sucrose", "Starch", "Fructose (fruit sugar — naturally occurring monosaccharide in fruits and honey)", "Lactose"],
+        "o": [
+          "Sucrose",
+          "Starch",
+          "Fructose (fruit sugar — naturally occurring monosaccharide in fruits and honey)",
+          "Lactose"
+        ],
         "a": 2,
         "e": "Fructose (levulose/fruit sugar) is a monosaccharide naturally present in fruits, honey, and some vegetables. It is the sweetest of all sugars. Like glucose and galactose, it does not require enzymatic digestion and is directly absorbed.",
         "h": "Fructose = monosaccharide (fruit sugar) found in fruits, honey — the sweetest sugar.",
@@ -777,7 +1231,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Maltose (malt sugar) is a disaccharide formed from:",
-        "o": ["Glucose + Galactose", "Glucose + Fructose", "Glucose + Glucose (two glucose units linked by alpha-1,4 bond)", "Galactose + Fructose"],
+        "o": [
+          "Glucose + Galactose",
+          "Glucose + Fructose",
+          "Glucose + Glucose (two glucose units linked by alpha-1,4 bond)",
+          "Galactose + Fructose"
+        ],
         "a": 2,
         "e": "Maltose is formed from two glucose units linked by an α-1,4 glycosidic bond. It is produced during the digestion of starch (by amylase) and during germination of grains. It is found in malted barley (used in brewing) and is a product of starch digestion.",
         "h": "Maltose = Glucose + Glucose (product of starch digestion and grain germination).",
@@ -785,7 +1244,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Yam, cassava, rice, and maize are primarily sources of which type of carbohydrate?",
-        "o": ["Monosaccharides (simple sugars)", "Disaccharides (double sugars)", "Polysaccharides (starch)", "Cellulose (dietary fibre)"],
+        "o": [
+          "Monosaccharides (simple sugars)",
+          "Disaccharides (double sugars)",
+          "Polysaccharides (starch)",
+          "Cellulose (dietary fibre)"
+        ],
         "a": 2,
         "e": "Yam, cassava, rice, maize, and other starchy foods contain primarily starch — a polysaccharide made of hundreds to thousands of glucose units. Starch is broken down to maltose and then glucose during digestion.",
         "h": "Yam, cassava, rice, maize = starch (polysaccharide) as primary carbohydrate.",
@@ -793,7 +1257,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The brain's preferred and almost exclusive energy source under normal conditions is:",
-        "o": ["Fatty acids", "Amino acids", "Glucose (from carbohydrate metabolism)", "Ketone bodies"],
+        "o": [
+          "Fatty acids",
+          "Amino acids",
+          "Glucose (from carbohydrate metabolism)",
+          "Ketone bodies"
+        ],
         "a": 2,
         "e": "The brain has a very high energy requirement and normally uses almost exclusively glucose for its energy supply — it cannot use fatty acids directly. This is why maintaining blood glucose levels is critical; hypoglycaemia (low blood sugar) rapidly impairs brain function.",
         "h": "Brain's preferred energy = glucose (from carbohydrate) — cannot use fatty acids directly.",
@@ -801,7 +1270,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Hypoglycaemia, which can result from carbohydrate deficiency, is characterised by:",
-        "o": ["Very high blood glucose levels", "Low blood sugar (glucose) — causing dizziness, shakiness, weakness, and confusion", "Excess glycogen storage", "High blood ketone levels only"],
+        "o": [
+          "Very high blood glucose levels",
+          "Low blood sugar (glucose) — causing dizziness, shakiness, weakness, and confusion",
+          "Excess glycogen storage",
+          "High blood ketone levels only"
+        ],
         "a": 1,
         "e": "Hypoglycaemia = low blood glucose (below 3.9 mmol/L). Symptoms: dizziness, trembling, sweating, confusion, weakness, and in severe cases, seizures. It occurs when carbohydrate intake is insufficient or when insulin is excessive.",
         "h": "Hypoglycaemia = low blood glucose → dizziness, shakiness, weakness, confusion.",
@@ -809,7 +1283,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The general chemical formula for carbohydrates Cn(H₂O)n indicates that:",
-        "o": ["Carbohydrates contain nitrogen", "The H:O ratio in carbohydrates is 2:1, similar to water molecules", "Carbohydrates are the same as water", "Carbohydrates contain no oxygen"],
+        "o": [
+          "Carbohydrates contain nitrogen",
+          "The H:O ratio in carbohydrates is 2:1, similar to water molecules",
+          "Carbohydrates are the same as water",
+          "Carbohydrates contain no oxygen"
+        ],
         "a": 1,
         "e": "The formula Cn(H₂O)n shows that carbohydrates have a 2:1 hydrogen to oxygen ratio (same as water H₂O). This is where the name 'carbohydrate' (hydrate of carbon) comes from. For example, glucose: C₆H₁₂O₆ = C₆(H₂O)₆.",
         "h": "Cn(H₂O)n formula: H:O ratio = 2:1 (like water) — hence 'hydrates of carbon'.",
@@ -817,7 +1296,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Dietary fibre is important for health because it:",
-        "o": ["Provides large amounts of energy", "Is converted to glucose for brain energy", "Prevents constipation, aids bowel function, may reduce risk of colon cancer and cardiovascular disease", "Is stored as glycogen in muscles"],
+        "o": [
+          "Provides large amounts of energy",
+          "Is converted to glucose for brain energy",
+          "Prevents constipation, aids bowel function, may reduce risk of colon cancer and cardiovascular disease",
+          "Is stored as glycogen in muscles"
+        ],
         "a": 2,
         "e": "Dietary fibre (insoluble: cellulose, hemicellulose; soluble: pectin, gums) benefits health: prevents constipation, reduces transit time (lowering colon cancer risk), slows glucose absorption (beneficial for diabetes), binds cholesterol (lowers blood LDL), and feeds beneficial gut bacteria.",
         "h": "Dietary fibre: prevents constipation, reduces colon cancer risk, controls blood sugar and cholesterol.",
@@ -825,7 +1309,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "When excess carbohydrate is consumed beyond energy needs, the body stores it by:",
-        "o": ["Excreting it in urine immediately", "First storing as glycogen in liver and muscle; excess beyond glycogen capacity is converted to fat (triglycerides) and stored in adipose tissue", "Converting it directly to protein", "Excreting it in faeces"],
+        "o": [
+          "Excreting it in urine immediately",
+          "First storing as glycogen in liver and muscle; excess beyond glycogen capacity is converted to fat (triglycerides) and stored in adipose tissue",
+          "Converting it directly to protein",
+          "Excreting it in faeces"
+        ],
         "a": 1,
         "e": "Excess carbohydrate fate: first converted to glycogen (limited capacity — liver ~100g, muscle ~400g). Once glycogen stores are full, excess carbohydrate is converted to fatty acids through de novo lipogenesis and stored as fat in adipose tissue.",
         "h": "Excess carbohydrate: stored as glycogen first; then converted to fat in adipose tissue.",
@@ -833,7 +1322,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which of the following pairs correctly matches the type of carbohydrate with its characteristic?",
-        "o": ["Glucose — polysaccharide (many units)", "Starch — monosaccharide (single unit)", "Sucrose — disaccharide (two sugar units: glucose + fructose)", "Cellulose — easily digested by humans"],
+        "o": [
+          "Glucose — polysaccharide (many units)",
+          "Starch — monosaccharide (single unit)",
+          "Sucrose — disaccharide (two sugar units: glucose + fructose)",
+          "Cellulose — easily digested by humans"
+        ],
         "a": 2,
         "e": "Sucrose is a disaccharide composed of one glucose unit + one fructose unit. It is correctly classified as a disaccharide. Glucose is a monosaccharide; starch is a polysaccharide; cellulose is a polysaccharide that humans cannot digest.",
         "h": "Sucrose = disaccharide (glucose + fructose) — correct classification.",
@@ -841,7 +1335,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Ogi (pap/akamu) made from fermented maize is classified as which type of food based on its primary carbohydrate content?",
-        "o": ["Body-building food", "Protective food", "Energy food (starch/carbohydrate from maize)", "Fat food"],
+        "o": [
+          "Body-building food",
+          "Protective food",
+          "Energy food (starch/carbohydrate from maize)",
+          "Fat food"
+        ],
         "a": 2,
         "e": "Ogi is made from maize (corn) — a starchy cereal grain. Maize is primarily a carbohydrate (starch) source, making ogi an energy food. Fermentation slightly reduces the starch and increases organic acids, B vitamins, and digestibility.",
         "h": "Ogi (from maize) = energy food (starch/carbohydrate from cereal grain).",
@@ -858,7 +1357,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "Which chemical element is present in proteins but NOT in carbohydrates and fats?",
-        "o": ["Carbon", "Hydrogen", "Oxygen", "Nitrogen"],
+        "o": [
+          "Carbon",
+          "Hydrogen",
+          "Oxygen",
+          "Nitrogen"
+        ],
         "a": 3,
         "e": "Nitrogen (N) is the distinguishing element of proteins — it is present in all amino acids (as part of the amino group, -NH₂). Carbohydrates and fats contain only C, H, and O. The nitrogen content of proteins is approximately 16% by weight.",
         "h": "Nitrogen (N) = unique to proteins (not in carbohydrates or fats).",
@@ -866,7 +1370,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The basic structural units of proteins are called:",
-        "o": ["Fatty acids", "Monosaccharides", "Amino acids", "Nucleotides"],
+        "o": [
+          "Fatty acids",
+          "Monosaccharides",
+          "Amino acids",
+          "Nucleotides"
+        ],
         "a": 2,
         "e": "Amino acids are the building blocks (monomers) of proteins. About 20 different amino acids combine in various sequences and lengths to form all the diverse proteins in the body. They are linked by peptide bonds to form polypeptide chains.",
         "h": "Amino acids = building blocks (monomers) of all proteins.",
@@ -874,7 +1383,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Essential amino acids are amino acids that:",
-        "o": ["The body can synthesise in adequate quantities", "Must be obtained from the diet because the body cannot synthesise them (or not in sufficient amounts)", "Are only found in animal foods", "Are the same as non-essential amino acids"],
+        "o": [
+          "The body can synthesise in adequate quantities",
+          "Must be obtained from the diet because the body cannot synthesise them (or not in sufficient amounts)",
+          "Are only found in animal foods",
+          "Are the same as non-essential amino acids"
+        ],
         "a": 1,
         "e": "Essential (indispensable) amino acids cannot be synthesised by the body at all (or not in amounts adequate for normal growth). There are 9 essential amino acids for adults: lysine, methionine, tryptophan, leucine, isoleucine, valine, threonine, phenylalanine, and histidine.",
         "h": "Essential amino acids: MUST come from diet (9 for adults — body cannot make them).",
@@ -882,7 +1396,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A complete protein is one that:",
-        "o": ["Contains only non-essential amino acids", "Contains all essential amino acids in proportions adequate to support growth and maintenance", "Is found only in plant foods", "Contains the most calories"],
+        "o": [
+          "Contains only non-essential amino acids",
+          "Contains all essential amino acids in proportions adequate to support growth and maintenance",
+          "Is found only in plant foods",
+          "Contains the most calories"
+        ],
         "a": 1,
         "e": "Complete (high biological value) proteins contain all 9 essential amino acids in adequate proportions to support normal protein synthesis. Animal proteins (eggs, meat, fish, milk) are generally complete. Egg protein is the reference standard with a biological value of 100.",
         "h": "Complete protein: contains ALL essential amino acids in adequate proportions (animal foods).",
@@ -890,7 +1409,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Kwashiorkor is a nutritional disease characterised by all of the following EXCEPT:",
-        "o": ["Oedema (swelling — particularly abdomen and legs)", "Moon face (fluid retention)", "Extreme wasting ('skin and bone' appearance) with no oedema", "Hair changes (reddish discolouration in dark-haired children)"],
+        "o": [
+          "Oedema (swelling — particularly abdomen and legs)",
+          "Moon face (fluid retention)",
+          "Extreme wasting ('skin and bone' appearance) with no oedema",
+          "Hair changes (reddish discolouration in dark-haired children)"
+        ],
         "a": 2,
         "e": "Kwashiorkor features: oedema (fluid retention causing swollen belly and legs), moon face, muscle wasting under oedema, skin changes (dermatosis), hair discolouration, irritability. 'Extreme wasting with NO oedema' describes marasmus (starvation), not kwashiorkor.",
         "h": "Kwashiorkor = oedema + pot belly + skin/hair changes. Extreme wasting with NO oedema = marasmus.",
@@ -898,7 +1422,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Protein complementation between beans and rice improves protein quality because:",
-        "o": ["Both beans and rice have complete proteins", "Beans (high lysine, low methionine) and rice (high methionine, low lysine) compensate for each other's limiting amino acids", "Mixing them creates new amino acids", "Beans and rice both have the same amino acid profile"],
+        "o": [
+          "Both beans and rice have complete proteins",
+          "Beans (high lysine, low methionine) and rice (high methionine, low lysine) compensate for each other's limiting amino acids",
+          "Mixing them creates new amino acids",
+          "Beans and rice both have the same amino acid profile"
+        ],
         "a": 1,
         "e": "Beans lack methionine (limiting amino acid) but are rich in lysine. Rice lacks lysine (limiting amino acid) but is rich in methionine. Eaten together, the two incomplete plant proteins complement each other to provide a complete amino acid profile.",
         "h": "Beans (high lysine, low methionine) + Rice (high methionine, low lysine) = complete profile.",
@@ -906,7 +1435,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Marasmus, unlike kwashiorkor, is characterised by:",
-        "o": ["Oedema and pot belly", "Only protein deficiency with adequate energy", "Severe energy AND protein deficiency — extreme wasting, 'skin and bone' appearance, no oedema", "Hair discolouration and skin lesions only"],
+        "o": [
+          "Oedema and pot belly",
+          "Only protein deficiency with adequate energy",
+          "Severe energy AND protein deficiency — extreme wasting, 'skin and bone' appearance, no oedema",
+          "Hair discolouration and skin lesions only"
+        ],
         "a": 2,
         "e": "Marasmus results from chronic severe deficiency of BOTH energy and protein (starvation). Features: extreme wasting of muscle and fat, 'old man face,' prominent bones, no oedema, child is alert but lethargic. Energy deficiency is more prominent than in kwashiorkor.",
         "h": "Marasmus = energy + protein deficiency (starvation): extreme wasting, no oedema, 'skin and bone'.",
@@ -914,7 +1448,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Enzymes are biological catalysts made from protein. Their production is therefore a key function of proteins because:",
-        "o": ["Enzymes are made from carbohydrates", "Without enzymes, no metabolic reactions (digestion, energy metabolism, biosynthesis) could proceed at the rates needed for life", "Enzymes are only needed for digestion", "Enzymes are made from fats"],
+        "o": [
+          "Enzymes are made from carbohydrates",
+          "Without enzymes, no metabolic reactions (digestion, energy metabolism, biosynthesis) could proceed at the rates needed for life",
+          "Enzymes are only needed for digestion",
+          "Enzymes are made from fats"
+        ],
         "a": 1,
         "e": "Enzymes are protein catalysts that enable virtually every biochemical reaction in the body to occur rapidly at body temperature. Digestive enzymes (amylase, lipase, pepsin), metabolic enzymes, and regulatory enzymes are all proteins. Without adequate protein, enzyme production fails.",
         "h": "Enzymes = protein catalysts; without protein → no enzyme production → metabolic reactions slow/stop.",
@@ -922,7 +1461,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Haemoglobin (the iron-containing protein in red blood cells) demonstrates which function of proteins?",
-        "o": ["Structural/building function", "Energy provision", "Transport function — haemoglobin carries oxygen from lungs to all body tissues", "Hormone function"],
+        "o": [
+          "Structural/building function",
+          "Energy provision",
+          "Transport function — haemoglobin carries oxygen from lungs to all body tissues",
+          "Hormone function"
+        ],
         "a": 2,
         "e": "Haemoglobin is a transport protein — it binds oxygen in the lungs and releases it to tissues. It is a globular protein with four polypeptide chains and an iron-containing haem group. Albumin (blood protein) transports fatty acids, bilirubin, and drugs.",
         "h": "Haemoglobin = transport protein (carries oxygen from lungs to tissues).",
@@ -930,7 +1474,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Protein supplementation involves:",
-        "o": ["Eating only protein foods", "Adding a small amount of high-quality protein to a diet predominantly based on incomplete protein foods to improve overall protein quality", "Replacing all plant proteins with animal proteins", "Taking protein pills"],
+        "o": [
+          "Eating only protein foods",
+          "Adding a small amount of high-quality protein to a diet predominantly based on incomplete protein foods to improve overall protein quality",
+          "Replacing all plant proteins with animal proteins",
+          "Taking protein pills"
+        ],
         "a": 1,
         "e": "Supplementation improves protein quality by adding a small amount of complete protein (egg, fish, crayfish, milk) to a large amount of incomplete protein. For example, adding a small amount of crayfish to beans increases the overall amino acid quality of the meal.",
         "h": "Supplementation: add small amount of complete protein to boost quality of incomplete protein source.",
@@ -938,7 +1487,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Insulin and growth hormone, which regulate metabolism and growth respectively, are examples of proteins functioning as:",
-        "o": ["Structural proteins", "Transport proteins", "Hormones — chemical messengers produced from amino acids that regulate body functions", "Enzymes"],
+        "o": [
+          "Structural proteins",
+          "Transport proteins",
+          "Hormones — chemical messengers produced from amino acids that regulate body functions",
+          "Enzymes"
+        ],
         "a": 2,
         "e": "Insulin (regulates blood glucose), growth hormone (stimulates growth), glucagon (raises blood glucose), and many other hormones are proteins (or peptides derived from amino acids). Their production requires adequate dietary protein.",
         "h": "Insulin and growth hormone = protein hormones (chemical messengers regulating body functions).",
@@ -946,7 +1500,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Antibodies (immunoglobulins) that fight infections are proteins. Their production depends on:",
-        "o": ["Carbohydrate intake only", "Adequate dietary protein intake — without protein, the body cannot produce sufficient antibodies", "Fat intake only", "Water intake only"],
+        "o": [
+          "Carbohydrate intake only",
+          "Adequate dietary protein intake — without protein, the body cannot produce sufficient antibodies",
+          "Fat intake only",
+          "Water intake only"
+        ],
         "a": 1,
         "e": "Antibodies are complex protein molecules (immunoglobulins) produced by B lymphocytes to neutralise pathogens. Protein malnutrition (especially kwashiorkor) severely impairs immune function — children with kwashiorkor have significantly reduced antibody production.",
         "h": "Antibodies = proteins; protein malnutrition → impaired immunity (reduced antibody production).",
@@ -954,7 +1513,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The limiting amino acid in a protein food refers to:",
-        "o": ["The amino acid present in highest amount", "The essential amino acid present in the lowest proportion relative to the body's needs — it limits the use of other amino acids for protein synthesis", "An amino acid that causes disease", "The most important amino acid"],
+        "o": [
+          "The amino acid present in highest amount",
+          "The essential amino acid present in the lowest proportion relative to the body's needs — it limits the use of other amino acids for protein synthesis",
+          "An amino acid that causes disease",
+          "The most important amino acid"
+        ],
         "a": 1,
         "e": "The limiting amino acid determines the biological value of a protein. If lysine is the limiting amino acid (in wheat), the body can only make protein up to the level that lysine allows — other amino acids in excess cannot be used for protein synthesis and are deaminated.",
         "h": "Limiting amino acid = essential amino acid in lowest proportion → limits overall protein synthesis.",
@@ -962,7 +1526,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which of the following foods is classified as providing complete protein?",
-        "o": ["Cassava (starchy tuber)", "Maize (cereal grain)", "Egg (contains all 9 essential amino acids — reference protein with BV of 100)", "Yam (starchy tuber)"],
+        "o": [
+          "Cassava (starchy tuber)",
+          "Maize (cereal grain)",
+          "Egg (contains all 9 essential amino acids — reference protein with BV of 100)",
+          "Yam (starchy tuber)"
+        ],
         "a": 2,
         "e": "Egg protein is the reference standard for protein quality (biological value = 100) — it contains all 9 essential amino acids in ideal proportions. Cassava, maize, and yam are primarily carbohydrate foods with very little protein.",
         "h": "Egg = complete protein (biological value 100 — reference standard for protein quality).",
@@ -970,7 +1539,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Protein-Energy Malnutrition (PEM) is a spectrum that includes:",
-        "o": ["Only kwashiorkor", "Only marasmus", "Both kwashiorkor (protein deficiency) and marasmus (energy + protein deficiency), and intermediate forms", "Only obesity"],
+        "o": [
+          "Only kwashiorkor",
+          "Only marasmus",
+          "Both kwashiorkor (protein deficiency) and marasmus (energy + protein deficiency), and intermediate forms",
+          "Only obesity"
+        ],
         "a": 2,
         "e": "PEM encompasses the range of nutritional deficiency conditions from mild undernutrition to severe forms: kwashiorkor (predominantly protein deficiency), marasmus (severe energy + protein deficiency), and marasmic-kwashiorkor (combined features). It is the most serious form of malnutrition globally.",
         "h": "PEM = spectrum including kwashiorkor, marasmus, and intermediate forms.",
@@ -978,7 +1552,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Collagen, the most abundant protein in the human body, provides which function?",
-        "o": ["Transport of oxygen", "Catalysis of biochemical reactions", "Structural support — gives strength and flexibility to skin, tendons, ligaments, cartilage, and bone", "Immune defence"],
+        "o": [
+          "Transport of oxygen",
+          "Catalysis of biochemical reactions",
+          "Structural support — gives strength and flexibility to skin, tendons, ligaments, cartilage, and bone",
+          "Immune defence"
+        ],
         "a": 2,
         "e": "Collagen is a fibrous structural protein — it provides the structural framework for connective tissues: skin, tendons, ligaments, cartilage, and bone. Vitamin C is required for its synthesis. Scurvy (Vitamin C deficiency) impairs collagen formation.",
         "h": "Collagen = structural protein (strength/flexibility of skin, tendons, ligaments, bone).",
@@ -986,7 +1565,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Adding a raw egg to children's porridge is an example of which protein quality improvement strategy?",
-        "o": ["Protein complementation", "Protein supplementation (adding complete protein egg to improve incomplete protein of cereal porridge)", "Protein denaturation", "Protein catabolism"],
+        "o": [
+          "Protein complementation",
+          "Protein supplementation (adding complete protein egg to improve incomplete protein of cereal porridge)",
+          "Protein denaturation",
+          "Protein catabolism"
+        ],
         "a": 1,
         "e": "Adding egg (complete protein — contains all essential amino acids) to cereal porridge (incomplete plant protein) is supplementation — the small amount of complete egg protein improves the amino acid profile of the larger amount of cereal protein.",
         "h": "Adding egg to porridge = protein supplementation (complete protein improves incomplete cereal protein quality).",
@@ -994,7 +1578,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "When proteins are used as an energy source, they yield:",
-        "o": ["9 kcal/g (same as fat)", "4 kcal/g (same as carbohydrate)", "2 kcal/g", "7 kcal/g"],
+        "o": [
+          "9 kcal/g (same as fat)",
+          "4 kcal/g (same as carbohydrate)",
+          "2 kcal/g",
+          "7 kcal/g"
+        ],
         "a": 1,
         "e": "Protein yields approximately 4 kcal/g when oxidised for energy — the same as carbohydrates. Using protein for energy is metabolically expensive and wasteful — amino acids must first be deaminated (nitrogen removed as urea) before the carbon skeleton is oxidised.",
         "h": "Protein as energy = 4 kcal/g (same as carbohydrate; using protein for energy is wasteful).",
@@ -1002,7 +1591,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The oedema (fluid retention and swelling) seen in kwashiorkor is caused by:",
-        "o": ["Excess water intake", "Reduced blood protein (albumin) levels — insufficient albumin cannot maintain osmotic pressure, allowing fluid to leak into tissues", "Excess fat intake", "Vitamin C deficiency"],
+        "o": [
+          "Excess water intake",
+          "Reduced blood protein (albumin) levels — insufficient albumin cannot maintain osmotic pressure, allowing fluid to leak into tissues",
+          "Excess fat intake",
+          "Vitamin C deficiency"
+        ],
         "a": 1,
         "e": "Oedema in kwashiorkor results from hypoalbuminaemia (low blood albumin). Albumin maintains oncotic pressure in blood vessels. When albumin is low, osmotic pressure decreases, causing fluid to leak from capillaries into tissue spaces — causing the characteristic swelling.",
         "h": "Kwashiorkor oedema: low blood albumin → reduced oncotic pressure → fluid leaks into tissues.",
@@ -1010,7 +1604,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which local Nigerian food has the highest protein content per unit weight?",
-        "o": ["Yam", "Garri", "Soybeans (35-40% protein — highest protein legume)", "Cassava"],
+        "o": [
+          "Yam",
+          "Garri",
+          "Soybeans (35-40% protein — highest protein legume)",
+          "Cassava"
+        ],
         "a": 2,
         "e": "Soybeans have the highest protein content of common Nigerian foods — approximately 35-40% protein by weight. They also contain high-quality protein (complete, with all essential amino acids). Yam and garri/cassava are primarily carbohydrate foods with very low protein (<3%).",
         "h": "Soybeans = highest protein content in Nigerian foods (35-40% protein, complete quality).",
@@ -1027,7 +1626,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "The main physical difference between fats and oils is that at room temperature:",
-        "o": ["Oils are solid; fats are liquid", "Both fats and oils are always solid", "Fats are solid; oils are liquid", "Both fats and oils are always liquid"],
+        "o": [
+          "Oils are solid; fats are liquid",
+          "Both fats and oils are always solid",
+          "Fats are solid; oils are liquid",
+          "Both fats and oils are always liquid"
+        ],
         "a": 2,
         "e": "This is the fundamental distinction: fats are SOLID at room temperature (butter, lard, tallow, coconut fat) while oils are LIQUID at room temperature (palm oil, groundnut oil, sunflower oil). This is due to different fatty acid composition.",
         "h": "Fats = SOLID at room temperature; oils = LIQUID at room temperature.",
@@ -1035,7 +1639,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Fats are predominantly solid because they contain mainly:",
-        "o": ["Polyunsaturated fatty acids", "Monounsaturated fatty acids", "Saturated fatty acids (no double bonds — tightly packed, higher melting point)", "Trans fatty acids"],
+        "o": [
+          "Polyunsaturated fatty acids",
+          "Monounsaturated fatty acids",
+          "Saturated fatty acids (no double bonds — tightly packed, higher melting point)",
+          "Trans fatty acids"
+        ],
         "a": 2,
         "e": "Saturated fatty acids have no carbon-carbon double bonds — their chains are straight and can pack tightly together, resulting in higher melting points and solid state at room temperature. Animal fats (butter, lard) are predominantly saturated.",
         "h": "Fats solid because: mainly saturated fatty acids (no double bonds → tight packing → solid at room temp).",
@@ -1043,7 +1652,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Fats and oils yield how many kilocalories per gram?",
-        "o": ["4 kcal/g (same as carbohydrates)", "7 kcal/g", "9 kcal/g — more than twice the energy per gram of carbohydrates or protein", "2 kcal/g"],
+        "o": [
+          "4 kcal/g (same as carbohydrates)",
+          "7 kcal/g",
+          "9 kcal/g — more than twice the energy per gram of carbohydrates or protein",
+          "2 kcal/g"
+        ],
         "a": 2,
         "e": "Fats and oils are the most concentrated energy source — providing 9 kcal/g (37 kJ/g). This is more than twice the energy of carbohydrates (4 kcal/g) and proteins (4 kcal/g). This high energy density explains why fat-rich foods are so energy-dense.",
         "h": "Fat/oil = 9 kcal/g (most concentrated energy source — more than double carbs/protein at 4 kcal/g).",
@@ -1051,7 +1665,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Essential fatty acids are fatty acids that:",
-        "o": ["Can be synthesised by the body from other fats", "Are found only in animal foods", "Must be obtained from the diet — the body cannot synthesise them (linoleic acid/omega-6; alpha-linolenic acid/omega-3)", "Are only important for cooking"],
+        "o": [
+          "Can be synthesised by the body from other fats",
+          "Are found only in animal foods",
+          "Must be obtained from the diet — the body cannot synthesise them (linoleic acid/omega-6; alpha-linolenic acid/omega-3)",
+          "Are only important for cooking"
+        ],
         "a": 2,
         "e": "The two essential fatty acids humans MUST obtain from diet are: linoleic acid (omega-6 — found in vegetable oils) and alpha-linolenic acid (omega-3 — found in flaxseed, fatty fish, chia seeds). Both are needed for brain development, cell membranes, and regulation of inflammation.",
         "h": "Essential fatty acids: linoleic acid (omega-6) and alpha-linolenic acid (omega-3) — must come from diet.",
@@ -1059,7 +1678,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Fat-soluble vitamins (A, D, E, K) require fat in the diet because:",
-        "o": ["Fat protects vitamins from decomposing", "These vitamins are soluble in fat/oil and require dietary fat for their absorption in the intestine", "Fat increases vitamin production in the body", "Fat prevents vitamin toxicity"],
+        "o": [
+          "Fat protects vitamins from decomposing",
+          "These vitamins are soluble in fat/oil and require dietary fat for their absorption in the intestine",
+          "Fat increases vitamin production in the body",
+          "Fat prevents vitamin toxicity"
+        ],
         "a": 1,
         "e": "Fat-soluble vitamins dissolve in fat, not water. They require fat (lipids) in the intestinal contents to form mixed micelles for absorption. A person eating a very low-fat diet may not absorb sufficient fat-soluble vitamins even if foods containing them are consumed.",
         "h": "Fat-soluble vitamins (A, D, E, K): require dietary fat for intestinal absorption.",
@@ -1067,7 +1691,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which type of fatty acid is MOST harmful to cardiovascular health?",
-        "o": ["Monounsaturated fatty acids (MUFA)", "Polyunsaturated fatty acids (PUFA)", "Omega-3 fatty acids", "Trans fatty acids (artificially hydrogenated) — raise LDL and lower HDL cholesterol"],
+        "o": [
+          "Monounsaturated fatty acids (MUFA)",
+          "Polyunsaturated fatty acids (PUFA)",
+          "Omega-3 fatty acids",
+          "Trans fatty acids (artificially hydrogenated) — raise LDL and lower HDL cholesterol"
+        ],
         "a": 3,
         "e": "Trans fatty acids (from industrial partial hydrogenation of vegetable oils, found in margarine and processed foods) are the most harmful: they raise LDL (bad cholesterol), lower HDL (good cholesterol), and promote inflammation — increasing cardiovascular disease risk more than saturated fats.",
         "h": "Trans fats = most harmful (raise LDL, lower HDL — worst for cardiovascular health).",
@@ -1075,7 +1704,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The chemical structure of a triglyceride (the main form of dietary fat) consists of:",
-        "o": ["Two fatty acids attached to a glucose molecule", "One glycerol molecule with three fatty acid chains", "Three glucose molecules bonded together", "One fatty acid and one amino acid"],
+        "o": [
+          "Two fatty acids attached to a glucose molecule",
+          "One glycerol molecule with three fatty acid chains",
+          "Three glucose molecules bonded together",
+          "One fatty acid and one amino acid"
+        ],
         "a": 1,
         "e": "Triglycerides (triacylglycerols) are the main form of fat in food and in the body. Structure: one glycerol (3-carbon alcohol) with three fatty acid chains attached by ester bonds. They are the main storage form of energy in adipose tissue.",
         "h": "Triglyceride = glycerol + 3 fatty acid chains (ester bonds) — main dietary and storage fat.",
@@ -1083,7 +1717,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Subcutaneous fat (fat under the skin) serves which important function?",
-        "o": ["Providing direct energy during exercise", "Insulation — reducing heat loss from the body and protecting against cold", "Digesting food", "Producing blood cells"],
+        "o": [
+          "Providing direct energy during exercise",
+          "Insulation — reducing heat loss from the body and protecting against cold",
+          "Digesting food",
+          "Producing blood cells"
+        ],
         "a": 1,
         "e": "Subcutaneous (under-skin) fat acts as thermal insulation — reducing heat loss from the body to the environment. This is why very thin people feel cold more easily. It also provides some cushioning and mechanical protection.",
         "h": "Subcutaneous fat = insulation (reduces heat loss, protects against cold).",
@@ -1091,7 +1730,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Omega-3 fatty acids (found in fatty fish, flaxseed) are beneficial because they:",
-        "o": ["Raise LDL (bad) cholesterol levels", "Have anti-inflammatory effects, reduce triglycerides, and lower cardiovascular disease risk", "Are the same as saturated fats", "Cause weight gain exclusively"],
+        "o": [
+          "Raise LDL (bad) cholesterol levels",
+          "Have anti-inflammatory effects, reduce triglycerides, and lower cardiovascular disease risk",
+          "Are the same as saturated fats",
+          "Cause weight gain exclusively"
+        ],
         "a": 1,
         "e": "Omega-3 fatty acids (EPA and DHA from fish; ALA from plants) reduce inflammation, lower blood triglycerides, slightly lower blood pressure, support brain development, and reduce the risk of cardiovascular disease and certain cancers.",
         "h": "Omega-3: anti-inflammatory, reduces triglycerides, lowers CVD risk, supports brain development.",
@@ -1099,7 +1743,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Cholesterol, found in animal foods, is important in the body because it is:",
-        "o": ["Purely harmful with no bodily function", "A precursor for steroid hormones (sex hormones, cortisol), Vitamin D, and bile acids — essential for normal physiology", "Only needed for energy", "A type of carbohydrate"],
+        "o": [
+          "Purely harmful with no bodily function",
+          "A precursor for steroid hormones (sex hormones, cortisol), Vitamin D, and bile acids — essential for normal physiology",
+          "Only needed for energy",
+          "A type of carbohydrate"
+        ],
         "a": 1,
         "e": "Cholesterol is essential despite its negative reputation: it is a precursor for steroid hormones (oestrogen, testosterone, cortisol), Vitamin D synthesis, and bile acids (needed for fat digestion). The body makes its own cholesterol; dietary cholesterol adds to endogenous production.",
         "h": "Cholesterol essential: precursor for sex hormones, cortisol, Vitamin D, and bile acids.",
@@ -1107,7 +1756,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Palm oil is classified as an oil (not fat) despite being semi-solid at Nigerian temperatures because:",
-        "o": ["It is mainly saturated", "It is predominantly plant-derived with mixed saturated and unsaturated fatty acids, though more liquid than solid animal fats", "It contains no fatty acids", "It is always solid everywhere in the world"],
+        "o": [
+          "It is mainly saturated",
+          "It is predominantly plant-derived with mixed saturated and unsaturated fatty acids, though more liquid than solid animal fats",
+          "It contains no fatty acids",
+          "It is always solid everywhere in the world"
+        ],
         "a": 1,
         "e": "Palm oil is technically an oil (from palm fruit) with a mixture of saturated (palmitic acid) and unsaturated fatty acids. It appears semi-solid at cool temperatures but becomes fully liquid when warmed. Its high saturated fat content makes it more solid than most vegetable oils.",
         "h": "Palm oil = plant oil (semi-solid at room temperature; mixed saturated + unsaturated fatty acids).",
@@ -1115,7 +1769,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A diet completely devoid of fat would result in which deficiency?",
-        "o": ["Protein deficiency only", "Deficiencies of fat-soluble vitamins (A, D, E, K) and essential fatty acids (linoleic, alpha-linolenic acid)", "Carbohydrate deficiency only", "No deficiency — fat is not essential"],
+        "o": [
+          "Protein deficiency only",
+          "Deficiencies of fat-soluble vitamins (A, D, E, K) and essential fatty acids (linoleic, alpha-linolenic acid)",
+          "Carbohydrate deficiency only",
+          "No deficiency — fat is not essential"
+        ],
         "a": 1,
         "e": "A fat-free diet causes: fat-soluble vitamin deficiencies (A, D, E, K cannot be absorbed without fat), essential fatty acid deficiency (dry scaly skin, impaired brain development, poor wound healing), and loss of essential fat-based structural components of cells.",
         "h": "Fat-free diet → fat-soluble vitamin deficiencies + essential fatty acid deficiency.",
@@ -1123,7 +1782,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Hydrogenation of vegetable oils (converting oils to solid fat for margarine production) creates:",
-        "o": ["More healthy unsaturated fats", "Omega-3 fatty acids", "Trans fatty acids — an artificially saturated form that is harmful to cardiovascular health", "Essential fatty acids"],
+        "o": [
+          "More healthy unsaturated fats",
+          "Omega-3 fatty acids",
+          "Trans fatty acids — an artificially saturated form that is harmful to cardiovascular health",
+          "Essential fatty acids"
+        ],
         "a": 2,
         "e": "Industrial partial hydrogenation converts liquid unsaturated oils to more solid fats by adding hydrogen atoms to double bonds. However, this process creates trans fatty acids — artificially saturated fats that are worse than natural saturated fats for cardiovascular health.",
         "h": "Hydrogenation of oils → trans fatty acids (harmful to heart health — worst type of fat).",
@@ -1131,7 +1795,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Adipose tissue (body fat reserves) serves which primary nutritional function?",
-        "o": ["Protein storage", "Long-term energy storage — triglycerides stored in fat cells can be mobilised when dietary energy is insufficient", "Vitamin C storage", "Iron storage"],
+        "o": [
+          "Protein storage",
+          "Long-term energy storage — triglycerides stored in fat cells can be mobilised when dietary energy is insufficient",
+          "Vitamin C storage",
+          "Iron storage"
+        ],
         "a": 1,
         "e": "Adipose tissue is the body's long-term energy reserve — triglycerides stored in fat cells (adipocytes) can be released as fatty acids during periods of fasting, starvation, or prolonged exercise. Unlike glycogen (limited), fat stores can hold virtually unlimited energy.",
         "h": "Adipose tissue = long-term energy storage (triglycerides mobilised during fasting/exercise).",
@@ -1139,7 +1808,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Cell membranes contain phospholipids (a type of lipid). This demonstrates which function of fats?",
-        "o": ["Energy provision", "Insulation function", "Structural function — phospholipids form the bilayer structure of all cell membranes", "Vitamin transport function"],
+        "o": [
+          "Energy provision",
+          "Insulation function",
+          "Structural function — phospholipids form the bilayer structure of all cell membranes",
+          "Vitamin transport function"
+        ],
         "a": 2,
         "e": "Phospholipids form the phospholipid bilayer — the basic structural component of all cell membranes. They regulate what enters and exits cells. This structural role is essential for all cells and demonstrates why a minimum amount of fat is required in the diet.",
         "h": "Phospholipids form cell membrane bilayer = structural function of fats/lipids.",
@@ -1147,7 +1821,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The difference in fatty acid composition explains why butter (from cows) is solid while olive oil (from olives) is liquid because:",
-        "o": ["Butter has more calories", "Butter is mainly saturated (no double bonds → solid); olive oil is mainly monounsaturated (one double bond → liquid)", "Olive oil is heated to make it liquid", "Butter is a plant product; olive oil is an animal product"],
+        "o": [
+          "Butter has more calories",
+          "Butter is mainly saturated (no double bonds → solid); olive oil is mainly monounsaturated (one double bond → liquid)",
+          "Olive oil is heated to make it liquid",
+          "Butter is a plant product; olive oil is an animal product"
+        ],
         "a": 1,
         "e": "Butter (from animal milk) is predominantly saturated (palmitic, stearic acids) — no double bonds, tight packing, solid. Olive oil is predominantly monounsaturated (oleic acid — one double bond) — less tight packing, lower melting point, liquid. Double bonds prevent close packing.",
         "h": "Butter = saturated → solid; olive oil = monounsaturated → liquid (double bonds reduce melting point).",
@@ -1155,7 +1834,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Saturated fatty acids are described as harmful to cardiovascular health because they:",
-        "o": ["Reduce the total fat in the blood", "Raise LDL (low-density lipoprotein) cholesterol levels, which increases risk of atherosclerosis and coronary heart disease", "Lower blood pressure directly", "Have no effect on blood cholesterol"],
+        "o": [
+          "Reduce the total fat in the blood",
+          "Raise LDL (low-density lipoprotein) cholesterol levels, which increases risk of atherosclerosis and coronary heart disease",
+          "Lower blood pressure directly",
+          "Have no effect on blood cholesterol"
+        ],
         "a": 1,
         "e": "Saturated fatty acids (particularly palmitic, lauric, and myristic acids) raise LDL (bad) cholesterol by downregulating LDL receptors in the liver. Elevated LDL promotes atherosclerotic plaque formation in arteries, increasing risk of heart attack and stroke.",
         "h": "Saturated fats raise LDL (bad) cholesterol → promotes atherosclerosis → increases CVD risk.",
@@ -1163,7 +1847,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The visibility of fat as a ring around red meat (marbling) or around organs represents which type of fat?",
-        "o": ["Structural fat (in cell membranes)", "Subcutaneous fat", "Essential fat (for hormones)", "Reserve/storage fat (depot fat in adipose tissue around organs and under skin)"],
+        "o": [
+          "Structural fat (in cell membranes)",
+          "Subcutaneous fat",
+          "Essential fat (for hormones)",
+          "Reserve/storage fat (depot fat in adipose tissue around organs and under skin)"
+        ],
         "a": 3,
         "e": "The visible fat marbling in meat and the fat surrounding organs (kidneys, heart) is depot/storage fat — triglycerides stored in adipose cells around organs for energy storage and protection. Intramuscular fat (marbling) improves meat flavour and tenderness.",
         "h": "Visible fat marbling in meat/around organs = depot/storage fat (triglycerides in adipose tissue).",
@@ -1171,7 +1860,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Dry, scaly skin and impaired brain development in infants can result from deficiency of:",
-        "o": ["Vitamin C", "Iron", "Essential fatty acids (linoleic acid and alpha-linolenic acid)", "Calcium"],
+        "o": [
+          "Vitamin C",
+          "Iron",
+          "Essential fatty acids (linoleic acid and alpha-linolenic acid)",
+          "Calcium"
+        ],
         "a": 2,
         "e": "Essential fatty acid deficiency causes: dry, scaly skin (impaired skin barrier), poor wound healing, and impaired brain/neural development in infants and children. Omega-3 and omega-6 fatty acids are critical for brain structure and function.",
         "h": "Dry scaly skin + impaired brain development = essential fatty acid deficiency (omega-3, omega-6).",
@@ -1179,7 +1873,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Groundnut (peanut) oil is classified as a vegetable oil because it:",
-        "o": ["Is solid at room temperature", "Is liquid at room temperature and predominantly unsaturated (mainly monounsaturated oleic acid)", "Contains mainly saturated fatty acids", "Is made from an animal source"],
+        "o": [
+          "Is solid at room temperature",
+          "Is liquid at room temperature and predominantly unsaturated (mainly monounsaturated oleic acid)",
+          "Contains mainly saturated fatty acids",
+          "Is made from an animal source"
+        ],
         "a": 1,
         "e": "Groundnut oil is liquid at room temperature — predominantly monounsaturated (oleic acid, ~47%) and polyunsaturated (linoleic acid, ~30%) with some saturated fat. Its predominantly unsaturated composition makes it liquid and from a plant (legume) source.",
         "h": "Groundnut oil = vegetable oil (liquid at room temp; mainly monounsaturated oleic acid).",
@@ -1196,7 +1895,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "Fat-soluble vitamins are stored in the body's fat tissues and liver. They are:",
-        "o": ["Vitamins B and C", "Vitamins A, D, E, and K", "All vitamins can be stored", "Only Vitamin A and D"],
+        "o": [
+          "Vitamins B and C",
+          "Vitamins A, D, E, and K",
+          "All vitamins can be stored",
+          "Only Vitamin A and D"
+        ],
         "a": 1,
         "e": "The four fat-soluble vitamins are A, D, E, and K (ADEK). They dissolve in fat, can be stored in the liver and adipose tissue, and do not need to be consumed every day. Excess accumulation can lead to toxicity (hypervitaminosis).",
         "h": "Fat-soluble vitamins = A, D, E, K (ADEK) — stored in body fat and liver.",
@@ -1204,7 +1908,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Vitamin A deficiency causes which specific eye condition that is a leading cause of preventable blindness?",
-        "o": ["Rickets", "Beriberi", "Night blindness and xerophthalmia (dry, damaged cornea)", "Scurvy"],
+        "o": [
+          "Rickets",
+          "Beriberi",
+          "Night blindness and xerophthalmia (dry, damaged cornea)",
+          "Scurvy"
+        ],
         "a": 2,
         "e": "Vitamin A is essential for rhodopsin production (visual pigment in retinal rods for night vision). Deficiency causes night blindness (inability to see in dim light) and xerophthalmia (dry eyes, Bitot's spots, corneal ulceration, blindness). It is the leading cause of preventable blindness in children.",
         "h": "Vitamin A deficiency: night blindness → xerophthalmia → preventable blindness.",
@@ -1212,7 +1921,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Pellagra, caused by Vitamin B3 (niacin) deficiency, is characterised by the '3 Ds' which are:",
-        "o": ["Diabetes, Dizziness, Depression", "Dermatitis, Diarrhoea, Dementia", "Deafness, Dental problems, Dry eyes", "Dysentery, Depression, Dehydration"],
+        "o": [
+          "Diabetes, Dizziness, Depression",
+          "Dermatitis, Diarrhoea, Dementia",
+          "Deafness, Dental problems, Dry eyes",
+          "Dysentery, Depression, Dehydration"
+        ],
         "a": 1,
         "e": "Pellagra's 3 Ds: Dermatitis (photosensitive skin rash on sun-exposed areas), Diarrhoea (gastrointestinal symptoms), and Dementia (neurological symptoms, confusion, memory loss). A fourth D is sometimes added: Death (if untreated). Common in maize-based diets.",
         "h": "Pellagra (Vitamin B3/niacin deficiency) = 3 Ds: Dermatitis, Diarrhoea, Dementia.",
@@ -1220,7 +1934,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Scurvy is caused by deficiency of which vitamin, and its primary symptom is:",
-        "o": ["Vitamin D deficiency — bone pain", "Vitamin A deficiency — night blindness", "Vitamin C (ascorbic acid) deficiency — bleeding gums, poor wound healing, bruising", "Vitamin K deficiency — excess bleeding"],
+        "o": [
+          "Vitamin D deficiency — bone pain",
+          "Vitamin A deficiency — night blindness",
+          "Vitamin C (ascorbic acid) deficiency — bleeding gums, poor wound healing, bruising",
+          "Vitamin K deficiency — excess bleeding"
+        ],
         "a": 2,
         "e": "Vitamin C is essential for collagen synthesis. Scurvy (Vitamin C deficiency) causes: bleeding gums, loose teeth, poor wound healing, bruising, joint pain, and fatigue. Collagen is the cement of connective tissues; without adequate Vitamin C, blood vessels and tissues become fragile.",
         "h": "Scurvy = Vitamin C deficiency: bleeding gums, poor wound healing (impaired collagen synthesis).",
@@ -1228,7 +1947,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Rickets in children and osteomalacia in adults are both caused by deficiency of:",
-        "o": ["Vitamin A", "Vitamin B1 (thiamine)", "Vitamin D (calciferol)", "Vitamin C"],
+        "o": [
+          "Vitamin A",
+          "Vitamin B1 (thiamine)",
+          "Vitamin D (calciferol)",
+          "Vitamin C"
+        ],
         "a": 2,
         "e": "Vitamin D (calciferol) is essential for calcium and phosphorus absorption from the gut. Deficiency causes: in children — rickets (soft, bowed bones, pot belly); in adults — osteomalacia (soft bones, pain). Vitamin D is mainly obtained from sunlight on skin.",
         "h": "Vitamin D deficiency: rickets (children — soft bones) and osteomalacia (adults).",
@@ -1236,7 +1960,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Beriberi is caused by deficiency of which vitamin, and it primarily affects:",
-        "o": ["Vitamin B2 — primarily skin", "Vitamin B1 (thiamine) — primarily the nervous system and heart", "Vitamin B9 (folate) — primarily blood", "Vitamin B12 — primarily kidneys"],
+        "o": [
+          "Vitamin B2 — primarily skin",
+          "Vitamin B1 (thiamine) — primarily the nervous system and heart",
+          "Vitamin B9 (folate) — primarily blood",
+          "Vitamin B12 — primarily kidneys"
+        ],
         "a": 1,
         "e": "Beriberi results from Vitamin B1 (thiamine) deficiency. Thiamine is a coenzyme in carbohydrate metabolism. Wet beriberi affects the heart (heart failure, oedema); dry beriberi affects the peripheral nervous system (numbness, weakness, paralysis).",
         "h": "Beriberi = Vitamin B1 (thiamine) deficiency: wet (heart) and dry (nervous system) forms.",
@@ -1244,7 +1973,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Iron deficiency anaemia is characterised by:",
-        "o": ["Enlarged thyroid gland", "Bowed legs and soft bones", "Pallor (pale skin/conjunctiva), fatigue, weakness, and reduced physical capacity due to insufficient haemoglobin", "Bleeding gums"],
+        "o": [
+          "Enlarged thyroid gland",
+          "Bowed legs and soft bones",
+          "Pallor (pale skin/conjunctiva), fatigue, weakness, and reduced physical capacity due to insufficient haemoglobin",
+          "Bleeding gums"
+        ],
         "a": 2,
         "e": "Iron deficiency anaemia results from insufficient iron for haemoglobin production. Haemoglobin carries oxygen; reduced haemoglobin means less oxygen delivery to tissues. Symptoms: pallor, fatigue, weakness, shortness of breath, poor concentration.",
         "h": "Iron deficiency anaemia: pallor, fatigue, weakness (insufficient haemoglobin for oxygen transport).",
@@ -1252,7 +1986,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Goitre (enlarged thyroid gland) is caused by deficiency of which mineral?",
-        "o": ["Iron", "Calcium", "Iodine", "Zinc"],
+        "o": [
+          "Iron",
+          "Calcium",
+          "Iodine",
+          "Zinc"
+        ],
         "a": 2,
         "e": "Iodine is essential for synthesis of thyroid hormones (thyroxine, T₃ and T₄). Iodine deficiency causes the thyroid gland to enlarge (goitre) as it attempts to capture more iodine. Severe iodine deficiency during pregnancy causes cretinism in babies.",
         "h": "Goitre = iodine deficiency (thyroid enlarges to trap more iodine for hormone synthesis).",
@@ -1260,7 +1999,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Vitamin D is unique among vitamins because it:",
-        "o": ["Is found only in animal foods", "Can be synthesised in the skin when exposed to ultraviolet light from sunlight", "Is water-soluble and excreted daily", "Is only needed by elderly people"],
+        "o": [
+          "Is found only in animal foods",
+          "Can be synthesised in the skin when exposed to ultraviolet light from sunlight",
+          "Is water-soluble and excreted daily",
+          "Is only needed by elderly people"
+        ],
         "a": 1,
         "e": "Vitamin D is unique: it is made in the skin when 7-dehydrocholesterol reacts with UV-B radiation from sunlight. This is the primary source for most people. In Nigeria, with abundant sunlight, deficiency should be rare — but indoor lifestyle, sun avoidance, and skin coverage reduce synthesis.",
         "h": "Vitamin D unique: synthesised in skin from sunlight UV-B (main source for most people).",
@@ -1268,7 +2012,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Folate (Vitamin B9) is especially important during pregnancy because:",
-        "o": ["It prevents morning sickness only", "Folate is essential for DNA synthesis and neural tube formation in the early embryo — deficiency causes spina bifida and anencephaly", "It prevents gestational diabetes", "It has no special importance in pregnancy"],
+        "o": [
+          "It prevents morning sickness only",
+          "Folate is essential for DNA synthesis and neural tube formation in the early embryo — deficiency causes spina bifida and anencephaly",
+          "It prevents gestational diabetes",
+          "It has no special importance in pregnancy"
+        ],
         "a": 1,
         "e": "Folate is critical for DNA synthesis and cell division — particularly important during rapid growth (pregnancy). Folate deficiency in the first weeks of pregnancy (before the woman often knows she is pregnant) causes neural tube defects (spina bifida, anencephaly). All women of reproductive age should take folic acid supplements.",
         "h": "Folate critical in pregnancy: essential for neural tube closure (deficiency → spina bifida).",
@@ -1276,7 +2025,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Calcium is critical for bone health, but Vitamin D is also needed for calcium absorption because:",
-        "o": ["Vitamin D is made from calcium", "Vitamin D stimulates the production of calcium-binding proteins in the intestine, enabling calcium absorption", "They are the same nutrient", "Vitamin D converts to calcium in the body"],
+        "o": [
+          "Vitamin D is made from calcium",
+          "Vitamin D stimulates the production of calcium-binding proteins in the intestine, enabling calcium absorption",
+          "They are the same nutrient",
+          "Vitamin D converts to calcium in the body"
+        ],
         "a": 1,
         "e": "Vitamin D (specifically its active form, calcitriol) stimulates the synthesis of calcium-binding proteins (calbindin) in intestinal cells that enable active absorption of calcium. Without adequate Vitamin D, only about 10-15% of dietary calcium is absorbed.",
         "h": "Vitamin D needed for calcium absorption (stimulates calcium-binding proteins in intestine).",
@@ -1284,7 +2038,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Water-soluble vitamins (B vitamins and Vitamin C) need to be consumed more regularly than fat-soluble vitamins because:",
-        "o": ["They provide more energy", "They are more expensive", "They are not stored in the body (except B12) and are excreted in urine — regular intake prevents depletion", "They are only found in animal foods"],
+        "o": [
+          "They provide more energy",
+          "They are more expensive",
+          "They are not stored in the body (except B12) and are excreted in urine — regular intake prevents depletion",
+          "They are only found in animal foods"
+        ],
         "a": 2,
         "e": "Water-soluble vitamins dissolve in water and excess amounts are excreted in urine — they cannot be stored for long periods (except Vitamin B12 which is stored in the liver for years). This means the diet must regularly provide them to maintain adequate body levels.",
         "h": "Water-soluble vitamins not stored (excreted in urine) → must be consumed regularly.",
@@ -1292,7 +2051,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Vitamin K is essential for blood clotting. Its deficiency would cause:",
-        "o": ["Night blindness", "Goitre", "Excessive bleeding and poor clotting — even minor wounds would not heal properly", "Pellagra"],
+        "o": [
+          "Night blindness",
+          "Goitre",
+          "Excessive bleeding and poor clotting — even minor wounds would not heal properly",
+          "Pellagra"
+        ],
         "a": 2,
         "e": "Vitamin K is a coenzyme needed for synthesis of clotting factors (II, VII, IX, X) in the liver. Deficiency causes impaired blood clotting: excessive bleeding from minor wounds, bruising, and haemorrhage. Vitamin K is given to newborns to prevent haemorrhagic disease.",
         "h": "Vitamin K deficiency: impaired blood clotting (excessive bleeding from wounds).",
@@ -1300,7 +2064,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Zinc deficiency in children causes:",
-        "o": ["Soft, bowed bones", "Poor wound healing, growth retardation, impaired immunity, and loss of taste and smell", "Night blindness", "Swollen thyroid gland"],
+        "o": [
+          "Soft, bowed bones",
+          "Poor wound healing, growth retardation, impaired immunity, and loss of taste and smell",
+          "Night blindness",
+          "Swollen thyroid gland"
+        ],
         "a": 1,
         "e": "Zinc is a cofactor for hundreds of enzymes involved in growth, immune function, DNA synthesis, and wound healing. Deficiency causes: growth retardation (stunting), impaired immune function, poor wound healing, dermatitis, and hypogeusia (impaired taste/smell).",
         "h": "Zinc deficiency: poor growth, impaired immunity, poor wound healing, loss of taste/smell.",
@@ -1308,7 +2077,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Vitamin C enhances iron absorption from plant foods. This is because:",
-        "o": ["Vitamin C and iron are chemically the same", "Vitamin C converts iron from the less absorbable ferric (Fe³⁺) form to the more absorbable ferrous (Fe²⁺) form", "Vitamin C increases stomach acid", "Vitamin C and iron are always found together in foods"],
+        "o": [
+          "Vitamin C and iron are chemically the same",
+          "Vitamin C converts iron from the less absorbable ferric (Fe³⁺) form to the more absorbable ferrous (Fe²⁺) form",
+          "Vitamin C increases stomach acid",
+          "Vitamin C and iron are always found together in foods"
+        ],
         "a": 1,
         "e": "Non-haem iron (from plant foods) is mostly in the ferric (Fe³⁺) form which is poorly absorbed. Vitamin C (a reducing agent) converts ferric to ferrous (Fe²⁺) iron, which is much more bioavailable. Drinking orange juice with iron-rich plant foods increases iron absorption.",
         "h": "Vitamin C enhances plant iron absorption: converts Fe³⁺ (poorly absorbed) to Fe²⁺ (better absorbed).",
@@ -1316,7 +2090,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Vitamin B12 (cobalamin) is found almost exclusively in animal foods. This means which group is at high risk of B12 deficiency?",
-        "o": ["Heavy meat eaters", "People who drink too much water", "Strict vegetarians/vegans who consume no animal products", "People who exercise vigorously"],
+        "o": [
+          "Heavy meat eaters",
+          "People who drink too much water",
+          "Strict vegetarians/vegans who consume no animal products",
+          "People who exercise vigorously"
+        ],
         "a": 2,
         "e": "Vitamin B12 is found only in animal foods (meat, fish, eggs, dairy) — plants contain no B12. Strict vegans who avoid all animal products must supplement with B12 or consume B12-fortified foods. B12 deficiency causes pernicious anaemia and permanent nerve damage.",
         "h": "B12 only in animal foods → vegans/strict vegetarians at risk of B12 deficiency (must supplement).",
@@ -1324,7 +2103,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which mineral, found in table salt and seafood, is added to salt ('iodised salt') specifically to prevent:",
-        "o": ["Anaemia", "Osteoporosis", "Goitre and cretinism (iodine deficiency disorders)", "Rickets"],
+        "o": [
+          "Anaemia",
+          "Osteoporosis",
+          "Goitre and cretinism (iodine deficiency disorders)",
+          "Rickets"
+        ],
         "a": 2,
         "e": "Iodisation of salt is the most effective public health intervention for iodine deficiency disorders (IDD). Adding iodine to salt prevents goitre (enlarged thyroid) and cretinism (severe intellectual disability in children born to iodine-deficient mothers).",
         "h": "Iodised salt: prevents goitre and cretinism (iodine deficiency disorders).",
@@ -1332,7 +2116,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Ariboflavinosis (riboflavin/Vitamin B2 deficiency) is characterised by:",
-        "o": ["Bowed legs and soft bones", "Bleeding gums and bruising", "Angular stomatitis (cracked corners of mouth), sore tongue, corneal vascularisation", "Oedema and pot belly"],
+        "o": [
+          "Bowed legs and soft bones",
+          "Bleeding gums and bruising",
+          "Angular stomatitis (cracked corners of mouth), sore tongue, corneal vascularisation",
+          "Oedema and pot belly"
+        ],
         "a": 2,
         "e": "Ariboflavinosis features: angular stomatitis (cracks at corners of mouth), cheilosis (sore, cracked lips), glossitis (red, swollen tongue), corneal vascularisation (eye sensitivity, photophobia). Riboflavin is needed for flavoproteins in energy metabolism.",
         "h": "Ariboflavinosis (B2 deficiency): cracked corners of mouth, sore tongue, eye sensitivity.",
@@ -1340,7 +2129,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Calcium works with phosphorus to form hydroxyapatite. This mineral compound forms the hard matrix of:",
-        "o": ["Muscle fibres", "Red blood cells", "Bones and teeth (calcium phosphate gives them hardness and strength)", "Blood plasma"],
+        "o": [
+          "Muscle fibres",
+          "Red blood cells",
+          "Bones and teeth (calcium phosphate gives them hardness and strength)",
+          "Blood plasma"
+        ],
         "a": 2,
         "e": "Hydroxyapatite [Ca₁₀(PO₄)₆(OH)₂] — a calcium phosphate mineral — is the main mineral component of bone and teeth, providing their hardness and strength. 99% of body calcium and 85% of body phosphorus are in bones and teeth.",
         "h": "Calcium + Phosphorus = hydroxyapatite (hardens bones and teeth).",
@@ -1348,7 +2142,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Vitamin E is known as the antioxidant vitamin because it:",
-        "o": ["Is stored in muscle tissue", "Protects cell membranes and polyunsaturated fats from oxidative damage by free radicals", "Prevents beriberi", "Is destroyed by cooking"],
+        "o": [
+          "Is stored in muscle tissue",
+          "Protects cell membranes and polyunsaturated fats from oxidative damage by free radicals",
+          "Prevents beriberi",
+          "Is destroyed by cooking"
+        ],
         "a": 1,
         "e": "Vitamin E (tocopherol) is a fat-soluble antioxidant that protects polyunsaturated fatty acids in cell membranes from oxidative damage by free radicals. It works alongside Vitamin C and other antioxidants to prevent oxidative stress, which is implicated in ageing and chronic diseases.",
         "h": "Vitamin E = antioxidant (protects cell membranes and PUFAs from free radical damage).",
@@ -1365,7 +2164,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "The chemical formula for water is:",
-        "o": ["CO₂", "H₂O₂", "H₂O (two hydrogen atoms and one oxygen atom)", "NaCl"],
+        "o": [
+          "CO₂",
+          "H₂O₂",
+          "H₂O (two hydrogen atoms and one oxygen atom)",
+          "NaCl"
+        ],
         "a": 2,
         "e": "Water is H₂O — composed of two hydrogen atoms covalently bonded to one oxygen atom. The polar nature of this molecule (unequal charge distribution) makes water an excellent solvent and gives it many of its unique properties.",
         "h": "Water = H₂O (2 hydrogen + 1 oxygen).",
@@ -1373,7 +2177,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Approximately what percentage of the human body is composed of water?",
-        "o": ["20-30%", "40-50%", "60-70%", "80-90%"],
+        "o": [
+          "20-30%",
+          "40-50%",
+          "60-70%",
+          "80-90%"
+        ],
         "a": 2,
         "e": "The average adult human body is approximately 60-70% water by weight. Water content varies: muscles contain about 75% water; fat tissue about 10-20%; bone about 22%. Infants have higher body water percentage (~75%); elderly people have lower (~50-55%).",
         "h": "Human body = 60-70% water (varies by tissue type; muscles ~75%).",
@@ -1381,7 +2190,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Water regulates body temperature primarily through:",
-        "o": ["Absorbing heat from food during digestion", "Evaporation of sweat from the skin, which removes heat and cools the body", "Producing heat through chemical reactions", "Preventing all heat loss from the body"],
+        "o": [
+          "Absorbing heat from food during digestion",
+          "Evaporation of sweat from the skin, which removes heat and cools the body",
+          "Producing heat through chemical reactions",
+          "Preventing all heat loss from the body"
+        ],
         "a": 1,
         "e": "When body temperature rises, sweat glands produce sweat. As sweat evaporates from the skin surface, it absorbs heat from the body, cooling it down. Water's high heat of vaporisation makes this an efficient cooling mechanism.",
         "h": "Water regulates temperature: sweating → evaporation removes heat from body surface.",
@@ -1389,7 +2203,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Water acts as a 'universal solvent' because it:",
-        "o": ["Can dissolve everything", "Can dissolve most nutrients, electrolytes, and waste products, enabling their transport in blood and other body fluids", "Is found in all foods", "Does not react with any substance"],
+        "o": [
+          "Can dissolve everything",
+          "Can dissolve most nutrients, electrolytes, and waste products, enabling their transport in blood and other body fluids",
+          "Is found in all foods",
+          "Does not react with any substance"
+        ],
         "a": 1,
         "e": "Water's polarity allows it to dissolve a wide range of substances — ions (Na⁺, K⁺, Cl⁻), polar molecules (glucose, amino acids, vitamins), and gases (CO₂, O₂). This makes blood and other body fluids effective transport media for nutrients, waste products, and hormones.",
         "h": "Universal solvent: water dissolves most nutrients, electrolytes, and waste for transport.",
@@ -1397,7 +2216,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Metabolic water refers to water that:",
-        "o": ["Only comes from drinking water", "Is produced within the body as a by-product of oxidising carbohydrates, fats, and proteins for energy", "Evaporates from the skin as sweat", "Is stored in fat tissue"],
+        "o": [
+          "Only comes from drinking water",
+          "Is produced within the body as a by-product of oxidising carbohydrates, fats, and proteins for energy",
+          "Evaporates from the skin as sweat",
+          "Is stored in fat tissue"
+        ],
         "a": 1,
         "e": "Metabolic water is produced endogenously during aerobic oxidation of nutrients: when hydrogen atoms from carbohydrates, fats, and proteins combine with oxygen in the electron transport chain, water (H₂O) is formed. A significant amount — 200-300 mL/day — is produced metabolically.",
         "h": "Metabolic water: produced internally when nutrients (carbs, fats, proteins) are oxidised for energy.",
@@ -1405,7 +2229,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Early symptoms of dehydration include:",
-        "o": ["Confusion and organ failure", "Thirst, concentrated (dark) urine, headache, dry mouth, and mild fatigue", "Loss of consciousness", "Seizures"],
+        "o": [
+          "Confusion and organ failure",
+          "Thirst, concentrated (dark) urine, headache, dry mouth, and mild fatigue",
+          "Loss of consciousness",
+          "Seizures"
+        ],
         "a": 1,
         "e": "Early dehydration (1-2% body weight water loss): thirst, slightly reduced urine output, darker urine, mild headache, dry mouth. Moderate dehydration (2-4%): significant thirst, reduced urine, fatigue, reduced physical performance. Severe (>4%): confusion, heart palpitations, organ failure.",
         "h": "Early dehydration: thirst, dark concentrated urine, headache, dry mouth, mild fatigue.",
@@ -1413,7 +2242,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Synovial fluid in joints and tears in eyes are examples of which function of water?",
-        "o": ["Transport function", "Solvent function", "Lubrication — water-based fluids reduce friction between moving surfaces", "Temperature regulation"],
+        "o": [
+          "Transport function",
+          "Solvent function",
+          "Lubrication — water-based fluids reduce friction between moving surfaces",
+          "Temperature regulation"
+        ],
         "a": 2,
         "e": "Lubrication is an important water function: synovial fluid (in joints) reduces friction during movement; tears lubricate and protect the cornea; mucus in the digestive tract lubricates food passage; saliva lubricates food for swallowing.",
         "h": "Synovial fluid and tears = lubrication function of water.",
@@ -1421,7 +2255,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Oral Rehydration Solution (ORS) is used to treat dehydration from diarrhoea. It replaces:",
-        "o": ["Only water", "Only electrolytes (salts)", "Both water AND electrolytes (sodium, glucose, potassium) — the glucose enhances sodium and water absorption", "Protein lost during illness"],
+        "o": [
+          "Only water",
+          "Only electrolytes (salts)",
+          "Both water AND electrolytes (sodium, glucose, potassium) — the glucose enhances sodium and water absorption",
+          "Protein lost during illness"
+        ],
         "a": 2,
         "e": "ORS replaces both water and electrolytes (especially sodium and potassium) lost in diarrhoeal stools. The glucose in ORS co-transports sodium (sodium-glucose cotransporter) across the intestinal wall, greatly enhancing water and electrolyte absorption.",
         "h": "ORS replaces water + electrolytes (Na, K, glucose enhances absorption via cotransporter).",
@@ -1429,7 +2268,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Water participates in digestion as a reactant in which type of chemical reaction?",
-        "o": ["Oxidation reactions", "Dehydration synthesis reactions", "Hydrolysis reactions — water molecules split bonds in large food molecules (starch, proteins, fats) to break them down", "Reduction reactions"],
+        "o": [
+          "Oxidation reactions",
+          "Dehydration synthesis reactions",
+          "Hydrolysis reactions — water molecules split bonds in large food molecules (starch, proteins, fats) to break them down",
+          "Reduction reactions"
+        ],
         "a": 2,
         "e": "Digestion is essentially hydrolysis — 'hydro' (water) + 'lysis' (splitting). Water molecules are added across bonds: starch + water → glucose units; protein + water → amino acids; triglyceride + water → glycerol + fatty acids. Digestive enzymes catalyse these hydrolysis reactions.",
         "h": "Water in digestion = hydrolysis (water splits chemical bonds in starch, protein, fat).",
@@ -1437,7 +2281,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Amniotic fluid (surrounding the developing foetus) and cerebrospinal fluid (around the brain) demonstrate which function of water?",
-        "o": ["Energy provision", "Temperature regulation", "Cushioning/protective function — water-based fluids absorb shocks and protect sensitive organs", "Transport of nutrients to muscle"],
+        "o": [
+          "Energy provision",
+          "Temperature regulation",
+          "Cushioning/protective function — water-based fluids absorb shocks and protect sensitive organs",
+          "Transport of nutrients to muscle"
+        ],
         "a": 2,
         "e": "Amniotic fluid protects the foetus from mechanical shocks and maintains temperature. Cerebrospinal fluid cushions the brain and spinal cord against impacts. These are examples of water's protective cushioning function.",
         "h": "Amniotic fluid (foetus) and cerebrospinal fluid (brain) = cushioning/protective function of water.",
@@ -1445,7 +2294,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which food has the highest water content?",
-        "o": ["Dry rice", "Bread", "Watermelon (approximately 92% water)", "Palm oil"],
+        "o": [
+          "Dry rice",
+          "Bread",
+          "Watermelon (approximately 92% water)",
+          "Palm oil"
+        ],
         "a": 2,
         "e": "Watermelon has one of the highest water contents of any food — approximately 92% water by weight. Other high-water-content foods: cucumbers (96%), lettuce (95%), tomatoes (95%), oranges (87%), milk (88%). Dry cereals and oils have very low water content.",
         "h": "Watermelon ~92% water (one of highest water content foods).",
@@ -1453,7 +2307,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Blood (plasma) is mostly water. Water's role as a transport medium in blood includes carrying:",
-        "o": ["Only red blood cells", "Nutrients (glucose, amino acids, vitamins), oxygen (via haemoglobin), hormones, and waste products (CO₂, urea) to and from all body cells", "Only proteins", "Only carbon dioxide"],
+        "o": [
+          "Only red blood cells",
+          "Nutrients (glucose, amino acids, vitamins), oxygen (via haemoglobin), hormones, and waste products (CO₂, urea) to and from all body cells",
+          "Only proteins",
+          "Only carbon dioxide"
+        ],
         "a": 1,
         "e": "Blood plasma is approximately 92% water — it transports: glucose and amino acids to cells, oxygen (attached to haemoglobin in red cells), hormones to target organs, carbon dioxide from cells to lungs, and urea from the liver to the kidneys for excretion.",
         "h": "Blood plasma (92% water): transports nutrients, O₂ (in RBCs), hormones, CO₂, and waste products.",
@@ -1461,7 +2320,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Why can humans survive for weeks without food but only 2-4 days without water?",
-        "o": ["Water provides more energy than food", "Water is involved in virtually every metabolic process and its absence rapidly causes organ failure, while the body can mobilise stored energy from fat and glycogen for weeks", "Food is less important than water", "Humans produce water from breathing"],
+        "o": [
+          "Water provides more energy than food",
+          "Water is involved in virtually every metabolic process and its absence rapidly causes organ failure, while the body can mobilise stored energy from fat and glycogen for weeks",
+          "Food is less important than water",
+          "Humans produce water from breathing"
+        ],
         "a": 1,
         "e": "Water is essential for all metabolic reactions, blood circulation, waste removal, temperature regulation, and lubrication — processes that cannot stop for more than hours. Without water, kidneys fail (cannot excrete urea), blood thickens, cells cannot function. Fat and glycogen stores can sustain energy for weeks without food.",
         "h": "Cannot survive without water: essential for all metabolic reactions, circulation, waste removal (2-4 days max).",
@@ -1469,7 +2333,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which of the following foods would contribute the MOST water to daily intake?",
-        "o": ["A handful of groundnuts", "A bowl of cooked rice", "A large glass of fresh orange juice", "A piece of dry bread"],
+        "o": [
+          "A handful of groundnuts",
+          "A bowl of cooked rice",
+          "A large glass of fresh orange juice",
+          "A piece of dry bread"
+        ],
         "a": 2,
         "e": "Fresh orange juice (approximately 88% water) would contribute more water than groundnuts (~6% water), cooked rice (~70% water, but less overall water content per serving), or dry bread (~35% water). Beverages are the most concentrated sources of dietary water.",
         "h": "Beverages (orange juice ~88% water) contribute most water; dry foods (groundnuts, bread) least.",
@@ -1477,7 +2346,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "During vigorous exercise in hot weather, increased water requirements are needed because:",
-        "o": ["Exercise creates water inside the body", "Exercise and heat increase sweating to cool the body — more water is lost through sweat, requiring increased fluid intake to prevent dehydration", "The kidneys work less during exercise", "Water is metabolised faster during exercise"],
+        "o": [
+          "Exercise creates water inside the body",
+          "Exercise and heat increase sweating to cool the body — more water is lost through sweat, requiring increased fluid intake to prevent dehydration",
+          "The kidneys work less during exercise",
+          "Water is metabolised faster during exercise"
+        ],
         "a": 1,
         "e": "Exercise increases metabolic heat production; the body sweats more to cool down. In hot weather, sweat losses can reach 1-2 litres per hour during intense exercise. Replacing these losses is essential to maintain performance, prevent heat stroke, and avoid dehydration.",
         "h": "Exercise + hot weather: increased sweating → more water loss → increased fluid intake needed.",
@@ -1485,7 +2359,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The process of producing concentrated urine demonstrates water's role in:",
-        "o": ["Temperature regulation", "Structural function", "Waste removal — kidneys filter blood and excrete urea, creatinine, and toxins dissolved in water as urine", "Energy provision"],
+        "o": [
+          "Temperature regulation",
+          "Structural function",
+          "Waste removal — kidneys filter blood and excrete urea, creatinine, and toxins dissolved in water as urine",
+          "Energy provision"
+        ],
         "a": 2,
         "e": "Kidneys filter blood and excrete metabolic waste products (urea, creatinine, uric acid, excess salts) dissolved in water as urine. When water intake is inadequate, urine becomes concentrated (dark yellow) as kidneys conserve water — but if severely dehydrated, kidney function is impaired.",
         "h": "Urine production = water's waste removal function (kidneys excrete metabolic wastes dissolved in water).",
@@ -1493,7 +2372,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which of the following correctly identifies a source of water that does NOT involve drinking?",
-        "o": ["Breathing in water vapour only", "Metabolic water — produced when the body oxidises food for energy", "Tears and sweat reabsorbed into the body", "Intravenous fluids only"],
+        "o": [
+          "Breathing in water vapour only",
+          "Metabolic water — produced when the body oxidises food for energy",
+          "Tears and sweat reabsorbed into the body",
+          "Intravenous fluids only"
+        ],
         "a": 1,
         "e": "Metabolic water is produced endogenously — when carbohydrates, fats, and proteins are oxidised in cells, hydrogen from these molecules combines with oxygen to form water. 100g of fat produces about 107mL of metabolic water; 100g of carbohydrate produces about 55mL.",
         "h": "Non-drinking water source: metabolic water (produced by oxidising food in cells).",
@@ -1501,7 +2385,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Children are more vulnerable to dehydration than adults because:",
-        "o": ["Children drink less water", "Children have a higher body surface area to body weight ratio — losing proportionally more water through skin and respiration, and a higher metabolic rate", "Adults lose more water during exercise", "Children prefer salty foods"],
+        "o": [
+          "Children drink less water",
+          "Children have a higher body surface area to body weight ratio — losing proportionally more water through skin and respiration, and a higher metabolic rate",
+          "Adults lose more water during exercise",
+          "Children prefer salty foods"
+        ],
         "a": 1,
         "e": "Children have: higher body water content (75-80%); higher surface area to body weight ratio (greater water loss through skin); higher metabolic rate; immature kidneys (less efficient at concentrating urine). These factors make children dehydrate faster and more severely than adults.",
         "h": "Children more vulnerable to dehydration: high surface area/body weight ratio + high metabolic rate.",
@@ -1509,7 +2398,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Water's high specific heat capacity is important for the body because it means water:",
-        "o": ["Freezes easily", "Can absorb large amounts of heat with only small changes in temperature — helping the body maintain stable body temperature despite metabolic heat production", "Evaporates slowly", "Has no effect on body temperature"],
+        "o": [
+          "Freezes easily",
+          "Can absorb large amounts of heat with only small changes in temperature — helping the body maintain stable body temperature despite metabolic heat production",
+          "Evaporates slowly",
+          "Has no effect on body temperature"
+        ],
         "a": 1,
         "e": "High specific heat capacity means water can absorb large amounts of thermal energy with minimal temperature change. The body's high water content acts as a thermal buffer — absorbing the heat produced by metabolism and preventing large temperature swings.",
         "h": "High specific heat capacity: water absorbs large heat → minimal temperature changes in body.",
@@ -1517,15 +2411,19 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Saliva, which lubricates food and begins starch digestion, is primarily composed of:",
-        "o": ["Fat", "Protein only", "Water (approximately 99%) with small amounts of salivary amylase, mucus, and electrolytes", "Glucose"],
+        "o": [
+          "Fat",
+          "Protein only",
+          "Water (approximately 99%) with small amounts of salivary amylase, mucus, and electrolytes",
+          "Glucose"
+        ],
         "a": 2,
         "e": "Saliva is 99% water plus: salivary amylase (enzyme that begins starch digestion), mucin (lubricating glycoprotein), electrolytes (Na⁺, K⁺, Cl⁻), and antibacterial compounds. The high water content enables food mixing, moistening, and enzyme function.",
         "h": "Saliva = ~99% water + salivary amylase + mucin (lubricates food for swallowing).",
         "yr": "SS1"
       }
     ]
-  }
-  ,
+  },
   {
     "topic": "Scientific Study of Foods",
     "topicCode": "SS1-FN-10",
@@ -1535,7 +2433,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "The metric unit used for measuring the mass of food portions is:",
-        "o": ["Litre (L)", "Celsius (°C)", "Gram (g) and kilogram (kg)", "Kilocalorie (kcal)"],
+        "o": [
+          "Litre (L)",
+          "Celsius (°C)",
+          "Gram (g) and kilogram (kg)",
+          "Kilocalorie (kcal)"
+        ],
         "a": 2,
         "e": "Mass (weight) of food is measured in grams (g) and kilograms (kg) in the metric system. 1 kg = 1000 g. Kilograms are used for larger amounts (bulk ingredients); grams for individual food portions and recipe ingredients.",
         "h": "Food mass/weight = grams (g) and kilograms (kg); 1 kg = 1000 g.",
@@ -1543,7 +2446,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The volume of a liquid ingredient like palm oil or water in a recipe is best measured in:",
-        "o": ["Grams (g)", "Kilocalories (kcal)", "Millilitres (mL) or litres (L)", "Degrees Celsius (°C)"],
+        "o": [
+          "Grams (g)",
+          "Kilocalories (kcal)",
+          "Millilitres (mL) or litres (L)",
+          "Degrees Celsius (°C)"
+        ],
         "a": 2,
         "e": "Volume is measured in millilitres (mL) and litres (L). 1 L = 1000 mL. For liquid ingredients in cooking (water, oil, milk), volume measurements are practical using measuring jugs or measuring spoons.",
         "h": "Liquid volume = mL and L; 1 L = 1000 mL.",
@@ -1551,7 +2459,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "One tablespoon (1 tbsp) of liquid is approximately equivalent to:",
-        "o": ["5 mL (one teaspoon)", "30 mL (two tablespoons)", "15 mL (standard tablespoon measure)", "100 mL (half a cup)"],
+        "o": [
+          "5 mL (one teaspoon)",
+          "30 mL (two tablespoons)",
+          "15 mL (standard tablespoon measure)",
+          "100 mL (half a cup)"
+        ],
         "a": 2,
         "e": "Standard measurements: 1 teaspoon (tsp) = 5 mL; 1 tablespoon (tbsp) = 15 mL (3 teaspoons); 1 cup = 240 mL (16 tablespoons). These handy measures are approximations used when precision weighing equipment is unavailable.",
         "h": "1 tablespoon = 15 mL (3 teaspoons); 1 teaspoon = 5 mL.",
@@ -1559,7 +2472,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The 'tare' function on a digital kitchen scale allows the user to:",
-        "o": ["Convert grams to kilograms automatically", "Subtract the weight of the container, so only the food weight is measured", "Measure temperature", "Check battery level"],
+        "o": [
+          "Convert grams to kilograms automatically",
+          "Subtract the weight of the container, so only the food weight is measured",
+          "Measure temperature",
+          "Check battery level"
+        ],
         "a": 1,
         "e": "The tare function zeros the scale after placing a container — the scale only shows the weight of food added to the container, not the container itself. This is essential for accurate measurement without needing to subtract container weight manually.",
         "h": "Tare function: zeros scale to subtract container weight → measures food weight only.",
@@ -1567,7 +2485,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Accurate food weighing is essential in nutritional assessment because:",
-        "o": ["It makes cooking faster", "It allows precise calculation of nutrient content using food composition tables", "Weight determines taste", "Only large quantities need to be weighed"],
+        "o": [
+          "It makes cooking faster",
+          "It allows precise calculation of nutrient content using food composition tables",
+          "Weight determines taste",
+          "Only large quantities need to be weighed"
+        ],
         "a": 1,
         "e": "To calculate how many calories, grams of protein, or milligrams of Vitamin C a person consumed, the exact weight of each food eaten must be known. This weight is then multiplied by the nutrient content per 100g (from food composition tables) to get total nutrient intake.",
         "h": "Accurate weighing → precise nutrient calculations using food composition tables.",
@@ -1575,7 +2498,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The difference between accuracy and precision in food measurement is:",
-        "o": ["They mean the same thing", "Accuracy = how close to the true value; precision = how consistently the same result is obtained", "Precision = how close to the true value; accuracy = consistency", "Accuracy only applies to temperature"],
+        "o": [
+          "They mean the same thing",
+          "Accuracy = how close to the true value; precision = how consistently the same result is obtained",
+          "Precision = how close to the true value; accuracy = consistency",
+          "Accuracy only applies to temperature"
+        ],
         "a": 1,
         "e": "Accuracy: the measurement is close to the real (true) value. Precision: measurements are consistently similar to each other (reproducible) but not necessarily accurate. A scale can be precise but inaccurate (consistently wrong by the same amount).",
         "h": "Accuracy = closeness to true value; Precision = reproducibility/consistency.",
@@ -1583,7 +2511,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "One kilocalorie (kcal) is equivalent to approximately:",
-        "o": ["1 kilojoule (kJ)", "4.184 kilojoules (kJ)", "10 kilojoules (kJ)", "0.24 kilojoules (kJ)"],
+        "o": [
+          "1 kilojoule (kJ)",
+          "4.184 kilojoules (kJ)",
+          "10 kilojoules (kJ)",
+          "0.24 kilojoules (kJ)"
+        ],
         "a": 1,
         "e": "Energy conversion: 1 kcal = 4.184 kJ. So if a food contains 100 kcal, it provides 418.4 kJ. Both units measure the same energy — kcal is more commonly used in nutrition labelling; kJ is the SI (metric) unit.",
         "h": "1 kcal = 4.184 kJ (energy unit conversion).",
@@ -1591,7 +2524,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which type of scale is most appropriate for precise research measurements in a food science laboratory?",
-        "o": ["A simple bathroom scale", "A kitchen platform scale", "An analytical electronic balance (accurate to ±0.001g)", "A handheld spring scale"],
+        "o": [
+          "A simple bathroom scale",
+          "A kitchen platform scale",
+          "An analytical electronic balance (accurate to ±0.001g)",
+          "A handheld spring scale"
+        ],
         "a": 2,
         "e": "Analytical balances used in food science laboratories can measure to 0.001 g (1 mg) precision — essential for accurate chemical analysis, nutrient composition studies, and research. Kitchen scales typically measure to ±1-5 g, which is insufficient for analytical work.",
         "h": "Laboratory food science = analytical electronic balance (accurate to ±0.001g).",
@@ -1599,7 +2537,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Handy measures are useful in nutrition education because:",
-        "o": ["They are more accurate than weighing scales", "They help communities estimate food quantities without requiring weighing equipment", "Only qualified nutritionists can use handy measures", "Handy measures are the same globally"],
+        "o": [
+          "They are more accurate than weighing scales",
+          "They help communities estimate food quantities without requiring weighing equipment",
+          "Only qualified nutritionists can use handy measures",
+          "Handy measures are the same globally"
+        ],
         "a": 1,
         "e": "Handy measures (palm, fist, cup) allow practical food portion estimation in communities where weighing scales are unavailable. Nutrition educators use them to teach people how to eat appropriate portions. They are approximations — less accurate than scales but practical.",
         "h": "Handy measures: practical food portion estimation without scales (community nutrition).",
@@ -1607,7 +2550,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Recipe standardisation requires accurate measurement because:",
-        "o": ["It makes cooking faster", "Consistent ingredient quantities ensure the same product quality, yield, and nutritional content every time it is prepared", "Chefs do not need to follow measurements", "Only expensive recipes need standardisation"],
+        "o": [
+          "It makes cooking faster",
+          "Consistent ingredient quantities ensure the same product quality, yield, and nutritional content every time it is prepared",
+          "Chefs do not need to follow measurements",
+          "Only expensive recipes need standardisation"
+        ],
         "a": 1,
         "e": "Standardised recipes specify exact ingredient quantities so that the dish tastes the same, has the same portion size, the same cost, and the same nutritional content every time. This is essential in institutional catering, food production, and quality control.",
         "h": "Recipe standardisation: consistent quantities = consistent quality, yield, and nutritional content.",
@@ -1615,7 +2563,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Parallax error in reading a measuring jug occurs when:",
-        "o": ["The jug is too small", "The reader's eye is not at the same level as the liquid surface, causing an incorrect volume reading", "The liquid is coloured", "The jug is made of plastic"],
+        "o": [
+          "The jug is too small",
+          "The reader's eye is not at the same level as the liquid surface, causing an incorrect volume reading",
+          "The liquid is coloured",
+          "The jug is made of plastic"
+        ],
         "a": 1,
         "e": "Parallax error: if the eye is above the measurement mark, it appears the liquid is at that mark but the true level may be lower (reading too high). If the eye is below, the reading appears lower than actual. The eye must be level with the liquid surface for an accurate reading.",
         "h": "Parallax error: eye not level with liquid surface → incorrect volume reading.",
@@ -1623,7 +2576,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A standard cup used in cooking measurements holds approximately:",
-        "o": ["120 mL (half cup)", "240 mL (standard cup measure)", "500 mL (half litre)", "1000 mL (one litre)"],
+        "o": [
+          "120 mL (half cup)",
+          "240 mL (standard cup measure)",
+          "500 mL (half litre)",
+          "1000 mL (one litre)"
+        ],
         "a": 1,
         "e": "The standard cup measurement in cooking is approximately 240 mL (US) or 250 mL (metric cup). This is a practical volume measure for liquid and dry ingredients. Half cup = 120 mL; quarter cup = 60 mL.",
         "h": "Standard cup = approximately 240 mL.",
@@ -1631,7 +2589,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Body weight scales (bathroom scales) are used in nutrition to:",
-        "o": ["Weigh food ingredients", "Measure temperature", "Assess a person's total body weight as part of nutritional status and growth monitoring", "Measure volume of liquids"],
+        "o": [
+          "Weigh food ingredients",
+          "Measure temperature",
+          "Assess a person's total body weight as part of nutritional status and growth monitoring",
+          "Measure volume of liquids"
+        ],
         "a": 2,
         "e": "Body weight scales are essential for anthropometric nutritional assessment — monitoring growth in children, tracking weight changes in patients, calculating BMI, and assessing nutritional status. They are a fundamental tool in clinical and community nutrition practice.",
         "h": "Body weight scales: measure person's weight for nutritional assessment and growth monitoring.",
@@ -1639,7 +2602,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Food labelling regulations require accurate weight/volume measurements because:",
-        "o": ["Labels are only decorative", "Consumers rely on label information for nutritional content per serving — inaccurate measurements mislead consumers and may violate food regulations", "Weight on labels is optional", "Only price needs to be accurate"],
+        "o": [
+          "Labels are only decorative",
+          "Consumers rely on label information for nutritional content per serving — inaccurate measurements mislead consumers and may violate food regulations",
+          "Weight on labels is optional",
+          "Only price needs to be accurate"
+        ],
         "a": 1,
         "e": "Nutritional labels specify energy, protein, fat, carbohydrate, and micronutrient content per 100g or per serving. These values are calculated from precise analytical measurements. Inaccurate information can mislead consumers and violates food labelling regulations (e.g., NAFDAC regulations in Nigeria).",
         "h": "Food labels require accurate measurements: consumers rely on this for dietary decisions; NAFDAC enforces this.",
@@ -1647,7 +2615,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Temperature measurement in cooking (°C) is important because:",
-        "o": ["Temperature only affects appearance, not nutrition", "Cooking temperature determines nutrient retention, food safety (killing pathogens), texture, and the chemical reactions occurring during cooking", "All foods cook at the same temperature", "Temperature only matters for baking"],
+        "o": [
+          "Temperature only affects appearance, not nutrition",
+          "Cooking temperature determines nutrient retention, food safety (killing pathogens), texture, and the chemical reactions occurring during cooking",
+          "All foods cook at the same temperature",
+          "Temperature only matters for baking"
+        ],
         "a": 1,
         "e": "Temperature critically affects: food safety (pathogens are killed above specific temperatures), nutrient retention (Vitamin C is destroyed by high heat), texture (protein coagulation, starch gelatinisation), and flavour development (Maillard reaction requires high temperatures).",
         "h": "Cooking temperature affects: food safety, nutrient retention, texture, and flavour.",
@@ -1655,7 +2628,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A metric conversion important in food science is that 1000 grams equals:",
-        "o": ["100 grams", "10 kilograms", "1 kilogram (1 kg = 1000 g)", "0.1 kilogram"],
+        "o": [
+          "100 grams",
+          "10 kilograms",
+          "1 kilogram (1 kg = 1000 g)",
+          "0.1 kilogram"
+        ],
         "a": 2,
         "e": "The metric system is based on powers of 10. Kilo- means 1000 — so 1 kilogram = 1000 grams. This conversion is used constantly in food science for converting between gram measurements (individual portions) and kilogram measurements (bulk ingredients).",
         "h": "1 kilogram = 1000 grams (kilo = 1000).",
@@ -1663,7 +2641,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Dietary assessment methods that weigh all food consumed before eating are called:",
-        "o": ["Diet history method", "24-hour dietary recall", "Weighed food record (food diary with weighing) — the most accurate method of dietary assessment", "Food frequency questionnaire"],
+        "o": [
+          "Diet history method",
+          "24-hour dietary recall",
+          "Weighed food record (food diary with weighing) — the most accurate method of dietary assessment",
+          "Food frequency questionnaire"
+        ],
         "a": 2,
         "e": "The weighed food record requires the subject to weigh and record every food and drink consumed over a specified period (usually 3-7 days). It is the most accurate method for assessing actual food intake but is burdensome for participants.",
         "h": "Weighed food record: weighing ALL food before eating = most accurate dietary assessment method.",
@@ -1671,7 +2654,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Nutrient weight in food labelling refers to:",
-        "o": ["The weight of the food package", "The amount (in grams, milligrams, or micrograms) of each nutrient present per 100g or per serving of a food", "How much the food weighs when cooked", "The weight of the heaviest nutrient"],
+        "o": [
+          "The weight of the food package",
+          "The amount (in grams, milligrams, or micrograms) of each nutrient present per 100g or per serving of a food",
+          "How much the food weighs when cooked",
+          "The weight of the heaviest nutrient"
+        ],
         "a": 1,
         "e": "Nutrient weight specifies the actual quantity of each nutrient in a food — e.g., 100g of beans contains approximately 24g protein, 60g carbohydrate, 1.5g fat, 8mg iron. These values come from chemical analysis of representative samples.",
         "h": "Nutrient weight: amount of each nutrient (g, mg, μg) per 100g or per serving on food labels.",
@@ -1679,7 +2667,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A spring balance differs from an electronic digital scale in that a spring balance:",
-        "o": ["Is always more accurate", "Uses the elastic property of a spring to measure force (and thus weight) — simpler but less accurate than digital scales", "Only measures volume", "Cannot measure food items"],
+        "o": [
+          "Is always more accurate",
+          "Uses the elastic property of a spring to measure force (and thus weight) — simpler but less accurate than digital scales",
+          "Only measures volume",
+          "Cannot measure food items"
+        ],
         "a": 1,
         "e": "A spring balance uses Hooke's Law — the extension of a spring is proportional to the weight applied. It is simple and needs no electricity but is less accurate than electronic scales and can give errors if the spring is worn or temperature varies. It measures force (converted to weight).",
         "h": "Spring balance: uses spring extension to measure weight — simple, no power needed, but less accurate.",
@@ -1687,7 +2680,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Calibration of weighing scales is important because:",
-        "o": ["It makes scales look clean", "It ensures the scale gives accurate (true) readings by verifying against known reference weights", "It is done only once at manufacture", "Only expensive scales need calibration"],
+        "o": [
+          "It makes scales look clean",
+          "It ensures the scale gives accurate (true) readings by verifying against known reference weights",
+          "It is done only once at manufacture",
+          "Only expensive scales need calibration"
+        ],
         "a": 1,
         "e": "Calibration checks and adjusts a scale's accuracy against known standard weights. Scales can drift over time due to mechanical wear, temperature changes, or impacts. Regular calibration ensures measurements remain accurate.",
         "h": "Calibration: verifying scale accuracy against standard weights → ensures accurate measurements.",
@@ -1704,7 +2702,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "Starch gelatinisation during cooking is important because it:",
-        "o": ["Destroys all nutrients in starch", "Makes starch indigestible", "Swells and bursts starch granules making the starch more digestible and creating thickened textures", "Converts starch to fat"],
+        "o": [
+          "Destroys all nutrients in starch",
+          "Makes starch indigestible",
+          "Swells and bursts starch granules making the starch more digestible and creating thickened textures",
+          "Converts starch to fat"
+        ],
         "a": 2,
         "e": "Gelatinisation occurs when starch granules absorb water and are heated — they swell, burst, and the starch chains hydrate, forming a thick viscous gel. This process makes starch easily accessible to digestive enzymes (amylase), dramatically improving digestibility.",
         "h": "Starch gelatinisation: granules swell and burst with heat + water → more digestible, thicker texture.",
@@ -1712,7 +2715,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Vitamin C is described as the most heat-sensitive vitamin because it:",
-        "o": ["Is found only in heat-stable foods", "Is rapidly destroyed by heat, oxygen, and water during cooking — making it easily lost", "Is actually enhanced by cooking", "Can be replaced by heating food"],
+        "o": [
+          "Is found only in heat-stable foods",
+          "Is rapidly destroyed by heat, oxygen, and water during cooking — making it easily lost",
+          "Is actually enhanced by cooking",
+          "Can be replaced by heating food"
+        ],
         "a": 1,
         "e": "Vitamin C (ascorbic acid) is destroyed by heat, oxygen (oxidation), and leaching into cooking water. It is thermolabile (destroyed by heat). Boiling vegetables destroys 40-70% of their Vitamin C. To preserve it: minimal cooking, steaming, or eating foods raw.",
         "h": "Vitamin C: most heat-sensitive vitamin (destroyed by heat + oxygen + leaches into water).",
@@ -1720,7 +2728,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Protein denaturation during cooking IMPROVES digestibility because:",
-        "o": ["It creates new essential amino acids", "Unfolding of protein's 3D structure exposes peptide bonds to digestive enzymes, making the protein easier to digest", "It converts protein to carbohydrate", "It reduces the protein content of food"],
+        "o": [
+          "It creates new essential amino acids",
+          "Unfolding of protein's 3D structure exposes peptide bonds to digestive enzymes, making the protein easier to digest",
+          "It converts protein to carbohydrate",
+          "It reduces the protein content of food"
+        ],
         "a": 1,
         "e": "Native (uncooked) proteins have complex 3D structures that may not be easily accessible to digestive enzymes. Heat denaturation unfolds these proteins, exposing more peptide bonds for protease attack. This is why cooked egg protein is more digestible than raw egg protein.",
         "h": "Protein denaturation: unfolds 3D structure → exposes peptide bonds → better digestibility.",
@@ -1728,7 +2741,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Trypsin inhibitors in raw beans reduce protein digestibility. Cooking improves bean protein digestion by:",
-        "o": ["Adding more protein", "Destroying the trypsin inhibitors, allowing the digestive enzyme trypsin to break down bean proteins normally", "Increasing the amino acid content", "Reducing the fat in beans"],
+        "o": [
+          "Adding more protein",
+          "Destroying the trypsin inhibitors, allowing the digestive enzyme trypsin to break down bean proteins normally",
+          "Increasing the amino acid content",
+          "Reducing the fat in beans"
+        ],
         "a": 1,
         "e": "Raw beans contain trypsin inhibitors — antinutrients that inhibit the digestive enzyme trypsin, reducing protein digestion. Cooking (boiling) destroys these inhibitors. This is why raw beans should never be eaten — cooking is essential for protein bioavailability and removal of other antinutrients.",
         "h": "Cooking beans destroys trypsin inhibitors → restores trypsin activity → normal protein digestion.",
@@ -1736,7 +2754,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Caramelisation occurs when:",
-        "o": ["Protein and sugar react when heated", "Starch gelatinises during boiling", "Sugars are heated above 160°C without water — forming brown compounds and flavourful caramel products", "Fat is heated beyond its smoking point"],
+        "o": [
+          "Protein and sugar react when heated",
+          "Starch gelatinises during boiling",
+          "Sugars are heated above 160°C without water — forming brown compounds and flavourful caramel products",
+          "Fat is heated beyond its smoking point"
+        ],
         "a": 2,
         "e": "Caramelisation is the dry-heat thermal degradation of sugars at high temperatures (above 160°C for most sugars). Sugars dehydrate, oxidise, and fragment — producing hundreds of volatile flavour compounds and brown pigments. Examples: caramel sauce, the crust of browned onions.",
         "h": "Caramelisation: sugars heated above 160°C without water → brown colour and caramel flavour.",
@@ -1744,7 +2767,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The Maillard reaction in cooking involves:",
-        "o": ["Only water and carbohydrate", "A reaction between reducing sugars and amino acids when heated, producing brown colour and complex flavours in baked/fried foods", "Only protein denaturation", "Only starch gelatinisation"],
+        "o": [
+          "Only water and carbohydrate",
+          "A reaction between reducing sugars and amino acids when heated, producing brown colour and complex flavours in baked/fried foods",
+          "Only protein denaturation",
+          "Only starch gelatinisation"
+        ],
         "a": 1,
         "e": "The Maillard reaction: reducing sugars (glucose, fructose) + amino groups (from amino acids/proteins) react at high temperatures to produce brown polymers (melanoidins) and hundreds of flavour compounds. Examples: bread crust, fried chicken, roasted coffee, browned meat.",
         "h": "Maillard reaction: reducing sugars + amino acids → brown colour + complex flavours (bread crust, fried foods).",
@@ -1752,7 +2780,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Minerals in vegetables are NOT destroyed by heat but ARE lost during boiling because:",
-        "o": ["Heat converts minerals to gas", "Minerals are water-soluble and dissolve into the cooking water — discarding cooking water loses the minerals", "Minerals are destroyed at cooking temperatures", "Boiling creates new minerals"],
+        "o": [
+          "Heat converts minerals to gas",
+          "Minerals are water-soluble and dissolve into the cooking water — discarding cooking water loses the minerals",
+          "Minerals are destroyed at cooking temperatures",
+          "Boiling creates new minerals"
+        ],
         "a": 1,
         "e": "Minerals (iron, calcium, potassium, zinc) are inorganic elements — they cannot be chemically decomposed by cooking heat. However, they are water-soluble and leach into cooking water. Discarding this water wastes the minerals. Steaming or using cooking water in soups/stews preserves more minerals.",
         "h": "Minerals: not destroyed by heat (inorganic) but leach into cooking water → lost when water is discarded.",
@@ -1760,7 +2793,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Dextrinisation occurs when starch is subjected to:",
-        "o": ["Water and low heat (boiling)", "Dry heat (roasting, toasting, baking) — starch chains break down to shorter dextrin chains, producing brown colour and toasted flavour", "Cold temperatures", "Enzyme action only"],
+        "o": [
+          "Water and low heat (boiling)",
+          "Dry heat (roasting, toasting, baking) — starch chains break down to shorter dextrin chains, producing brown colour and toasted flavour",
+          "Cold temperatures",
+          "Enzyme action only"
+        ],
         "a": 1,
         "e": "Dextrinisation: dry heat partially hydrolyses starch into shorter chain dextrins (lighter, more soluble). The surface of bread becomes brown and crispy in the oven (dextrinisation at the crust). Unlike gelatinisation (needs water + heat), dextrinisation requires only dry heat.",
         "h": "Dextrinisation: dry heat breaks starch into dextrins → brown colour (toast, bread crust).",
@@ -1768,7 +2806,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Exceeding an oil's smoking point during cooking is harmful because:",
-        "o": ["It makes food taste better", "Beyond the smoking point, fat breaks down producing acrolein (toxic) and harmful free radicals; fat-soluble vitamins are also destroyed", "It only changes the colour of the oil", "Exceeding smoking point is desirable for deep frying"],
+        "o": [
+          "It makes food taste better",
+          "Beyond the smoking point, fat breaks down producing acrolein (toxic) and harmful free radicals; fat-soluble vitamins are also destroyed",
+          "It only changes the colour of the oil",
+          "Exceeding smoking point is desirable for deep frying"
+        ],
         "a": 1,
         "e": "Each oil has a specific smoking point (palm oil: ~200°C; olive oil: ~190°C; refined groundnut oil: ~230°C). Beyond this, triglycerides break down: glycerol forms toxic acrolein (carcinogenic), fatty acids form harmful aldehydes, and fat-soluble vitamins are destroyed.",
         "h": "Exceeding smoking point: toxic acrolein + harmful aldehydes formed; fat-soluble vitamins destroyed.",
@@ -1776,7 +2819,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Fat-soluble vitamins (A, D, E, K) are relatively stable to cooking because:",
-        "o": ["They are not in food at all", "They dissolve in fat rather than water and are protected by fat during cooking; they do not easily oxidise at normal cooking temperatures", "Heat increases their potency", "They are never found in cooked foods"],
+        "o": [
+          "They are not in food at all",
+          "They dissolve in fat rather than water and are protected by fat during cooking; they do not easily oxidise at normal cooking temperatures",
+          "Heat increases their potency",
+          "They are never found in cooked foods"
+        ],
         "a": 1,
         "e": "Fat-soluble vitamins are dissolved in fat/oil components of food, which provides some protection during cooking. Unlike water-soluble vitamins that leach into water, fat-soluble vitamins stay with the fat. Normal cooking temperatures cause relatively little loss, though excessive heat can destroy them.",
         "h": "Fat-soluble vitamins (A, D, E, K): stable to cooking (dissolved in fat, protected; little leaching).",
@@ -1784,7 +2832,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Cooking tomatoes actually INCREASES the bioavailability of lycopene (an antioxidant) because:",
-        "o": ["Heat creates new lycopene", "Heat breaks down plant cell walls, releasing lycopene from cells and converting it to a more bioavailable form", "Raw tomatoes contain no lycopene", "Cooking destroys all antioxidants"],
+        "o": [
+          "Heat creates new lycopene",
+          "Heat breaks down plant cell walls, releasing lycopene from cells and converting it to a more bioavailable form",
+          "Raw tomatoes contain no lycopene",
+          "Cooking destroys all antioxidants"
+        ],
         "a": 1,
         "e": "Lycopene in tomatoes is bound within cell structures. Cooking breaks down cell walls and converts trans-lycopene to cis-lycopene (more bioavailable form). This is one case where cooking actually INCREASES nutrient availability — processed tomatoes (passata, cooked sauce) provide more bioavailable lycopene than raw.",
         "h": "Cooking tomatoes: increases lycopene bioavailability (breaks cell walls, converts to more bioavailable form).",
@@ -1792,7 +2845,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The best cooking method for preserving vitamin C in vegetables is:",
-        "o": ["Boiling in large amounts of water for a long time", "Frying in deep oil", "Steaming briefly or eating vegetables raw", "Pressure cooking for extended periods"],
+        "o": [
+          "Boiling in large amounts of water for a long time",
+          "Frying in deep oil",
+          "Steaming briefly or eating vegetables raw",
+          "Pressure cooking for extended periods"
+        ],
         "a": 2,
         "e": "Steaming minimises water contact (reducing leaching) and is faster than boiling (less heat exposure). Short steaming times preserve more Vitamin C than prolonged boiling. Eating vegetables raw preserves all heat-sensitive vitamins but cooking may be needed for safety and digestibility.",
         "h": "Best Vitamin C preservation: brief steaming or eating raw (minimal water contact + minimal heat exposure).",
@@ -1800,7 +2858,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Egg white turning solid and opaque when cooked is an example of protein:",
-        "o": ["Gelatinisation", "Dextrinisation", "Denaturation and coagulation — heat unfolds proteins, then they aggregate and solidify", "Hydrolysis"],
+        "o": [
+          "Gelatinisation",
+          "Dextrinisation",
+          "Denaturation and coagulation — heat unfolds proteins, then they aggregate and solidify",
+          "Hydrolysis"
+        ],
         "a": 2,
         "e": "Raw egg white is transparent (albumin proteins in their native liquid state). Cooking denatures the proteins (unfolds them) and causes them to coagulate (aggregate together), forming a solid, opaque white mass. This is irreversible denaturation.",
         "h": "Egg white solidifying when cooked = protein denaturation + coagulation (irreversible).",
@@ -1808,7 +2871,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The Maillard reaction at very high temperatures can reduce the nutritional quality of protein because it:",
-        "o": ["Creates new essential amino acids", "Makes protein more digestible", "Reacts lysine (an essential amino acid) with sugars — making lysine unavailable for absorption, reducing protein's nutritional value", "Increases protein content"],
+        "o": [
+          "Creates new essential amino acids",
+          "Makes protein more digestible",
+          "Reacts lysine (an essential amino acid) with sugars — making lysine unavailable for absorption, reducing protein's nutritional value",
+          "Increases protein content"
+        ],
         "a": 2,
         "e": "Excessive Maillard reaction (high heat, prolonged cooking) reacts lysine's epsilon-amino group with sugars, forming compounds that cannot be digested — making lysine unavailable. Since lysine is often a limiting amino acid in cereals, this further reduces protein quality.",
         "h": "Excessive Maillard reaction: reacts lysine with sugars → lysine unavailable → reduced protein quality.",
@@ -1816,7 +2884,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Thiamine (Vitamin B1) is particularly vulnerable to heat and water because:",
-        "o": ["It is fat-soluble", "It is heat-labile and water-soluble — lost into cooking water and destroyed by high temperatures and alkaline conditions", "It is not found in cooked foods", "Thiamine is always completely stable"],
+        "o": [
+          "It is fat-soluble",
+          "It is heat-labile and water-soluble — lost into cooking water and destroyed by high temperatures and alkaline conditions",
+          "It is not found in cooked foods",
+          "Thiamine is always completely stable"
+        ],
         "a": 1,
         "e": "Thiamine is both heat-sensitive and water-soluble — it leaches into cooking water and is also destroyed by heat. Alkaline cooking (with bicarbonate of soda, sometimes added to green vegetables) also destroys thiamine. Significant amounts are lost in washing and boiling rice.",
         "h": "Thiamine (B1): water-soluble + heat-labile → lost in cooking water and destroyed by heat.",
@@ -1824,7 +2897,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Using cooking water from vegetables in soups or gravies helps to:",
-        "o": ["Increase fat content", "Recover water-soluble vitamins (C, B vitamins) and minerals that have leached into the water during cooking", "Remove antinutrients", "Add more calories to the dish"],
+        "o": [
+          "Increase fat content",
+          "Recover water-soluble vitamins (C, B vitamins) and minerals that have leached into the water during cooking",
+          "Remove antinutrients",
+          "Add more calories to the dish"
+        ],
         "a": 1,
         "e": "When vegetables are boiled, water-soluble vitamins (C, B vitamins) and minerals leach into the cooking water. Using this water in soups, sauces, or gravies recovers much of these leached nutrients rather than discarding them.",
         "h": "Use cooking water: recovers water-soluble vitamins and minerals leached during boiling.",
@@ -1832,7 +2910,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Oxidative rancidity in fats is accelerated by heat and produces:",
-        "o": ["Beneficial antioxidants", "Off-flavours, odours, and potentially harmful peroxide compounds that indicate spoilage", "More vitamins", "Better cooking performance"],
+        "o": [
+          "Beneficial antioxidants",
+          "Off-flavours, odours, and potentially harmful peroxide compounds that indicate spoilage",
+          "More vitamins",
+          "Better cooking performance"
+        ],
         "a": 1,
         "e": "Heat accelerates oxidation of unsaturated fatty acids in fats and oils — polyunsaturated fats are most susceptible. Oxidative rancidity produces off-flavours (stale/rancid odour), peroxides, aldehydes, and ketones — some of which may be harmful.",
         "h": "Heat + fat = accelerated oxidative rancidity → off-flavours, peroxides, harmful compounds.",
@@ -1840,7 +2923,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Folic acid (Vitamin B9) is particularly important to preserve during cooking because it is needed for:",
-        "o": ["Bone mineralisation", "DNA synthesis and is critical for pregnant women to prevent neural tube defects in the foetus", "Fat digestion", "Temperature regulation"],
+        "o": [
+          "Bone mineralisation",
+          "DNA synthesis and is critical for pregnant women to prevent neural tube defects in the foetus",
+          "Fat digestion",
+          "Temperature regulation"
+        ],
         "a": 1,
         "e": "Folate/folic acid is heat-sensitive and water-soluble. It is critical for DNA synthesis and neural tube formation. Prolonged cooking destroys a large proportion of food folate. Pregnant women, who need adequate folate, should minimise cooking time for folate-rich foods (dark green leafy vegetables).",
         "h": "Folic acid (B9): heat-sensitive; critical for DNA synthesis and neural tube formation in pregnancy.",
@@ -1848,7 +2936,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which cooking method best preserves the most nutrients overall?",
-        "o": ["Boiling in large volumes of water for extended periods", "Deep frying at very high temperatures", "Steaming or microwave cooking with minimal water and short cooking times", "Pressure cooking for very long periods"],
+        "o": [
+          "Boiling in large volumes of water for extended periods",
+          "Deep frying at very high temperatures",
+          "Steaming or microwave cooking with minimal water and short cooking times",
+          "Pressure cooking for very long periods"
+        ],
         "a": 2,
         "e": "Steaming and microwave cooking preserve the most nutrients: minimal water contact (less leaching of water-soluble nutrients), shorter cooking times (less heat exposure), and lower temperatures. These methods are far superior to prolonged boiling in destroying heat-sensitive vitamins.",
         "h": "Steaming/microwaving: best nutrient preservation (minimal water + minimal heat exposure + short time).",
@@ -1856,7 +2949,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Beta-carotene in orange and red vegetables is relatively stable to heat because:",
-        "o": ["It is water-soluble and stable", "It is fat-soluble and not heat-labile — moderate cooking does not significantly destroy it", "Heat creates new beta-carotene", "Beta-carotene is only found in raw foods"],
+        "o": [
+          "It is water-soluble and stable",
+          "It is fat-soluble and not heat-labile — moderate cooking does not significantly destroy it",
+          "Heat creates new beta-carotene",
+          "Beta-carotene is only found in raw foods"
+        ],
         "a": 1,
         "e": "Beta-carotene is fat-soluble and relatively heat-stable. Moderate cooking actually slightly increases its bioavailability (cooking breaks down cell walls, releasing beta-carotene from plant matrix). Some fat in the meal enhances its absorption.",
         "h": "Beta-carotene: fat-soluble, heat-stable; moderate cooking may even improve bioavailability.",
@@ -1873,7 +2971,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "The Biuret test is used to detect the presence of protein. A positive result is indicated by:",
-        "o": ["A yellow colour when heated", "A blue-black colour with iodine", "A purple or violet colour when NaOH and dilute CuSO₄ are added to the sample", "A brick-red precipitate"],
+        "o": [
+          "A yellow colour when heated",
+          "A blue-black colour with iodine",
+          "A purple or violet colour when NaOH and dilute CuSO₄ are added to the sample",
+          "A brick-red precipitate"
+        ],
         "a": 2,
         "e": "The Biuret test detects peptide bonds (the bonds linking amino acids in proteins). In alkaline conditions (NaOH), copper ions (Cu²⁺ from CuSO₄) coordinate with peptide bonds, forming a violet/purple complex. This indicates the presence of proteins or polypeptides.",
         "h": "Biuret test positive = purple/violet colour (NaOH + CuSO₄ + protein → copper-peptide bond complex).",
@@ -1881,7 +2984,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The Biuret test uses which two chemicals as reagents?",
-        "o": ["Iodine solution and water", "Sodium hydroxide (NaOH) and dilute copper sulphate (CuSO₄)", "Millon's reagent and heat", "Ethanol and water"],
+        "o": [
+          "Iodine solution and water",
+          "Sodium hydroxide (NaOH) and dilute copper sulphate (CuSO₄)",
+          "Millon's reagent and heat",
+          "Ethanol and water"
+        ],
         "a": 1,
         "e": "Biuret reagent = NaOH (provides alkaline conditions) + dilute CuSO₄ (provides copper ions). The copper ions form a complex with peptide bonds in alkaline solution, producing the characteristic purple/violet colour.",
         "h": "Biuret reagents = NaOH (alkaline) + dilute CuSO₄ (copper) → purple with protein.",
@@ -1889,7 +2997,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Millon's test is positive (brick-red precipitate) because it detects:",
-        "o": ["All amino acids equally", "Starch in protein foods", "Tyrosine — a specific amino acid that reacts with mercuric ions in nitric acid to form a red complex", "Fat content in protein foods"],
+        "o": [
+          "All amino acids equally",
+          "Starch in protein foods",
+          "Tyrosine — a specific amino acid that reacts with mercuric ions in nitric acid to form a red complex",
+          "Fat content in protein foods"
+        ],
         "a": 2,
         "e": "Millon's reagent (mercuric sulphate in nitric and sulphuric acid) reacts specifically with the phenol group of tyrosine (an amino acid). Most proteins contain tyrosine, so a brick-red precipitate is formed. Proteins without tyrosine would give a negative result.",
         "h": "Millon's test: brick-red = tyrosine present (mercuric ions react with tyrosine's phenol group).",
@@ -1897,7 +3010,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Coagulation of protein (positive coagulation test) occurs when protein is treated with:",
-        "o": ["Cold water only", "Iodine solution", "Heat or acids (or alcohol) — proteins unfold, aggregate, and form a solid white precipitate", "Sodium chloride solution"],
+        "o": [
+          "Cold water only",
+          "Iodine solution",
+          "Heat or acids (or alcohol) — proteins unfold, aggregate, and form a solid white precipitate",
+          "Sodium chloride solution"
+        ],
         "a": 2,
         "e": "Proteins coagulate (denature and aggregate into solid mass) when exposed to heat (cooking egg), acids (adding vinegar to milk), or alcohol. The white coagulum formed is a positive indication of protein presence.",
         "h": "Coagulation test positive: white solid precipitate when protein heated or treated with acid/alcohol.",
@@ -1905,7 +3023,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "An example of natural protein coagulation that demonstrates the coagulation test principle is:",
-        "o": ["Sugar dissolving in water", "Starch thickening when heated", "Egg white turning solid and white when fried or boiled", "Salt dissolving in water"],
+        "o": [
+          "Sugar dissolving in water",
+          "Starch thickening when heated",
+          "Egg white turning solid and white when fried or boiled",
+          "Salt dissolving in water"
+        ],
         "a": 2,
         "e": "Egg white (albumin protein) is liquid and clear raw. When heated, albumin proteins denature (unfold) and coagulate (aggregate together), forming the familiar solid, white, opaque cooked egg white. This is the same principle as the coagulation test.",
         "h": "Egg white solidifying when cooked = natural coagulation test (protein denaturation + aggregation).",
@@ -1913,7 +3036,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The foam test for proteins gives a positive result when:",
-        "o": ["The food sample turns blue", "A brick-red precipitate forms", "A persistent froth or foam forms when the aqueous solution of food is shaken vigorously", "A white precipitate forms"],
+        "o": [
+          "The food sample turns blue",
+          "A brick-red precipitate forms",
+          "A persistent froth or foam forms when the aqueous solution of food is shaken vigorously",
+          "A white precipitate forms"
+        ],
         "a": 2,
         "e": "Proteins (particularly those with surface-active properties) reduce surface tension in water. When the solution is shaken, this creates persistent stable foam. The foam test is simple but not highly specific, as other substances (saponins) also cause foaming.",
         "h": "Foam test positive: persistent stable foam when food solution is shaken vigorously.",
@@ -1921,7 +3049,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Why is the Biuret test considered the most important routine protein test in food analysis?",
-        "o": ["It is the most colourful test", "It detects ALL proteins (any compound with two or more peptide bonds) — not just specific amino acids", "It requires the most expensive equipment", "It only detects one type of protein"],
+        "o": [
+          "It is the most colourful test",
+          "It detects ALL proteins (any compound with two or more peptide bonds) — not just specific amino acids",
+          "It requires the most expensive equipment",
+          "It only detects one type of protein"
+        ],
         "a": 1,
         "e": "The Biuret test detects peptide bonds — the structural feature common to all proteins (and polypeptides). Since all proteins have peptide bonds, this test is more broadly applicable than Millon's (only tyrosine-containing proteins). It is the standard qualitative protein test.",
         "h": "Biuret: detects ALL proteins (peptide bonds present in all proteins) = most broadly applicable test.",
@@ -1929,7 +3062,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Milk forms white curds (clots) when lemon juice or vinegar is added. This demonstrates which protein test?",
-        "o": ["Biuret test", "Millon's test", "Coagulation test (acid causing milk protein/casein to coagulate)", "Foam test"],
+        "o": [
+          "Biuret test",
+          "Millon's test",
+          "Coagulation test (acid causing milk protein/casein to coagulate)",
+          "Foam test"
+        ],
         "a": 2,
         "e": "Adding acid to milk causes casein (the main milk protein) to coagulate and precipitate as white curds. The acid changes the pH, causing casein to reach its isoelectric point and denature. This is the same principle as cheese-making and is a natural demonstration of the coagulation test.",
         "h": "Acid + milk → white curds = coagulation test (acid denatures casein protein).",
@@ -1937,7 +3075,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The negative result of the Biuret test (when protein is ABSENT) shows:",
-        "o": ["Purple colour", "Red colour", "Blue colour (the original colour of dilute CuSO₄ without protein)", "No colour at all"],
+        "o": [
+          "Purple colour",
+          "Red colour",
+          "Blue colour (the original colour of dilute CuSO₄ without protein)",
+          "No colour at all"
+        ],
         "a": 2,
         "e": "Without protein (no peptide bonds to coordinate with copper ions), the mixture remains blue — the original colour of dilute copper sulphate (CuSO₄) solution. The purple complex only forms when copper coordinates with peptide bonds.",
         "h": "Biuret negative = remains blue (no peptide bonds to coordinate with copper ions).",
@@ -1945,7 +3088,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which protein test would you use to distinguish a protein-rich food from one with only starch?",
-        "o": ["Iodine test", "Sudan III test", "Biuret test — purple with protein; iodine test (blue-black with starch)", "Ethanol test"],
+        "o": [
+          "Iodine test",
+          "Sudan III test",
+          "Biuret test — purple with protein; iodine test (blue-black with starch)",
+          "Ethanol test"
+        ],
         "a": 2,
         "e": "The Biuret test (purple/violet with NaOH + CuSO₄) detects protein; the iodine test (blue-black with iodine/KI) detects starch. Using both tests can distinguish protein-rich foods from starchy foods.",
         "h": "Biuret test distinguishes protein (purple) from starch (use iodine test for starch identification).",
@@ -1953,7 +3101,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Millon's reagent contains which metal that reacts with tyrosine?",
-        "o": ["Copper", "Zinc", "Mercury (mercuric ions in nitric acid)", "Iron"],
+        "o": [
+          "Copper",
+          "Zinc",
+          "Mercury (mercuric ions in nitric acid)",
+          "Iron"
+        ],
         "a": 2,
         "e": "Millon's reagent contains mercury (as mercuric sulphate) dissolved in concentrated nitric acid. The mercuric ions react with the phenol group of tyrosine to form a mercury-phenol complex, which appears as a brick-red precipitate.",
         "h": "Millon's reagent = mercury (mercuric sulphate) in nitric acid → reacts with tyrosine's phenol group.",
@@ -1961,7 +3114,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "In which of the following situations would the Biuret test give a NEGATIVE result?",
-        "o": ["Testing a sample of boiled egg white", "Testing a sample of cooked beans", "Testing pure glucose solution (no protein/peptide bonds present)", "Testing a sample of fish broth"],
+        "o": [
+          "Testing a sample of boiled egg white",
+          "Testing a sample of cooked beans",
+          "Testing pure glucose solution (no protein/peptide bonds present)",
+          "Testing a sample of fish broth"
+        ],
         "a": 2,
         "e": "Pure glucose has no peptide bonds — it is a simple carbohydrate. The Biuret test would remain blue (negative), as there are no peptide bonds for copper ions to coordinate with. Egg, beans, and fish broth all contain protein and would give positive (purple) results.",
         "h": "Biuret negative: pure glucose (no peptide bonds) → remains blue (negative result).",
@@ -1969,7 +3127,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The order of performing the Biuret test correctly is:",
-        "o": ["Add CuSO₄ first, then NaOH", "Heat the sample first, then add reagents", "Add NaOH first to create alkaline conditions, then add drops of dilute CuSO₄", "Add the sample to the reagents simultaneously"],
+        "o": [
+          "Add CuSO₄ first, then NaOH",
+          "Heat the sample first, then add reagents",
+          "Add NaOH first to create alkaline conditions, then add drops of dilute CuSO₄",
+          "Add the sample to the reagents simultaneously"
+        ],
         "a": 2,
         "e": "Correct Biuret procedure: (1) Add excess NaOH to the food sample (creates alkaline conditions). (2) Add a few drops of dilute CuSO₄. (3) Observe colour change. The alkaline environment is essential for the copper-peptide coordination that produces the purple colour.",
         "h": "Biuret procedure: NaOH first (alkaline medium) → then drops of CuSO₄ → observe colour.",
@@ -1977,7 +3140,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The foam test is NOT highly specific for proteins because:",
-        "o": ["Proteins never foam", "It gives the same purple colour as the Biuret test", "Other non-protein substances (like saponins and detergents) also produce persistent foam when shaken", "Only oil produces foam"],
+        "o": [
+          "Proteins never foam",
+          "It gives the same purple colour as the Biuret test",
+          "Other non-protein substances (like saponins and detergents) also produce persistent foam when shaken",
+          "Only oil produces foam"
+        ],
         "a": 2,
         "e": "Saponins (natural plant compounds in beans, yam, quinoa) and detergents also produce stable foam. This means a positive foam test does not conclusively prove the presence of protein — other substances can give the same result, making it a screening rather than a confirmatory test.",
         "h": "Foam test not specific: saponins and detergents also foam (false positives possible).",
@@ -1985,7 +3153,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Why must the Biuret reagent be added in small quantities (drops)?",
-        "o": ["To save reagent chemicals", "Too much copper sulphate interferes with the result — producing an overriding blue colour that masks the purple protein complex", "To prevent bubbling", "Small quantities make the test faster"],
+        "o": [
+          "To save reagent chemicals",
+          "Too much copper sulphate interferes with the result — producing an overriding blue colour that masks the purple protein complex",
+          "To prevent bubbling",
+          "Small quantities make the test faster"
+        ],
         "a": 1,
         "e": "Only a few drops of dilute CuSO₄ are added — the reagent must be in limited supply so that the purple copper-peptide complex is clearly visible. Excess copper sulphate creates a strong blue colour that overwhelms the purple, making the positive result difficult to see.",
         "h": "Only drops of CuSO₄: excess copper blue colour overwhelms the purple protein signal.",
@@ -1993,7 +3166,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "All four protein tests (foam, Millon, Biuret, coagulation) are important in food science because they help:",
-        "o": ["Determine the exact amount of protein in food (quantitative analysis)", "Confirm the PRESENCE or ABSENCE of protein in food samples (qualitative analysis)", "Measure vitamins in protein foods", "Replace all modern food analysis equipment"],
+        "o": [
+          "Determine the exact amount of protein in food (quantitative analysis)",
+          "Confirm the PRESENCE or ABSENCE of protein in food samples (qualitative analysis)",
+          "Measure vitamins in protein foods",
+          "Replace all modern food analysis equipment"
+        ],
         "a": 1,
         "e": "These tests are qualitative — they indicate whether protein is PRESENT (positive result) or ABSENT (negative result) but do not measure exact amounts. For quantitative protein measurement, other methods (Kjeldahl nitrogen analysis, Bradford assay, bicinchoninic acid assay) are used.",
         "h": "Foam, Millon, Biuret, Coagulation = qualitative tests (presence/absence of protein, not exact amount).",
@@ -2001,7 +3179,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A student tests samples from three foods using the Biuret test: milk (A), garri (B), and groundnut oil (C). Which expected result is CORRECT?",
-        "o": ["All three turn purple", "A (milk) turns purple; B (garri) remains blue; C (groundnut oil) remains blue", "Only C (groundnut oil) turns purple", "B (garri) turns purple; A and C remain blue"],
+        "o": [
+          "All three turn purple",
+          "A (milk) turns purple; B (garri) remains blue; C (groundnut oil) remains blue",
+          "Only C (groundnut oil) turns purple",
+          "B (garri) turns purple; A and C remain blue"
+        ],
         "a": 1,
         "e": "Milk contains protein (casein, whey) → Biuret positive (purple). Garri is cassava starch (carbohydrate, very little protein) → Biuret negative (blue). Groundnut oil is 100% fat (no protein) → Biuret negative (blue). Only protein-rich samples give the purple Biuret result.",
         "h": "Milk = purple (protein present); garri = blue (starch, no protein); groundnut oil = blue (fat, no protein).",
@@ -2009,7 +3192,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The coagulation of blood when wounds heal is a natural biological example of:",
-        "o": ["Starch gelatinisation", "Fat solidification", "Protein coagulation — clotting factors (proteins) coagulate to form a blood clot", "Mineral precipitation"],
+        "o": [
+          "Starch gelatinisation",
+          "Fat solidification",
+          "Protein coagulation — clotting factors (proteins) coagulate to form a blood clot",
+          "Mineral precipitation"
+        ],
         "a": 2,
         "e": "Blood clotting involves coagulation of fibrinogen (a soluble blood protein) into fibrin (an insoluble protein network) — the clot. This is an in vivo example of protein coagulation, similar to the laboratory coagulation test.",
         "h": "Blood clotting = natural protein coagulation (fibrinogen → fibrin clot).",
@@ -2017,7 +3205,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "In which scientific context would the Biuret test be most practically useful?",
-        "o": ["Measuring the sweetness of food", "Determining if a food product contains added protein or verifying protein presence in a food sample", "Testing if oil is rancid", "Checking if vegetables are overcooked"],
+        "o": [
+          "Measuring the sweetness of food",
+          "Determining if a food product contains added protein or verifying protein presence in a food sample",
+          "Testing if oil is rancid",
+          "Checking if vegetables are overcooked"
+        ],
         "a": 1,
         "e": "The Biuret test is practically used to: verify that a claimed protein-rich food actually contains protein, check for protein adulteration in foods, confirm protein presence in laboratory food science experiments, and identify unknown food samples in quality control.",
         "h": "Biuret test practical use: verify protein presence in food samples and quality control.",
@@ -2025,7 +3218,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Cheese-making (adding rennet or acid to warm milk to curdle it) is an industrial application of which protein property?",
-        "o": ["Protein denaturation by heat alone", "Protein coagulation and precipitation (casein forms solid curds when milk is acidified or treated with rennet)", "Protein supplementation", "Protein complementation"],
+        "o": [
+          "Protein denaturation by heat alone",
+          "Protein coagulation and precipitation (casein forms solid curds when milk is acidified or treated with rennet)",
+          "Protein supplementation",
+          "Protein complementation"
+        ],
         "a": 1,
         "e": "Cheese-making exploits casein's tendency to coagulate: rennet (an enzyme) or acid cleaves casein micelles, causing them to aggregate and precipitate as curds (solid), while whey (liquid) drains away. This is a controlled, industrial application of the coagulation test principle.",
         "h": "Cheese-making = industrial protein coagulation (casein curds when acidified or treated with rennet).",
@@ -2042,7 +3240,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "The iodine test gives a blue-black colour with starch because:",
-        "o": ["Iodine is naturally blue-black", "Iodine molecules enter the helical structure of amylose (starch) and form a blue-black complex", "Iodine reacts with glucose to form a blue compound", "Starch contains iodine"],
+        "o": [
+          "Iodine is naturally blue-black",
+          "Iodine molecules enter the helical structure of amylose (starch) and form a blue-black complex",
+          "Iodine reacts with glucose to form a blue compound",
+          "Starch contains iodine"
+        ],
         "a": 1,
         "e": "Amylose (the linear component of starch) forms a helical structure. Iodine molecules (I₃⁻ ions from potassium iodide) fit inside these helices and transfer electrons, forming a deep blue-black charge-transfer complex. Amylopectin (branched starch) gives a reddish-brown colour.",
         "h": "Iodine + starch = blue-black (I₃⁻ fits inside amylose helix → charge-transfer complex).",
@@ -2050,7 +3253,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The negative result of the iodine test for starch shows:",
-        "o": ["Blue-black colour", "White colour", "Orange-red colour", "Yellow-brown colour (the original colour of iodine solution)"],
+        "o": [
+          "Blue-black colour",
+          "White colour",
+          "Orange-red colour",
+          "Yellow-brown colour (the original colour of iodine solution)"
+        ],
         "a": 3,
         "e": "Iodine solution is naturally yellow-brown (amber). When starch is absent, the solution remains yellow-brown — no colour change occurs. Only starch causes the dramatic colour change to blue-black.",
         "h": "Iodine test negative = remains yellow-brown (iodine's own colour — no starch present).",
@@ -2058,7 +3266,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Benedict's test detects reducing sugars. Which of the following sugars would NOT give a positive Benedict's test?",
-        "o": ["Glucose", "Fructose", "Maltose", "Sucrose (a non-reducing disaccharide)"],
+        "o": [
+          "Glucose",
+          "Fructose",
+          "Maltose",
+          "Sucrose (a non-reducing disaccharide)"
+        ],
         "a": 3,
         "e": "Reducing sugars have free aldehyde or ketone groups that can reduce copper ions (Cu²⁺ to Cu⁺). Glucose, fructose, maltose, and lactose are reducing sugars. Sucrose is a non-reducing disaccharide — its reducing groups are linked together, so they cannot reduce Benedict's reagent.",
         "h": "Sucrose = non-reducing sugar (does NOT give positive Benedict's test — no free reducing group).",
@@ -2066,7 +3279,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A brick-red precipitate in Benedict's test indicates:",
-        "o": ["Small amount of reducing sugar", "No sugar present", "Large amount of reducing sugar (brick-red = highest concentration; green/yellow = lower concentrations)", "Starch present"],
+        "o": [
+          "Small amount of reducing sugar",
+          "No sugar present",
+          "Large amount of reducing sugar (brick-red = highest concentration; green/yellow = lower concentrations)",
+          "Starch present"
+        ],
         "a": 2,
         "e": "Benedict's test is semi-quantitative: the colour progression corresponds to increasing reducing sugar concentration: blue (negative) → green → yellow → orange → brick-red precipitate (highest concentration of reducing sugar). The brick-red indicates the most reducing sugar.",
         "h": "Brick-red in Benedict's = high concentration of reducing sugar (progression: blue→green→yellow→orange→red).",
@@ -2074,7 +3292,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The grease (blotting paper) test for fat differs from a water test because:",
-        "o": ["Both produce the same result", "Fat stain on paper is permanent (translucent spot that does not disappear when held to light); water stain dries and disappears", "Water produces a bigger stain", "Fat produces a coloured stain"],
+        "o": [
+          "Both produce the same result",
+          "Fat stain on paper is permanent (translucent spot that does not disappear when held to light); water stain dries and disappears",
+          "Water produces a bigger stain",
+          "Fat produces a coloured stain"
+        ],
         "a": 1,
         "e": "Both water and fat create translucent spots on paper, but water evaporates (spot disappears as paper dries), while fat does not evaporate — the greasy translucent spot remains permanently. Holding the paper to light: fat spot is still translucent; dried water spot has disappeared.",
         "h": "Grease spot test: fat = permanent translucent spot; water = temporary (dries and disappears).",
@@ -2082,7 +3305,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Sudan III is used as a test for fat because:",
-        "o": ["It reacts chemically with fatty acids", "Sudan III is a fat-soluble dye that dissolves in fat, staining it orange-red while not dissolving in water", "It turns blue in the presence of fat", "Sudan III coagulates fat"],
+        "o": [
+          "It reacts chemically with fatty acids",
+          "Sudan III is a fat-soluble dye that dissolves in fat, staining it orange-red while not dissolving in water",
+          "It turns blue in the presence of fat",
+          "Sudan III coagulates fat"
+        ],
         "a": 1,
         "e": "Sudan III is a hydrophobic (fat-soluble) dye — it partitions preferentially into fat/oil rather than water. Fat droplets in a sample pick up the orange-red colour while the aqueous phase remains unstained. This makes fat droplets visible under a microscope or visible to the naked eye.",
         "h": "Sudan III: fat-soluble dye → stains fat orange-red (does not dissolve in water).",
@@ -2090,7 +3318,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "In the ethanol emulsification test for fat, the milky white emulsion forms because:",
-        "o": ["Ethanol is white when mixed with water", "Fat dissolves in ethanol but not in water — when the ethanol-fat mixture is poured into water, tiny fat droplets form an emulsion (milky turbid appearance)", "Water reacts with fat to form milk", "Ethanol turns white when heated"],
+        "o": [
+          "Ethanol is white when mixed with water",
+          "Fat dissolves in ethanol but not in water — when the ethanol-fat mixture is poured into water, tiny fat droplets form an emulsion (milky turbid appearance)",
+          "Water reacts with fat to form milk",
+          "Ethanol turns white when heated"
+        ],
         "a": 1,
         "e": "Fat dissolves in ethanol (both non-polar). When this fat-ethanol solution is poured into water, ethanol mixes with water but fat cannot dissolve in water — it forms tiny droplets. These microscopic fat droplets scatter light, creating the milky white turbid appearance.",
         "h": "Ethanol emulsification: fat dissolves in ethanol → pour into water → tiny fat droplets → milky white emulsion.",
@@ -2098,7 +3331,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Blue litmus paper turning red when dipped into lemon juice indicates that lemon juice is:",
-        "o": ["Alkaline", "Neutral", "Acidic (lemon juice contains citric acid — pH below 7 turns blue litmus red)", "Protein-rich"],
+        "o": [
+          "Alkaline",
+          "Neutral",
+          "Acidic (lemon juice contains citric acid — pH below 7 turns blue litmus red)",
+          "Protein-rich"
+        ],
         "a": 2,
         "e": "Blue litmus turns red in acidic conditions (pH below 7). Lemon juice is acidic due to citric acid (pH approximately 2-3). Red litmus turns blue in alkaline conditions (pH above 7). Neither litmus changes in neutral solutions (pH 7).",
         "h": "Blue litmus → red = acidic (lemon juice, vinegar, acidic foods).",
@@ -2106,7 +3344,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A positive iodine test result is obtained with which common Nigerian food?",
-        "o": ["Palm oil", "Groundnut", "Cooked yam or cassava/garri (starchy foods)", "Egg white"],
+        "o": [
+          "Palm oil",
+          "Groundnut",
+          "Cooked yam or cassava/garri (starchy foods)",
+          "Egg white"
+        ],
         "a": 2,
         "e": "Yam and cassava are rich in starch — adding iodine to their paste/flour gives an immediate blue-black colour (positive iodine test). Palm oil (fat) and egg white (protein) would not give this result.",
         "h": "Iodine test positive: yam, cassava, garri, rice (starchy foods → blue-black with iodine).",
@@ -2114,7 +3357,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The Benedict's test requires heating because:",
-        "o": ["Heat makes the reagent safer", "Heat is needed to activate the reaction between copper ions and reducing sugar — the reaction does not occur at room temperature", "Heating makes the colour change easier to see", "Cold temperatures destroy sugar"],
+        "o": [
+          "Heat makes the reagent safer",
+          "Heat is needed to activate the reaction between copper ions and reducing sugar — the reaction does not occur at room temperature",
+          "Heating makes the colour change easier to see",
+          "Cold temperatures destroy sugar"
+        ],
         "a": 1,
         "e": "The reduction of copper ions (Cu²⁺ to Cu⁺) by reducing sugars requires activation energy provided by heat. Placing the test tube in a boiling water bath (95-100°C) for 5 minutes provides the necessary energy for the reaction to proceed.",
         "h": "Benedict's requires heating: activation energy needed for Cu²⁺ reduction by reducing sugars.",
@@ -2122,7 +3370,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "To test whether palm oil contains fat (a confirmatory test), the MOST appropriate test would be:",
-        "o": ["Iodine test", "Biuret test", "Blotting paper test (greasy spot) or Sudan III test (orange-red staining)", "Millon's test"],
+        "o": [
+          "Iodine test",
+          "Biuret test",
+          "Blotting paper test (greasy spot) or Sudan III test (orange-red staining)",
+          "Millon's test"
+        ],
         "a": 2,
         "e": "To confirm fat/oil: blotting paper test (permanent greasy translucent spot) or Sudan III test (fat droplets stain orange-red). Palm oil would give strongly positive results for both since it is 100% fat.",
         "h": "Testing for fat in palm oil: blotting paper (grease spot) or Sudan III (orange-red staining).",
@@ -2130,7 +3383,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Fehling's solution is used similarly to Benedict's solution. What type of compounds does it detect?",
-        "o": ["Starch only", "Fats only", "Reducing sugars — compounds with free aldehyde or ketone groups that can reduce copper ions", "Non-reducing sugars"],
+        "o": [
+          "Starch only",
+          "Fats only",
+          "Reducing sugars — compounds with free aldehyde or ketone groups that can reduce copper ions",
+          "Non-reducing sugars"
+        ],
         "a": 2,
         "e": "Fehling's test uses alkaline copper tartrate solution. Like Benedict's test, it detects reducing sugars through the reduction of Cu²⁺ (blue) to Cu₂O (brick-red precipitate). Both tests are used interchangeably for detecting reducing sugars.",
         "h": "Fehling's solution = detects reducing sugars (same principle as Benedict's: Cu²⁺ → Cu₂O red precipitate).",
@@ -2138,7 +3396,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "When testing milk with the iodine test, the result would be:",
-        "o": ["Blue-black (milk contains starch)", "Orange-red (fat staining)", "Yellow-brown — negative (milk contains protein and fat, not starch)", "Purple (protein present)"],
+        "o": [
+          "Blue-black (milk contains starch)",
+          "Orange-red (fat staining)",
+          "Yellow-brown — negative (milk contains protein and fat, not starch)",
+          "Purple (protein present)"
+        ],
         "a": 2,
         "e": "Milk contains water, protein (casein, whey), fat, lactose (a sugar), and minerals — but NO starch. The iodine test would remain yellow-brown (negative), as starch is absent from milk.",
         "h": "Milk + iodine = yellow-brown (negative) — milk contains no starch.",
@@ -2146,7 +3409,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The Sudan III test is particularly useful in food microscopy because it:",
-        "o": ["Kills bacteria in food", "Stains fat droplets orange-red, making them visible under a microscope for detecting fat distribution and emulsions", "Makes starch visible", "Stains all nutrients equally"],
+        "o": [
+          "Kills bacteria in food",
+          "Stains fat droplets orange-red, making them visible under a microscope for detecting fat distribution and emulsions",
+          "Makes starch visible",
+          "Stains all nutrients equally"
+        ],
         "a": 1,
         "e": "In food microscopy, Sudan III (or Sudan IV) stains fat droplets selectively — they appear orange-red against an unstained background. This is used to study fat distribution in foods, milk fat globules, emulsions (like margarine), and lipid structures.",
         "h": "Sudan III in microscopy: stains fat droplets orange-red → visible fat distribution in food samples.",
@@ -2154,7 +3422,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which of the following correctly matches the nutrient with its test and positive result?",
-        "o": ["Starch — Biuret test — purple", "Fat — Iodine test — blue-black", "Reducing sugar — Benedict's test — brick-red precipitate", "Protein — Sudan III — orange-red"],
+        "o": [
+          "Starch — Biuret test — purple",
+          "Fat — Iodine test — blue-black",
+          "Reducing sugar — Benedict's test — brick-red precipitate",
+          "Protein — Sudan III — orange-red"
+        ],
         "a": 2,
         "e": "Correct matches: Starch → iodine test → blue-black; Reducing sugar → Benedict's → brick-red; Fat → blotting paper or Sudan III → grease spot / orange-red; Protein → Biuret → purple. Reducing sugar + Benedict's → brick-red is the correct match.",
         "h": "Reducing sugar + Benedict's test → brick-red precipitate (correct match).",
@@ -2162,7 +3435,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A student wants to test whether garri contains starch and fat. Which two tests should be performed?",
-        "o": ["Biuret test and foam test", "Iodine test (for starch) and blotting paper or Sudan III test (for fat)", "Benedict's test and Millon's test", "Coagulation test and iodine test"],
+        "o": [
+          "Biuret test and foam test",
+          "Iodine test (for starch) and blotting paper or Sudan III test (for fat)",
+          "Benedict's test and Millon's test",
+          "Coagulation test and iodine test"
+        ],
         "a": 1,
         "e": "To test for starch: iodine test (blue-black = starch present). To test for fat: blotting paper test (grease spot = fat present) or Sudan III (orange-red = fat). Garri is mainly starch — iodine should be positive; garri has little fat — blotting paper likely negative.",
         "h": "Testing garri for starch = iodine test; testing for fat = blotting paper or Sudan III.",
@@ -2170,7 +3448,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Why is sucrose (table sugar) NOT detected by Benedict's test?",
-        "o": ["Sucrose is not a carbohydrate", "Sucrose contains both glucose and fructose but their reducing groups are linked together in the glycosidic bond — preventing them from reducing copper ions", "Sucrose turns blue with Benedict's", "Sucrose is not found in food"],
+        "o": [
+          "Sucrose is not a carbohydrate",
+          "Sucrose contains both glucose and fructose but their reducing groups are linked together in the glycosidic bond — preventing them from reducing copper ions",
+          "Sucrose turns blue with Benedict's",
+          "Sucrose is not found in food"
+        ],
         "a": 1,
         "e": "In sucrose, glucose and fructose are linked by an α,β-1,2-glycosidic bond that involves the reducing groups of BOTH monosaccharides. Neither free reducing group is available to reduce Cu²⁺. Only after hydrolysis of sucrose to glucose + fructose (with acid or invertase) does it give a positive Benedict's test.",
         "h": "Sucrose (non-reducing): glycosidic bond uses both reducing groups → cannot reduce Cu²⁺ in Benedict's.",
@@ -2178,7 +3461,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Red litmus paper remains red when dipped into baking soda solution. What does this indicate?",
-        "o": ["Baking soda is acidic", "Red litmus stays red in acidic conditions only", "Baking soda is alkaline — alkaline conditions should turn red litmus to blue, but if it remains red, the solution might be neutral or the litmus test was performed incorrectly", "Baking soda contains fat"],
+        "o": [
+          "Baking soda is acidic",
+          "Red litmus stays red in acidic conditions only",
+          "Baking soda is alkaline — alkaline conditions should turn red litmus to blue, but if it remains red, the solution might be neutral or the litmus test was performed incorrectly",
+          "Baking soda contains fat"
+        ],
         "a": 2,
         "e": "Correction: baking soda (sodium bicarbonate) is alkaline (pH 8.3) — RED litmus should turn BLUE in alkaline conditions. If red litmus remains red, either: (a) the solution is acidic/neutral, or (b) the test was performed incorrectly. Blue litmus turning red would indicate acid; red turning blue = alkali.",
         "h": "Litmus: red → blue in ALKALINE; blue → red in ACIDIC. Baking soda (alkaline) → red litmus turns blue.",
@@ -2186,7 +3474,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Food samples from five foods are tested with iodine. Which gives a POSITIVE (blue-black) result?",
-        "o": ["Palm oil", "Boiled egg", "Cooked rice (starchy food → blue-black with iodine)", "Groundnut oil"],
+        "o": [
+          "Palm oil",
+          "Boiled egg",
+          "Cooked rice (starchy food → blue-black with iodine)",
+          "Groundnut oil"
+        ],
         "a": 2,
         "e": "Cooked rice is rich in starch (it is a cereal grain) → positive iodine test (blue-black). Palm oil and groundnut oil are 100% fat (no starch → negative). Boiled egg is protein and fat (no starch → negative).",
         "h": "Cooked rice = positive iodine test (rich in starch → blue-black colour).",
@@ -2194,7 +3487,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The ethanol emulsification test is preferred over the blotting paper test in some situations because:",
-        "o": ["Ethanol test is simpler", "The ethanol test can detect fat in homogeneous liquid food samples where pressing on blotting paper is not practical", "Blotting paper is more expensive", "The ethanol test detects more nutrients"],
+        "o": [
+          "Ethanol test is simpler",
+          "The ethanol test can detect fat in homogeneous liquid food samples where pressing on blotting paper is not practical",
+          "Blotting paper is more expensive",
+          "The ethanol test detects more nutrients"
+        ],
         "a": 1,
         "e": "The blotting paper test requires pressing a solid or semi-solid food onto paper. For liquid foods (milk, fruit juice, soup), the ethanol emulsification test is more practical — dissolve the sample's fat in ethanol, then pour into water to check for the milky emulsion.",
         "h": "Ethanol emulsification preferred for liquid food samples where blotting paper test is impractical.",
@@ -2211,7 +3509,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "Digestion is defined as:",
-        "o": ["The movement of nutrients from the gut into the bloodstream", "The use of absorbed nutrients by body cells for energy and growth", "The mechanical and chemical breakdown of food into smaller molecules that can be absorbed", "The excretion of waste products from the body"],
+        "o": [
+          "The movement of nutrients from the gut into the bloodstream",
+          "The use of absorbed nutrients by body cells for energy and growth",
+          "The mechanical and chemical breakdown of food into smaller molecules that can be absorbed",
+          "The excretion of waste products from the body"
+        ],
         "a": 2,
         "e": "Digestion is the process of breaking down complex food molecules into simpler ones: mechanical digestion (chewing, churning) physically breaks food into smaller pieces; chemical digestion (enzymes, acid) chemically splits large molecules (starch → glucose; protein → amino acids; fat → fatty acids + glycerol).",
         "h": "Digestion = mechanical + chemical breakdown of food into smaller absorbable molecules.",
@@ -2219,7 +3522,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Absorption in digestion refers to:",
-        "o": ["Chewing food in the mouth", "The breakdown of food by enzymes", "The movement of digested nutrients from the digestive tract into the blood or lymphatic system", "The removal of waste from the body"],
+        "o": [
+          "Chewing food in the mouth",
+          "The breakdown of food by enzymes",
+          "The movement of digested nutrients from the digestive tract into the blood or lymphatic system",
+          "The removal of waste from the body"
+        ],
         "a": 2,
         "e": "Absorption is the transfer of digested nutrients across the intestinal wall into circulation. Most absorption occurs in the small intestine (ileum): monosaccharides and amino acids → blood (portal vein); fatty acids and fat-soluble vitamins → lymphatic lacteals → eventually blood.",
         "h": "Absorption = digested nutrients move from gut into bloodstream/lymph (mainly in small intestine).",
@@ -2227,7 +3535,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Enzymes are described as biological catalysts because they:",
-        "o": ["Are consumed (used up) in the reactions they catalyse", "Speed up biochemical reactions without being permanently changed or used up", "Only work at very high temperatures", "Are made from carbohydrates"],
+        "o": [
+          "Are consumed (used up) in the reactions they catalyse",
+          "Speed up biochemical reactions without being permanently changed or used up",
+          "Only work at very high temperatures",
+          "Are made from carbohydrates"
+        ],
         "a": 1,
         "e": "Enzymes are protein catalysts — they lower the activation energy of biochemical reactions, allowing them to proceed rapidly at body temperature (37°C). Crucially, enzymes are not consumed in the reactions — the same enzyme molecules can catalyse thousands of reactions.",
         "h": "Enzymes: biological catalysts (protein) — speed reactions, not consumed, specific, work at body temperature.",
@@ -2235,7 +3548,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Salivary amylase (ptyalin) begins the digestion of which nutrient in the mouth?",
-        "o": ["Protein", "Fat", "Starch (converting it to maltose)", "Vitamins"],
+        "o": [
+          "Protein",
+          "Fat",
+          "Starch (converting it to maltose)",
+          "Vitamins"
+        ],
         "a": 2,
         "e": "Salivary amylase is secreted in saliva by the salivary glands. It catalyses the hydrolysis of starch (amylose and amylopectin) into shorter chains and ultimately maltose (a disaccharide). This is why if you chew a starchy food (bread, rice) for a long time, it begins to taste sweet.",
         "h": "Salivary amylase: digests starch → maltose, begins in mouth (chewing stage).",
@@ -2243,7 +3561,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Pepsin is an enzyme secreted in the stomach that digests:",
-        "o": ["Starch into maltose", "Fat into fatty acids and glycerol", "Proteins into polypeptides", "Maltose into glucose"],
+        "o": [
+          "Starch into maltose",
+          "Fat into fatty acids and glycerol",
+          "Proteins into polypeptides",
+          "Maltose into glucose"
+        ],
         "a": 2,
         "e": "Pepsin (pepsinogen activated by HCl) is a protease — it cleaves peptide bonds in proteins, producing shorter polypeptide chains. It works optimally at pH 2-3 (stomach's acidic environment). It begins the breakdown of dietary protein.",
         "h": "Pepsin: stomach enzyme — digests proteins → polypeptides (works in acidic stomach pH).",
@@ -2251,7 +3574,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The main site of nutrient digestion and absorption in the human body is:",
-        "o": ["The stomach", "The mouth", "The large intestine/colon", "The small intestine (particularly the ileum)"],
+        "o": [
+          "The stomach",
+          "The mouth",
+          "The large intestine/colon",
+          "The small intestine (particularly the ileum)"
+        ],
         "a": 3,
         "e": "The small intestine (duodenum, jejunum, ileum) is where most digestion is completed (by pancreatic and intestinal enzymes) and most nutrients are absorbed (through the villi and microvilli of the intestinal wall). The ileum is particularly important for absorption of vitamin B12 and bile salts.",
         "h": "Main digestion + absorption site = small intestine (duodenum → jejunum → ileum).",
@@ -2259,7 +3587,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Bile produced by the liver aids fat digestion by:",
-        "o": ["Chemically breaking down fat molecules", "Emulsifying fat — breaking large fat globules into small droplets to increase surface area for lipase action", "Converting fat to protein", "Storing fat in the gallbladder"],
+        "o": [
+          "Chemically breaking down fat molecules",
+          "Emulsifying fat — breaking large fat globules into small droplets to increase surface area for lipase action",
+          "Converting fat to protein",
+          "Storing fat in the gallbladder"
+        ],
         "a": 1,
         "e": "Bile salts are amphipathic — they emulsify large fat globules into millions of tiny fat droplets, dramatically increasing the surface area available for pancreatic lipase to act on. Bile does not chemically digest fat (it has no enzymatic action) but makes fat more accessible to lipase.",
         "h": "Bile: emulsifies fat (breaks into tiny droplets) → increases surface area for lipase digestion.",
@@ -2267,7 +3600,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Lipase breaks down fats into:",
-        "o": ["Glucose and fructose", "Amino acids and peptides", "Fatty acids and glycerol", "Starch and dextrins"],
+        "o": [
+          "Glucose and fructose",
+          "Amino acids and peptides",
+          "Fatty acids and glycerol",
+          "Starch and dextrins"
+        ],
         "a": 2,
         "e": "Pancreatic lipase (and other lipases) catalyse the hydrolysis of triglycerides (fats/oils) at the ester bonds, producing free fatty acids and glycerol. These smaller molecules can then be absorbed across the intestinal wall.",
         "h": "Lipase: fat (triglycerides) → fatty acids + glycerol (hydrolysis at ester bonds).",
@@ -2275,7 +3613,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Metabolism (utilisation) refers to:",
-        "o": ["Breaking food down in the gut", "Moving nutrients from gut to blood", "All chemical reactions in body cells that use absorbed nutrients for energy production, growth, and repair", "Removing waste from the body"],
+        "o": [
+          "Breaking food down in the gut",
+          "Moving nutrients from gut to blood",
+          "All chemical reactions in body cells that use absorbed nutrients for energy production, growth, and repair",
+          "Removing waste from the body"
+        ],
         "a": 2,
         "e": "Metabolism encompasses all chemical reactions in body cells: catabolism (breaking down nutrients for energy — e.g., glycolysis, beta-oxidation) and anabolism (building body components from nutrients — e.g., protein synthesis, bone mineralisation). Metabolism occurs in all cells.",
         "h": "Metabolism = all cellular chemical reactions using absorbed nutrients (catabolism + anabolism).",
@@ -2283,7 +3626,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Hydrochloric acid (HCl) in the stomach serves which functions?",
-        "o": ["Digests fat", "Digests starch", "Creates the acidic pH needed to activate pepsinogen to pepsin; kills many pathogens in food", "Absorbs nutrients"],
+        "o": [
+          "Digests fat",
+          "Digests starch",
+          "Creates the acidic pH needed to activate pepsinogen to pepsin; kills many pathogens in food",
+          "Absorbs nutrients"
+        ],
         "a": 2,
         "e": "HCl in gastric juice: (1) Activates pepsinogen → pepsin (needs pH 1.5-2); (2) Creates optimal acidic pH for pepsin activity; (3) Kills most pathogens in food (important for protection); (4) Denatures proteins (unfolding for enzyme access); (5) Creates acidic chyme.",
         "h": "HCl in stomach: activates pepsin, provides acidic pH for protein digestion, kills pathogens.",
@@ -2291,7 +3639,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Peristalsis is the wave-like muscular contraction that moves food through the digestive tract. It occurs in:",
-        "o": ["Only the stomach", "The liver", "The oesophagus, stomach, and intestines — propelling food from mouth to anus", "Only the small intestine"],
+        "o": [
+          "Only the stomach",
+          "The liver",
+          "The oesophagus, stomach, and intestines — propelling food from mouth to anus",
+          "Only the small intestine"
+        ],
         "a": 2,
         "e": "Peristalsis is rhythmic, wave-like contractions of the circular and longitudinal muscles of the digestive tract wall. It occurs throughout the digestive system: oesophagus (swallowing), stomach (churning), small intestine (mixing and propulsion), and large intestine (moving faeces toward rectum).",
         "h": "Peristalsis: rhythmic contractions throughout digestive tract (oesophagus, stomach, intestines).",
@@ -2299,7 +3652,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The pancreas is important in digestion because it:",
-        "o": ["Stores bile", "Absorbs nutrients", "Produces a range of digestive enzymes (amylase, lipase, proteases) and bicarbonate which is secreted into the small intestine", "Produces HCl"],
+        "o": [
+          "Stores bile",
+          "Absorbs nutrients",
+          "Produces a range of digestive enzymes (amylase, lipase, proteases) and bicarbonate which is secreted into the small intestine",
+          "Produces HCl"
+        ],
         "a": 2,
         "e": "The exocrine pancreas secretes pancreatic juice into the duodenum — containing: pancreatic amylase (starch digestion), lipase (fat digestion), trypsin + chymotrypsin (protein digestion), and sodium bicarbonate (neutralises acidic chyme, creating the right pH for intestinal enzymes).",
         "h": "Pancreas: produces amylase, lipase, proteases (trypsin), and bicarbonate for small intestine digestion.",
@@ -2307,7 +3665,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The villi and microvilli in the small intestine increase absorption because they:",
-        "o": ["Produce digestive enzymes only", "Increase the surface area of the intestinal wall enormously — the folded inner lining with finger-like projections dramatically increases absorption capacity", "Produce bile for fat digestion", "Remove toxins from food"],
+        "o": [
+          "Produce digestive enzymes only",
+          "Increase the surface area of the intestinal wall enormously — the folded inner lining with finger-like projections dramatically increases absorption capacity",
+          "Produce bile for fat digestion",
+          "Remove toxins from food"
+        ],
         "a": 1,
         "e": "The small intestine's inner surface area is massively increased by: circular folds (plicae circulares), finger-like projections (villi), and tiny projections on villi (microvilli/brush border). Combined, these increase surface area to ~200-300 m² — maximising nutrient absorption.",
         "h": "Villi and microvilli: increase intestinal surface area enormously (200-300 m²) → maximise absorption.",
@@ -2315,7 +3678,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The large intestine (colon) primarily functions to:",
-        "o": ["Digest proteins completely", "Absorb all nutrients", "Absorb water and electrolytes from undigested material, forming solid faeces for excretion", "Produce digestive enzymes"],
+        "o": [
+          "Digest proteins completely",
+          "Absorb all nutrients",
+          "Absorb water and electrolytes from undigested material, forming solid faeces for excretion",
+          "Produce digestive enzymes"
+        ],
         "a": 2,
         "e": "The colon's primary function is water and electrolyte absorption — converting the liquid chyme arriving from the small intestine into semi-solid faeces. The colon also hosts trillions of bacteria (gut microbiome) that ferment dietary fibre and produce B vitamins.",
         "h": "Colon: absorbs water and electrolytes → converts liquid chyme to solid faeces.",
@@ -2323,7 +3691,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Disaccharidases (maltase, sucrase, lactase) are enzymes located in the small intestine that:",
-        "o": ["Digest proteins into amino acids", "Digest polysaccharides into disaccharides", "Split disaccharides into monosaccharides for absorption (maltose → glucose + glucose; lactose → glucose + galactose)", "Produce bile"],
+        "o": [
+          "Digest proteins into amino acids",
+          "Digest polysaccharides into disaccharides",
+          "Split disaccharides into monosaccharides for absorption (maltose → glucose + glucose; lactose → glucose + galactose)",
+          "Produce bile"
+        ],
         "a": 2,
         "e": "Disaccharidases are brush-border enzymes in the small intestine that complete carbohydrate digestion: maltase splits maltose → 2 glucose; sucrase splits sucrose → glucose + fructose; lactase splits lactose → glucose + galactose. The resulting monosaccharides are then absorbed.",
         "h": "Disaccharidases: split disaccharides into monosaccharides (maltase, sucrase, lactase in small intestine).",
@@ -2331,7 +3704,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Excretion in the digestive context includes removing which metabolic waste products?",
-        "o": ["Only faeces from the large intestine", "Metabolic waste products including urea (kidneys/urine), CO₂ (lungs), water (lungs + skin + kidneys), and bile pigments (faeces)", "Only carbon dioxide", "Only water"],
+        "o": [
+          "Only faeces from the large intestine",
+          "Metabolic waste products including urea (kidneys/urine), CO₂ (lungs), water (lungs + skin + kidneys), and bile pigments (faeces)",
+          "Only carbon dioxide",
+          "Only water"
+        ],
         "a": 1,
         "e": "Excretion removes metabolic wastes: urea (from protein metabolism → excreted in urine by kidneys), CO₂ (from aerobic respiration → excreted by lungs), water (kidneys, lungs, skin), bile pigments/bilirubin (from haemoglobin breakdown → faeces via liver/bile). Faeces also contains indigestible material but that is egestion, not excretion.",
         "h": "Excretion: urea (kidneys), CO₂ (lungs), water (kidneys/lungs/skin), bile pigments (faeces).",
@@ -2339,7 +3717,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Lactose intolerance occurs when:",
-        "o": ["Too much lactose is consumed", "A person cannot digest fat in milk", "The small intestine lacks adequate lactase enzyme — lactose cannot be split and is fermented by bacteria, causing gas and diarrhoea", "Milk protein causes an allergic reaction"],
+        "o": [
+          "Too much lactose is consumed",
+          "A person cannot digest fat in milk",
+          "The small intestine lacks adequate lactase enzyme — lactose cannot be split and is fermented by bacteria, causing gas and diarrhoea",
+          "Milk protein causes an allergic reaction"
+        ],
         "a": 2,
         "e": "Lactase deficiency: without sufficient lactase, lactose reaches the large intestine undigested — bacteria ferment it, producing gas (bloating, flatulence), organic acids, and drawing water into the intestine (diarrhoea). It is NOT an allergy (which involves immune response to milk protein).",
         "h": "Lactose intolerance: lactase deficiency → undigested lactose fermented by bacteria → gas + diarrhoea.",
@@ -2347,7 +3730,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The oesophagus's role in digestion is:",
-        "o": ["Producing digestive enzymes", "Absorbing water", "Transporting food from the mouth to the stomach through peristaltic contractions", "Chemical digestion of proteins"],
+        "o": [
+          "Producing digestive enzymes",
+          "Absorbing water",
+          "Transporting food from the mouth to the stomach through peristaltic contractions",
+          "Chemical digestion of proteins"
+        ],
         "a": 2,
         "e": "The oesophagus is a muscular tube connecting the pharynx (throat) to the stomach. It does not produce digestive enzymes or absorb nutrients — its sole function is to transport food (and liquids) from the mouth to the stomach through rhythmic peristaltic contractions.",
         "h": "Oesophagus: transports food from mouth to stomach (peristalsis) — no digestion or absorption occurs here.",
@@ -2355,7 +3743,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The stomach's muscular churning action is an example of which type of digestion?",
-        "o": ["Chemical digestion (enzyme action)", "Absorption (nutrient uptake)", "Mechanical digestion (physical breakdown by muscular action)", "Metabolic utilisation"],
+        "o": [
+          "Chemical digestion (enzyme action)",
+          "Absorption (nutrient uptake)",
+          "Mechanical digestion (physical breakdown by muscular action)",
+          "Metabolic utilisation"
+        ],
         "a": 2,
         "e": "Mechanical digestion physically reduces food particle size without changing chemical composition: chewing in the mouth; churning/mixing in the stomach mixes food with gastric juice and reduces particle size, creating chyme. This prepares food for more effective chemical (enzymatic) digestion.",
         "h": "Stomach churning = mechanical digestion (physical breakdown, no chemical change).",
@@ -2363,7 +3756,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which digestive organ produces both digestive enzymes (exocrine function) AND hormones (endocrine function)?",
-        "o": ["Liver", "Stomach", "Pancreas (exocrine: enzymes for digestion; endocrine: insulin and glucagon for blood glucose regulation)", "Small intestine"],
+        "o": [
+          "Liver",
+          "Stomach",
+          "Pancreas (exocrine: enzymes for digestion; endocrine: insulin and glucagon for blood glucose regulation)",
+          "Small intestine"
+        ],
         "a": 2,
         "e": "The pancreas has dual functions: exocrine (produces digestive enzymes — amylase, lipase, proteases — secreted into duodenum) and endocrine (pancreatic islets produce insulin and glucagon, secreted into blood to regulate blood glucose). Both functions are essential to health.",
         "h": "Pancreas: exocrine (digestive enzymes) + endocrine (insulin + glucagon) — dual function organ.",
@@ -2380,7 +3778,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "Which enzyme begins carbohydrate digestion in the mouth?",
-        "o": ["Pepsin", "Lipase", "Salivary amylase (ptyalin) — converts starch to maltose", "Trypsin"],
+        "o": [
+          "Pepsin",
+          "Lipase",
+          "Salivary amylase (ptyalin) — converts starch to maltose",
+          "Trypsin"
+        ],
         "a": 2,
         "e": "Salivary amylase (ptyalin) in saliva begins starch digestion in the mouth. It catalyses the hydrolysis of starch into shorter dextrins and maltose. This is why starchy foods taste sweet after prolonged chewing.",
         "h": "Salivary amylase: begins starch digestion in mouth (starch → maltose).",
@@ -2388,7 +3791,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The function of hydrochloric acid (HCl) in the stomach is to:",
-        "o": ["Digest fats", "Neutralise food", "Activate pepsinogen to pepsin, maintain acidic pH for protein digestion, and kill pathogens", "Absorb nutrients"],
+        "o": [
+          "Digest fats",
+          "Neutralise food",
+          "Activate pepsinogen to pepsin, maintain acidic pH for protein digestion, and kill pathogens",
+          "Absorb nutrients"
+        ],
         "a": 2,
         "e": "HCl in gastric juice: (1) Converts inactive pepsinogen → active pepsin; (2) Creates pH 1.5-2 optimal for pepsin's protein digestion activity; (3) Kills most bacteria in food (protective); (4) Denatures proteins, making them more accessible to pepsin.",
         "h": "HCl: activates pepsin, acidic pH for protein digestion, kills food pathogens.",
@@ -2396,7 +3804,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Bile from the liver aids fat digestion. It enters the digestive tract at the:",
-        "o": ["Stomach", "Mouth", "Duodenum (bile duct opens into the duodenum)", "Large intestine"],
+        "o": [
+          "Stomach",
+          "Mouth",
+          "Duodenum (bile duct opens into the duodenum)",
+          "Large intestine"
+        ],
         "a": 2,
         "e": "Bile is produced in the liver, stored in the gallbladder, and released into the duodenum (first part of small intestine) through the common bile duct when chyme (with fat) enters the duodenum. The alkaline bile also helps neutralise the acidic chyme.",
         "h": "Bile: produced in liver, stored in gallbladder, released into duodenum through bile duct.",
@@ -2404,7 +3817,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "After fat digestion, fatty acids and glycerol are absorbed into:",
-        "o": ["Blood (portal vein) directly", "Lymphatic lacteals in the villi → lymph → thoracic duct → blood", "The liver directly", "The stomach lining"],
+        "o": [
+          "Blood (portal vein) directly",
+          "Lymphatic lacteals in the villi → lymph → thoracic duct → blood",
+          "The liver directly",
+          "The stomach lining"
+        ],
         "a": 1,
         "e": "Unlike glucose and amino acids (absorbed into blood via portal vein), digested fats (fatty acids + glycerol) are reassembled into chylomicrons inside enterocytes and absorbed into lymphatic capillaries (lacteals) in the villi. Lymph travels via the thoracic duct to the subclavian vein, entering blood circulation.",
         "h": "Fats absorbed into lymph (lacteals) → thoracic duct → blood (NOT directly into portal vein).",
@@ -2412,7 +3830,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The role of sodium bicarbonate (from the pancreas) in the duodenum is to:",
-        "o": ["Digest starch directly", "Neutralise the acidic chyme arriving from the stomach, raising pH to 7-8 for optimal enzyme activity", "Absorb minerals", "Kill bacteria in the small intestine"],
+        "o": [
+          "Digest starch directly",
+          "Neutralise the acidic chyme arriving from the stomach, raising pH to 7-8 for optimal enzyme activity",
+          "Absorb minerals",
+          "Kill bacteria in the small intestine"
+        ],
         "a": 1,
         "e": "Pancreatic bicarbonate neutralises the acidic chyme (pH 1.5-2) arriving from the stomach. The intestinal environment needs to be neutral to slightly alkaline (pH 7-8) for pancreatic and intestinal enzymes to function optimally. Without this neutralisation, intestinal enzymes would be inactivated by acid.",
         "h": "Sodium bicarbonate (pancreas): neutralises acidic chyme → creates optimal pH for intestinal enzymes.",
@@ -2420,7 +3843,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Trypsin and chymotrypsin are proteases secreted by the pancreas. They digest:",
-        "o": ["Starch into glucose", "Fat into fatty acids and glycerol", "Polypeptides into shorter peptides (continuing protein digestion started by pepsin in the stomach)", "Lactose into glucose and galactose"],
+        "o": [
+          "Starch into glucose",
+          "Fat into fatty acids and glycerol",
+          "Polypeptides into shorter peptides (continuing protein digestion started by pepsin in the stomach)",
+          "Lactose into glucose and galactose"
+        ],
         "a": 2,
         "e": "Trypsin and chymotrypsin (serine proteases) cleave different peptide bonds in polypeptides, producing shorter peptide chains. These are further digested by peptidases (brush-border and intestinal enzymes) into dipeptides and ultimately free amino acids.",
         "h": "Trypsin + chymotrypsin: cleave polypeptides into shorter peptides (continue protein digestion in duodenum).",
@@ -2428,7 +3856,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Succus entericus is the intestinal juice produced in the small intestine. It contains enzymes called:",
-        "o": ["Amylases and lipases only", "Peptidases (erepsin) and disaccharidases (maltase, sucrase, lactase) — completing protein and carbohydrate digestion", "HCl and pepsin", "Bile salts and lecithin"],
+        "o": [
+          "Amylases and lipases only",
+          "Peptidases (erepsin) and disaccharidases (maltase, sucrase, lactase) — completing protein and carbohydrate digestion",
+          "HCl and pepsin",
+          "Bile salts and lecithin"
+        ],
         "a": 1,
         "e": "Succus entericus (intestinal juice) contains brush-border enzymes: peptidases (aminopeptidase, dipeptidases — split peptides to amino acids), and disaccharidases (maltase, sucrase, lactase — split disaccharides to monosaccharides). These complete the final stages of protein and carbohydrate digestion.",
         "h": "Succus entericus: peptidases (amino acids from peptides) + disaccharidases (monosaccharides from disaccharides).",
@@ -2436,7 +3869,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The ileum, the final portion of the small intestine, is specifically important for absorption of:",
-        "o": ["Only water and minerals", "Most nutrients including glucose, amino acids, fatty acids, vitamins, and minerals; also specifically absorbs Vitamin B12 and bile salts", "Only carbohydrates", "Only proteins"],
+        "o": [
+          "Only water and minerals",
+          "Most nutrients including glucose, amino acids, fatty acids, vitamins, and minerals; also specifically absorbs Vitamin B12 and bile salts",
+          "Only carbohydrates",
+          "Only proteins"
+        ],
         "a": 1,
         "e": "The ileum is the main absorption site for virtually all nutrients. It has special active transport mechanisms for Vitamin B12 (requires intrinsic factor) and bile salts (enterohepatic circulation). The ileum's villi, microvilli, and transport proteins enable efficient absorption.",
         "h": "Ileum: main absorption site for most nutrients; specific absorption of B12 and bile salts.",
@@ -2444,7 +3882,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Intrinsic factor (produced in the stomach) is needed for the absorption of:",
-        "o": ["Vitamin C", "Iron", "Vitamin B12 (cobalamin) — intrinsic factor must bind to B12 for its absorption in the ileum", "Calcium"],
+        "o": [
+          "Vitamin C",
+          "Iron",
+          "Vitamin B12 (cobalamin) — intrinsic factor must bind to B12 for its absorption in the ileum",
+          "Calcium"
+        ],
         "a": 2,
         "e": "Vitamin B12 is absorbed by a special mechanism: it must bind to intrinsic factor (a glycoprotein produced by parietal cells in the stomach) to be recognised by receptors in the terminal ileum for absorption. Lack of intrinsic factor causes pernicious anaemia (B12 deficiency).",
         "h": "Intrinsic factor (from stomach) essential for Vitamin B12 absorption in the terminal ileum.",
@@ -2452,7 +3895,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The jejunum (middle section of small intestine) is primarily the site for:",
-        "o": ["Initial protein digestion", "Starch digestion beginning", "Rapid absorption of most nutrients — glucose, amino acids, water-soluble vitamins", "Water absorption only"],
+        "o": [
+          "Initial protein digestion",
+          "Starch digestion beginning",
+          "Rapid absorption of most nutrients — glucose, amino acids, water-soluble vitamins",
+          "Water absorption only"
+        ],
         "a": 2,
         "e": "The jejunum is the primary absorption site — it absorbs most glucose, amino acids, water-soluble vitamins, minerals, and a large portion of dietary fat. The duodenum continues enzymatic digestion started in the stomach; the ileum completes remaining absorption.",
         "h": "Jejunum: primary absorption site (glucose, amino acids, water-soluble vitamins, most fat).",
@@ -2460,7 +3908,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The portal vein carries absorbed nutrients from the small intestine to the:",
-        "o": ["Heart directly", "Lungs", "Liver (for processing, storage, or redistribution to the rest of the body)", "Kidneys"],
+        "o": [
+          "Heart directly",
+          "Lungs",
+          "Liver (for processing, storage, or redistribution to the rest of the body)",
+          "Kidneys"
+        ],
         "a": 2,
         "e": "The portal vein carries blood rich in absorbed nutrients (glucose, amino acids, water-soluble vitamins, minerals) from the intestines directly to the liver. The liver processes these nutrients: stores glycogen, synthesises proteins, converts excess nutrients, and detoxifies potential harmful substances.",
         "h": "Portal vein: carries absorbed nutrients from small intestine → liver (for processing and storage).",
@@ -2468,7 +3921,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Chylomicrons, formed in the intestinal cells after fat absorption, are:",
-        "o": ["Enzymes produced by the pancreas", "Complexes of fatty acids, glycerol, and protein that transport fat through the lymph into blood circulation", "Types of digestive enzymes for fat", "A form of dietary fibre"],
+        "o": [
+          "Enzymes produced by the pancreas",
+          "Complexes of fatty acids, glycerol, and protein that transport fat through the lymph into blood circulation",
+          "Types of digestive enzymes for fat",
+          "A form of dietary fibre"
+        ],
         "a": 1,
         "e": "Chylomicrons are large lipoproteins formed in intestinal cells (enterocytes): fatty acids + glycerol are reassembled into triglycerides, coated with phospholipids, cholesterol, and apoproteins, forming chylomicrons. These are too large for capillaries, so they enter lymph (lacteals) first.",
         "h": "Chylomicrons: fat + protein packages formed in intestinal cells → enter lymph → eventually blood.",
@@ -2476,7 +3934,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which organ coordinates the final steps of protein digestion to free amino acids in the small intestine?",
-        "o": ["Liver (through bile)", "Pancreas (trypsin/chymotrypsin) and intestinal brush-border peptidases together complete protein digestion", "Only the stomach (pepsin)", "Large intestine bacteria"],
+        "o": [
+          "Liver (through bile)",
+          "Pancreas (trypsin/chymotrypsin) and intestinal brush-border peptidases together complete protein digestion",
+          "Only the stomach (pepsin)",
+          "Large intestine bacteria"
+        ],
         "a": 1,
         "e": "Complete protein digestion requires multiple steps: stomach (pepsin → polypeptides); pancreas (trypsin, chymotrypsin, carboxypeptidase → shorter peptides); brush-border/intestinal enzymes (aminopeptidase, dipeptidases → amino acids). It requires both pancreatic and intestinal enzymes working sequentially.",
         "h": "Complete protein digestion: stomach pepsin → pancreatic proteases → intestinal brush-border peptidases → amino acids.",
@@ -2484,7 +3947,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The large intestine differs from the small intestine in that the large intestine:",
-        "o": ["Is responsible for most nutrient absorption", "Has villi for absorption", "Primarily absorbs water and electrolytes, hosts gut bacteria, and forms/stores faeces", "Produces digestive enzymes"],
+        "o": [
+          "Is responsible for most nutrient absorption",
+          "Has villi for absorption",
+          "Primarily absorbs water and electrolytes, hosts gut bacteria, and forms/stores faeces",
+          "Produces digestive enzymes"
+        ],
         "a": 2,
         "e": "The large intestine (colon) absorbs most remaining water (converting liquid chyme to semi-solid faeces), electrolytes, and some B vitamins produced by gut bacteria (microbiome). It does not have villi, does not produce digestive enzymes, and most nutrient absorption has already occurred in the small intestine.",
         "h": "Large intestine: water absorption, electrolytes, gut bacteria (microbiome), faeces formation.",
@@ -2492,7 +3960,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Why does the stomach not digest itself?",
-        "o": ["The stomach has no acid", "The stomach wall is protected by a thick mucus layer that shields it from HCl and pepsin", "Pepsin only digests food proteins, not stomach protein", "The stomach is made of a different type of protein"],
+        "o": [
+          "The stomach has no acid",
+          "The stomach wall is protected by a thick mucus layer that shields it from HCl and pepsin",
+          "Pepsin only digests food proteins, not stomach protein",
+          "The stomach is made of a different type of protein"
+        ],
         "a": 1,
         "e": "The gastric mucosa (stomach lining) produces a thick layer of bicarbonate-rich mucus that protects the stomach wall from its own acid and pepsin. Breakdown of this mucus layer (by H. pylori bacteria, NSAIDs, or excessive acid) leads to peptic ulcers.",
         "h": "Stomach doesn't digest itself: protected by thick mucus layer buffering HCl and pepsin.",
@@ -2500,7 +3973,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The digestion of sucrose (table sugar) in the small intestine produces:",
-        "o": ["Only glucose (two glucose molecules)", "Glucose and galactose", "Glucose and fructose (by the enzyme sucrase)", "Galactose and fructose"],
+        "o": [
+          "Only glucose (two glucose molecules)",
+          "Glucose and galactose",
+          "Glucose and fructose (by the enzyme sucrase)",
+          "Galactose and fructose"
+        ],
         "a": 2,
         "e": "Sucrase (brush-border enzyme in small intestine) cleaves sucrose (glucose-fructose disaccharide) into glucose and fructose. These two monosaccharides are then absorbed by specific carrier proteins into the intestinal cells and blood.",
         "h": "Sucrase: sucrose → glucose + fructose (small intestine brush-border enzyme).",
@@ -2508,7 +3986,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The summary of carbohydrate digestion from mouth to ileum is:",
-        "o": ["Mouth: amylase; Stomach: HCl breaks down starch; Ileum: final glucose absorption", "Mouth: amylase (starch → maltose) → Duodenum: amylase (more starch → maltose) → Ileum: disaccharidases (maltose → glucose) → Absorbed as monosaccharides", "Stomach: starch fully digested; Ileum: absorption of starch", "All carbohydrate digestion occurs only in the stomach"],
+        "o": [
+          "Mouth: amylase; Stomach: HCl breaks down starch; Ileum: final glucose absorption",
+          "Mouth: amylase (starch → maltose) → Duodenum: amylase (more starch → maltose) → Ileum: disaccharidases (maltose → glucose) → Absorbed as monosaccharides",
+          "Stomach: starch fully digested; Ileum: absorption of starch",
+          "All carbohydrate digestion occurs only in the stomach"
+        ],
         "a": 1,
         "e": "Carbohydrate digestion pathway: (1) Mouth: salivary amylase → starch to maltose; (2) Stomach: no carbohydrate digestion (amylase inactivated by HCl); (3) Duodenum: pancreatic amylase → starch/dextrins to maltose; (4) Ileum brush-border: maltase/sucrase/lactase → monosaccharides; (5) Absorbed into blood.",
         "h": "Carb digestion: mouth amylase → duodenum amylase → ileum disaccharidases → absorbed as monosaccharides.",
@@ -2516,7 +3999,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which part of the small intestine receives chyme from the stomach and also receives bile and pancreatic juice?",
-        "o": ["Jejunum", "Ileum", "Duodenum (first portion; receives chyme + bile from gallbladder + pancreatic juice)", "Pylorus"],
+        "o": [
+          "Jejunum",
+          "Ileum",
+          "Duodenum (first portion; receives chyme + bile from gallbladder + pancreatic juice)",
+          "Pylorus"
+        ],
         "a": 2,
         "e": "The duodenum (first 25-30 cm of small intestine) receives: acidic chyme from stomach; bile from gallbladder (via common bile duct); and pancreatic juice from pancreas (via pancreatic duct). The sphincter of Oddi controls the release of bile and pancreatic juice into the duodenum.",
         "h": "Duodenum: receives chyme from stomach + bile + pancreatic juice (the most important digestive site).",
@@ -2524,7 +4012,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Complete fat digestion produces which end products that are then absorbed?",
-        "o": ["Glucose and fructose", "Amino acids and peptides", "Fatty acids and glycerol (from triglyceride hydrolysis by lipase)", "Maltose and dextrins"],
+        "o": [
+          "Glucose and fructose",
+          "Amino acids and peptides",
+          "Fatty acids and glycerol (from triglyceride hydrolysis by lipase)",
+          "Maltose and dextrins"
+        ],
         "a": 2,
         "e": "Lipase (with bile emulsification) hydrolyses triglycerides at the ester bonds, producing: 2 free fatty acids + 1 monoglyceride (mostly), or 3 fatty acids + glycerol. These lipid products form mixed micelles with bile salts for absorption into enterocytes.",
         "h": "Fat digestion end products: fatty acids + glycerol (from lipase hydrolysis of triglycerides).",
@@ -2532,7 +4025,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The stomach does NOT absorb most nutrients because:",
-        "o": ["The stomach has villi like the small intestine", "The stomach is not designed for absorption — its thick muscular wall and lack of villi limit nutrient absorption; it mainly prepares food for intestinal digestion", "The stomach absorbs all fats instead", "Nutrients enter blood from the stomach immediately"],
+        "o": [
+          "The stomach has villi like the small intestine",
+          "The stomach is not designed for absorption — its thick muscular wall and lack of villi limit nutrient absorption; it mainly prepares food for intestinal digestion",
+          "The stomach absorbs all fats instead",
+          "Nutrients enter blood from the stomach immediately"
+        ],
         "a": 1,
         "e": "The stomach's primary role is digestion (mechanical churning + chemical with acid and pepsin) — it is not designed for absorption. The thick mucus layer, lack of villi, and muscular wall limit absorption. The small intestine, with its villi and specialised carriers, is the absorption organ.",
         "h": "Stomach: mainly for digestion (not absorption) — no villi, thick wall, primarily prepares food for intestine.",
@@ -2549,7 +4047,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "Folic acid (Vitamin B9) is most critical in pregnancy during which period?",
-        "o": ["The last trimester (7-9 months)", "The first few weeks of pregnancy — ideally supplementation should start before conception", "Only during labour", "The second trimester (4-6 months)"],
+        "o": [
+          "The last trimester (7-9 months)",
+          "The first few weeks of pregnancy — ideally supplementation should start before conception",
+          "Only during labour",
+          "The second trimester (4-6 months)"
+        ],
         "a": 1,
         "e": "Neural tube closure occurs in the first 28 days of pregnancy — often before the woman knows she is pregnant. Folic acid must be adequate during this critical period. This is why it is recommended that all women of reproductive age take folic acid supplements.",
         "h": "Folic acid most critical: first weeks (neural tube closes in first 28 days — before woman knows she is pregnant).",
@@ -2557,7 +4060,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Iron requirements increase significantly during pregnancy because:",
-        "o": ["The mother needs less blood during pregnancy", "The expanding maternal blood volume and formation of foetal iron stores require substantially more iron", "Iron is lost in breast milk", "Pregnancy reduces iron absorption"],
+        "o": [
+          "The mother needs less blood during pregnancy",
+          "The expanding maternal blood volume and formation of foetal iron stores require substantially more iron",
+          "Iron is lost in breast milk",
+          "Pregnancy reduces iron absorption"
+        ],
         "a": 1,
         "e": "Pregnancy requires extra iron for: (1) expanded maternal blood volume (blood volume increases 50%); (2) foetal haemoglobin production; (3) building iron stores in the foetus for the first 6 months after birth. Without extra iron, maternal iron-deficiency anaemia develops.",
         "h": "Pregnancy iron: expanded blood volume (50%) + foetal iron stores → greatly increased need.",
@@ -2565,7 +4073,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Cretinism (severe intellectual disability in babies) is caused by severe deficiency of which nutrient during pregnancy?",
-        "o": ["Iron", "Vitamin C", "Iodine (needed for foetal thyroid hormone development and brain formation)", "Calcium"],
+        "o": [
+          "Iron",
+          "Vitamin C",
+          "Iodine (needed for foetal thyroid hormone development and brain formation)",
+          "Calcium"
+        ],
         "a": 2,
         "e": "Iodine deficiency during pregnancy is the world's leading preventable cause of intellectual disability. Severe iodine deficiency prevents adequate thyroid hormone production in the developing foetus — thyroid hormones are essential for brain development, and deficiency causes cretinism.",
         "h": "Cretinism = severe iodine deficiency during pregnancy (impairs foetal brain development).",
@@ -2573,7 +4086,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The WHO recommendation for exclusive breastfeeding is:",
-        "o": ["For the first 3 months only", "For the first 6 months of life", "Only for the first 2 weeks", "For the entire first year"],
+        "o": [
+          "For the first 3 months only",
+          "For the first 6 months of life",
+          "Only for the first 2 weeks",
+          "For the entire first year"
+        ],
         "a": 1,
         "e": "The World Health Organisation (WHO) recommends exclusive breastfeeding (no other food or drink, not even water) for the first 6 months of life. After 6 months, complementary foods should be introduced while breastfeeding continues up to 2 years or beyond.",
         "h": "WHO: exclusive breastfeeding for first 6 months (no other food or water).",
@@ -2581,7 +4099,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Adolescent girls have particularly high iron requirements because:",
-        "o": ["Girls exercise more than boys", "Menstruation causes monthly blood loss, increasing iron requirements beyond normal growth needs", "Girls grow taller than boys", "Adolescent girls eat less than boys"],
+        "o": [
+          "Girls exercise more than boys",
+          "Menstruation causes monthly blood loss, increasing iron requirements beyond normal growth needs",
+          "Girls grow taller than boys",
+          "Adolescent girls eat less than boys"
+        ],
         "a": 1,
         "e": "From menarche (onset of menstruation), girls lose iron monthly in menstrual blood. Combined with the iron needed for growth (adolescent growth spurt), this makes adolescent girls particularly vulnerable to iron deficiency anaemia.",
         "h": "Adolescent girls: high iron need due to menstrual blood loss + growth spurt iron requirements.",
@@ -2589,7 +4112,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Why is calcium especially important during adolescence?",
-        "o": ["Calcium prevents puberty from starting too early", "Adolescence is the period of peak bone mass building — adequate calcium during this period determines bone density throughout life", "Calcium replaces iron in adolescents", "Only elderly people need calcium"],
+        "o": [
+          "Calcium prevents puberty from starting too early",
+          "Adolescence is the period of peak bone mass building — adequate calcium during this period determines bone density throughout life",
+          "Calcium replaces iron in adolescents",
+          "Only elderly people need calcium"
+        ],
         "a": 1,
         "e": "Peak bone mass is achieved in late adolescence/early adulthood. The calcium deposited in bones during adolescence largely determines lifelong bone density and the risk of osteoporosis in later life. Inadequate calcium during adolescence limits peak bone mass.",
         "h": "Adolescence = peak bone mass building period; calcium intake now determines lifetime bone density.",
@@ -2597,7 +4125,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Maternal iron deficiency anaemia during pregnancy can result in:",
-        "o": ["Improved foetal growth", "Preterm birth, low birth weight, and increased risk of infant mortality", "No effect on the baby", "Faster delivery"],
+        "o": [
+          "Improved foetal growth",
+          "Preterm birth, low birth weight, and increased risk of infant mortality",
+          "No effect on the baby",
+          "Faster delivery"
+        ],
         "a": 1,
         "e": "Maternal anaemia reduces oxygen delivery to the foetus and placenta, impairing foetal growth. Consequences: preterm birth (before 37 weeks), low birth weight (under 2.5 kg), and increased risk of perinatal mortality. The mother is also at increased risk of complications during delivery.",
         "h": "Maternal iron deficiency anaemia → preterm birth, low birth weight, higher infant mortality risk.",
@@ -2605,7 +4138,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A food taboo preventing pregnant women from eating eggs is harmful because eggs provide:",
-        "o": ["Excess fat that harms the foetus", "Complete protein, vitamins A, B12, D, iron, and zinc — all essential for foetal development", "Substances that cause birth defects", "Nothing useful to pregnant women"],
+        "o": [
+          "Excess fat that harms the foetus",
+          "Complete protein, vitamins A, B12, D, iron, and zinc — all essential for foetal development",
+          "Substances that cause birth defects",
+          "Nothing useful to pregnant women"
+        ],
         "a": 1,
         "e": "Eggs are among the most nutritious foods, providing complete protein (all essential amino acids), Vitamin A, B12, D, iron, zinc, and choline — all essential for foetal growth and brain development. Food taboos preventing pregnant women from eating eggs reduce their nutritional intake and can harm foetal development.",
         "h": "Egg taboo in pregnancy harmful: eggs provide complete protein, Vitamins A, B12, D, iron, zinc for foetal development.",
@@ -2613,7 +4151,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Lactating (breastfeeding) mothers require approximately how many extra kilocalories per day?",
-        "o": ["100 extra kcal/day", "200 extra kcal/day", "500 extra kcal/day (to support milk production)", "1000 extra kcal/day"],
+        "o": [
+          "100 extra kcal/day",
+          "200 extra kcal/day",
+          "500 extra kcal/day (to support milk production)",
+          "1000 extra kcal/day"
+        ],
         "a": 2,
         "e": "Breastfeeding requires an additional approximately 500 kcal/day beyond normal needs to support milk production. Human breast milk contains about 70 kcal per 100 mL; a typical breastfeeding mother produces 700-800 mL/day. The energy cost of milk synthesis is approximately 500 kcal/day.",
         "h": "Lactating mothers need ~500 extra kcal/day for milk production.",
@@ -2621,7 +4164,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Calcium is particularly important during pregnancy because it is needed for:",
-        "o": ["Maternal weight gain", "Foetal bone and teeth development — the foetus requires large amounts of calcium for skeletal mineralisation", "Production of breast milk only", "Preventing maternal nausea"],
+        "o": [
+          "Maternal weight gain",
+          "Foetal bone and teeth development — the foetus requires large amounts of calcium for skeletal mineralisation",
+          "Production of breast milk only",
+          "Preventing maternal nausea"
+        ],
         "a": 1,
         "e": "The developing foetus requires calcium for bone and teeth formation — the foetal skeleton mineralises progressively during pregnancy. If maternal dietary calcium is insufficient, calcium is mobilised from the mother's bones to supply the foetus, potentially weakening maternal bone density.",
         "h": "Calcium in pregnancy: foetal bone and teeth development (from maternal diet or maternal bones).",
@@ -2629,7 +4177,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Why does breast milk composition remain relatively constant even when the mother's diet is poor?",
-        "o": ["The baby produces its own nutrients", "The mother's body prioritises the infant — drawing on maternal nutrient reserves to maintain milk composition, at the expense of the mother's own health", "Breast milk quality always deteriorates with poor diet", "Formula milk is better in this situation"],
+        "o": [
+          "The baby produces its own nutrients",
+          "The mother's body prioritises the infant — drawing on maternal nutrient reserves to maintain milk composition, at the expense of the mother's own health",
+          "Breast milk quality always deteriorates with poor diet",
+          "Formula milk is better in this situation"
+        ],
         "a": 1,
         "e": "The body has a biological priority system: in lactation, the mammary gland has priority for nutrients over the mother's own tissues. The mother's body will draw on its stores (bone calcium, liver vitamin reserves, muscle protein) to maintain milk quality — the mother's health suffers, not the infant's milk.",
         "h": "Poor maternal diet: body prioritises infant → draws on maternal reserves for milk (mother's health suffers).",
@@ -2637,7 +4190,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Neural tube defects (like spina bifida) occur when the neural tube fails to close properly. They can be prevented by adequate intake of:",
-        "o": ["Vitamin C before and during pregnancy", "Iron during the third trimester", "Folic acid before and in the early weeks of pregnancy (critical period for neural tube closure)", "Calcium throughout pregnancy"],
+        "o": [
+          "Vitamin C before and during pregnancy",
+          "Iron during the third trimester",
+          "Folic acid before and in the early weeks of pregnancy (critical period for neural tube closure)",
+          "Calcium throughout pregnancy"
+        ],
         "a": 2,
         "e": "Neural tube closure occurs in weeks 3-4 of pregnancy. Adequate folic acid (400 micrograms/day as supplement + dietary folate) is essential during this critical window. Women planning pregnancy should supplement folic acid at least 1 month before conception.",
         "h": "Neural tube defects prevented by folic acid: start before conception (neural tube closes weeks 3-4).",
@@ -2645,7 +4203,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Zinc is particularly important during adolescence for:",
-        "o": ["Preventing skin pigmentation changes", "Supporting growth, sexual maturation, and immune function — zinc is essential for reproductive development", "Replacing calcium in bones", "Vision protection only"],
+        "o": [
+          "Preventing skin pigmentation changes",
+          "Supporting growth, sexual maturation, and immune function — zinc is essential for reproductive development",
+          "Replacing calcium in bones",
+          "Vision protection only"
+        ],
         "a": 1,
         "e": "Zinc is critical during adolescence: it supports cell division and growth (adolescent growth spurt), sexual maturation (testosterone synthesis and reproductive development), and immune function. Zinc deficiency causes stunted growth and delayed sexual maturation.",
         "h": "Zinc in adolescence: supports growth, sexual maturation, and immune function.",
@@ -2653,7 +4216,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Adolescents who skip meals regularly are at risk of:",
-        "o": ["Better concentration in school", "Improved athletic performance", "Nutritional deficiencies, poor growth, impaired academic performance, and eating disorders", "No nutritional risk"],
+        "o": [
+          "Better concentration in school",
+          "Improved athletic performance",
+          "Nutritional deficiencies, poor growth, impaired academic performance, and eating disorders",
+          "No nutritional risk"
+        ],
         "a": 2,
         "e": "Meal skipping in adolescence leads to: inadequate energy for rapid growth; nutrient deficiencies; blood glucose fluctuations (affecting concentration and mood); compensatory overeating; and increased risk of developing eating disorders (anorexia, bulimia).",
         "h": "Adolescent meal skipping: nutritional deficiencies, poor growth, impaired concentration, eating disorder risk.",
@@ -2661,7 +4229,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Early marriage and pregnancy (before nutritional maturity) is a harmful practice because:",
-        "o": ["Young women always have better nutrition than older women", "Adolescent girls who are still growing themselves compete with the foetus for nutrients, increasing risk of poor outcomes for both mother and baby", "Teenage pregnancy provides better foetal nutrition", "Age does not affect pregnancy nutrition"],
+        "o": [
+          "Young women always have better nutrition than older women",
+          "Adolescent girls who are still growing themselves compete with the foetus for nutrients, increasing risk of poor outcomes for both mother and baby",
+          "Teenage pregnancy provides better foetal nutrition",
+          "Age does not affect pregnancy nutrition"
+        ],
         "a": 1,
         "e": "Adolescent girls who become pregnant while still growing have competing nutrient demands — their own growing bodies and the developing foetus both need nutrients. This increases risk of: low birth weight, preterm birth, maternal malnutrition, anaemia, and complications during delivery.",
         "h": "Teenage pregnancy: girl's own growth competes with foetal needs → risk of poor outcomes for both.",
@@ -2669,7 +4242,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Vitamin A requirements increase during pregnancy because it is needed for:",
-        "o": ["Only maternal night vision", "Foetal organ development, cell differentiation, and maintaining maternal immunity", "Preventing morning sickness", "Only the last month of pregnancy"],
+        "o": [
+          "Only maternal night vision",
+          "Foetal organ development, cell differentiation, and maintaining maternal immunity",
+          "Preventing morning sickness",
+          "Only the last month of pregnancy"
+        ],
         "a": 1,
         "e": "Vitamin A is essential for foetal development — it regulates cell differentiation (determines what type of cell each stem cell becomes), organ formation, eye development, and immune function. Both deficiency (organ malformations) and excess (teratogenic/causes birth defects) are harmful in pregnancy.",
         "h": "Vitamin A in pregnancy: foetal organ development and cell differentiation (deficiency AND excess harmful).",
@@ -2677,7 +4255,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which combination of nutrients is most critical for a pregnant woman in Nigeria to receive from antenatal supplements?",
-        "o": ["Vitamin C and Vitamin K", "Iron and folic acid (the most commonly prescribed antenatal supplements for Nigerian women)", "Vitamin E and Vitamin D only", "Zinc and copper only"],
+        "o": [
+          "Vitamin C and Vitamin K",
+          "Iron and folic acid (the most commonly prescribed antenatal supplements for Nigerian women)",
+          "Vitamin E and Vitamin D only",
+          "Zinc and copper only"
+        ],
         "a": 1,
         "e": "In Nigeria and most developing countries, iron and folic acid are the most commonly prescribed antenatal supplements because: iron deficiency anaemia is very prevalent (30-40% of pregnant women); folate deficiency and neural tube defects are significant public health concerns.",
         "h": "Nigerian antenatal supplements: iron + folic acid most important (anaemia + neural tube defects).",
@@ -2685,7 +4268,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The growth spurt during adolescence requires increased protein intake because:",
-        "o": ["Protein provides the primary energy for the growth spurt", "Protein provides amino acids for building new muscle, bone matrix, and other tissues during the rapid growth phase", "Protein replaces calcium in bones", "Growth spurts do not increase protein needs"],
+        "o": [
+          "Protein provides the primary energy for the growth spurt",
+          "Protein provides amino acids for building new muscle, bone matrix, and other tissues during the rapid growth phase",
+          "Protein replaces calcium in bones",
+          "Growth spurts do not increase protein needs"
+        ],
         "a": 1,
         "e": "During the adolescent growth spurt, large amounts of new tissue are synthesised — muscle mass increases, bone protein matrix forms, and organ growth occurs. All new tissue requires amino acids from dietary protein. Inadequate protein during the growth spurt leads to stunting.",
         "h": "Adolescent growth spurt: needs more protein for new muscle, bone matrix, and tissue synthesis.",
@@ -2693,7 +4281,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Breast milk provides all the nutrition a baby needs exclusively for the first 6 months because it contains:",
-        "o": ["Only water and sugar", "Complete nutrition including protein, fat, carbohydrate, vitamins, minerals, antibodies, and growth factors specifically designed for the human infant", "Only protein and vitamins", "The same nutrients as cow's milk"],
+        "o": [
+          "Only water and sugar",
+          "Complete nutrition including protein, fat, carbohydrate, vitamins, minerals, antibodies, and growth factors specifically designed for the human infant",
+          "Only protein and vitamins",
+          "The same nutrients as cow's milk"
+        ],
         "a": 1,
         "e": "Breast milk is uniquely suited for human infants: it provides complete, easily digestible nutrition; contains maternal antibodies (immunoglobulins, especially IgA) that protect against infections; has growth factors that promote gut maturation; and adjusts composition as the baby grows.",
         "h": "Breast milk = complete infant nutrition + antibodies + growth factors (tailored for human infants).",
@@ -2701,7 +4294,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Pregnancy-induced hypertension (PIH) has been linked to inadequate intake of which nutrient?",
-        "o": ["Iron", "Folic acid", "Calcium — low calcium intake is associated with increased risk of gestational hypertension and pre-eclampsia", "Vitamin C"],
+        "o": [
+          "Iron",
+          "Folic acid",
+          "Calcium — low calcium intake is associated with increased risk of gestational hypertension and pre-eclampsia",
+          "Vitamin C"
+        ],
         "a": 2,
         "e": "Research shows that adequate calcium intake during pregnancy may reduce the risk of pregnancy-induced hypertension (gestational hypertension) and pre-eclampsia. WHO recommends calcium supplementation for pregnant women in populations with low calcium intake to prevent these complications.",
         "h": "Calcium deficiency linked to pregnancy-induced hypertension and pre-eclampsia.",
@@ -2718,7 +4316,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "The 'work triangle' principle in kitchen planning refers to:",
-        "o": ["Having three cooks in the kitchen", "The triangle-shaped layout of the three main work centres: refrigerator/storage, sink/preparation, and stove/cooking for efficient movement", "Using three different colours in the kitchen", "Having three separate kitchens"],
+        "o": [
+          "Having three cooks in the kitchen",
+          "The triangle-shaped layout of the three main work centres: refrigerator/storage, sink/preparation, and stove/cooking for efficient movement",
+          "Using three different colours in the kitchen",
+          "Having three separate kitchens"
+        ],
         "a": 1,
         "e": "The kitchen work triangle positions the three most-used work stations (refrigerator/storage, sink/preparation area, stove/cooking area) in a triangular arrangement, minimising the distance travelled between them and improving kitchen efficiency and workflow.",
         "h": "Work triangle: refrigerator + sink + stove in triangle = efficient kitchen workflow.",
@@ -2726,7 +4329,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Good ventilation is essential in kitchen planning because it:",
-        "o": ["Makes the kitchen look larger", "Removes steam, smoke, cooking odours, and heat, preventing respiratory problems and maintaining a comfortable working environment", "Provides more storage space", "Is only important in restaurants"],
+        "o": [
+          "Makes the kitchen look larger",
+          "Removes steam, smoke, cooking odours, and heat, preventing respiratory problems and maintaining a comfortable working environment",
+          "Provides more storage space",
+          "Is only important in restaurants"
+        ],
         "a": 1,
         "e": "Kitchen ventilation removes: steam (prevents mould and dampness), smoke (fire hazard and respiratory irritant), cooking odours (improves air quality), and excess heat (prevents discomfort). Poor ventilation leads to moisture damage, mould growth, and respiratory issues.",
         "h": "Kitchen ventilation: removes steam, smoke, odours, heat → prevents mould, maintains comfort.",
@@ -2734,7 +4342,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The correct temperature for a food refrigerator to safely store perishable foods is:",
-        "o": ["10-15°C (too warm for food safety)", "0-4°C (cold enough to slow bacterial growth without freezing)", "-18°C (freezing temperature)", "20-25°C (room temperature)"],
+        "o": [
+          "10-15°C (too warm for food safety)",
+          "0-4°C (cold enough to slow bacterial growth without freezing)",
+          "-18°C (freezing temperature)",
+          "20-25°C (room temperature)"
+        ],
         "a": 1,
         "e": "Refrigerators should maintain 0-4°C — cold enough to significantly slow bacterial growth (bacteria multiply rapidly at 5-60°C, the 'danger zone') without freezing most foods. At these temperatures, most pathogens cannot multiply rapidly, extending food safety.",
         "h": "Refrigerator: 0-4°C (slows bacterial growth; danger zone is 5-60°C).",
@@ -2742,7 +4355,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A pressure cooker is a labour-saving kitchen device because it:",
-        "o": ["Reduces pressure during cooking", "Cooks food faster by raising the boiling point of water (above 100°C) under increased pressure, significantly reducing cooking time", "Uses electricity to mix food", "Cools food rapidly"],
+        "o": [
+          "Reduces pressure during cooking",
+          "Cooks food faster by raising the boiling point of water (above 100°C) under increased pressure, significantly reducing cooking time",
+          "Uses electricity to mix food",
+          "Cools food rapidly"
+        ],
         "a": 1,
         "e": "Pressure cookers trap steam, increasing internal pressure. Higher pressure raises the boiling point of water (above 100°C), allowing food to cook at higher temperatures and therefore much faster. A dish that normally takes 45 minutes can cook in 15 minutes — saving time, energy, and fuel.",
         "h": "Pressure cooker: increased pressure → higher boiling point → faster cooking time (saves energy and time).",
@@ -2750,7 +4368,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Adequate lighting in the kitchen is important for:",
-        "o": ["Decoration only", "Safe food preparation — good lighting allows accurate cutting, measuring, and checking food quality, preventing accidents", "Making the kitchen appear larger", "Providing heat for cooking"],
+        "o": [
+          "Decoration only",
+          "Safe food preparation — good lighting allows accurate cutting, measuring, and checking food quality, preventing accidents",
+          "Making the kitchen appear larger",
+          "Providing heat for cooking"
+        ],
         "a": 1,
         "e": "Good kitchen lighting is a safety requirement — poor lighting increases the risk of cutting accidents, burns from missed pots, inability to read recipe instructions, failure to notice food spoilage signs, and difficulty checking if food is properly cooked.",
         "h": "Good kitchen lighting: safety (prevents cutting accidents, helps spot spoilage, read recipes).",
@@ -2758,7 +4381,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A colander differs from a sieve in that a colander:",
-        "o": ["Has smaller holes and is used for sifting flour", "Has larger holes and is used for draining water from cooked pasta, vegetables, or rinsing food", "Is used for measuring volumes", "Is a cooking pot"],
+        "o": [
+          "Has smaller holes and is used for sifting flour",
+          "Has larger holes and is used for draining water from cooked pasta, vegetables, or rinsing food",
+          "Is used for measuring volumes",
+          "Is a cooking pot"
+        ],
         "a": 1,
         "e": "A colander has larger holes/perforations and is used for draining water from boiled food (pasta, vegetables, beans, rice). A sieve has finer mesh and is used for sifting flour, straining sauces, or removing lumps. Both are straining tools but for different purposes.",
         "h": "Colander: large holes for draining food. Sieve: fine mesh for sifting flour or straining sauces.",
@@ -2766,7 +4394,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Easy-to-clean surfaces (tiles, smooth countertops) in the kitchen are important for:",
-        "o": ["Decoration and appearance only", "Hygiene — smooth, non-porous surfaces can be thoroughly cleaned, preventing food residue and bacteria from accumulating", "Reducing kitchen noise", "Providing heat insulation"],
+        "o": [
+          "Decoration and appearance only",
+          "Hygiene — smooth, non-porous surfaces can be thoroughly cleaned, preventing food residue and bacteria from accumulating",
+          "Reducing kitchen noise",
+          "Providing heat insulation"
+        ],
         "a": 1,
         "e": "Smooth, non-porous kitchen surfaces (ceramic tiles, stainless steel, solid surface countertops) can be thoroughly cleaned and disinfected — food residues cannot penetrate the surface. Rough, porous surfaces harbour bacteria and are difficult to clean hygienically.",
         "h": "Smooth kitchen surfaces: can be thoroughly cleaned → prevent bacterial accumulation (food hygiene).",
@@ -2774,7 +4407,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The correct care of kitchen knives includes:",
-        "o": ["Soaking in water for long periods", "Washing in a dishwasher regularly", "Washing immediately after use, drying thoroughly, and storing separately (not loose with other utensils)", "Using metal scourers to clean"],
+        "o": [
+          "Soaking in water for long periods",
+          "Washing in a dishwasher regularly",
+          "Washing immediately after use, drying thoroughly, and storing separately (not loose with other utensils)",
+          "Using metal scourers to clean"
+        ],
         "a": 2,
         "e": "Proper knife care: wash immediately (food acids can damage steel), dry thoroughly (prevent rust and staining), store in a knife block or on a magnetic strip (not loose in a drawer — dangerous and dulls the blade). Sharp knives are safer than blunt ones.",
         "h": "Knife care: wash immediately, dry thoroughly, store in knife block (not loose in drawer).",
@@ -2782,7 +4420,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A refrigerator should be defrosted regularly because:",
-        "o": ["Defrosting adds nutrients to food", "Ice build-up reduces refrigerator efficiency — it acts as insulation around the cooling coils, making the refrigerator work harder and less effectively", "Defrosting increases storage space only", "Defrosting is done for aesthetic reasons"],
+        "o": [
+          "Defrosting adds nutrients to food",
+          "Ice build-up reduces refrigerator efficiency — it acts as insulation around the cooling coils, making the refrigerator work harder and less effectively",
+          "Defrosting increases storage space only",
+          "Defrosting is done for aesthetic reasons"
+        ],
         "a": 1,
         "e": "Ice build-up in refrigerators (particularly older models) insulates the cooling coils, reducing their efficiency. The refrigerator must work harder to maintain temperature, consuming more electricity and potentially failing to maintain safe temperatures. Regular defrosting maintains efficiency.",
         "h": "Defrost refrigerator: ice build-up reduces efficiency (insulates coils → higher energy use, less cooling).",
@@ -2790,7 +4433,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Labour-saving devices in the kitchen are designed to:",
-        "o": ["Replace all human cooking skills", "Reduce the time, physical effort, and energy required for food preparation", "Only be used by professional chefs", "Increase the nutritional content of food"],
+        "o": [
+          "Replace all human cooking skills",
+          "Reduce the time, physical effort, and energy required for food preparation",
+          "Only be used by professional chefs",
+          "Increase the nutritional content of food"
+        ],
         "a": 1,
         "e": "Labour-saving devices (electric blenders, food processors, electric mixers, pressure cookers, dishwashers) reduce the physical effort and time required for food preparation — making cooking more accessible, faster, and less physically demanding.",
         "h": "Labour-saving devices: reduce time and physical effort in food preparation.",
@@ -2798,7 +4446,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Why should a chopping board for raw meat be different from the one used for vegetables?",
-        "o": ["Different colours are preferred for aesthetic reasons", "Cross-contamination prevention — bacteria from raw meat (e.g., Salmonella) transferred to vegetables eaten raw would cause food poisoning", "Meat and vegetables have different textures", "There is no practical reason for separate boards"],
+        "o": [
+          "Different colours are preferred for aesthetic reasons",
+          "Cross-contamination prevention — bacteria from raw meat (e.g., Salmonella) transferred to vegetables eaten raw would cause food poisoning",
+          "Meat and vegetables have different textures",
+          "There is no practical reason for separate boards"
+        ],
         "a": 1,
         "e": "Cross-contamination: raw meat can harbour pathogens (Salmonella, Campylobacter). If the same board is used for raw vegetables eaten without cooking, those pathogens contaminate the vegetables, causing foodborne illness. Separate boards (colour-coded) prevent this.",
         "h": "Separate chopping boards: prevents cross-contamination of raw meat pathogens onto raw vegetables.",
@@ -2806,7 +4459,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The oven in a kitchen should be regularly cleaned because:",
-        "o": ["It improves the oven's appearance only", "Food spills and grease residue inside the oven can burn, causing smoke, off-flavours in food, and in extreme cases fire", "Cleaning the oven reduces cooking temperature", "Cleaning is only needed when the oven breaks down"],
+        "o": [
+          "It improves the oven's appearance only",
+          "Food spills and grease residue inside the oven can burn, causing smoke, off-flavours in food, and in extreme cases fire",
+          "Cleaning the oven reduces cooking temperature",
+          "Cleaning is only needed when the oven breaks down"
+        ],
         "a": 1,
         "e": "Burnt food residue and grease in ovens: produce smoke during cooking (affecting food flavour); are a fire hazard; indicate bacterial growth potential; reduce efficiency. Regular cleaning (after cooling) with appropriate oven cleaners maintains hygiene and performance.",
         "h": "Clean oven regularly: food residue/grease burns causing smoke, off-flavours, and fire hazard.",
@@ -2814,7 +4472,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "An electric blender is considered a labour-saving device because it:",
-        "o": ["Cooks food automatically", "Replaces the time-consuming manual process of pounding, grinding, or mixing — completing in seconds what would take minutes of manual effort", "Reduces the nutritional content of food", "Only works for cold foods"],
+        "o": [
+          "Cooks food automatically",
+          "Replaces the time-consuming manual process of pounding, grinding, or mixing — completing in seconds what would take minutes of manual effort",
+          "Reduces the nutritional content of food",
+          "Only works for cold foods"
+        ],
         "a": 1,
         "e": "An electric blender replaces manual grinding/pounding (traditionally done with mortar and pestle in many Nigerian homes) — blending tomatoes, peppers, and spices that would take significant manual effort and time. It can complete in 30 seconds what might take 10-15 minutes manually.",
         "h": "Electric blender: replaces manual grinding/pounding (seconds vs minutes of manual work).",
@@ -2822,7 +4485,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "When planning a kitchen, why is an adequate water supply and drainage essential?",
-        "o": ["Water is only needed for drinking in the kitchen", "Water is needed for food preparation, cleaning equipment and surfaces, personal hygiene, and removal of waste through drainage", "Drainage is only important in commercial kitchens", "Water supply can be substituted with stored bottled water"],
+        "o": [
+          "Water is only needed for drinking in the kitchen",
+          "Water is needed for food preparation, cleaning equipment and surfaces, personal hygiene, and removal of waste through drainage",
+          "Drainage is only important in commercial kitchens",
+          "Water supply can be substituted with stored bottled water"
+        ],
         "a": 1,
         "e": "Kitchen operations require water for: washing food, cleaning equipment and surfaces, personal handwashing, cooking (boiling water), and removing waste through drainage. Inadequate water supply or poor drainage compromises hygiene and efficient kitchen operations.",
         "h": "Kitchen water supply: needed for food prep, cleaning, personal hygiene, cooking; drainage removes waste.",
@@ -2830,7 +4498,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A whisk is used in cooking for which specific purpose?",
-        "o": ["Cutting and slicing food", "Straining liquids through fine mesh", "Incorporating air into mixtures (beating eggs, cream, batters) to create light, fluffy textures", "Measuring liquid volumes"],
+        "o": [
+          "Cutting and slicing food",
+          "Straining liquids through fine mesh",
+          "Incorporating air into mixtures (beating eggs, cream, batters) to create light, fluffy textures",
+          "Measuring liquid volumes"
+        ],
         "a": 2,
         "e": "A whisk's wire loops trap and incorporate air into liquid mixtures when rapidly agitated. This is essential for: beating eggs to stiffness (meringue), whipping cream, making batters fluffy, and mixing sauces. Without a whisk (or electric mixer), achieving these textures is very difficult.",
         "h": "Whisk: incorporates air into mixtures (beating eggs, whipping cream, fluffy batters).",
@@ -2838,7 +4511,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The purpose of a food storage area in kitchen planning is to:",
-        "o": ["Provide space for entertaining guests", "Store ingredients (dry goods, canned foods, spices) in organised, accessible, and appropriate conditions that maintain food quality", "Display kitchen equipment as decoration", "Only store cooked food"],
+        "o": [
+          "Provide space for entertaining guests",
+          "Store ingredients (dry goods, canned foods, spices) in organised, accessible, and appropriate conditions that maintain food quality",
+          "Display kitchen equipment as decoration",
+          "Only store cooked food"
+        ],
         "a": 1,
         "e": "Organised food storage maintains ingredient quality and prevents waste: dry goods in airtight containers (prevent moisture and pests), canned goods in cool dry conditions, refrigerated items at appropriate temperatures. Good storage organisation also prevents buying duplicates.",
         "h": "Food storage area: organised, accessible storage of ingredients in appropriate conditions.",
@@ -2846,7 +4524,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Safe electrical connections in the kitchen are particularly important because:",
-        "o": ["Electricity makes cooking faster", "Water and moisture in kitchen environments combined with faulty electrical connections create serious electrocution and fire hazards", "Electrical equipment is always safe", "Only outdoor kitchens need electrical safety"],
+        "o": [
+          "Electricity makes cooking faster",
+          "Water and moisture in kitchen environments combined with faulty electrical connections create serious electrocution and fire hazards",
+          "Electrical equipment is always safe",
+          "Only outdoor kitchens need electrical safety"
+        ],
         "a": 1,
         "e": "Kitchens combine moisture, water, and electrical equipment — a dangerous combination if electrical connections are faulty. Ground fault circuit interrupters (GFCIs) should be installed near water sources. Frayed cords, overloaded sockets, and wet hands near switches are serious electrocution and fire risks.",
         "h": "Kitchen electrical safety critical: water + electricity = electrocution and fire hazard.",
@@ -2854,7 +4537,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A measuring jug differs from a bowl in that a measuring jug:",
-        "o": ["Has a handle for gripping only", "Has graduated markings showing volume measurements (mL/L) allowing accurate liquid measurement", "Cannot hold liquids", "Is used only for solid ingredients"],
+        "o": [
+          "Has a handle for gripping only",
+          "Has graduated markings showing volume measurements (mL/L) allowing accurate liquid measurement",
+          "Cannot hold liquids",
+          "Is used only for solid ingredients"
+        ],
         "a": 1,
         "e": "A measuring jug has calibrated markings (mL and L) on the side allowing accurate volume measurement of liquids. It typically has a spout for pouring and a handle. Bowls have no graduated markings and are not suitable for accurate volume measurement.",
         "h": "Measuring jug: graduated volume markings (mL, L) for accurate liquid measurement.",
@@ -2862,7 +4550,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Proper storage of sharp utensils (knives, peelers) is important for:",
-        "o": ["Making them look attractive", "Safety — preventing accidental cuts when reaching into drawers; and maintaining blade sharpness by preventing contact with other utensils", "Saving storage space", "Making knives easier to sharpen"],
+        "o": [
+          "Making them look attractive",
+          "Safety — preventing accidental cuts when reaching into drawers; and maintaining blade sharpness by preventing contact with other utensils",
+          "Saving storage space",
+          "Making knives easier to sharpen"
+        ],
         "a": 1,
         "e": "Sharp utensils stored loose in drawers are dangerous (accidental cuts when reaching in) and become dull (blade edge damaged by contact with other utensils). Knife blocks, magnetic strips, or blade guards protect both the knife edge and the handler.",
         "h": "Proper sharp utensil storage: safety (prevents accidental cuts) + blade protection (maintains sharpness).",
@@ -2870,10 +4563,219 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which of the following is NOT a consideration when planning a home kitchen?",
-        "o": ["Ventilation", "Lighting", "Proximity to the school (distance from the home to school)", "Water supply and drainage"],
+        "o": [
+          "Ventilation",
+          "Lighting",
+          "Proximity to the school (distance from the home to school)",
+          "Water supply and drainage"
+        ],
         "a": 2,
         "e": "Proximity to the school is not a consideration in kitchen planning. Kitchen planning factors include: ventilation, lighting, water supply, drainage, electrical and gas safety, surface materials, storage, space, and workflow efficiency (work triangle). School proximity is irrelevant.",
         "h": "NOT a kitchen planning factor: school proximity (irrelevant). Relevant: ventilation, lighting, water, safety.",
+        "yr": "SS1"
+      }
+    ]
+  },
+  {
+    "topic": "Small or Moveable Tools/Utensils",
+    "topicCode": "SS1-FN-25",
+    "module": "Kitchen Tools, Safety and First Aid",
+    "term": "Second Term",
+    "contentHTML": "<div class=\"learn-intro\">Every cook needs tools. <span class=\"learn-keyword\">Small or moveable utensils</span> are the light tools and containers we can pick up and carry about the kitchen, such as knives, spoons, graters and sieves. <span class=\"learn-keyword\">Labour-saving devices</span> are tools or machines that do a job faster and with less effort from us, such as a blender or a pressure cooker. Think of a mama putting a big pot of egusi soup on the fire. She uses a wooden spoon to stir, a knife to cut the vegetables, a sieve to drain the water and maybe an electric blender to grind pepper. Knowing how to choose, use and care for these tools saves time, saves money, keeps food clean and keeps you safe.</div>\n\n<h3 class=\"learn-subheading\">1. What are small or moveable utensils?</h3>\n<p class=\"learn-p\">A <span class=\"learn-keyword\">utensil</span> is any tool or container used for preparing, cooking, serving or storing food. A utensil is <span class=\"learn-keyword\">small or moveable</span> when it is light enough to carry and is not fixed in one place. A cooker or a sink is fixed in the kitchen, so it is not a moveable utensil. A spoon or a bowl can be moved anywhere, so it is. Small utensils are often called <span class=\"learn-keyword\">small equipment</span>.</p>\n\n<h3 class=\"learn-subheading\">2. Groups of small utensils and what each is used for</h3>\n<p class=\"learn-p\">It is easier to learn the utensils when we put them into groups by the job they do.</p>\n<div class=\"learn-table-wrap\"><table class=\"learn-table\"><thead><tr><th>Group</th><th>Examples</th><th>Main use</th></tr></thead><tbody>\n<tr><td>Measuring</td><td>Measuring jug, measuring cups, measuring spoons, kitchen scale</td><td>To get the correct amount of liquid or dry food so the recipe works</td></tr>\n<tr><td>Cutting and peeling</td><td>Kitchen knife, vegetable peeler, chopping board, kitchen scissors</td><td>To cut, slice, chop and peel food safely</td></tr>\n<tr><td>Mixing and beating</td><td>Mixing bowl, wooden spoon, whisk, spatula</td><td>To mix, stir, beat or scrape ingredients</td></tr>\n<tr><td>Grating and straining</td><td>Grater, sieve, colander, funnel</td><td>To make food into small pieces, to remove lumps or to drain water from food</td></tr>\n<tr><td>Cooking</td><td>Saucepan, frying pan, cooking pot, baking tin, turner</td><td>To hold food while it is boiled, fried, steamed or baked</td></tr>\n<tr><td>Opening and other tools</td><td>Tin opener, bottle opener, rolling pin, pastry brush, tongs</td><td>To open cans and bottles, to roll dough and to lift hot food</td></tr>\n<tr><td>Serving and storing</td><td>Plates, ladle, serving spoons, food flasks, covered containers</td><td>To serve food neatly and keep it fresh</td></tr>\n</tbody></table></div>\n<p class=\"learn-p\">A <span class=\"learn-keyword\">colander</span> is a bowl with many holes, used to drain boiled rice or beans. A <span class=\"learn-keyword\">sieve</span> has a fine net and is used to remove lumps from flour or to separate coarse bits from fine ones. A <span class=\"learn-keyword\">spatula</span> is a flat, wide tool used to scrape a bowl or turn food. A <span class=\"learn-keyword\">whisk</span> is a set of wires used to beat air into eggs or cream.</p>\n\n<h3 class=\"learn-subheading\">3. Selecting (choosing) utensils</h3>\n<p class=\"learn-p\">Good tools cost money, so we must choose with care. Before you buy a utensil, ask yourself these questions:</p>\n<ol class=\"learn-ordered\">\n<li>Step 1: What will I use it for? Buy only what you really need.</li>\n<li>Step 2: What material is it made of? Check that it is strong and will not rust, crack or melt easily.</li>\n<li>Step 3: Is it the right size and shape for my family? A very big pot wastes fuel when cooking for two people.</li>\n<li>Step 4: Is it easy to hold, use and clean? Look for firm handles and smooth surfaces with no hard-to-reach corners.</li>\n<li>Step 5: Is it safe? Handles should not get hot, and the base of a pot should be flat so it does not tip over.</li>\n<li>Step 6: Is the price fair for the quality? The cheapest item may break quickly and cost more in the end.</li>\n</ol>\n<p class=\"learn-p\">The material also matters. The table shows common materials.</p>\n<div class=\"learn-table-wrap\"><table class=\"learn-table\"><thead><tr><th>Material</th><th>Good points</th><th>Care points</th></tr></thead><tbody>\n<tr><td>Aluminium</td><td>Light, heats quickly, fairly cheap</td><td>Scratches and dents easily; do not leave acid foods such as tomato stew in it for a long time</td></tr>\n<tr><td>Stainless steel</td><td>Strong, does not rust, easy to clean</td><td>Costs more; avoid harsh scouring that scratches it</td></tr>\n<tr><td>Wood</td><td>Does not get hot, does not scratch pots</td><td>Can crack or hold smells; dry well after washing</td></tr>\n<tr><td>Plastic</td><td>Light and cheap</td><td>Can melt or stain with high heat; use heat-resistant types for hot food</td></tr>\n<tr><td>Enamel</td><td>Looks nice, does not react with food</td><td>The coating can chip if the pot is knocked</td></tr>\n<tr><td>Glass</td><td>Clean, you can see the food</td><td>Can break if dropped or if it is heated suddenly</td></tr>\n</tbody></table></div>\n\n<h3 class=\"learn-subheading\">4. Using utensils correctly</h3>\n<ul class=\"learn-list\">\n<li>Use each tool for its own job. Do not use a kitchen knife to open a tin, because it can break or cut you.</li>\n<li>Use a chopping board when cutting. Cut away from your body and keep your fingers curled in.</li>\n<li>Use separate boards, or wash the board well, when you change from raw meat or fish to vegetables. This stops germs from moving from one food to another.</li>\n<li>Use a wooden spoon for stirring hot food in non-stick or aluminium pots so the surface is not scratched.</li>\n<li>Use a measuring jug or spoon level with the top for exact amounts. A heaped spoon gives more than the recipe asks for.</li>\n<li>Use dry cloths or oven gloves to hold hot handles. A wet cloth passes heat to your hand quickly.</li>\n</ul>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">✏️</span><strong>Worked Example 1 (choosing a pot):</strong> Mrs Bello cooks for a family of 4 and wants to buy a new pot for daily stew. She finds two choices. Pot A is a thin aluminium pot with a loose handle at a low price. Pot B is a thicker aluminium pot with a firm, heat-proof handle and a flat base at a slightly higher price. Step 1: the pot is for daily use, so it must be strong. Step 2: the loose handle in Pot A is unsafe when carrying hot stew. Step 3: a flat base in Pot B sits steadily on the stove and heats evenly. Step 4: the thicker metal lasts longer, so the small extra cost saves money later. Answer: she should choose Pot B because it is safer, steadier and better value over time.</div>\n\n<h3 class=\"learn-subheading\">5. Care of utensils</h3>\n<p class=\"learn-p\"><span class=\"learn-keyword\">Care</span> means cleaning, drying and storing a utensil so that it stays clean, safe and lasts a long time. Follow these steps after cooking:</p>\n<ol class=\"learn-ordered\">\n<li>Step 1: Remove left-over food with a spatula or soft paper. Soak greasy or burnt pots in warm water for a short while.</li>\n<li>Step 2: Wash in hot water with soap, using a soft sponge. Use a plastic scrubber on aluminium and non-stick items, not a hard wire brush.</li>\n<li>Step 3: Rinse with clean water until no soap is left.</li>\n<li>Step 4: Dry fully with a clean cloth or let it drain on a rack. Wet metal can rust and wet wood can grow mould.</li>\n<li>Step 5: Store in a clean, dry, covered place. Hang knives on a rack or keep them in a block, with the blade guarded.</li>\n</ol>\n<p class=\"learn-p\">Extra care points: sharpen knives regularly because a blunt knife slips and cuts the user. Do not put wooden spoons to soak for a long time. Repair or replace loose handles quickly. Never leave knives in a bowl of soapy water where a hand may reach in and be cut. Keep sieves and graters clean by brushing them under running water straight after use, before food dries on them.</p>\n\n<h3 class=\"learn-subheading\">6. Labour-saving devices</h3>\n<p class=\"learn-p\">A <span class=\"learn-keyword\">labour-saving device</span> is any tool or machine that reduces the time and physical work needed for a task. Some are very simple and some use electricity or gas. A family may choose them to save time, to save energy and to get better results.</p>\n<div class=\"learn-table-wrap\"><table class=\"learn-table\"><thead><tr><th>Device</th><th>Job it does</th><th>How it saves labour</th></tr></thead><tbody>\n<tr><td>Electric blender</td><td>Grinds pepper, tomato, beans and soups</td><td>Replaces the grinding stone or mortar; takes minutes instead of a long time</td></tr>\n<tr><td>Pressure cooker</td><td>Cooks food under steam pressure</td><td>Softens beans, meat and yam quickly and uses less fuel</td></tr>\n<tr><td>Electric or gas cooker</td><td>Gives steady heat</td><td>Easier to control than firewood and cleaner</td></tr>\n<tr><td>Refrigerator and freezer</td><td>Keeps food cold</td><td>Food stays fresh longer, so shopping is less frequent</td></tr>\n<tr><td>Electric mixer</td><td>Beats eggs, cake mix and dough</td><td>Replaces long hand beating</td></tr>\n<tr><td>Toaster and electric kettle</td><td>Toasts bread, boils water</td><td>Quick and needs little attention</td></tr>\n<tr><td>Food processor</td><td>Chops, slices and shreds</td><td>Does many cutting jobs in seconds</td></tr>\n<tr><td>Kitchen scale and timer</td><td>Weigh food, count cooking time</td><td>Give correct results without guessing</td></tr>\n</tbody></table></div>\n<p class=\"learn-p\"><strong>Advantages</strong> of these devices: they save time, give a better and more even result and let one person do more work. <strong>Limits:</strong> they cost money to buy and to repair, most need electricity or gas (so a power cut stops the work), and they can be dangerous if used wrongly. Keep electric devices dry, unplug them before cleaning and keep children away from moving blades. Always read the maker's instructions.</p>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">✏️</span><strong>Worked Example 2 (is a device worth it?):</strong> A family spends about 40 minutes each day grinding pepper and tomato by hand. A blender does the same job in 5 minutes. Time saved per day = 40 − 5 = 35 minutes. In 7 days this is 35 × 7 = 245 minutes, which is a little more than 4 hours (245 ÷ 60 is about 4.1 hours). Answer: the blender saves about 4 hours each week, so it is a good labour-saving device, provided the family can pay for it and has electricity.</div>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">⚠️</span><strong>Common Mistakes:</strong> (1) Using a utensil for the wrong job, such as a knife as a tin opener. Always use the correct tool. (2) Storing metal pots while still wet, which causes rust. Dry them fully first. (3) Using a hard wire brush on aluminium or non-stick pots, which scratches the surface. Use a soft sponge. (4) Calling a cooker a moveable utensil. A moveable utensil can be carried; a fixed cooker or sink cannot. (5) Buying the cheapest item without checking the quality.</div>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">💡</span><strong>Exam Tip:</strong> WAEC often asks you to \"list four small kitchen utensils and state one use of each\", or to \"state four points to consider when selecting a kitchen utensil\", or to \"give three ways of caring for a named utensil\". Always give the use or care point beside each name, as the marks are for both. For labour-saving devices, name the device, state the job and say how it saves time or effort.</div>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">🎯</span><strong>Summary:</strong> Small or moveable utensils are light tools that can be carried about the kitchen.<br>They are grouped by use: measuring, cutting, mixing, grating, cooking, opening and serving.<br>Choose by purpose, material, size, safety, ease of cleaning and price.<br>Use each tool for its own job, and handle knives and hot items safely.<br>Care means cleaning, rinsing, drying and storing correctly, and sharpening knives.<br>Labour-saving devices such as blenders and pressure cookers save time and effort but cost money and need safe use.</div>",
+    "questions": [
+      {
+        "q": "Which of these is a small or moveable utensil?",
+        "o": [
+          "A wooden spoon",
+          "A fixed kitchen sink",
+          "A built-in cooker",
+          "A kitchen wall cabinet"
+        ],
+        "a": 0,
+        "e": "A small or moveable utensil is light enough to be carried about the kitchen. A spoon can be moved anywhere, but a fixed sink or cooker cannot be carried.",
+        "h": "Ask: can I pick it up and carry it?",
+        "yr": "SS1"
+      },
+      {
+        "q": "A colander is mainly used for",
+        "o": [
+          "beating eggs",
+          "draining water from boiled food such as rice or beans",
+          "measuring liquids",
+          "opening tins"
+        ],
+        "a": 1,
+        "e": "A colander is a bowl with many holes that lets water run out while the food stays inside. Beating eggs is done with a whisk and measuring with a jug.",
+        "h": "Think of the holes in it.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which tool should be used to remove lumps from flour?",
+        "o": [
+          "Whisk",
+          "Rolling pin",
+          "Sieve",
+          "Tin opener"
+        ],
+        "a": 2,
+        "e": "A sieve has a fine net that lets fine flour pass and holds back lumps. A whisk beats air into mixtures and does not separate lumps.",
+        "h": "Fine net.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which of these is a measuring utensil?",
+        "o": [
+          "Grater",
+          "Tongs",
+          "Chopping board",
+          "Measuring jug"
+        ],
+        "a": 3,
+        "e": "A measuring jug has marks that show the amount of liquid. A grater makes food small and a chopping board is only a surface for cutting.",
+        "h": "Look for markings.",
+        "yr": "SS1"
+      },
+      {
+        "q": "A point to consider when selecting a kitchen utensil is",
+        "o": [
+          "the colour of the neighbour's kitchen",
+          "the strength and safety of the material",
+          "how many guests visited last year",
+          "the number of shops in town"
+        ],
+        "a": 1,
+        "e": "We choose utensils by purpose, material, size, safety, ease of cleaning and price. The other options have nothing to do with the quality of the utensil.",
+        "h": "Think about use and safety.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Why should an aluminium pot be washed with a soft sponge and not a hard wire brush?",
+        "o": [
+          "The sponge makes the pot heavier",
+          "The wire brush makes the water cold",
+          "The wire brush scratches the surface",
+          "Aluminium cannot touch water"
+        ],
+        "a": 2,
+        "e": "Aluminium is a soft metal, so a hard wire brush scratches it and spoils the pot. Aluminium can be washed with water; it should just be dried afterwards.",
+        "h": "What does hard metal do to soft metal?",
+        "yr": "SS1"
+      },
+      {
+        "q": "Why is a blunt knife more dangerous than a sharp one?",
+        "o": [
+          "It cuts food too fast",
+          "It is lighter to hold",
+          "It does not touch the board",
+          "It needs more force and slips easily"
+        ],
+        "a": 3,
+        "e": "A blunt knife needs extra pressure, so it can slip and cut the hand. A sharp knife cuts with little force and is easier to control. This is why knives are sharpened regularly.",
+        "h": "Think about force and slipping.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Why should metal pots be dried well before storing?",
+        "o": [
+          "Wet metal can rust",
+          "Dry pots are heavier",
+          "Water makes food taste sweet",
+          "Pots must be wet to stay cool"
+        ],
+        "a": 0,
+        "e": "Water left on metal causes rust, which damages the pot. Drying fully and storing in a dry place keeps utensils lasting longer.",
+        "h": "What does moisture do to iron?",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which of these is a labour-saving device?",
+        "o": [
+          "Wooden spoon",
+          "Chopping board",
+          "Electric blender",
+          "Plastic bowl"
+        ],
+        "a": 2,
+        "e": "A labour-saving device reduces the time and effort for a job. An electric blender grinds pepper and tomato in minutes, replacing long grinding by hand.",
+        "h": "It saves time and effort.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which advantage does a pressure cooker give?",
+        "o": [
+          "It makes food cold",
+          "It removes the need for water",
+          "It cuts vegetables",
+          "It cooks food quickly and saves fuel"
+        ],
+        "a": 3,
+        "e": "A pressure cooker raises the cooking temperature using steam pressure, so tough foods such as beans soften faster and less fuel is used. It does not cut food.",
+        "h": "Think of steam under pressure.",
+        "yr": "SS1"
+      },
+      {
+        "q": "A disadvantage of many labour-saving devices is that they",
+        "o": [
+          "need electricity or gas and can be costly to buy and repair",
+          "make cooking slower",
+          "are unsafe for every user at all times",
+          "always spoil the taste of food"
+        ],
+        "a": 0,
+        "e": "Devices cost money and most need power, so a power cut stops the work. They save time rather than waste it, and they are safe when used as directed.",
+        "h": "Consider cost and power supply.",
+        "yr": "SS1"
+      },
+      {
+        "q": "A family spends 30 minutes each day grinding pepper by hand. A blender does it in 5 minutes. How many minutes are saved in 7 days?",
+        "o": [
+          "35 minutes",
+          "175 minutes",
+          "210 minutes",
+          "25 minutes"
+        ],
+        "a": 1,
+        "e": "Time saved each day = 30 − 5 = 25 minutes. In 7 days = 25 × 7 = 175 minutes. The answer 210 comes from forgetting to subtract the 5 minutes.",
+        "h": "First find the saving for one day.",
+        "yr": "SS1"
+      },
+      {
+        "q": "A student wants to buy a pot for daily cooking. Pot X is cheap with a loose handle and Pot Y is stronger with a firm handle and costs a little more. The better choice is Pot Y because",
+        "o": [
+          "loose handles are easier to carry",
+          "cheap pots never rust",
+          "the price must always be the lowest",
+          "it is safer and will last longer"
+        ],
+        "a": 3,
+        "e": "A firm handle prevents spills and burns, and a strong pot lasts longer, so it gives better value. A loose handle is a safety risk and the cheapest option is not always best.",
+        "h": "Think about safety and long-term value.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Mrs Okon washes her knives by leaving them in a bowl of soapy water. What is the main risk?",
+        "o": [
+          "A hand reaching in may be cut",
+          "The knife becomes sweet",
+          "The water becomes harder",
+          "The knife becomes lighter"
+        ],
+        "a": 0,
+        "e": "Knives hidden under soapy water cannot be seen, so a person can cut a hand when reaching in. It is safer to wash knives one at a time and place them in a rack to dry.",
+        "h": "What cannot be seen in soapy water?",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which is the correct way to care for a wooden spoon?",
+        "o": [
+          "Soak it in water for several days",
+          "Leave it wet in a closed drawer",
+          "Wash, dry well and store in a dry place",
+          "Put it on a very hot flame to dry"
+        ],
+        "a": 2,
+        "e": "Wood absorbs water, so long soaking can make it crack or grow mould. Washing, drying well and storing dry keeps it in good condition. A flame can burn or crack it.",
+        "h": "Wood and water do not stay together for long.",
         "yr": "SS1"
       }
     ]
@@ -2887,7 +4789,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "Soap and detergents are effective for cleaning greasy kitchen surfaces because they are:",
-        "o": ["Strong acids that dissolve grease", "Surfactants — they reduce water surface tension and emulsify (surround and lift off) grease particles so they can be rinsed away", "Abrasives that physically scrape off grease", "Disinfectants that kill grease"],
+        "o": [
+          "Strong acids that dissolve grease",
+          "Surfactants — they reduce water surface tension and emulsify (surround and lift off) grease particles so they can be rinsed away",
+          "Abrasives that physically scrape off grease",
+          "Disinfectants that kill grease"
+        ],
         "a": 1,
         "e": "Soap and detergent molecules are surfactants — they have a water-loving (hydrophilic) head and fat-loving (lipophilic) tail. The tail attaches to grease; the head stays in water. This surrounds grease in tiny droplets (emulsification) that rinse away easily with water.",
         "h": "Soap/detergent = surfactants: emulsify grease (lipophilic tail grabs grease; hydrophilic head stays in water).",
@@ -2895,7 +4802,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Bleach (sodium hypochlorite) is classified as a disinfectant rather than a cleaning agent because it:",
-        "o": ["Removes food stains by mechanical action", "Kills bacteria and other microorganisms on surfaces (antimicrobial activity) rather than physically removing dirt", "Is a natural cleaning product", "Is safe to leave on food-contact surfaces"],
+        "o": [
+          "Removes food stains by mechanical action",
+          "Kills bacteria and other microorganisms on surfaces (antimicrobial activity) rather than physically removing dirt",
+          "Is a natural cleaning product",
+          "Is safe to leave on food-contact surfaces"
+        ],
         "a": 1,
         "e": "Disinfectants kill microorganisms chemically — bleach (sodium hypochlorite) releases reactive chlorine that destroys microbial cell membranes and proteins. It reduces or eliminates pathogen contamination on surfaces. It must be rinsed off food-contact surfaces as it is toxic if ingested.",
         "h": "Bleach = disinfectant (kills microorganisms) NOT a cleaner (doesn't remove dirt by mechanical action).",
@@ -2903,7 +4815,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Vinegar or lemon juice as cleaning agents are effective for removing:",
-        "o": ["Greasy pots and pans", "Protein stains from meat", "Lime scale (calcium carbonate mineral deposits) from kettles, taps, and glass", "Burnt food from ovens"],
+        "o": [
+          "Greasy pots and pans",
+          "Protein stains from meat",
+          "Lime scale (calcium carbonate mineral deposits) from kettles, taps, and glass",
+          "Burnt food from ovens"
+        ],
         "a": 2,
         "e": "Vinegar and lemon juice are mild acids (acetic acid and citric acid). They dissolve alkaline mineral deposits like lime scale (CaCO₃) and rust stains through acid-base neutralisation. They are natural, food-safe descalers for kettles, taps, and glass surfaces.",
         "h": "Vinegar/lemon juice (acids): remove lime scale and mineral deposits (acid dissolves alkaline deposits).",
@@ -2911,7 +4828,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Steel wool scouring pads should NOT be used on non-stick pans because:",
-        "o": ["Steel wool is too expensive", "The abrasive metal fibres scratch and destroy the non-stick coating (PTFE/Teflon), releasing potentially harmful particles", "Steel wool leaves rust on the pan", "Non-stick pans cannot be cleaned"],
+        "o": [
+          "Steel wool is too expensive",
+          "The abrasive metal fibres scratch and destroy the non-stick coating (PTFE/Teflon), releasing potentially harmful particles",
+          "Steel wool leaves rust on the pan",
+          "Non-stick pans cannot be cleaned"
+        ],
         "a": 1,
         "e": "Steel wool's coarse metal fibres will scratch and remove the non-stick coating (usually PTFE/Teflon or ceramic coating). Damaged coating reduces non-stick performance, may release coating particles, and exposes the base metal. Use soft nylon pads or cloths for non-stick surfaces.",
         "h": "Steel wool on non-stick: destroys PTFE coating (scratches and peels it off) → use nylon pads instead.",
@@ -2919,7 +4841,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Baking soda (sodium bicarbonate) is useful as a cleaning agent because it is a mild alkali that:",
-        "o": ["Has abrasive properties only", "Neutralises and emulsifies fats and grease; also acts as a mild abrasive; is food-safe and non-toxic", "Only removes water stains", "Is a strong acid"],
+        "o": [
+          "Has abrasive properties only",
+          "Neutralises and emulsifies fats and grease; also acts as a mild abrasive; is food-safe and non-toxic",
+          "Only removes water stains",
+          "Is a strong acid"
+        ],
         "a": 1,
         "e": "Baking soda is a mild alkali (pH 8.3) that: neutralises and breaks down fats/grease (alkalis saponify fats); acts as a mild abrasive; deodorises; and is non-toxic (food-safe). It is safe for use on food-contact surfaces without the need for excessive rinsing.",
         "h": "Baking soda: mild alkali + mild abrasive + deodoriser + non-toxic (safe on food surfaces).",
@@ -2927,7 +4854,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The principle of cleaning kitchen surfaces from top to bottom (high to low) prevents:",
-        "o": ["Using too much cleaning product", "Re-contamination — dirt and cleaning spray dripping from higher surfaces onto already-cleaned lower surfaces", "Cleaning taking too long", "Cleaning products from drying"],
+        "o": [
+          "Using too much cleaning product",
+          "Re-contamination — dirt and cleaning spray dripping from higher surfaces onto already-cleaned lower surfaces",
+          "Cleaning taking too long",
+          "Cleaning products from drying"
+        ],
         "a": 1,
         "e": "Cleaning from top to bottom: clean higher surfaces (shelves, cupboard tops) first so that any drips or displaced dirt fall onto lower surfaces that have not yet been cleaned. Cleaning low surfaces first and then high surfaces would re-contaminate the already-cleaned lower areas.",
         "h": "Clean top to bottom: dirt from high surfaces falls to low surfaces → clean low surfaces last.",
@@ -2935,7 +4867,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Thorough rinsing of food-contact surfaces after using cleaning agents is essential because:",
-        "o": ["Rinsing improves the flavour of food", "Cleaning agent residues (soap, detergent, disinfectant) left on surfaces can contaminate food and may be toxic if ingested", "Rinsing removes food that was not cleaned", "Rinsing is optional if the surface looks clean"],
+        "o": [
+          "Rinsing improves the flavour of food",
+          "Cleaning agent residues (soap, detergent, disinfectant) left on surfaces can contaminate food and may be toxic if ingested",
+          "Rinsing removes food that was not cleaned",
+          "Rinsing is optional if the surface looks clean"
+        ],
         "a": 1,
         "e": "Cleaning agents (detergents, disinfectants) are designed to remove dirt or kill bacteria but are not intended to be consumed. Residues on food-contact surfaces can contaminate food, causing toxic ingestion effects. All food-contact surfaces must be rinsed with clean water after cleaning.",
         "h": "Rinse food surfaces after cleaning: remove chemical residues (detergent/disinfectant) that contaminate food.",
@@ -2943,7 +4880,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Scouring powder (like Vim) is appropriate for cleaning:",
-        "o": ["Non-stick frying pans", "Polished wooden surfaces", "Ceramic sinks, enamel surfaces, and stainless steel (where mild abrasion is acceptable)", "Glass cooking hobs"],
+        "o": [
+          "Non-stick frying pans",
+          "Polished wooden surfaces",
+          "Ceramic sinks, enamel surfaces, and stainless steel (where mild abrasion is acceptable)",
+          "Glass cooking hobs"
+        ],
         "a": 2,
         "e": "Scouring powder contains fine abrasive particles and cleaning chemicals. It is appropriate for surfaces that can withstand mild abrasion — ceramic sinks, enamel baths, stainless steel. Avoid on non-stick surfaces, polished wood, or soft metals (aluminium) that it would scratch.",
         "h": "Scouring powder: suitable for ceramic sinks, enamel, stainless steel; NOT non-stick or soft surfaces.",
@@ -2951,7 +4893,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Pre-soaking dirty pots before scrubbing is recommended because:",
-        "o": ["Soaking adds nutrients to the pot", "Water softens and loosens dried and burnt food residues, making them easier to remove without excessive scrubbing", "Soaking sterilises the pot", "Pre-soaking is required by food regulations"],
+        "o": [
+          "Soaking adds nutrients to the pot",
+          "Water softens and loosens dried and burnt food residues, making them easier to remove without excessive scrubbing",
+          "Soaking sterilises the pot",
+          "Pre-soaking is required by food regulations"
+        ],
         "a": 1,
         "e": "Soaking dried food residues in water (hot water or water with detergent) softens them through hydration. The water penetrates the dried food matrix, loosening it from the pot surface. This dramatically reduces the effort required to clean — no vigorous scrubbing needed.",
         "h": "Pre-soaking: water penetrates and softens dried/burnt food → easier removal with less scrubbing.",
@@ -2959,7 +4906,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Cleaning products should be stored away from food because:",
-        "o": ["They take up valuable food storage space", "Cleaning chemicals can contaminate food (spills, mislabelling), cause food poisoning if accidentally used on food, or be confused with food ingredients", "They make food smell bad", "Only restaurants need to separate cleaning products from food"],
+        "o": [
+          "They take up valuable food storage space",
+          "Cleaning chemicals can contaminate food (spills, mislabelling), cause food poisoning if accidentally used on food, or be confused with food ingredients",
+          "They make food smell bad",
+          "Only restaurants need to separate cleaning products from food"
+        ],
         "a": 1,
         "e": "Cross-contamination risk: cleaning chemicals stored near food may: spill onto food; be accidentally added to food (bottles mistaken for food products); contaminate food through fumes; or be used on food-contact surfaces with excessive residue. Separation is a basic food safety requirement.",
         "h": "Store chemicals away from food: prevent contamination (spills, confusion, fumes).",
@@ -2967,7 +4919,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A nylon scrubbing pad is preferred for cleaning non-stick pans compared to steel wool because nylon pads:",
-        "o": ["Are more expensive and therefore better", "Are soft enough to clean without scratching the non-stick coating while still removing food residue", "Kill bacteria on the pan", "Are more abrasive than steel wool"],
+        "o": [
+          "Are more expensive and therefore better",
+          "Are soft enough to clean without scratching the non-stick coating while still removing food residue",
+          "Kill bacteria on the pan",
+          "Are more abrasive than steel wool"
+        ],
         "a": 1,
         "e": "Nylon scrubbing pads are softer than steel wool — they have sufficient abrasive action to remove food residue from non-stick surfaces without scratching the PTFE or ceramic coating. Steel wool would permanently damage the non-stick surface.",
         "h": "Nylon pads: soft enough not to scratch non-stick coating (unlike steel wool).",
@@ -2975,7 +4932,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Oven cleaner contains caustic (strong alkaline) chemicals because:",
-        "o": ["Ovens need to be cooled by alkaline chemicals", "Strong alkalis can saponify (break down) the heavy polymerised grease and burnt food that accumulates in ovens, which milder cleaners cannot dissolve", "Oven cleaner is used for disinfecting ovens", "Strong chemicals are safer than mild ones"],
+        "o": [
+          "Ovens need to be cooled by alkaline chemicals",
+          "Strong alkalis can saponify (break down) the heavy polymerised grease and burnt food that accumulates in ovens, which milder cleaners cannot dissolve",
+          "Oven cleaner is used for disinfecting ovens",
+          "Strong chemicals are safer than mild ones"
+        ],
         "a": 1,
         "e": "Baked-on oven grease is heavily polymerised and carbonised — ordinary soap/detergent cannot dissolve it. Strong alkalis (caustic soda NaOH, or similar) in oven cleaners chemically saponify (break down ester bonds in) these polymerised fats, dissolving them. These chemicals must be used carefully with protective gloves.",
         "h": "Oven cleaner: strong alkali saponifies heavy polymerised grease that ordinary detergents cannot dissolve.",
@@ -2983,7 +4945,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Traditional Nigerian cleaning of pots with ash and coconut husk exploits which properties of these materials?",
-        "o": ["Ash and coconut husk are disinfectants", "Wood ash is alkaline (contains potassium carbonate) and acts as a cleaning agent; coconut husk is an abrasive — together they clean and scour traditional pots effectively", "They have no cleaning properties", "They are used only for decoration"],
+        "o": [
+          "Ash and coconut husk are disinfectants",
+          "Wood ash is alkaline (contains potassium carbonate) and acts as a cleaning agent; coconut husk is an abrasive — together they clean and scour traditional pots effectively",
+          "They have no cleaning properties",
+          "They are used only for decoration"
+        ],
         "a": 1,
         "e": "Wood ash contains potassium carbonate (K₂CO₃) — an alkaline substance that saponifies fats and helps loosen grease. Coconut husk is fibrous and abrasive, providing scrubbing action. This traditional combination functioned as an effective alkali cleaner plus abrasive long before commercial products.",
         "h": "Wood ash (alkaline — K₂CO₃) + coconut husk (abrasive) = traditional Nigerian pot cleaning.",
@@ -2991,7 +4958,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Disinfectants and sanitisers should be used after cleaning (not instead of) because:",
-        "o": ["Disinfectants work better on dirty surfaces", "Organic matter (food, grease, dirt) on surfaces inactivates many disinfectants — surfaces must be physically clean before disinfection is effective", "Disinfectants are too expensive to use alone", "Cleaning after disinfecting is more effective"],
+        "o": [
+          "Disinfectants work better on dirty surfaces",
+          "Organic matter (food, grease, dirt) on surfaces inactivates many disinfectants — surfaces must be physically clean before disinfection is effective",
+          "Disinfectants are too expensive to use alone",
+          "Cleaning after disinfecting is more effective"
+        ],
         "a": 1,
         "e": "Organic matter (food residue, blood, grease) physically shields bacteria from disinfectants and chemically inactivates some disinfectants (chlorine reacts with organic matter, losing its antimicrobial effect). The correct sequence is: clean first (remove physical dirt) → then disinfect (kill remaining bacteria).",
         "h": "Clean THEN disinfect: organic matter inactivates disinfectants (shields and chemically reacts with them).",
@@ -2999,7 +4971,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which statement about cleaning agents is CORRECT?",
-        "o": ["Bleach can be used to clean food directly", "All cleaning agents can be used on all surfaces", "Detergents remove grease but do not kill bacteria; disinfectants kill bacteria but do not remove grease — both are needed for thorough kitchen hygiene", "Abrasives should be used on all kitchen surfaces"],
+        "o": [
+          "Bleach can be used to clean food directly",
+          "All cleaning agents can be used on all surfaces",
+          "Detergents remove grease but do not kill bacteria; disinfectants kill bacteria but do not remove grease — both are needed for thorough kitchen hygiene",
+          "Abrasives should be used on all kitchen surfaces"
+        ],
         "a": 2,
         "e": "Detergents: excellent at removing physical dirt and grease (emulsification) but have little antimicrobial effect. Disinfectants: kill bacteria but do not remove physical dirt — and are less effective if dirt is present. Effective kitchen hygiene requires both: clean first with detergent, then sanitise with disinfectant.",
         "h": "Detergent removes grease (not antimicrobial); disinfectant kills bacteria (not a cleaner) — both needed.",
@@ -3007,7 +4984,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Descalers for coffee machines and kettles contain which type of cleaning agent?",
-        "o": ["Strong bleach", "Alkalis", "Acids (citric acid or other mild acids that dissolve calcium carbonate lime scale)", "Abrasive particles"],
+        "o": [
+          "Strong bleach",
+          "Alkalis",
+          "Acids (citric acid or other mild acids that dissolve calcium carbonate lime scale)",
+          "Abrasive particles"
+        ],
         "a": 2,
         "e": "Kettle and coffee machine descalers contain citric acid, acetic acid, or other mild acids. Lime scale is calcium carbonate (CaCO₃ — an alkaline mineral deposit). Acids react with calcium carbonate to dissolve it: CaCO₃ + 2HCl → CaCl₂ + H₂O + CO₂.",
         "h": "Descalers: mild acids (citric, acetic) dissolve lime scale (CaCO₃) by acid-base reaction.",
@@ -3015,7 +4997,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "When selecting a cleaning method for a non-stick cooking pot, the correct approach is:",
-        "o": ["Use steel wool and scouring powder for thorough cleaning", "Soak in hot soapy water, then clean with a soft cloth or nylon pad — never use abrasive materials that damage the coating", "Use bleach to disinfect the interior", "Leave it unwashed to preserve the non-stick coating"],
+        "o": [
+          "Use steel wool and scouring powder for thorough cleaning",
+          "Soak in hot soapy water, then clean with a soft cloth or nylon pad — never use abrasive materials that damage the coating",
+          "Use bleach to disinfect the interior",
+          "Leave it unwashed to preserve the non-stick coating"
+        ],
         "a": 1,
         "e": "Non-stick cookware care: soak in warm soapy water to loosen food residue; wash with a soft cloth or nylon pad; rinse thoroughly. Never use steel wool, metal utensils, scouring powder, or harsh abrasives — these permanently damage the non-stick coating.",
         "h": "Non-stick pot: soak in warm soapy water → soft cloth/nylon pad (never steel wool or abrasive powder).",
@@ -3023,7 +5010,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The most basic and fundamental cleaning agent in any kitchen is:",
-        "o": ["Bleach (disinfectant)", "Baking soda", "Water — the universal solvent that dissolves water-soluble dirt and rinses away chemical residues", "Washing-up liquid"],
+        "o": [
+          "Bleach (disinfectant)",
+          "Baking soda",
+          "Water — the universal solvent that dissolves water-soluble dirt and rinses away chemical residues",
+          "Washing-up liquid"
+        ],
         "a": 2,
         "e": "Water is the most fundamental cleaning agent — it dissolves water-soluble dirt and food residues (sugar, salt, water-soluble stains), is used as the medium for all other cleaning agents to work in, and is essential for rinsing away soap, detergent, and other chemicals after cleaning.",
         "h": "Water = most fundamental kitchen cleaner (universal solvent, dissolves water-soluble dirt, rinsing agent).",
@@ -3031,7 +5023,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Washing-up liquid (dishwashing soap) must always be rinsed off plates and utensils before use because:",
-        "o": ["It makes food taste better when left on dishes", "Detergent residues can contaminate food and may cause gastrointestinal irritation if ingested", "Rinsing adds water to the food", "Detergents improve food flavour"],
+        "o": [
+          "It makes food taste better when left on dishes",
+          "Detergent residues can contaminate food and may cause gastrointestinal irritation if ingested",
+          "Rinsing adds water to the food",
+          "Detergents improve food flavour"
+        ],
         "a": 1,
         "e": "Washing-up liquid residues on plates contain surfactants and other chemical additives that are not food-safe. If ingested with food, they can cause nausea, vomiting, and gastrointestinal irritation. Always rinse food-contact utensils thoroughly with clean water.",
         "h": "Rinse washing-up liquid: residues cause gastrointestinal irritation if ingested with food.",
@@ -3039,7 +5036,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Quaternary ammonium compounds (quats) are commonly used as food-safe sanitisers in commercial kitchens because they:",
-        "o": ["Are the same as bleach (sodium hypochlorite)", "Are effective broad-spectrum antimicrobials that are food-safe at correct dilutions and leave no harmful residue at recommended concentrations", "Are highly toxic and must be rinsed thoroughly", "Only clean physical dirt, not bacteria"],
+        "o": [
+          "Are the same as bleach (sodium hypochlorite)",
+          "Are effective broad-spectrum antimicrobials that are food-safe at correct dilutions and leave no harmful residue at recommended concentrations",
+          "Are highly toxic and must be rinsed thoroughly",
+          "Only clean physical dirt, not bacteria"
+        ],
         "a": 1,
         "e": "Quaternary ammonium compounds (e.g., benzalkonium chloride) are food-safe sanitisers used in catering — they kill bacteria and viruses at recommended dilutions without leaving harmful residues. They are non-corrosive and effective against a broad spectrum of pathogens.",
         "h": "Quaternary ammonium compounds: food-safe broad-spectrum sanitisers at correct dilutions.",
@@ -3056,7 +5058,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "Water should NEVER be used to extinguish a fire caused by burning cooking oil because:",
-        "o": ["Water makes the fire go out too slowly", "Water instantly vaporises when it contacts burning oil, causing a violent, explosive expansion that spreads burning oil droplets, making the fire much worse", "Water damages the cooking pot", "Water is too expensive to waste"],
+        "o": [
+          "Water makes the fire go out too slowly",
+          "Water instantly vaporises when it contacts burning oil, causing a violent, explosive expansion that spreads burning oil droplets, making the fire much worse",
+          "Water damages the cooking pot",
+          "Water is too expensive to waste"
+        ],
         "a": 1,
         "e": "When cold water hits burning oil (which may be 300-400°C), it instantly turns to steam — expanding to about 1700 times its liquid volume. This explosion violently disperses burning oil droplets in all directions, dramatically increasing the fire and causing severe burns.",
         "h": "NEVER water on fat fire: water explodes into steam → spreads burning oil = catastrophic fire/burns.",
@@ -3064,7 +5071,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The correct method for extinguishing a cooking oil fire is to:",
-        "o": ["Add more water quickly", "Use a fire blanket to smother the flames (removing oxygen) or use a dry powder/CO₂ fire extinguisher", "Blow on the fire to reduce temperature", "Pour salt on the fire"],
+        "o": [
+          "Add more water quickly",
+          "Use a fire blanket to smother the flames (removing oxygen) or use a dry powder/CO₂ fire extinguisher",
+          "Blow on the fire to reduce temperature",
+          "Pour salt on the fire"
+        ],
         "a": 1,
         "e": "For a fat/oil fire: (1) Fire blanket — wet blanket draped carefully over the pan smothers the fire by removing oxygen. (2) Dry powder or CO₂ extinguisher — safe for fat fires. (3) Turn off the heat source if safe to do so. Never use water, never carry the burning pan.",
         "h": "Fat fire: fire blanket (smothers) or dry powder/CO₂ extinguisher — NEVER water.",
@@ -3072,7 +5084,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Pot handles should be turned towards the back (or side) of the stove when cooking because:",
-        "o": ["It makes the pot easier to stir", "Handles extending over the edge of the stove can be accidentally knocked, tipping boiling content and causing severe scalds/burns", "The food cooks faster", "It prevents gas from escaping"],
+        "o": [
+          "It makes the pot easier to stir",
+          "Handles extending over the edge of the stove can be accidentally knocked, tipping boiling content and causing severe scalds/burns",
+          "The food cooks faster",
+          "It prevents gas from escaping"
+        ],
         "a": 1,
         "e": "A pot handle extending over the stove edge can be: accidentally knocked by a passing person (tipping the pot); grabbed by a child; or cause the cook to bump it. Hot liquid spilling from tipped pots causes severe scalds. Handles should always point inward or to the side.",
         "h": "Pot handles inward/back: prevents accidental knocking → prevents tipping → prevents scalds.",
@@ -3080,7 +5097,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Wet or damp oven gloves should NOT be used to remove hot items from the oven because:",
-        "o": ["They are too cold", "Moisture in the gloves conducts heat rapidly to the hands, causing instant burns — heat travels through water much faster than through dry insulating material", "Wet gloves leave water marks", "Dry gloves are less hygienic"],
+        "o": [
+          "They are too cold",
+          "Moisture in the gloves conducts heat rapidly to the hands, causing instant burns — heat travels through water much faster than through dry insulating material",
+          "Wet gloves leave water marks",
+          "Dry gloves are less hygienic"
+        ],
         "a": 1,
         "e": "Water is a good conductor of heat — steam created from wet gloves instantly transmits oven heat to the hands, causing steam burns. Always use dry oven gloves or oven mitts which have insulating dry material that slows heat transfer.",
         "h": "Wet oven gloves conduct heat to hands instantly (steam burns) — always use DRY gloves.",
@@ -3088,7 +5110,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The correct response to a suspected gas leak in the kitchen is:",
-        "o": ["Light a match to check if gas is leaking", "Turn on the electric fan to clear the gas", "Do NOT ignite any flame or operate any electrical switches; open windows; leave the area; call the gas company", "Continue cooking carefully to avoid wasting food"],
+        "o": [
+          "Light a match to check if gas is leaking",
+          "Turn on the electric fan to clear the gas",
+          "Do NOT ignite any flame or operate any electrical switches; open windows; leave the area; call the gas company",
+          "Continue cooking carefully to avoid wasting food"
+        ],
         "a": 2,
         "e": "Gas-air mixtures are explosive — any spark (match, electrical switch, phone) can ignite them. If a gas leak is suspected: (1) Do NOT light anything or operate switches; (2) Open windows to ventilate; (3) Turn off gas supply at the mains if safe; (4) Leave; (5) Call gas emergency services from outside.",
         "h": "Gas leak: NO flames or switches; open windows; leave immediately; call emergency from outside.",
@@ -3096,7 +5123,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Tying hair back when cooking is a kitchen safety and hygiene practice that prevents:",
-        "o": ["Hair from getting wet", "Hair from falling into food (contamination) and being caught in appliances or near open flames (safety hazard)", "Hair from being styled", "Heat damage to hair from the cooker"],
+        "o": [
+          "Hair from getting wet",
+          "Hair from falling into food (contamination) and being caught in appliances or near open flames (safety hazard)",
+          "Hair from being styled",
+          "Heat damage to hair from the cooker"
+        ],
         "a": 1,
         "e": "Long loose hair in the kitchen is both a safety hazard (hair can catch fire near flames, or get caught in food mixers, blenders, and other machinery) and a hygiene hazard (hair falls into food, contaminating it). Hair should be tied back or covered with a hairnet.",
         "h": "Tie hair back: prevents hair from falling into food (hygiene) and catching in flames/machinery (safety).",
@@ -3104,7 +5136,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Wet floors in the kitchen are a serious safety hazard because they:",
-        "o": ["Make the kitchen harder to clean", "Create a slip hazard — wet surfaces dramatically reduce friction, causing falls that can result in serious injuries including broken bones", "Damage the floor material", "Only affect elderly kitchen workers"],
+        "o": [
+          "Make the kitchen harder to clean",
+          "Create a slip hazard — wet surfaces dramatically reduce friction, causing falls that can result in serious injuries including broken bones",
+          "Damage the floor material",
+          "Only affect elderly kitchen workers"
+        ],
         "a": 1,
         "e": "Wet kitchen floors are a major cause of slips and falls. Water (or other liquids) on floor surfaces dramatically reduces friction, causing feet to slide unexpectedly. Falls in kitchens are particularly dangerous because of hot surfaces, sharp objects, and hard floors.",
         "h": "Wet floors: greatly reduced friction → slip hazard → falls → serious injuries in kitchen environment.",
@@ -3112,7 +5149,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Children should be kept away from the cooking area because:",
-        "o": ["Children make too much noise in the kitchen", "The kitchen has multiple hazards (hot surfaces, boiling water, sharp knives, open flames) that are particularly dangerous for children who lack the understanding and motor skills to avoid them", "Children never help with cooking", "Children are not interested in food"],
+        "o": [
+          "Children make too much noise in the kitchen",
+          "The kitchen has multiple hazards (hot surfaces, boiling water, sharp knives, open flames) that are particularly dangerous for children who lack the understanding and motor skills to avoid them",
+          "Children never help with cooking",
+          "Children are not interested in food"
+        ],
         "a": 1,
         "e": "Children are particularly vulnerable in kitchens: they may touch hot surfaces, pull pot handles, put objects in electrical sockets, accidentally ingest cleaning chemicals, or be scalded by falling hot liquid. Kitchen hazards require adult awareness and motor control that young children lack.",
         "h": "Keep children out of cooking area: multiple hazards (hot, sharp, electrical, chemical) exceed their safety awareness.",
@@ -3120,7 +5162,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Overloading electrical sockets in the kitchen is dangerous because:",
-        "o": ["It increases electricity costs only", "Excessive current draw through one socket can overheat wiring and connections, potentially causing fires and electrical failures", "It makes appliances work slower", "Overloading is only dangerous in wet rooms other than the kitchen"],
+        "o": [
+          "It increases electricity costs only",
+          "Excessive current draw through one socket can overheat wiring and connections, potentially causing fires and electrical failures",
+          "It makes appliances work slower",
+          "Overloading is only dangerous in wet rooms other than the kitchen"
+        ],
         "a": 1,
         "e": "Overloaded sockets draw more current than the wiring is rated for. This overheats the wiring insulation, which can melt and catch fire — electrical fires. In kitchens where multiple high-power appliances (kettle, microwave, toaster) may be used simultaneously, overloading is a real risk.",
         "h": "Overloaded sockets: excess current overheats wiring → insulation melts → electrical fire.",
@@ -3128,7 +5175,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The purpose of a fire blanket in the kitchen is to:",
-        "o": ["Keep the cook warm", "Smother small fires by covering them — removing oxygen from the fire to extinguish it safely", "Clean up liquid spills", "Protect food from contamination"],
+        "o": [
+          "Keep the cook warm",
+          "Smother small fires by covering them — removing oxygen from the fire to extinguish it safely",
+          "Clean up liquid spills",
+          "Protect food from contamination"
+        ],
         "a": 1,
         "e": "Fire blankets are made of fire-resistant materials (fibreglass, Kevlar). Placed over a fire (carefully, away from the person), they smother it by cutting off the oxygen supply. Particularly useful for small pan fires. After smothering, leave the blanket in place until the pan cools (re-ignition risk).",
         "h": "Fire blanket: smothers fire by removing oxygen (covers pan — particularly for fat fires).",
@@ -3136,7 +5188,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Wearing an apron and closed shoes while cooking is recommended because:",
-        "o": ["It makes the cook look professional only", "An apron protects clothing and skin from food splashes and boiling liquids; closed shoes protect feet from dropped hot items and sharp utensils", "These are only required in commercial kitchens", "Personal preference determines protective clothing"],
+        "o": [
+          "It makes the cook look professional only",
+          "An apron protects clothing and skin from food splashes and boiling liquids; closed shoes protect feet from dropped hot items and sharp utensils",
+          "These are only required in commercial kitchens",
+          "Personal preference determines protective clothing"
+        ],
         "a": 1,
         "e": "Protective kitchen clothing: apron protects against food splashes, boiling liquid spatter, and oil splatters; closed shoes protect feet from dropped knives, heavy pots, or boiling liquid spills. Open sandals leave feet vulnerable to burns and cuts.",
         "h": "Apron: protects from splashes; closed shoes: protect feet from dropped items and hot liquid.",
@@ -3144,7 +5201,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Never leaving cooking food unattended is a fundamental kitchen safety rule because:",
-        "o": ["Food tastes better when watched", "Unattended cooking can lead to boiling dry, burning, grease fires, and other hazards that rapidly escalate without immediate intervention", "It is required by law in all homes", "Food cooks faster when watched"],
+        "o": [
+          "Food tastes better when watched",
+          "Unattended cooking can lead to boiling dry, burning, grease fires, and other hazards that rapidly escalate without immediate intervention",
+          "It is required by law in all homes",
+          "Food cooks faster when watched"
+        ],
         "a": 1,
         "e": "Unattended cooking is a leading cause of kitchen fires and accidents: pots boil dry and catch fire; fat overheats and ignites; food burns and creates smoke; and without immediate intervention, small incidents escalate into major emergencies.",
         "h": "Never leave cooking unattended: boiling dry, fat fires, burning can escalate rapidly without intervention.",
@@ -3152,7 +5214,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Cleaning up spills on the kitchen floor immediately is a safety practice that prevents:",
-        "o": ["The spill from drying and hardening", "Slipping accidents — wet floors are the most common cause of kitchen falls and injuries", "The spill from staining the floor permanently", "Insects from being attracted to the spill"],
+        "o": [
+          "The spill from drying and hardening",
+          "Slipping accidents — wet floors are the most common cause of kitchen falls and injuries",
+          "The spill from staining the floor permanently",
+          "Insects from being attracted to the spill"
+        ],
         "a": 1,
         "e": "Immediate spill clean-up prevents slips — the primary kitchen floor safety hazard. A wet patch on a kitchen floor (even small) is easy to step on unknowingly, especially when carrying heavy pots or dishes. The risk of falling with hot food is life-threatening.",
         "h": "Clean spills immediately: wet floor = slip hazard → falls (particularly dangerous when carrying hot food).",
@@ -3160,7 +5227,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Broken glass in the kitchen should be disposed of by:",
-        "o": ["Picking up with bare hands quickly", "Wrapping in newspaper or thick paper and placing in a separate bag/container clearly labelled 'sharp glass' before disposal", "Leaving it for others to clean up", "Flushing down the drain"],
+        "o": [
+          "Picking up with bare hands quickly",
+          "Wrapping in newspaper or thick paper and placing in a separate bag/container clearly labelled 'sharp glass' before disposal",
+          "Leaving it for others to clean up",
+          "Flushing down the drain"
+        ],
         "a": 1,
         "e": "Broken glass must be: swept up with a broom (never hands — invisible small fragments cause deep cuts); wrapped in newspaper or thick material; placed in a clearly marked separate bag or container. Thin plastic bags do not protect bin handlers from glass cuts.",
         "h": "Broken glass: sweep (never hands) → wrap in newspaper → mark clearly 'broken glass' before disposal.",
@@ -3168,7 +5240,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Carbon monoxide (CO) is particularly dangerous in kitchens with gas appliances because it:",
-        "o": ["Makes food cook faster", "Is odourless and colourless — a potentially lethal gas produced by incomplete combustion that cannot be detected without a CO alarm", "Improves the flavour of food", "Is always visible as smoke"],
+        "o": [
+          "Makes food cook faster",
+          "Is odourless and colourless — a potentially lethal gas produced by incomplete combustion that cannot be detected without a CO alarm",
+          "Improves the flavour of food",
+          "Is always visible as smoke"
+        ],
         "a": 1,
         "e": "Carbon monoxide (CO) is 'the silent killer' — colourless, odourless, and tasteless. It is produced when gas or other fuels burn incompletely (poor ventilation, blocked burner). CO poisoning causes: headache, dizziness, confusion, and death. CO alarms are essential safety devices.",
         "h": "Carbon monoxide: colourless + odourless = cannot be detected without CO alarm → can be lethal.",
@@ -3176,7 +5253,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which safety action should be taken FIRST when a small fire starts on the stove?",
-        "o": ["Pour water on it immediately", "Run out of the kitchen", "Turn off the heat source and cover the pan with a lid or fire blanket to smother the fire", "Call the fire service before doing anything"],
+        "o": [
+          "Pour water on it immediately",
+          "Run out of the kitchen",
+          "Turn off the heat source and cover the pan with a lid or fire blanket to smother the fire",
+          "Call the fire service before doing anything"
+        ],
         "a": 2,
         "e": "For a small stove fire: (1) Turn off the heat immediately if safe (removes energy source); (2) Smother with a lid or fire blanket (removes oxygen). Only if the fire is uncontrollable should you evacuate and call emergency services. Never use water on fat fires.",
         "h": "Small stove fire: (1) Turn off heat; (2) Cover/smother with lid or fire blanket — if uncontrollable, evacuate.",
@@ -3184,7 +5266,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Placing hot pots directly on a cold marble or granite countertop is discouraged because:",
-        "o": ["Cold surfaces cool food too fast", "Extreme temperature difference can crack marble or granite countertops and damage their surface", "Marble is too soft for heavy pots", "Hot pots cannot be placed on any surface"],
+        "o": [
+          "Cold surfaces cool food too fast",
+          "Extreme temperature difference can crack marble or granite countertops and damage their surface",
+          "Marble is too soft for heavy pots",
+          "Hot pots cannot be placed on any surface"
+        ],
         "a": 1,
         "e": "Thermal shock — placing a very hot pot on a cold stone surface — can cause cracking or crazing of marble and granite due to the rapid and uneven temperature change. Always use heat-resistant trivets or mats between hot pots and countertops.",
         "h": "No hot pots directly on cold marble/granite: thermal shock causes cracking — use heat-resistant trivets.",
@@ -3192,7 +5279,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Non-slip mats placed in front of the kitchen sink and stove are a safety feature because:",
-        "o": ["They are decorative only", "These high-activity areas where water and oil spills are common benefit most from anti-slip protection — preventing falls in wet conditions", "They are required by law in all kitchens", "Non-slip mats prevent burns"],
+        "o": [
+          "They are decorative only",
+          "These high-activity areas where water and oil spills are common benefit most from anti-slip protection — preventing falls in wet conditions",
+          "They are required by law in all kitchens",
+          "Non-slip mats prevent burns"
+        ],
         "a": 1,
         "e": "The areas around the sink (water splashing) and stove (fat/oil spills, steam condensation) are the wettest zones in the kitchen and therefore most slip-hazardous. Non-slip mats provide grip even when wet, reducing fall risk in these critical locations.",
         "h": "Non-slip mats at sink/stove: most slip-hazardous areas due to water and oil splashes.",
@@ -3200,7 +5292,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Before using any electrical kitchen appliance (blender, mixer), you should check that:",
-        "o": ["The appliance is switched on before plugging in", "The power cord is undamaged, the appliance is dry, hands are dry, and the appliance is on a stable surface before plugging in", "The appliance is immersed in water to check it works", "Other appliances are unplugged to save electricity"],
+        "o": [
+          "The appliance is switched on before plugging in",
+          "The power cord is undamaged, the appliance is dry, hands are dry, and the appliance is on a stable surface before plugging in",
+          "The appliance is immersed in water to check it works",
+          "Other appliances are unplugged to save electricity"
+        ],
         "a": 1,
         "e": "Electrical appliance safety check: cord undamaged (no fraying or exposed wire), appliance is dry (no moisture near electrical components), hands are dry (water + electricity = electrocution), placed on stable surface (prevent falling while in use). Only then plug in and operate.",
         "h": "Before electrical appliance use: check cord, dry appliance, dry hands, stable surface.",
@@ -3208,7 +5305,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The reason why flammable materials (dish towels, curtains, paper) should be kept away from the stove is:",
-        "o": ["They slow down cooking", "They are expensive to replace", "Open flame or high heat from the stove can ignite these materials, causing kitchen fires that spread rapidly", "They block the stove burners"],
+        "o": [
+          "They slow down cooking",
+          "They are expensive to replace",
+          "Open flame or high heat from the stove can ignite these materials, causing kitchen fires that spread rapidly",
+          "They block the stove burners"
+        ],
         "a": 2,
         "e": "Flammable materials near the stove are a major fire hazard — a dish towel left hanging near a flame, curtains blowing near a lit gas burner, or paper left on the hob can catch fire instantly. Kitchen fires typically start when flammable materials contact heat sources.",
         "h": "Keep flammables from stove: open flame or heat ignites dish towels, curtains, paper → kitchen fire.",
@@ -3225,7 +5327,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "The most important personal hygiene practice for food handlers is:",
-        "o": ["Wearing a chef's hat", "Handwashing with soap and running water at critical points in food handling", "Wearing clean shoes", "Tasting food regularly to check quality"],
+        "o": [
+          "Wearing a chef's hat",
+          "Handwashing with soap and running water at critical points in food handling",
+          "Wearing clean shoes",
+          "Tasting food regularly to check quality"
+        ],
         "a": 1,
         "e": "Hands are the primary vehicle for transferring bacteria from person to food. Thorough handwashing with soap removes and kills pathogens at critical transfer points. No other single hygiene practice has as much impact on food safety as proper handwashing.",
         "h": "Handwashing = most important food handler hygiene practice (primary route of food contamination).",
@@ -3233,7 +5340,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The temperature 'danger zone' for bacterial growth in food is:",
-        "o": ["0-4°C (refrigerator temperature)", "100-150°C (cooking temperature)", "5-60°C — the range within which most bacteria multiply rapidly", "-18°C (freezer temperature)"],
+        "o": [
+          "0-4°C (refrigerator temperature)",
+          "100-150°C (cooking temperature)",
+          "5-60°C — the range within which most bacteria multiply rapidly",
+          "-18°C (freezer temperature)"
+        ],
         "a": 2,
         "e": "Bacteria multiply most rapidly between 5-60°C — this is the 'temperature danger zone.' Above 60°C, most bacteria are killed; below 5°C, bacterial growth is greatly slowed. Food should spend minimal time in this range. The classic risk is leaving food at room temperature (25-30°C in Nigeria).",
         "h": "Temperature danger zone: 5-60°C (bacteria multiply rapidly — refrigerate <5°C or cook to >60°C).",
@@ -3241,7 +5353,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A food handler with an active case of diarrhoea and vomiting should:",
-        "o": ["Continue working but wash hands more frequently", "Handle only raw food, not cooked food", "Not handle food at all until fully recovered — gastrointestinal illness is highly contagious via food", "Work with gloves on"],
+        "o": [
+          "Continue working but wash hands more frequently",
+          "Handle only raw food, not cooked food",
+          "Not handle food at all until fully recovered — gastrointestinal illness is highly contagious via food",
+          "Work with gloves on"
+        ],
         "a": 2,
         "e": "A person with diarrhoea/vomiting is likely shedding foodborne pathogens (Salmonella, Norovirus, Campylobacter) in large quantities. Even with gloves, the risk of contaminating food is unacceptably high. Food handlers with these symptoms must not handle food until 48 hours after symptoms resolve.",
         "h": "Food handler with diarrhoea/vomiting: must NOT handle food (shedding pathogens in large numbers).",
@@ -3249,7 +5366,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Cross-contamination between raw meat and ready-to-eat foods is prevented by:",
-        "o": ["Using the same board but washing it between uses", "Using separate colour-coded chopping boards for raw meat and ready-to-eat foods, and storing raw meat below cooked/ready foods in the refrigerator", "Keeping raw meat at room temperature", "Cooking all food before refrigerating"],
+        "o": [
+          "Using the same board but washing it between uses",
+          "Using separate colour-coded chopping boards for raw meat and ready-to-eat foods, and storing raw meat below cooked/ready foods in the refrigerator",
+          "Keeping raw meat at room temperature",
+          "Cooking all food before refrigerating"
+        ],
         "a": 1,
         "e": "Cross-contamination prevention: separate boards (raw meat vs vegetables/cooked food); separate utensils; store raw meat on the bottom shelf of the refrigerator (to prevent juices dripping onto other foods); clean and sanitise surfaces after raw meat contact.",
         "h": "Cross-contamination prevention: separate boards, raw meat stored below other foods in fridge.",
@@ -3257,7 +5379,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Fruits and vegetables should be washed under RUNNING water (not in a basin of still water) because:",
-        "o": ["Running water is warmer", "Still water allows bacteria and pesticide residues washed off one vegetable to contaminate others in the same basin", "Running water contains chlorine", "Still water does not clean vegetables"],
+        "o": [
+          "Running water is warmer",
+          "Still water allows bacteria and pesticide residues washed off one vegetable to contaminate others in the same basin",
+          "Running water contains chlorine",
+          "Still water does not clean vegetables"
+        ],
         "a": 1,
         "e": "Running water continuously removes bacteria and pesticide residues from the surface and washes them away. In a basin of still water, the first washed items contaminate the water — subsequent items soak in contaminated water. Running water is also more mechanically effective at dislodging surface dirt.",
         "h": "Running water for vegetables: prevents contaminated wash water from re-contaminating other produce.",
@@ -3265,7 +5392,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Keeping garbage bins covered in the kitchen is a hygiene practice that prevents:",
-        "o": ["Odours from escaping the bin", "Attracting flies, cockroaches, and rodents that can transfer bacteria from waste to food and food surfaces", "Bins from tipping over", "Only aesthetic concerns"],
+        "o": [
+          "Odours from escaping the bin",
+          "Attracting flies, cockroaches, and rodents that can transfer bacteria from waste to food and food surfaces",
+          "Bins from tipping over",
+          "Only aesthetic concerns"
+        ],
         "a": 1,
         "e": "Uncovered bins: attract flies (which carry bacteria from waste to food — houseflies carry hundreds of species of bacteria on their bodies); attract cockroaches and rodents that spread pathogens; and allow odours and bacteria to contaminate the kitchen environment.",
         "h": "Covered bins: prevent flies, cockroaches, and rodents that carry bacteria from waste to food.",
@@ -3273,7 +5405,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Frozen food should be thawed in the refrigerator rather than at room temperature because:",
-        "o": ["Refrigerator thawing is faster", "Thawing at room temperature brings the food's surface through the danger zone (5-60°C) for a prolonged time, allowing bacteria to multiply to dangerous levels", "Room temperature thawing is more expensive", "Refrigerator thawing changes the food's texture"],
+        "o": [
+          "Refrigerator thawing is faster",
+          "Thawing at room temperature brings the food's surface through the danger zone (5-60°C) for a prolonged time, allowing bacteria to multiply to dangerous levels",
+          "Room temperature thawing is more expensive",
+          "Refrigerator thawing changes the food's texture"
+        ],
         "a": 1,
         "e": "Thawing at room temperature (25°C in Nigeria) quickly brings the outer surface of frozen food into the danger zone while the interior is still frozen. The outer surface may sit at bacteria-multiplying temperatures for hours. Refrigerator thawing keeps all parts of the food at safe temperatures (<5°C) throughout thawing.",
         "h": "Thaw in refrigerator: prevents surface entering danger zone (5-60°C) during thawing.",
@@ -3281,7 +5418,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Long fingernails on a food handler are a hygiene concern because:",
-        "o": ["They look unprofessional only", "Long nails harbour bacteria in the space underneath them — even handwashing may not remove all bacteria, and nails can fall into food", "Long nails are painful when cooking", "Only nail polish is a hygiene concern"],
+        "o": [
+          "They look unprofessional only",
+          "Long nails harbour bacteria in the space underneath them — even handwashing may not remove all bacteria, and nails can fall into food",
+          "Long nails are painful when cooking",
+          "Only nail polish is a hygiene concern"
+        ],
         "a": 1,
         "e": "Subungual space (under fingernails) harbours bacteria that resist handwashing. Long nails accumulate more bacteria and are harder to clean thoroughly. Nails (or nail fragments) can also fall into food. Food handlers should keep nails short, clean, and unpolished (nail polish can flake into food).",
         "h": "Long nails: harbour bacteria that resist handwashing; can fall into food.",
@@ -3289,7 +5431,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A cut on a food handler's hand should be covered with which type of dressing?",
-        "o": ["Any bandage or cloth available", "A brightly coloured (blue or green) waterproof plaster — blue is standard as it is visible if it falls into food", "No covering needed if the cut is small", "A cloth bandage tied with string"],
+        "o": [
+          "Any bandage or cloth available",
+          "A brightly coloured (blue or green) waterproof plaster — blue is standard as it is visible if it falls into food",
+          "No covering needed if the cut is small",
+          "A cloth bandage tied with string"
+        ],
         "a": 1,
         "e": "Cuts must be covered with waterproof (impermeable) dressings to prevent wound bacteria (including Staphylococcus) from contaminating food. Bright blue or green coloured plasters are standard in food handling — if they fall off, they are immediately visible in food (unlike flesh-coloured ones).",
         "h": "Cut: brightly coloured waterproof plaster (visible if it falls into food — blue is food-industry standard).",
@@ -3297,7 +5444,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Dish cloths and kitchen sponges can be major sources of bacterial contamination because:",
-        "o": ["They are too dry for bacteria", "They are warm, moist, and absorb food residues — ideal bacterial breeding conditions; bacteria multiply rapidly in wet cloths", "Only dish cloths used for raw meat are contaminated", "Modern sponges are antibacterial"],
+        "o": [
+          "They are too dry for bacteria",
+          "They are warm, moist, and absorb food residues — ideal bacterial breeding conditions; bacteria multiply rapidly in wet cloths",
+          "Only dish cloths used for raw meat are contaminated",
+          "Modern sponges are antibacterial"
+        ],
         "a": 1,
         "e": "Wet kitchen cloths and sponges are among the most contaminated objects in any kitchen — they are moist (bacteria need water), warm (kitchen temperature), and contain food residues (nutrients for bacteria). Kitchen cloths should be washed daily, disinfected regularly, and allowed to dry between uses.",
         "h": "Dish cloths/sponges: warm, moist, food residues = ideal bacteria culture medium → change/disinfect frequently.",
@@ -3305,7 +5457,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Separate chopping boards for raw meat and vegetables are needed because vegetables consumed raw would otherwise:",
-        "o": ["Taste different from the meat", "Become cross-contaminated with raw meat pathogens (Salmonella, Campylobacter) that are not killed since the vegetables are not subsequently cooked", "Spoil faster", "Not need to be washed if separate boards are used"],
+        "o": [
+          "Taste different from the meat",
+          "Become cross-contaminated with raw meat pathogens (Salmonella, Campylobacter) that are not killed since the vegetables are not subsequently cooked",
+          "Spoil faster",
+          "Not need to be washed if separate boards are used"
+        ],
         "a": 1,
         "e": "Raw meat contains pathogens. Vegetables consumed raw (salads, fresh fruit) are not cooked — any pathogens transferred from the raw meat board to the vegetables survive and are consumed, causing foodborne illness. Cooking would kill these pathogens, but raw consumption does not.",
         "h": "Separate boards: raw meat pathogens on veg consumed raw → not killed (no cooking) → food poisoning.",
@@ -3313,7 +5470,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Pest control in the kitchen (keeping insects and rodents out) is essential for food hygiene because:",
-        "o": ["Pests reduce food waste", "Pests (flies, cockroaches, mice) carry and spread pathogens on their bodies and in their droppings, contaminating food and food surfaces", "Pests improve kitchen biodiversity", "Only large pests are a hygiene concern"],
+        "o": [
+          "Pests reduce food waste",
+          "Pests (flies, cockroaches, mice) carry and spread pathogens on their bodies and in their droppings, contaminating food and food surfaces",
+          "Pests improve kitchen biodiversity",
+          "Only large pests are a hygiene concern"
+        ],
         "a": 1,
         "e": "Houseflies: carry 200+ species of bacteria on their bodies and regurgitate digestive fluids on food. Cockroaches: spread bacteria including Salmonella and E. coli from sewers and waste to food. Rodents: contaminate food with urine and droppings; spread Salmonella and Leptospira.",
         "h": "Pests carry and spread pathogens (flies, cockroaches, rodents contaminate food with bacteria).",
@@ -3321,7 +5483,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Using safe water (clean, potable water) for food preparation is essential because:",
-        "o": ["Taste of food depends on water quality", "Contaminated water introduces pathogens (bacteria, viruses, protozoa) directly into food, causing waterborne foodborne disease", "Only water for drinking needs to be clean", "Safe water is only important in restaurants"],
+        "o": [
+          "Taste of food depends on water quality",
+          "Contaminated water introduces pathogens (bacteria, viruses, protozoa) directly into food, causing waterborne foodborne disease",
+          "Only water for drinking needs to be clean",
+          "Safe water is only important in restaurants"
+        ],
         "a": 1,
         "e": "Water used in food preparation (washing vegetables, cooking, making drinks, ice) must be safe/potable. Contaminated water introduces waterborne pathogens: cholera (Vibrio cholerae), typhoid (Salmonella typhi), E. coli, Cryptosporidium. In Nigeria, water purification (boiling, chlorination, filtration) is important.",
         "h": "Safe water for food preparation: contaminated water introduces waterborne pathogens into food.",
@@ -3329,7 +5496,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Checking expiry dates and food quality before buying is a food hygiene practice that prevents:",
-        "o": ["Spending too much money on food", "Purchasing and consuming food that is spoiled or past its safe consumption date — reducing foodborne illness risk", "Buying too much food", "Food waste in the shop"],
+        "o": [
+          "Spending too much money on food",
+          "Purchasing and consuming food that is spoiled or past its safe consumption date — reducing foodborne illness risk",
+          "Buying too much food",
+          "Food waste in the shop"
+        ],
         "a": 1,
         "e": "Expiry dates indicate the period within which food is considered safe and of acceptable quality. Consuming food beyond its expiry (or best before) date risks ingesting spoiled food that may contain microbial toxins or live pathogens. Visual inspection for signs of spoilage also reduces risk.",
         "h": "Check expiry dates: prevents purchasing/consuming spoiled food past safe consumption date.",
@@ -3337,7 +5509,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Wearing jewellery (rings, bracelets) while handling food is discouraged because:",
-        "o": ["Jewellery is too expensive for the kitchen", "Jewellery can harbour bacteria in crevices, fall into food, or become contaminated, transferring pathogens to food", "Jewellery slows down cooking", "Only wedding rings are a hygiene concern"],
+        "o": [
+          "Jewellery is too expensive for the kitchen",
+          "Jewellery can harbour bacteria in crevices, fall into food, or become contaminated, transferring pathogens to food",
+          "Jewellery slows down cooking",
+          "Only wedding rings are a hygiene concern"
+        ],
         "a": 1,
         "e": "Jewellery in kitchens: rings, bracelets, and watches trap bacteria in crevices and cannot be adequately cleaned during handwashing; they may fall into food unnoticed; they harbour dirt and bacteria from non-food activities. Food handlers should remove jewellery or wear food-safe gloves.",
         "h": "Jewellery: harbours bacteria in crevices (resists handwashing), may fall into food unnoticed.",
@@ -3345,7 +5522,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The recommended handwashing procedure for food handlers involves:",
-        "o": ["Briefly rinsing hands under running water", "Wetting hands; applying soap; rubbing all surfaces (palms, back, between fingers, under nails) for at least 20 seconds; rinsing; drying with clean towel", "Using hand sanitiser only (no water)", "Washing once before the entire meal preparation"],
+        "o": [
+          "Briefly rinsing hands under running water",
+          "Wetting hands; applying soap; rubbing all surfaces (palms, back, between fingers, under nails) for at least 20 seconds; rinsing; drying with clean towel",
+          "Using hand sanitiser only (no water)",
+          "Washing once before the entire meal preparation"
+        ],
         "a": 1,
         "e": "Effective handwashing: (1) Wet hands under running water; (2) Apply soap; (3) Rub all surfaces vigorously for 20 seconds (the time to sing 'Happy Birthday' twice); (4) Rinse under running water; (5) Dry with a clean single-use towel. Hand sanitiser is supplementary, not a replacement for soap and water.",
         "h": "Correct handwashing: wet + soap + 20 seconds all surfaces + rinse + dry clean towel.",
@@ -3353,7 +5535,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Food should not be stored in opened tin cans in the refrigerator because:",
-        "o": ["The refrigerator will smell of the food", "Opened tins can develop metallic (tin) contamination of food; the exposed metal oxidises and may impart off-flavours and potentially harmful metallic compounds", "Tins take up too much refrigerator space", "Only glass containers can be refrigerated"],
+        "o": [
+          "The refrigerator will smell of the food",
+          "Opened tins can develop metallic (tin) contamination of food; the exposed metal oxidises and may impart off-flavours and potentially harmful metallic compounds",
+          "Tins take up too much refrigerator space",
+          "Only glass containers can be refrigerated"
+        ],
         "a": 1,
         "e": "When tin cans are opened, the internal coating is disrupted. Food left in open tins in the refrigerator can absorb tin ions from the exposed metal interior, leading to metallic taste and potentially harmful tin contamination. Food should be transferred to glass or plastic airtight containers.",
         "h": "Don't store food in open tins: tin ions leach into food (metallic taste, potential contamination).",
@@ -3361,7 +5548,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The purpose of cooling cooked food quickly before refrigerating is to:",
-        "o": ["Make refrigerator work harder to cool food", "Minimise the time food spends in the danger zone (5-60°C) where bacteria multiply — hot food should cool in 2 hours to below 60°C before refrigerating", "Prevent refrigerator contents from warming", "Improve the taste of refrigerated leftovers"],
+        "o": [
+          "Make refrigerator work harder to cool food",
+          "Minimise the time food spends in the danger zone (5-60°C) where bacteria multiply — hot food should cool in 2 hours to below 60°C before refrigerating",
+          "Prevent refrigerator contents from warming",
+          "Improve the taste of refrigerated leftovers"
+        ],
         "a": 1,
         "e": "Hot food should be cooled rapidly (not left at room temperature for hours) to minimise time in the bacterial danger zone (5-60°C). Methods to cool quickly: shallow containers, ice bath, cool running water. Once below 60°C, refrigerate within 2 hours total. Do not place very hot food directly in refrigerator (raises internal temperature).",
         "h": "Cool food quickly: minimises time in danger zone (5-60°C); refrigerate within 2 hours of cooking.",
@@ -3369,7 +5561,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "FIFO (First In, First Out) is a food storage principle that means:",
-        "o": ["The first person in the kitchen serves themselves first", "Older stock is used before newer stock — new deliveries placed at the back, older items brought to the front to be used first", "Food is consumed immediately without storing", "Only the freshest food should be used"],
+        "o": [
+          "The first person in the kitchen serves themselves first",
+          "Older stock is used before newer stock — new deliveries placed at the back, older items brought to the front to be used first",
+          "Food is consumed immediately without storing",
+          "Only the freshest food should be used"
+        ],
         "a": 1,
         "e": "FIFO ensures older food is used before it expires: when storing, move older items to the front and put new items behind them. This prevents food waste and reduces the risk of consuming expired food that could cause illness.",
         "h": "FIFO: older stock used first (new items to back, old items to front) — prevents expiry and waste.",
@@ -3377,7 +5574,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Airtight containers are recommended for storing dry foods (flour, rice, beans) because they:",
-        "o": ["Make food cook faster", "Prevent moisture, insects, and rodents from contaminating the food and slow oxidation that leads to rancidity or loss of quality", "Change the nutritional content of food", "Are always more hygienic than open bags"],
+        "o": [
+          "Make food cook faster",
+          "Prevent moisture, insects, and rodents from contaminating the food and slow oxidation that leads to rancidity or loss of quality",
+          "Change the nutritional content of food",
+          "Are always more hygienic than open bags"
+        ],
         "a": 1,
         "e": "Airtight containers: prevent moisture absorption (which promotes mould and bacterial growth), exclude insects and rodents from contaminating dry goods, slow oxidative rancidity of any fat in the food, and maintain product quality longer than open bags.",
         "h": "Airtight containers for dry foods: prevent moisture, insects, rodents, and oxidation.",
@@ -3394,7 +5596,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "Vegetable peelings, fruit rinds, and food scraps from the kitchen are classified as which type of waste?",
-        "o": ["Hazardous waste", "Recyclable waste", "Organic/biodegradable waste — can be composted or used as animal feed", "Non-recyclable general waste"],
+        "o": [
+          "Hazardous waste",
+          "Recyclable waste",
+          "Organic/biodegradable waste — can be composted or used as animal feed",
+          "Non-recyclable general waste"
+        ],
         "a": 2,
         "e": "Organic/biodegradable waste includes all food-derived waste that can be broken down by microorganisms: vegetable peelings, fruit rinds, eggshells, cooked food scraps, tea bags. This waste type is ideal for composting — converted to nutrient-rich fertiliser for gardens.",
         "h": "Vegetable peelings, fruit rinds = organic/biodegradable waste (compostable).",
@@ -3402,7 +5609,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Pouring used cooking oil down the kitchen drain is a harmful disposal practice because:",
-        "o": ["Cooking oil has no nutritional value once used", "Cooking oil solidifies in pipes and sewers, causing blockages; it also pollutes waterways and harms aquatic life", "Cooking oil should be reused indefinitely", "Only large amounts of oil cause problems"],
+        "o": [
+          "Cooking oil has no nutritional value once used",
+          "Cooking oil solidifies in pipes and sewers, causing blockages; it also pollutes waterways and harms aquatic life",
+          "Cooking oil should be reused indefinitely",
+          "Only large amounts of oil cause problems"
+        ],
         "a": 1,
         "e": "Used cooking oil poured down drains: cools and solidifies in pipes and sewer systems (particularly with cold water and soap residue), causing serious blockages (fatbergs). It also pollutes watercourses — oil coats water surfaces, reducing oxygen exchange and harming aquatic organisms.",
         "h": "Oil down drain: solidifies in pipes → sewer blockages (fatbergs) + water pollution.",
@@ -3410,7 +5622,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Improper waste disposal near the kitchen creates public health hazards primarily by:",
-        "o": ["Making the kitchen look untidy", "Providing breeding and feeding sites for disease vectors (flies, cockroaches, rats, mosquitoes) that carry and spread pathogens to food and water", "Reducing the nutritional value of nearby food", "Affecting only aesthetic conditions"],
+        "o": [
+          "Making the kitchen look untidy",
+          "Providing breeding and feeding sites for disease vectors (flies, cockroaches, rats, mosquitoes) that carry and spread pathogens to food and water",
+          "Reducing the nutritional value of nearby food",
+          "Affecting only aesthetic conditions"
+        ],
         "a": 1,
         "e": "Improperly disposed waste provides: food for flies, cockroaches, and rats that carry pathogens; standing water in poorly managed waste for mosquito breeding; shelter and harborage for disease vectors. These vectors spread diseases including typhoid, cholera, malaria, leptospirosis, and various foodborne illnesses.",
         "h": "Improper waste: breeds flies, cockroaches, rats, mosquitoes → disease vectors → spread pathogens.",
@@ -3418,7 +5635,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Waste segregation (separating waste into organic, recyclable, and general categories) benefits the environment by:",
-        "o": ["Making waste disposal companies work less", "Enabling recycling to reduce resource extraction; enabling composting to reduce landfill and create fertiliser; preventing cross-contamination of recyclables", "Only benefiting the government", "Making waste heavier for collection"],
+        "o": [
+          "Making waste disposal companies work less",
+          "Enabling recycling to reduce resource extraction; enabling composting to reduce landfill and create fertiliser; preventing cross-contamination of recyclables",
+          "Only benefiting the government",
+          "Making waste heavier for collection"
+        ],
         "a": 1,
         "e": "Waste segregation enables: recyclable materials to be recovered and remanufactured (reducing extraction of new resources); organic waste to be composted (reducing landfill and greenhouse gas production); and hazardous waste to be safely handled separately from general waste.",
         "h": "Waste segregation: enables recycling + composting + proper hazardous disposal → environmental protection.",
@@ -3426,7 +5648,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Kitchen bins should be emptied daily (or when full) because:",
-        "o": ["Empty bins look cleaner", "Food waste in bins attracts flies, cockroaches, and rodents within hours at warm Nigerian temperatures; organic waste also decomposes and produces gases and bacteria rapidly", "Bin emptying is required by law daily", "Full bins reduce kitchen space only"],
+        "o": [
+          "Empty bins look cleaner",
+          "Food waste in bins attracts flies, cockroaches, and rodents within hours at warm Nigerian temperatures; organic waste also decomposes and produces gases and bacteria rapidly",
+          "Bin emptying is required by law daily",
+          "Full bins reduce kitchen space only"
+        ],
         "a": 1,
         "e": "In Nigeria's warm climate, organic food waste begins fermenting and attracting flies within hours. Flies can lay eggs on waste within 10 minutes of exposure; maggots hatch within 24 hours. Cockroaches and rodents are attracted to food odours. Daily emptying prevents pest establishment.",
         "h": "Empty kitchen bins daily: warm temperatures → flies/pests attracted within hours, waste ferments rapidly.",
@@ -3434,7 +5661,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Composting is a beneficial kitchen waste practice because it:",
-        "o": ["Destroys all bacteria in food waste", "Converts organic kitchen waste into nutrient-rich compost/fertiliser for gardens, reducing landfill waste and greenhouse gas emissions", "Creates more kitchen waste", "Is only suitable for large farms"],
+        "o": [
+          "Destroys all bacteria in food waste",
+          "Converts organic kitchen waste into nutrient-rich compost/fertiliser for gardens, reducing landfill waste and greenhouse gas emissions",
+          "Creates more kitchen waste",
+          "Is only suitable for large farms"
+        ],
         "a": 1,
         "e": "Composting converts vegetable peelings, fruit rinds, eggshells, tea bags, and coffee grounds into nutrient-rich humus for gardens. Benefits: reduces waste sent to landfill (where it would produce methane — a greenhouse gas); creates free organic fertiliser; improves soil structure.",
         "h": "Composting: converts food scraps → fertiliser + reduces landfill waste + reduces greenhouse gas emissions.",
@@ -3442,7 +5674,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which of the following kitchen waste items is NOT suitable for a compost bin?",
-        "o": ["Vegetable peelings", "Fruit rinds and eggshells", "Raw chicken bones and cooked meat (attract pests and produce putrefaction)", "Coffee grounds and tea bags"],
+        "o": [
+          "Vegetable peelings",
+          "Fruit rinds and eggshells",
+          "Raw chicken bones and cooked meat (attract pests and produce putrefaction)",
+          "Coffee grounds and tea bags"
+        ],
         "a": 2,
         "e": "Meat, fish, cooked food, and dairy products should NOT go in home compost bins — they putrefy quickly (producing foul smells), attract rats, flies, and other pests. Suitable compost items: vegetable peelings, fruit scraps, eggshells, teabags, coffee grounds, paper, and garden waste.",
         "h": "NOT for compost: cooked meat, fish, dairy (attract pests, putrefy).",
@@ -3450,7 +5687,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Burning kitchen waste in an open fire near the home or kitchen is discouraged because:",
-        "o": ["It is too slow a disposal method", "Burning releases toxic gases and particulates (especially when burning plastics) that cause respiratory illness and air pollution", "Open burning requires government permission only", "Burning has no environmental consequences"],
+        "o": [
+          "It is too slow a disposal method",
+          "Burning releases toxic gases and particulates (especially when burning plastics) that cause respiratory illness and air pollution",
+          "Open burning requires government permission only",
+          "Burning has no environmental consequences"
+        ],
         "a": 1,
         "e": "Open burning of mixed waste (especially plastics) releases toxic compounds: dioxins, furans, hydrogen chloride, polycyclic aromatic hydrocarbons (PAHs). These cause respiratory disease, are carcinogenic, and pollute soil and water when smoke particles settle. Burning near dwellings exposes residents to these hazards.",
         "h": "Open burning: releases toxic gases (dioxins, PAHs from plastics) → respiratory disease + pollution.",
@@ -3458,7 +5700,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Expired medications should NOT be disposed of in regular kitchen waste bins because:",
-        "o": ["They take up too much space", "Expired medications in regular waste can contaminate soil and water supplies when landfilled, and may be retrieved and misused; they require special pharmaceutical waste disposal", "They have no effect on the environment", "Only liquid medications are a disposal concern"],
+        "o": [
+          "They take up too much space",
+          "Expired medications in regular waste can contaminate soil and water supplies when landfilled, and may be retrieved and misused; they require special pharmaceutical waste disposal",
+          "They have no effect on the environment",
+          "Only liquid medications are a disposal concern"
+        ],
         "a": 1,
         "e": "Pharmaceutical waste (expired medications) contains active compounds that: resist environmental degradation; contaminate soil and water (hormones, antibiotics in groundwater are a global environmental concern); may be retrieved from waste for misuse. Return to pharmacy or use designated collection points.",
         "h": "Expired medications: special disposal needed (contaminate water, may be misused if in general waste).",
@@ -3466,7 +5713,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Houseflies (Musca domestica) are particularly dangerous vectors of foodborne illness because they:",
-        "o": ["Eat all the food before humans can", "Land on waste and faeces, pick up pathogens on their bodies and feet, then land on food and regurgitate digestive fluids — transferring pathogens", "Only spread diseases in dirty kitchens", "Are attracted only to sweet foods"],
+        "o": [
+          "Eat all the food before humans can",
+          "Land on waste and faeces, pick up pathogens on their bodies and feet, then land on food and regurgitate digestive fluids — transferring pathogens",
+          "Only spread diseases in dirty kitchens",
+          "Are attracted only to sweet foods"
+        ],
         "a": 1,
         "e": "Houseflies are mechanical disease vectors: they land on faeces, rotting organic matter, and waste, contaminating their bodies with bacteria, viruses, and protozoa. When they land on food, they vomit digestive fluids (containing ingested pathogens) and defecate, transferring pathogens directly to food.",
         "h": "Houseflies: carry pathogens from waste → regurgitate + defecate on food → transfer diseases.",
@@ -3474,7 +5726,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "What is the public health consequence of standing water in improperly disposed waste?",
-        "o": ["No public health consequence", "Standing water provides breeding sites for mosquitoes — particularly Anopheles (malaria) and Aedes (dengue and yellow fever) mosquitoes", "Standing water only affects plant growth", "Only in countries with no mosquitoes"],
+        "o": [
+          "No public health consequence",
+          "Standing water provides breeding sites for mosquitoes — particularly Anopheles (malaria) and Aedes (dengue and yellow fever) mosquitoes",
+          "Standing water only affects plant growth",
+          "Only in countries with no mosquitoes"
+        ],
         "a": 1,
         "e": "Mosquitoes require standing water for breeding — they lay eggs in any stagnant water. Improper waste disposal creates stagnant water pools: cans, tyres, plastic bags holding rainwater all become mosquito breeding sites. Anopheles mosquitoes in Nigeria transmit malaria (a major public health burden).",
         "h": "Standing water in waste = mosquito breeding sites → malaria (Anopheles) and dengue (Aedes) transmission.",
@@ -3482,7 +5739,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Clean, rinsed recyclable items (tins, glass, plastic) should be separated from general waste because:",
-        "o": ["They are dangerous in general bins", "Recyclable materials can be recovered, reprocessed, and remanufactured into new products — reducing raw material extraction, energy use, and landfill", "Recycling is only for commercial businesses", "Clean items smell different from general waste"],
+        "o": [
+          "They are dangerous in general bins",
+          "Recyclable materials can be recovered, reprocessed, and remanufactured into new products — reducing raw material extraction, energy use, and landfill",
+          "Recycling is only for commercial businesses",
+          "Clean items smell different from general waste"
+        ],
         "a": 1,
         "e": "Recycling conserves natural resources (aluminium from bauxite ore; glass from sand; plastic from petroleum) by reprocessing used materials. This reduces: resource extraction, energy consumption (recycled aluminium uses 95% less energy than new aluminium), landfill space, and pollution.",
         "h": "Recyclables separated: recovered and reprocessed → saves resources, energy, and landfill space.",
@@ -3490,7 +5752,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The correct way to dispose of a broken glass bottle from the kitchen is:",
-        "o": ["Throw loose into the general waste bin", "Put it directly in a thin plastic bag", "Wrap in several layers of newspaper or place in a cardboard box, label 'broken glass,' then place in general waste or glass recycling", "Put down the kitchen drain"],
+        "o": [
+          "Throw loose into the general waste bin",
+          "Put it directly in a thin plastic bag",
+          "Wrap in several layers of newspaper or place in a cardboard box, label 'broken glass,' then place in general waste or glass recycling",
+          "Put down the kitchen drain"
+        ],
         "a": 2,
         "e": "Broken glass in waste bags is extremely dangerous to waste collectors who may cut themselves when handling bags. Wrapping in thick newspaper or boxing in a cardboard container with a clear label prevents injury. If the glass is uncontaminated, glass recycling banks are ideal.",
         "h": "Broken glass: wrap in newspaper, label clearly 'broken glass' → protects waste handlers from cuts.",
@@ -3498,7 +5765,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Keeping the area around outdoor waste bins clean is important because:",
-        "o": ["It improves neighbourhood appearance only", "Food spills and waste residues around bins attract pests (flies, rats, cockroaches) that then move into nearby kitchens and food storage areas", "Local government requires it for aesthetic reasons", "Bin areas only need cleaning annually"],
+        "o": [
+          "It improves neighbourhood appearance only",
+          "Food spills and waste residues around bins attract pests (flies, rats, cockroaches) that then move into nearby kitchens and food storage areas",
+          "Local government requires it for aesthetic reasons",
+          "Bin areas only need cleaning annually"
+        ],
         "a": 1,
         "e": "Spilled waste, food residues, and liquid overflow around bins attract pests to that location. Once pests (rats, cockroaches, flies) are established near the bin, they move into nearby buildings seeking food and shelter. Keeping bin areas clean reduces pest attraction.",
         "h": "Clean bin areas: spills attract pests → pests move from outdoor bins into kitchen if not controlled.",
@@ -3506,7 +5778,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The reduce, reuse, recycle (3Rs) principle applied to kitchen waste means:",
-        "o": ["Only buying expensive recyclable products", "Reducing food waste generated; reusing containers; recycling packaging — in order of environmental priority", "Only focusing on recycling", "The 3Rs apply only to industrial waste"],
+        "o": [
+          "Only buying expensive recyclable products",
+          "Reducing food waste generated; reusing containers; recycling packaging — in order of environmental priority",
+          "Only focusing on recycling",
+          "The 3Rs apply only to industrial waste"
+        ],
         "a": 1,
         "e": "The 3Rs hierarchy (in priority order): (1) Reduce (least waste is best — buy only what's needed, avoid over-packaging); (2) Reuse (use containers, bags, and items multiple times); (3) Recycle (when items can no longer be reused, recycle materials). Reducing generates least waste and environmental impact.",
         "h": "3Rs: Reduce (buy less) → Reuse (use again) → Recycle (recover material) — priority in this order.",
@@ -3514,7 +5791,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which of the following is a harmful environmental consequence of food waste in landfills?",
-        "o": ["Food waste improves landfill quality", "Food waste decomposes anaerobically in landfills producing methane — a powerful greenhouse gas contributing to climate change", "Food waste in landfills reduces air pollution", "Food waste helps plants grow in landfills"],
+        "o": [
+          "Food waste improves landfill quality",
+          "Food waste decomposes anaerobically in landfills producing methane — a powerful greenhouse gas contributing to climate change",
+          "Food waste in landfills reduces air pollution",
+          "Food waste helps plants grow in landfills"
+        ],
         "a": 1,
         "e": "In landfills, food waste decomposes anaerobically (without oxygen) — producing methane (CH₄) instead of CO₂. Methane is about 28 times more potent as a greenhouse gas than CO₂ over 100 years. Landfill methane is a significant contributor to climate change. Composting instead produces CO₂ (less harmful).",
         "h": "Food in landfill: anaerobic decomposition → methane (CH₄) → powerful greenhouse gas (contributes to climate change).",
@@ -3522,7 +5804,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Greywater from kitchen washing (dishwater, vegetable washing water) is best disposed of by:",
-        "o": ["Pouring directly into a river or stream", "Pouring into a proper drain or sewer system connected to wastewater treatment", "Leaving in buckets in the kitchen", "Using it to water food crops directly without treatment"],
+        "o": [
+          "Pouring directly into a river or stream",
+          "Pouring into a proper drain or sewer system connected to wastewater treatment",
+          "Leaving in buckets in the kitchen",
+          "Using it to water food crops directly without treatment"
+        ],
         "a": 1,
         "e": "Greywater should go into proper drainage/sewer systems leading to wastewater treatment. Pouring into rivers causes water pollution. Using untreated greywater on food crops risks contaminating crops with bacteria and detergents.",
         "h": "Greywater: dispose into proper sewer/drain system (not rivers or directly onto food crops).",
@@ -3530,7 +5817,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Worm composting (vermicomposting) is a method of organic waste management that uses earthworms to:",
-        "o": ["Consume and break down organic kitchen waste, converting it into nutrient-rich worm castings (vermicompost)", "Eat all types of kitchen waste including plastics", "Produce methane gas for cooking", "Replace municipal waste collection"],
+        "o": [
+          "Consume and break down organic kitchen waste, converting it into nutrient-rich worm castings (vermicompost)",
+          "Eat all types of kitchen waste including plastics",
+          "Produce methane gas for cooking",
+          "Replace municipal waste collection"
+        ],
         "a": 0,
         "e": "Vermicomposting uses earthworms (typically Eisenia fetida — red wigglers) to break down organic waste (vegetable scraps, fruit peels, paper, coffee grounds) into vermicompost — a high-quality, nutrient-rich soil amendment. It is faster than conventional composting.",
         "h": "Vermicomposting: earthworms break down organic waste into nutrient-rich vermicompost.",
@@ -3538,7 +5830,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The 'sanitary landfill' method of waste disposal is considered better than open dumping because:",
-        "o": ["Sanitary landfills are always free to use", "Sanitary landfills compact and cover waste with soil daily, reducing pest access, odour, and leachate contamination of groundwater", "Open dumps are completely safe", "Sanitary landfills eliminate all environmental impact"],
+        "o": [
+          "Sanitary landfills are always free to use",
+          "Sanitary landfills compact and cover waste with soil daily, reducing pest access, odour, and leachate contamination of groundwater",
+          "Open dumps are completely safe",
+          "Sanitary landfills eliminate all environmental impact"
+        ],
         "a": 1,
         "e": "Sanitary landfills: daily compaction reduces waste volume, daily soil cover prevents pest access and reduces odour, liners prevent leachate from contaminating groundwater, methane collection can generate energy. They are far safer than open dumps but not ideal long-term solutions.",
         "h": "Sanitary landfill: compaction + daily soil cover → reduces pests, odour, groundwater contamination.",
@@ -3546,7 +5843,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "E-waste (electronic waste) from old kitchen appliances (microwaves, electric kettles) should be disposed of through:",
-        "o": ["General household waste bins", "Burning to destroy the components", "Specialised e-waste collection or recycling facilities — e-waste contains toxic heavy metals (lead, mercury, cadmium)", "Composting"],
+        "o": [
+          "General household waste bins",
+          "Burning to destroy the components",
+          "Specialised e-waste collection or recycling facilities — e-waste contains toxic heavy metals (lead, mercury, cadmium)",
+          "Composting"
+        ],
         "a": 2,
         "e": "Electronic waste contains hazardous materials: lead (circuit boards), mercury (fluorescent lamps), cadmium (batteries), and flame retardants. Improper disposal (burning, landfilling) releases these toxins into soil and water. E-waste recycling facilities safely recover valuable metals and dispose of hazardous components.",
         "h": "E-waste: specialised recycling needed (contains lead, mercury, cadmium — toxic if improperly disposed).",
@@ -3563,7 +5865,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "The distinction between food infection and food intoxication is that food intoxication is caused by:",
-        "o": ["Living bacteria consumed with food", "Viruses contaminating food", "Pre-formed toxins produced by bacteria in food — the organism itself may be absent or dead but the toxin causes illness", "Parasites in food"],
+        "o": [
+          "Living bacteria consumed with food",
+          "Viruses contaminating food",
+          "Pre-formed toxins produced by bacteria in food — the organism itself may be absent or dead but the toxin causes illness",
+          "Parasites in food"
+        ],
         "a": 2,
         "e": "Food infection: live pathogenic organisms consumed → grow in intestine → cause illness (e.g., Salmonella, cholera). Food intoxication: bacteria produce toxins in food before consumption → eating the toxin causes illness (e.g., Staphylococcus aureus toxin in food left at room temperature). Cooking may kill bacteria but toxins may survive.",
         "h": "Food intoxication: pre-formed toxins in food cause illness (even if bacteria are dead — toxin survives cooking).",
@@ -3571,7 +5878,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Cholera is characterised by 'rice water' diarrhoea because:",
-        "o": ["The patient ate contaminated rice", "The profuse watery diarrhoea looks like water drained from rinsed rice — pale, watery, and voluminous", "Rice water is the cure for cholera", "Cholera only occurs in rice-eating populations"],
+        "o": [
+          "The patient ate contaminated rice",
+          "The profuse watery diarrhoea looks like water drained from rinsed rice — pale, watery, and voluminous",
+          "Rice water is the cure for cholera",
+          "Cholera only occurs in rice-eating populations"
+        ],
         "a": 1,
         "e": "Cholera (Vibrio cholerae) produces a toxin that causes intestinal cells to secrete massive amounts of water and electrolytes. The resulting diarrhoea is profuse, watery, and pale — resembling rice-washing water. Dehydration can be so severe it causes death within hours if untreated.",
         "h": "Cholera 'rice water' diarrhoea: profuse, watery, pale diarrhoea from V. cholerae toxin.",
@@ -3579,7 +5891,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Staphylococcal food poisoning has a very rapid onset (1-6 hours) because it is a food:",
-        "o": ["Infection — the bacteria grow very quickly in the intestine", "Intoxication — the pre-formed Staphylococcal toxin is already present in the food and acts immediately when consumed", "Caused by a virus", "Caused by a parasite"],
+        "o": [
+          "Infection — the bacteria grow very quickly in the intestine",
+          "Intoxication — the pre-formed Staphylococcal toxin is already present in the food and acts immediately when consumed",
+          "Caused by a virus",
+          "Caused by a parasite"
+        ],
         "a": 1,
         "e": "S. aureus toxin is already present in the food (produced during bacterial growth at room temperature). When eaten, the toxin acts directly on intestinal nerve endings — no incubation period for bacterial growth is needed. This causes rapid onset (1-6 hours) of severe vomiting and cramps.",
         "h": "Staphylococcal rapid onset (1-6 hrs) = food intoxication (toxin already in food, acts immediately).",
@@ -3587,7 +5904,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Typhoid fever is caused by Salmonella typhi. Its key distinguishing clinical feature is:",
-        "o": ["Profuse rice water diarrhoea", "Rapid vomiting without fever", "Sustained high fever (39-40°C) over 1-3 weeks, with headache, rose-coloured rash, abdominal pain", "Neurological symptoms and paralysis"],
+        "o": [
+          "Profuse rice water diarrhoea",
+          "Rapid vomiting without fever",
+          "Sustained high fever (39-40°C) over 1-3 weeks, with headache, rose-coloured rash, abdominal pain",
+          "Neurological symptoms and paralysis"
+        ],
         "a": 2,
         "e": "Typhoid fever (enteric fever) features a stepwise rising fever reaching 39-40°C sustained for weeks; relative bradycardia (slow heart rate despite high fever); rose spots (faint pink spots on abdomen); headache; constipation or diarrhoea; splenomegaly. It is far more severe than simple Salmonella gastroenteritis.",
         "h": "Typhoid: sustained high fever (39-40°C for weeks) + headache + rose spots on abdomen.",
@@ -3595,7 +5917,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Botulism is particularly dangerous because it is caused by:",
-        "o": ["Bacteria that grow only in refrigerators", "Clostridium botulinum toxin — the most potent toxin known — which blocks nerve signals causing progressive paralysis and potentially death", "A common virus found in all foods", "Normal bacteria that are harmless"],
+        "o": [
+          "Bacteria that grow only in refrigerators",
+          "Clostridium botulinum toxin — the most potent toxin known — which blocks nerve signals causing progressive paralysis and potentially death",
+          "A common virus found in all foods",
+          "Normal bacteria that are harmless"
+        ],
         "a": 1,
         "e": "Botulinum toxin (from Clostridium botulinum) is the most potent toxin known — nanograms can cause lethal paralysis. It blocks acetylcholine release at neuromuscular junctions → progressive flaccid paralysis. Improperly home-canned or preserved foods in anaerobic conditions are the main source.",
         "h": "Botulism: C. botulinum toxin → blocks neuromuscular transmission → paralysis (from improperly canned food).",
@@ -3603,7 +5930,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The WHO '5 Keys to Safer Food' are:",
-        "o": ["Cook, Clean, Chill, Separate, Safe Water", "Keep Clean; Separate Raw and Cooked; Cook Thoroughly; Keep at Safe Temperatures; Use Safe Water and Raw Materials", "Refrigerate, Cook, Wash, Separate, Check", "Buy Fresh; Cook Well; Eat Quickly; Store Cold; Check Labels"],
+        "o": [
+          "Cook, Clean, Chill, Separate, Safe Water",
+          "Keep Clean; Separate Raw and Cooked; Cook Thoroughly; Keep at Safe Temperatures; Use Safe Water and Raw Materials",
+          "Refrigerate, Cook, Wash, Separate, Check",
+          "Buy Fresh; Cook Well; Eat Quickly; Store Cold; Check Labels"
+        ],
         "a": 1,
         "e": "WHO's 5 Keys: (1) Keep Clean (handwashing, clean surfaces); (2) Separate raw and cooked (prevent cross-contamination); (3) Cook thoroughly (kill pathogens); (4) Keep food at safe temperatures (below 5°C or above 60°C); (5) Use safe water and raw materials. These cover the main food safety principles.",
         "h": "WHO 5 Keys: Keep Clean; Separate; Cook Thoroughly; Safe Temperatures; Safe Water/Materials.",
@@ -3611,7 +5943,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Salmonellosis is most commonly associated with which food sources?",
-        "o": ["Improperly canned vegetables", "Raw and undercooked poultry, eggs, and unpasteurised dairy", "Only contaminated water", "Only raw vegetables"],
+        "o": [
+          "Improperly canned vegetables",
+          "Raw and undercooked poultry, eggs, and unpasteurised dairy",
+          "Only contaminated water",
+          "Only raw vegetables"
+        ],
         "a": 1,
         "e": "Salmonella bacteria naturally inhabit the intestines of poultry and other animals. Raw or undercooked poultry, eggs, and unpasteurised milk are the most common vehicles. Cross-contamination from raw poultry to other foods via hands, surfaces, and utensils is also a major risk.",
         "h": "Salmonella most common in: raw/undercooked poultry, eggs, and unpasteurised dairy.",
@@ -3619,7 +5956,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Oral Rehydration Solution (ORS) is the primary treatment for most foodborne diarrhoeal illnesses because:",
-        "o": ["ORS kills the causative bacteria", "Most deaths from foodborne diarrhoeal illness are caused by dehydration — ORS replaces lost water and electrolytes, correcting dehydration and restoring normal function", "ORS improves the taste of water", "ORS is only used for cholera"],
+        "o": [
+          "ORS kills the causative bacteria",
+          "Most deaths from foodborne diarrhoeal illness are caused by dehydration — ORS replaces lost water and electrolytes, correcting dehydration and restoring normal function",
+          "ORS improves the taste of water",
+          "ORS is only used for cholera"
+        ],
         "a": 1,
         "e": "Most foodborne diarrhoeal deaths result from dehydration, not the infection itself. ORS (WHO formula: water, glucose, sodium, potassium, citrate) efficiently rehydrates by using the sodium-glucose co-transport mechanism. It is inexpensive, effective, and can be given at home — preventing most diarrhoeal deaths.",
         "h": "ORS: primary treatment (replaces water/electrolytes lost in diarrhoea — dehydration causes most deaths).",
@@ -3627,7 +5969,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Improperly home-canned or sealed preserved foods are associated with which dangerous foodborne illness?",
-        "o": ["Cholera", "Typhoid fever", "Botulism (Clostridium botulinum grows in anaerobic sealed environments)", "Salmonellosis"],
+        "o": [
+          "Cholera",
+          "Typhoid fever",
+          "Botulism (Clostridium botulinum grows in anaerobic sealed environments)",
+          "Salmonellosis"
+        ],
         "a": 2,
         "e": "Clostridium botulinum is an anaerobic bacterium (grows without oxygen) that thrives in sealed, low-acid canned foods where oxygen is absent. Improperly sterilised home-canned vegetables, meat, or fish provide ideal growth conditions. The toxin produced is extremely potent.",
         "h": "Botulism: improperly home-canned food (anaerobic sealed environment ideal for C. botulinum).",
@@ -3635,7 +5982,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "E. coli O157:H7, a particularly dangerous foodborne pathogen, is associated with:",
-        "o": ["Improperly canned food", "Undercooked ground beef, contaminated water, and unpasteurised juices", "Only contaminated water in developing countries", "Only poultry and eggs"],
+        "o": [
+          "Improperly canned food",
+          "Undercooked ground beef, contaminated water, and unpasteurised juices",
+          "Only contaminated water in developing countries",
+          "Only poultry and eggs"
+        ],
         "a": 1,
         "e": "E. coli O157:H7 (a Shiga toxin-producing E. coli) produces verotoxin/Shiga toxin causing bloody diarrhoea and Haemolytic Uraemic Syndrome (HUS — kidney failure) particularly in children. Main sources: undercooked ground beef (hamburgers), contaminated water, unpasteurised apple cider, and raw vegetables.",
         "h": "E. coli O157:H7: undercooked ground beef, contaminated water → bloody diarrhoea, HUS (kidney failure).",
@@ -3643,7 +5995,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which food handling practice directly prevents Staphylococcal food poisoning?",
-        "o": ["Cooking food to high temperatures only", "Not leaving cooked food at room temperature for more than 2 hours — S. aureus grows rapidly at 20-40°C producing heat-stable toxins", "Washing hands before cooking only", "Using iodised salt in all recipes"],
+        "o": [
+          "Cooking food to high temperatures only",
+          "Not leaving cooked food at room temperature for more than 2 hours — S. aureus grows rapidly at 20-40°C producing heat-stable toxins",
+          "Washing hands before cooking only",
+          "Using iodised salt in all recipes"
+        ],
         "a": 1,
         "e": "S. aureus grows rapidly at room temperature (particularly 20-40°C) and produces toxins within 2-4 hours. Crucially, the toxin is heat-stable — once produced, reheating food does NOT destroy it. Prevention: keep cooked food above 60°C or refrigerate promptly; do not leave out at room temperature.",
         "h": "Prevent Staphylococcal poisoning: never leave cooked food at room temp >2 hours (toxin is heat-stable).",
@@ -3651,7 +6008,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Contaminated water is the primary vehicle for transmission of which foodborne diseases?",
-        "o": ["Botulism and Staphylococcal poisoning", "Cholera and typhoid fever — both primarily waterborne diseases (though also food-transmitted)", "Salmonellosis and botulism", "E. coli O157:H7 and Staphylococcal poisoning"],
+        "o": [
+          "Botulism and Staphylococcal poisoning",
+          "Cholera and typhoid fever — both primarily waterborne diseases (though also food-transmitted)",
+          "Salmonellosis and botulism",
+          "E. coli O157:H7 and Staphylococcal poisoning"
+        ],
         "a": 1,
         "e": "Cholera (Vibrio cholerae) and typhoid fever (Salmonella typhi) are primarily waterborne diseases — the bacteria contaminate water supplies (usually from faecal contamination) and spread through communities. They can also be food-transmitted but contaminated water is the most common vehicle.",
         "h": "Cholera and typhoid fever: primarily waterborne (contaminated water is main transmission vehicle).",
@@ -3659,7 +6021,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The incubation period of a foodborne illness refers to:",
-        "o": ["The time taken to cook the contaminated food", "The time between consuming contaminated food and the appearance of first symptoms", "The temperature at which bacteria grow", "The time required to store food safely"],
+        "o": [
+          "The time taken to cook the contaminated food",
+          "The time between consuming contaminated food and the appearance of first symptoms",
+          "The temperature at which bacteria grow",
+          "The time required to store food safely"
+        ],
         "a": 1,
         "e": "Incubation period = the time from exposure (eating contaminated food) to symptom onset. Different pathogens have different incubation periods: S. aureus toxin (1-6 hours), Salmonella (6-72 hours), V. cholerae (2 hours to 5 days), S. typhi (7-21 days). The incubation period helps identify the likely pathogen.",
         "h": "Incubation period: time from eating contaminated food to appearance of first symptoms.",
@@ -3667,7 +6034,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which sign indicates that a person with foodborne diarrhoeal illness needs URGENT medical attention?",
-        "o": ["Mild loose stools for one day", "Normal urine output and good fluid intake", "Bloody diarrhoea, signs of severe dehydration (not urinating, sunken eyes), high fever, or symptoms of botulism", "Only mild nausea without vomiting"],
+        "o": [
+          "Mild loose stools for one day",
+          "Normal urine output and good fluid intake",
+          "Bloody diarrhoea, signs of severe dehydration (not urinating, sunken eyes), high fever, or symptoms of botulism",
+          "Only mild nausea without vomiting"
+        ],
         "a": 2,
         "e": "Urgent care signs: bloody diarrhoea (suggests invasive pathogen or HUS risk), severe dehydration (no urine, sunken eyes, extreme weakness), high sustained fever (suggests invasive illness like typhoid), or neurological symptoms (paralysis, double vision — suggests botulism). These require prompt medical evaluation.",
         "h": "Urgent medical care: bloody diarrhoea, severe dehydration, high fever, neurological symptoms.",
@@ -3675,7 +6047,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "High-risk foods (foods most commonly associated with foodborne illness) include:",
-        "o": ["Dried grains (rice, beans, maize)", "Whole intact fresh fruits", "Cooked meat and poultry, seafood, dairy, cooked rice, egg-based products at room temperature", "Bottled water and sealed tinned foods"],
+        "o": [
+          "Dried grains (rice, beans, maize)",
+          "Whole intact fresh fruits",
+          "Cooked meat and poultry, seafood, dairy, cooked rice, egg-based products at room temperature",
+          "Bottled water and sealed tinned foods"
+        ],
         "a": 2,
         "e": "High-risk foods are those that support rapid bacterial growth: they are moist, high in protein, and neutral to slightly acidic. Classic high-risk foods: cooked meat/poultry, seafood, dairy, cooked rice (Bacillus cereus), cooked egg/potato salads, and any food left in the temperature danger zone (5-60°C).",
         "h": "High-risk foods: cooked meat/poultry, seafood, dairy, cooked rice, egg-based products at room temperature.",
@@ -3683,7 +6060,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Pasteurisation of milk prevents which foodborne illnesses?",
-        "o": ["Botulism from milk", "Salmonellosis, tuberculosis (Mycobacterium bovis), E. coli, and other pathogen-related illnesses transmitted through raw milk", "Only cholera from milk", "Only vitamin C deficiency from milk"],
+        "o": [
+          "Botulism from milk",
+          "Salmonellosis, tuberculosis (Mycobacterium bovis), E. coli, and other pathogen-related illnesses transmitted through raw milk",
+          "Only cholera from milk",
+          "Only vitamin C deficiency from milk"
+        ],
         "a": 1,
         "e": "Raw milk can carry: Salmonella, E. coli O157:H7, Campylobacter, Listeria, and Mycobacterium bovis (bovine tuberculosis). Pasteurisation (heating to 72°C for 15 seconds, or 63°C for 30 minutes) kills these pathogens without significantly reducing milk's nutritional value.",
         "h": "Pasteurisation: kills Salmonella, E. coli, Campylobacter, M. bovis, and Listeria in raw milk.",
@@ -3691,7 +6073,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The chain of food contamination can be broken at which stages through good food safety practices?",
-        "o": ["Only at the cooking stage", "Only at the purchasing stage", "At multiple stages: purchasing safe food, proper storage, hygienic handling, thorough cooking, correct holding temperatures, and safe serving", "Only by using chemical preservatives"],
+        "o": [
+          "Only at the cooking stage",
+          "Only at the purchasing stage",
+          "At multiple stages: purchasing safe food, proper storage, hygienic handling, thorough cooking, correct holding temperatures, and safe serving",
+          "Only by using chemical preservatives"
+        ],
         "a": 2,
         "e": "The food contamination chain has multiple links — each stage of food handling (purchasing, storage, preparation, cooking, serving) is an opportunity to introduce or prevent contamination. Effective food safety breaks the chain at multiple points, providing multiple barriers against foodborne illness.",
         "h": "Food chain contamination broken at multiple stages: purchasing, storage, handling, cooking, serving.",
@@ -3699,7 +6086,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Why are infants, elderly people, pregnant women, and immunocompromised individuals most vulnerable to foodborne illness?",
-        "o": ["They eat more food than average", "These groups have less effective immune systems — they cannot fight off foodborne pathogens as effectively, leading to more severe illness and complications", "They prefer high-risk foods", "They have different digestive systems"],
+        "o": [
+          "They eat more food than average",
+          "These groups have less effective immune systems — they cannot fight off foodborne pathogens as effectively, leading to more severe illness and complications",
+          "They prefer high-risk foods",
+          "They have different digestive systems"
+        ],
         "a": 1,
         "e": "YOPI groups (Young, Old, Pregnant, Immunocompromised) have reduced immune competence: infants (immature immune system), elderly (declining immunity), pregnant women (natural immune suppression to prevent rejection of foetus), and immunocompromised (disease or medication). Lower infective doses cause illness; severity is greater.",
         "h": "YOPI (Young, Old, Pregnant, Immunocompromised): weaker immunity → more vulnerable to severe foodborne illness.",
@@ -3707,7 +6099,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Listeria monocytogenes is a foodborne pathogen that is particularly dangerous for pregnant women because it can:",
-        "o": ["Only cause mild stomach upset in all people equally", "Cross the placenta, causing miscarriage, stillbirth, or severe neonatal infection — pregnant women are 10x more susceptible", "Only affect elderly people", "Only contaminate hot foods"],
+        "o": [
+          "Only cause mild stomach upset in all people equally",
+          "Cross the placenta, causing miscarriage, stillbirth, or severe neonatal infection — pregnant women are 10x more susceptible",
+          "Only affect elderly people",
+          "Only contaminate hot foods"
+        ],
         "a": 1,
         "e": "Listeria is uniquely dangerous in pregnancy: it can cross the placenta, infecting the foetus and causing miscarriage, stillbirth, or severe neonatal meningitis. It grows at refrigerator temperatures (unlike most pathogens), found in ready-to-eat cold meats, soft cheeses, and smoked fish.",
         "h": "Listeria: crosses placenta → miscarriage/stillbirth; grows in fridge; pregnant women 10x more susceptible.",
@@ -3715,7 +6112,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A hepatitis A outbreak linked to food is most likely traced to which source?",
-        "o": ["Improperly canned food", "An infected food handler who did not wash hands after using the toilet, contaminating ready-to-eat food", "Undercooked meat only", "Only contaminated seafood"],
+        "o": [
+          "Improperly canned food",
+          "An infected food handler who did not wash hands after using the toilet, contaminating ready-to-eat food",
+          "Undercooked meat only",
+          "Only contaminated seafood"
+        ],
         "a": 1,
         "e": "Hepatitis A virus is transmitted faecal-orally — an infected food handler who fails to wash hands after using the toilet can contaminate ready-to-eat food (sandwiches, salads, fruit). Strict handwashing and excluding sick food handlers prevents most hepatitis A food outbreaks.",
         "h": "Hepatitis A foodborne outbreak: infected food handler → faecal-oral contamination of ready-to-eat food.",
@@ -3732,7 +6134,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "The FIRST and most important first aid action for a burn injury is:",
-        "o": ["Apply butter or cooking oil to soothe the burn", "Apply ice to cool the burn quickly", "Cool the burn with cool (not icy) running water for a minimum of 10 minutes", "Cover immediately with a tight bandage"],
+        "o": [
+          "Apply butter or cooking oil to soothe the burn",
+          "Apply ice to cool the burn quickly",
+          "Cool the burn with cool (not icy) running water for a minimum of 10 minutes",
+          "Cover immediately with a tight bandage"
+        ],
         "a": 2,
         "e": "Cool running water (not ice — ice causes vasoconstriction and can damage tissue) applied for at least 10 minutes stops the burning process (heat transfer continues after the source is removed), reduces pain, limits tissue damage, and reduces risk of scarring. This is the most critical immediate action.",
         "h": "Burn first aid: cool running water (not ice) for at least 10 MINUTES → stops burn progression.",
@@ -3740,7 +6147,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Applying butter, toothpaste, or cooking oil to a burn is harmful because:",
-        "o": ["These substances are too cold for burns", "They are heat insulators that trap heat in the burn; they also introduce bacteria, increasing infection risk, and interfere with medical treatment", "Medical tradition discourages it", "These substances are only useful for cooking, not first aid"],
+        "o": [
+          "These substances are too cold for burns",
+          "They are heat insulators that trap heat in the burn; they also introduce bacteria, increasing infection risk, and interfere with medical treatment",
+          "Medical tradition discourages it",
+          "These substances are only useful for cooking, not first aid"
+        ],
         "a": 1,
         "e": "Folk remedies (butter, toothpaste, oil) on burns: trap heat (making the burn worse instead of cooling); introduce bacteria that cause infection; and make wound assessment and medical treatment more difficult. Cool running water is the only evidence-based immediate burn treatment.",
         "h": "No butter/toothpaste on burns: traps heat, introduces bacteria, interferes with medical treatment.",
@@ -3748,7 +6160,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "First aid for a cut that is actively bleeding involves:",
-        "o": ["Removing the blood clot that forms", "Washing the wound immediately before stopping the bleeding", "Applying direct pressure to the wound with a clean cloth or gauze to control bleeding", "Applying a tourniquet immediately for all cuts"],
+        "o": [
+          "Removing the blood clot that forms",
+          "Washing the wound immediately before stopping the bleeding",
+          "Applying direct pressure to the wound with a clean cloth or gauze to control bleeding",
+          "Applying a tourniquet immediately for all cuts"
+        ],
         "a": 2,
         "e": "Direct pressure is the primary first aid for bleeding control: a clean cloth or gauze applied firmly over the wound constricts blood vessels and allows clotting to begin. Maintain pressure for at least 10 minutes without lifting (lifting disturbs the forming clot). Elevating the injured limb also slows bleeding.",
         "h": "Cut first aid: direct pressure with clean cloth for 10+ minutes (allows blood clot formation).",
@@ -3756,7 +6173,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The Heimlich manoeuvre (abdominal thrusts) is used as first aid for:",
-        "o": ["Burns and scalds", "Cuts and bleeding", "Choking — severe airway obstruction where coughing and back blows have not dislodged the obstruction", "Chemical poisoning"],
+        "o": [
+          "Burns and scalds",
+          "Cuts and bleeding",
+          "Choking — severe airway obstruction where coughing and back blows have not dislodged the obstruction",
+          "Chemical poisoning"
+        ],
         "a": 2,
         "e": "The Heimlich manoeuvre: stand behind the person, wrap arms around their waist, place a fist above the navel, grip with other hand, and give sharp upward thrusts into the abdomen. This uses the diaphragm to increase intrathoracic pressure, forcing air (and hopefully the obstruction) out of the airway.",
         "h": "Heimlich manoeuvre (abdominal thrusts): for choking when back blows fail to dislodge obstruction.",
@@ -3764,7 +6186,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Which item in the first aid kit is specifically used to prevent the first aider from being contaminated by blood or body fluids?",
-        "o": ["Adhesive plasters", "Antiseptic solution", "Disposable latex/nitrile gloves", "Scissors"],
+        "o": [
+          "Adhesive plasters",
+          "Antiseptic solution",
+          "Disposable latex/nitrile gloves",
+          "Scissors"
+        ],
         "a": 2,
         "e": "Disposable gloves protect the first aider from contact with blood and body fluids that may carry infectious agents (hepatitis B, HIV, bacteria). They should always be worn when treating bleeding wounds. First aiders must also practice hand hygiene after removing gloves.",
         "h": "Disposable gloves: protect first aider from blood/body fluid contamination during wound treatment.",
@@ -3772,7 +6199,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "When someone has ingested a household chemical, you should NOT induce vomiting because:",
-        "o": ["Vomiting is too slow to be effective", "The chemical may cause additional damage to the oesophagus and mouth on the way back up; some chemicals are more dangerous when vomited", "Vomiting always helps", "First aiders cannot induce vomiting"],
+        "o": [
+          "Vomiting is too slow to be effective",
+          "The chemical may cause additional damage to the oesophagus and mouth on the way back up; some chemicals are more dangerous when vomited",
+          "Vomiting always helps",
+          "First aiders cannot induce vomiting"
+        ],
         "a": 1,
         "e": "Inducing vomiting for chemical ingestion can: cause a caustic substance to re-burn the oesophagus and mouth coming back up; cause aspiration of chemicals into the lungs; and is sometimes more dangerous than leaving the substance to pass through the stomach. Always call emergency services and follow professional advice.",
         "h": "No vomiting for chemical poisoning: caustic damage on way back up, aspiration risk.",
@@ -3780,7 +6212,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The first action for someone who is choking and still able to cough forcefully is:",
-        "o": ["Immediately give abdominal thrusts", "Encourage them to continue coughing — forceful coughing is the most effective way to dislodge an airway obstruction", "Give back blows immediately", "Call emergency services immediately"],
+        "o": [
+          "Immediately give abdominal thrusts",
+          "Encourage them to continue coughing — forceful coughing is the most effective way to dislodge an airway obstruction",
+          "Give back blows immediately",
+          "Call emergency services immediately"
+        ],
         "a": 1,
         "e": "If the person can cough forcefully, their airway is partially open — encourage continued coughing. Coughing generates the highest airway pressures and is more effective than back blows or abdominal thrusts at dislodging an obstruction. Only intervene (back blows, abdominal thrusts) when coughing fails.",
         "h": "Choking with forceful cough: encourage continued coughing (most effective at dislodging obstruction).",
@@ -3788,7 +6225,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Antiseptic solution in the first aid kit is used for:",
-        "o": ["Cooling burns", "Stopping active bleeding", "Cleaning and disinfecting wounds to kill bacteria and reduce infection risk", "Treating chemical burns"],
+        "o": [
+          "Cooling burns",
+          "Stopping active bleeding",
+          "Cleaning and disinfecting wounds to kill bacteria and reduce infection risk",
+          "Treating chemical burns"
+        ],
         "a": 2,
         "e": "Antiseptic solutions (Dettol, Savlon, hydrogen peroxide, iodine solution) kill or inhibit bacteria on wound surfaces. After bleeding is controlled, wounds should be cleaned with antiseptic to reduce infection risk before covering with a sterile dressing. Not for use on deep wounds without medical direction.",
         "h": "Antiseptic: cleans and disinfects wounds after bleeding controlled (kills surface bacteria).",
@@ -3796,7 +6238,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "For which burn severity should the person DEFINITELY seek immediate medical attention?",
-        "o": ["A small reddening of the finger tip (superficial first-degree burn)", "A minor scald from boiling water on the hand covered in 1 cm", "A large burn covering a significant area of the body, or any burn on the face, hands, or joints", "A warm patch from briefly touching a hot pan"],
+        "o": [
+          "A small reddening of the finger tip (superficial first-degree burn)",
+          "A minor scald from boiling water on the hand covered in 1 cm",
+          "A large burn covering a significant area of the body, or any burn on the face, hands, or joints",
+          "A warm patch from briefly touching a hot pan"
+        ],
         "a": 2,
         "e": "Seek medical attention for burns that are: large (>1% body surface area — size of victim's hand palm), deep (blistered or worse — second/third degree), on critical areas (face, hands, feet, genitals, joints), caused by electricity or chemicals, or affecting infants and elderly. These require professional treatment.",
         "h": "Seek medical help: large burns, deep burns (blisters), face/hands/joints, electric/chemical burns.",
@@ -3804,7 +6251,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "After cooling a burn with water, the correct way to cover it is with:",
-        "o": ["A tight bandage to hold in moisture", "Butter or cream to moisturise the wound", "A loose, sterile, non-adhesive dressing or cling film (to prevent infection without sticking to the wound)", "Nothing — burns should be left uncovered"],
+        "o": [
+          "A tight bandage to hold in moisture",
+          "Butter or cream to moisturise the wound",
+          "A loose, sterile, non-adhesive dressing or cling film (to prevent infection without sticking to the wound)",
+          "Nothing — burns should be left uncovered"
+        ],
         "a": 2,
         "e": "After cooling: cover with a sterile non-adhesive dressing or cling film (not cotton wool which sticks). The covering protects against infection without adhering to the wound. Avoid fluffy materials that stick to burns. Leave blisters intact (they protect underlying tissue).",
         "h": "Cover burn: sterile non-adhesive dressing or cling film (protects without sticking to wound).",
@@ -3812,7 +6264,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Why is it important to keep a first aid box accessible and well-stocked in the kitchen?",
-        "o": ["To comply with government regulations only", "Immediate access to first aid supplies enables prompt treatment of injuries — reducing severity, preventing infection, and potentially saving lives before professional help arrives", "First aid boxes are only for hospitals", "First aid boxes are decorative"],
+        "o": [
+          "To comply with government regulations only",
+          "Immediate access to first aid supplies enables prompt treatment of injuries — reducing severity, preventing infection, and potentially saving lives before professional help arrives",
+          "First aid boxes are only for hospitals",
+          "First aid boxes are decorative"
+        ],
         "a": 1,
         "e": "Kitchen accidents (burns, cuts, scalds) happen suddenly — immediate first aid reduces injury severity. Prompt wound cleaning prevents infection. Proper burn cooling prevents deeper tissue damage. Having supplies immediately available eliminates critical delay in treatment.",
         "h": "Accessible first aid box: immediate treatment reduces injury severity and prevents complications.",
@@ -3820,7 +6277,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The correct sequence for first aid of a severe choking victim who is becoming unconscious is:",
-        "o": ["Call emergency services, then do nothing", "Give abdominal thrusts until they lose consciousness, then leave them", "Encourage coughing → 5 back blows → 5 abdominal thrusts → repeat; if unconscious: call emergency, begin CPR", "Give water to help dislodge the obstruction"],
+        "o": [
+          "Call emergency services, then do nothing",
+          "Give abdominal thrusts until they lose consciousness, then leave them",
+          "Encourage coughing → 5 back blows → 5 abdominal thrusts → repeat; if unconscious: call emergency, begin CPR",
+          "Give water to help dislodge the obstruction"
+        ],
         "a": 2,
         "e": "UK/international choking protocol: (1) If coughing — encourage; (2) If unable to cough: 5 back blows between shoulder blades; (3) 5 abdominal thrusts; (4) Alternate back blows and thrusts; (5) If unconscious: call emergency services; begin CPR (chest compressions may dislodge obstruction).",
         "h": "Choking sequence: encourage cough → 5 back blows → 5 abdominal thrusts → repeat → if unconscious: CPR.",
@@ -3828,7 +6290,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Removing rings and bracelets from a burned hand IMMEDIATELY after injury is recommended because:",
-        "o": ["Jewellery conducts heat", "Burns cause progressive swelling — jewellery removed before swelling peaks is far easier and less painful to remove than after the limb swells", "Jewellery is not safe around burns", "Jewellery interferes with cooling water"],
+        "o": [
+          "Jewellery conducts heat",
+          "Burns cause progressive swelling — jewellery removed before swelling peaks is far easier and less painful to remove than after the limb swells",
+          "Jewellery is not safe around burns",
+          "Jewellery interferes with cooling water"
+        ],
         "a": 1,
         "e": "Burns cause rapid swelling of surrounding tissue. Rings, bracelets, and watches must be removed promptly (immediately after cooling) before swelling makes removal impossible — a ring that cannot be removed may restrict blood circulation to fingers as swelling progresses.",
         "h": "Remove jewellery from burned limb immediately: progressive swelling makes removal impossible/dangerous.",
@@ -3836,7 +6303,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Elevating an injured, bleeding limb above the level of the heart is a first aid action that:",
-        "o": ["Increases blood flow to the injury", "Improves the visibility of the wound", "Reduces blood pressure in the injured area, slowing blood flow and helping to control bleeding", "Causes the blood to clot faster at the injury site"],
+        "o": [
+          "Increases blood flow to the injury",
+          "Improves the visibility of the wound",
+          "Reduces blood pressure in the injured area, slowing blood flow and helping to control bleeding",
+          "Causes the blood to clot faster at the injury site"
+        ],
         "a": 2,
         "e": "Elevating the injured limb above heart level reduces hydrostatic blood pressure at the wound site — making it harder for blood to flow toward and out of the wound. Combined with direct pressure, elevation significantly slows blood loss.",
         "h": "Elevate injured limb: reduces blood pressure at wound → slows bleeding (gravity effect).",
@@ -3844,7 +6316,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "An unconscious person who has consumed poison should be placed in the:",
-        "o": ["Upright sitting position", "Face-down prone position", "Recovery position (on their side) to prevent choking if they vomit", "Flat on their back with legs elevated"],
+        "o": [
+          "Upright sitting position",
+          "Face-down prone position",
+          "Recovery position (on their side) to prevent choking if they vomit",
+          "Flat on their back with legs elevated"
+        ],
         "a": 2,
         "e": "An unconscious person is at risk of aspiration (inhaling vomit into lungs) if placed on their back. The recovery position (on the side, with mouth downward, arm extended, knee bent) keeps the airway open and allows vomit to drain out safely, preventing aspiration pneumonia.",
         "h": "Unconscious: recovery position (on side) prevents aspiration of vomit into lungs.",
@@ -3852,7 +6329,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Tweezers in a first aid kit are useful in the kitchen for:",
-        "o": ["Removing glass shards from wounds", "Measuring body temperature", "Removing splinters, thorns, or small foreign objects from shallow wounds", "Cutting bandages"],
+        "o": [
+          "Removing glass shards from wounds",
+          "Measuring body temperature",
+          "Removing splinters, thorns, or small foreign objects from shallow wounds",
+          "Cutting bandages"
+        ],
         "a": 2,
         "e": "Tweezers allow fine control for removing small embedded objects: wooden splinters, glass fragments, thorns, or metal filings from shallow skin wounds. They should be cleaned with antiseptic before and after use. For deeply embedded objects, seek medical care.",
         "h": "Tweezers: remove splinters, glass fragments, and small foreign objects from shallow wounds.",
@@ -3860,7 +6342,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A scald is different from a burn in that a scald is caused by:",
-        "o": ["Dry heat (flame, hot metal)", "Cold objects", "Moist heat (hot liquids, steam) — boiling water, hot soup, steam", "Electricity"],
+        "o": [
+          "Dry heat (flame, hot metal)",
+          "Cold objects",
+          "Moist heat (hot liquids, steam) — boiling water, hot soup, steam",
+          "Electricity"
+        ],
         "a": 2,
         "e": "A burn is caused by dry heat (flame, hot metal, radiant heat, electricity, chemicals, radiation). A scald is a type of burn caused by moist heat — hot liquids (boiling water, hot oil, hot soup) or steam. First aid is the same: cool with running water for 10 minutes.",
         "h": "Scald = burn from moist heat (hot liquid or steam vs. burn from dry heat like flame).",
@@ -3868,7 +6355,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Eye wash solution in the first aid kit is used when:",
-        "o": ["Eyes feel tired from reading", "A foreign body (dust, chemical splash, small particle) enters the eye — to flush out the irritant with sterile solution", "Eyes need vitamin drops", "The first aider needs to see better"],
+        "o": [
+          "Eyes feel tired from reading",
+          "A foreign body (dust, chemical splash, small particle) enters the eye — to flush out the irritant with sterile solution",
+          "Eyes need vitamin drops",
+          "The first aider needs to see better"
+        ],
         "a": 1,
         "e": "Eye wash solution: used to flush foreign bodies or chemical splashes from the eye. Procedure: hold the eye open, allow sterile eye wash solution to flow from the inner corner outward — the flow washes debris out. For chemical splashes, flush with copious water for 15-20 minutes.",
         "h": "Eye wash: flushes foreign bodies or chemical splashes from eye (flush from inner to outer corner).",
@@ -3876,7 +6368,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Pressure bandaging (applying a pressure bandage after wound care) is used to:",
-        "o": ["Make the wound invisible", "Maintain constant gentle pressure on a wound to control bleeding and protect the wound from contamination", "Speed up blood clotting chemically", "Only for fractures and broken bones"],
+        "o": [
+          "Make the wound invisible",
+          "Maintain constant gentle pressure on a wound to control bleeding and protect the wound from contamination",
+          "Speed up blood clotting chemically",
+          "Only for fractures and broken bones"
+        ],
         "a": 1,
         "e": "A pressure bandage applies consistent moderate pressure over a wound dressing — maintaining the pressure that helps control bleeding without needing constant manual compression. It also protects the wound from contamination and supports the injured area.",
         "h": "Pressure bandage: maintains consistent pressure on wound to control bleeding and protect from contamination.",
@@ -3884,7 +6381,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "When a person has a nosebleed, the correct first aid is to:",
-        "o": ["Tilt the head backwards and apply pressure", "Tilt the head forward, pinch the soft part of the nose firmly for 10-15 minutes, and breathe through the mouth", "Place ice directly inside the nostril", "Lie the person flat on their back"],
+        "o": [
+          "Tilt the head backwards and apply pressure",
+          "Tilt the head forward, pinch the soft part of the nose firmly for 10-15 minutes, and breathe through the mouth",
+          "Place ice directly inside the nostril",
+          "Lie the person flat on their back"
+        ],
         "a": 1,
         "e": "Correct nosebleed management: (1) Sit upright, lean slightly forward (prevents blood flowing down throat and causing nausea/vomiting); (2) Pinch the soft part of the nose firmly; (3) Hold for 10-15 minutes without releasing; (4) Breathe through the mouth. Do NOT tilt head back — blood may be swallowed.",
         "h": "Nosebleed: lean forward, pinch soft nose for 10-15 minutes, breathe through mouth (not head back).",
@@ -3901,7 +6403,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
     "questions": [
       {
         "q": "Why are SHARP knives safer than DULL (blunt) knives for cutting?",
-        "o": ["Sharp knives are less dangerous because they cut more slowly", "Sharp knives require less cutting force and are more predictable — dull knives require more force, increasing the likelihood of slipping and causing unintended cuts", "Dull knives cannot cut the cook", "Sharp knives are only better for professional chefs"],
+        "o": [
+          "Sharp knives are less dangerous because they cut more slowly",
+          "Sharp knives require less cutting force and are more predictable — dull knives require more force, increasing the likelihood of slipping and causing unintended cuts",
+          "Dull knives cannot cut the cook",
+          "Sharp knives are only better for professional chefs"
+        ],
         "a": 1,
         "e": "A dull knife requires the cook to apply more force when cutting — this force, if the knife slips off the food, drives the blade toward the cook's hands at high force. A sharp knife requires minimal force and cuts smoothly without slipping.",
         "h": "Sharp knives safer: less force needed → less slipping; dull knives require force → slip and cut.",
@@ -3909,7 +6416,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The 'bear claw' grip technique when cutting food means:",
-        "o": ["Gripping the knife like a bear claw", "Curling the fingertips under while gripping food — knuckles guide the knife while fingertips are protected from the blade", "Cutting with a clawing motion", "Using both hands on the knife"],
+        "o": [
+          "Gripping the knife like a bear claw",
+          "Curling the fingertips under while gripping food — knuckles guide the knife while fingertips are protected from the blade",
+          "Cutting with a clawing motion",
+          "Using both hands on the knife"
+        ],
         "a": 1,
         "e": "The bear claw (claw grip): fingers curl under, knuckles forward, fingertips folded under. The flat of the knife blade rests against the knuckles as a guide — if the knife slips, it slides down the knuckle (minor graze) rather than cutting the fingertip (severe laceration).",
         "h": "Bear claw: fingers curled under, knuckles guide blade — fingertips protected from knife slipping.",
@@ -3917,7 +6429,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Knives should NEVER be left in a sink of dirty water because:",
-        "o": ["The water will rust the knives", "The submerged knife is invisible — someone reaching in to wash dishes may cut their hand severely on the hidden blade", "Knives should be washed immediately after use", "Water damages the knife handle"],
+        "o": [
+          "The water will rust the knives",
+          "The submerged knife is invisible — someone reaching in to wash dishes may cut their hand severely on the hidden blade",
+          "Knives should be washed immediately after use",
+          "Water damages the knife handle"
+        ],
         "a": 1,
         "e": "A knife in murky dish water is invisible — a person putting their hand in to wash dishes may grasp the blade rather than the handle, causing severe lacerations. Knives should be washed immediately after use, individually, with the blade pointing away from the hand.",
         "h": "No knives in sink water: invisible submerged blade → severe laceration when hand reaches in.",
@@ -3925,7 +6442,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The primary purpose of ensuring adequate kitchen ventilation is to prevent which type of kitchen hazard?",
-        "o": ["Cuts from sharp utensils", "Suffocation/inhalation hazards — removing dangerous gases (carbon monoxide, LPG from gas leaks, cooking smoke) that accumulate in enclosed spaces", "Slipping on wet floors", "Chemical poisoning from cleaning products"],
+        "o": [
+          "Cuts from sharp utensils",
+          "Suffocation/inhalation hazards — removing dangerous gases (carbon monoxide, LPG from gas leaks, cooking smoke) that accumulate in enclosed spaces",
+          "Slipping on wet floors",
+          "Chemical poisoning from cleaning products"
+        ],
         "a": 1,
         "e": "Adequate ventilation removes: cooking smoke (carcinogenic particles from burning oil), carbon monoxide from incomplete combustion, steam (prevents mould), and gas from leaks. Without ventilation in enclosed cooking spaces, these gases accumulate to dangerous concentrations.",
         "h": "Kitchen ventilation: removes CO, cooking smoke, gas leaks, steam → prevents suffocation/inhalation.",
@@ -3933,7 +6455,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A carbon monoxide (CO) alarm is essential in kitchens using gas cookers because CO is:",
-        "o": ["Bright red in colour and easily spotted", "Pungent-smelling and easily avoided", "Colourless and odourless — impossible to detect without an alarm until symptoms occur (headache, dizziness, loss of consciousness)", "Only produced by coal fires, not gas cookers"],
+        "o": [
+          "Bright red in colour and easily spotted",
+          "Pungent-smelling and easily avoided",
+          "Colourless and odourless — impossible to detect without an alarm until symptoms occur (headache, dizziness, loss of consciousness)",
+          "Only produced by coal fires, not gas cookers"
+        ],
         "a": 2,
         "e": "CO is produced when any carbon-containing fuel (gas, oil, wood, charcoal) burns incompletely — as occurs with faulty burners or poor ventilation. Its complete invisibility and absence of smell make it 'the silent killer' — only CO alarms detect it before dangerous concentrations build up.",
         "h": "CO alarm essential: CO is colourless + odourless (cannot detect without alarm before loss of consciousness).",
@@ -3941,7 +6468,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Using a charcoal grill (barbecue) in an enclosed kitchen or room is extremely dangerous because:",
-        "o": ["Charcoal is too expensive for indoor use", "Burning charcoal in enclosed spaces produces large amounts of carbon monoxide — a lethal gas that accumulates rapidly in poorly ventilated spaces", "Charcoal produces more heat than gas", "Charcoal grills cannot be used indoors due to their size"],
+        "o": [
+          "Charcoal is too expensive for indoor use",
+          "Burning charcoal in enclosed spaces produces large amounts of carbon monoxide — a lethal gas that accumulates rapidly in poorly ventilated spaces",
+          "Charcoal produces more heat than gas",
+          "Charcoal grills cannot be used indoors due to their size"
+        ],
         "a": 1,
         "e": "Charcoal burns produce CO (even when the charcoal appears to be burning well). In enclosed spaces, CO concentrations rapidly reach lethal levels. Many deaths globally occur each year from indoor charcoal use — grills, stoves, and heating devices using charcoal must only be used outdoors or in very well-ventilated areas.",
         "h": "Charcoal indoors lethal: produces high CO concentrations that accumulate rapidly in enclosed spaces.",
@@ -3949,7 +6481,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The soapy water test is used to detect gas leaks by:",
-        "o": ["Pouring soapy water down gas pipes", "Applying soapy water to gas pipe connections and fittings — bubbles forming indicate gas escaping through a leak", "Testing if gas pipes are clean", "Washing gas burners"],
+        "o": [
+          "Pouring soapy water down gas pipes",
+          "Applying soapy water to gas pipe connections and fittings — bubbles forming indicate gas escaping through a leak",
+          "Testing if gas pipes are clean",
+          "Washing gas burners"
+        ],
         "a": 1,
         "e": "The soapy water test: apply a soap solution to gas connections, joints, and fittings. Gas escaping through a leak creates bubbles in the soap solution — visible evidence of a leak even when the gas smell is not detectable. This is a simple, effective leak detection method.",
         "h": "Soapy water test: apply to gas connections → bubbles = gas leak (immediate repair needed).",
@@ -3957,7 +6494,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Accidental poisoning from cleaning products is prevented by storing them in:",
-        "o": ["Any container that is convenient", "Original clearly labelled containers in locked storage separate from food and out of children's reach", "The same cupboard as food for easy access", "Food containers to save space"],
+        "o": [
+          "Any container that is convenient",
+          "Original clearly labelled containers in locked storage separate from food and out of children's reach",
+          "The same cupboard as food for easy access",
+          "Food containers to save space"
+        ],
         "a": 1,
         "e": "Prevention: original labelled containers (clear identification of the chemical); locked storage (child-proof access); separate from food (no confusion); childproof caps (child cannot accidentally access). Accidental poisoning (often by children) is frequently caused by chemicals stored in food containers or at accessible heights.",
         "h": "Chemical storage: original labelled containers, locked cupboard, separate from food, out of children's reach.",
@@ -3965,7 +6507,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Aflatoxins are naturally occurring toxins that cause food poisoning and are associated with:",
-        "o": ["Fresh vegetables and fruits", "Clean water supplies", "Mouldy stored grains and nuts (especially maize, groundnuts, and sorghum) contaminated with Aspergillus fungi", "Fresh meat and poultry"],
+        "o": [
+          "Fresh vegetables and fruits",
+          "Clean water supplies",
+          "Mouldy stored grains and nuts (especially maize, groundnuts, and sorghum) contaminated with Aspergillus fungi",
+          "Fresh meat and poultry"
+        ],
         "a": 2,
         "e": "Aflatoxins are potent carcinogens produced by Aspergillus flavus and A. parasiticus moulds on improperly stored crops — particularly maize, groundnuts, sorghum, and other grains stored in warm, humid conditions. They cause liver damage, liver cancer, and acute toxicity. Preventing mould growth in food storage is essential.",
         "h": "Aflatoxins: produced by moulds on improperly stored maize, groundnuts — prevent by proper dry storage.",
@@ -3973,7 +6520,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "To prevent choking in young children during meals, parents should:",
-        "o": ["Only give children liquid foods", "Allow children to eat unsupervised to build independence", "Cut food into small, manageable pieces; avoid foods that are whole, firm, and spherical (grapes, nuts); supervise meals", "Give children the same food sizes as adults"],
+        "o": [
+          "Only give children liquid foods",
+          "Allow children to eat unsupervised to build independence",
+          "Cut food into small, manageable pieces; avoid foods that are whole, firm, and spherical (grapes, nuts); supervise meals",
+          "Give children the same food sizes as adults"
+        ],
         "a": 2,
         "e": "Choking prevention for children: cut round foods (grapes, cherry tomatoes) into quarters; avoid whole nuts, hard candy, and large chunks for children under 4; ensure proper chewing (not eating while running/playing); supervise meal times; know the Heimlich manoeuvre for emergencies.",
         "h": "Prevent child choking: cut foods small, avoid whole firm round foods, supervise meals.",
@@ -3981,7 +6533,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Storing chemicals in empty food containers (soft drink bottles, food jars) is particularly dangerous because:",
-        "o": ["Food containers are not strong enough for chemicals", "Children or adults may mistake the chemical for a food or drink and consume it, causing severe poisoning or death", "The chemical damages the food container", "This practice is only illegal, not dangerous"],
+        "o": [
+          "Food containers are not strong enough for chemicals",
+          "Children or adults may mistake the chemical for a food or drink and consume it, causing severe poisoning or death",
+          "The chemical damages the food container",
+          "This practice is only illegal, not dangerous"
+        ],
         "a": 1,
         "e": "Chemicals stored in familiar food containers are a major cause of accidental poisoning — a child sees a soft drink bottle and drinks from it, not knowing it contains cleaning fluid or pesticide. Chemicals must ALWAYS be kept in their original clearly labelled containers.",
         "h": "Chemicals in food containers: children mistake for food/drink → severe accidental poisoning.",
@@ -3989,7 +6546,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "When opening tin cans, which practice prevents accidental cuts?",
-        "o": ["Using the can opener towards the body", "Leaving sharp edges of opened tins unaddressed", "Using a smooth-edge can opener that rolls the lid without creating sharp edges; opening away from the body; handling the lid with care", "Opening cans with a knife instead of a can opener"],
+        "o": [
+          "Using the can opener towards the body",
+          "Leaving sharp edges of opened tins unaddressed",
+          "Using a smooth-edge can opener that rolls the lid without creating sharp edges; opening away from the body; handling the lid with care",
+          "Opening cans with a knife instead of a can opener"
+        ],
         "a": 2,
         "e": "Safe can opening: use a proper smooth-edge (safety) can opener; open away from the body; remove the lid carefully with tongs if sharp (don't press fingers down on sharp lid edges); smooth any sharp edges if needed; dispose of lids safely in the bin (not loose where they can cause cuts).",
         "h": "Safe can opening: smooth-edge can opener, open away from body, handle lid carefully.",
@@ -3997,7 +6559,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Proper storage of food to prevent mould growth is important for preventing which type of poisoning?",
-        "o": ["Chemical poisoning from cleaning products", "Mycotoxin poisoning (e.g., aflatoxins from Aspergillus mould on improperly stored grains and nuts)", "Carbon monoxide poisoning", "Botulism from canned food"],
+        "o": [
+          "Chemical poisoning from cleaning products",
+          "Mycotoxin poisoning (e.g., aflatoxins from Aspergillus mould on improperly stored grains and nuts)",
+          "Carbon monoxide poisoning",
+          "Botulism from canned food"
+        ],
         "a": 1,
         "e": "Mycotoxins (particularly aflatoxins) are produced by Aspergillus moulds on improperly stored grains and nuts. Preventing mould growth requires: low moisture (dry storage), low temperature, good ventilation, and airtight containers. Visual mould on food indicates potential mycotoxin contamination — discard the food.",
         "h": "Proper grain/nut storage (dry, cool, airtight): prevents Aspergillus mould → prevents aflatoxin poisoning.",
@@ -4005,7 +6572,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Medicines and pharmaceutical products should be stored separately from food in the kitchen because:",
-        "o": ["Medicine taste affects food flavour", "Medicines can be mistaken for food supplements and consumed in dangerous doses, or they may contaminate food if poorly sealed", "Only prescription medicines need separate storage", "Medicine storage is only an issue in hospitals"],
+        "o": [
+          "Medicine taste affects food flavour",
+          "Medicines can be mistaken for food supplements and consumed in dangerous doses, or they may contaminate food if poorly sealed",
+          "Only prescription medicines need separate storage",
+          "Medicine storage is only an issue in hospitals"
+        ],
         "a": 1,
         "e": "Medicines stored with food can: be mistaken for food supplements; contaminate food if spilled or leaked; be accessed by children who may confuse them with sweets; and be taken in incorrect doses if labels are confused. All medicines should be stored separately with childproof caps.",
         "h": "Medicines separate from food: prevent confusion, incorrect dosing, contamination of food.",
@@ -4013,7 +6585,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "What is the correct action if gas can be smelled in the kitchen?",
-        "o": ["Immediately check by turning on the gas cooker to see if it's the source", "Open a window and light a candle to dispel the gas", "Do not operate any electrical switches or light flames; open windows; turn off gas supply; leave and call for emergency assistance", "Pour water on the floor to prevent an explosion"],
+        "o": [
+          "Immediately check by turning on the gas cooker to see if it's the source",
+          "Open a window and light a candle to dispel the gas",
+          "Do not operate any electrical switches or light flames; open windows; turn off gas supply; leave and call for emergency assistance",
+          "Pour water on the floor to prevent an explosion"
+        ],
         "a": 2,
         "e": "Gas leak emergency: (1) Do NOT operate any electrical switches (sparks can ignite gas); (2) Do NOT light any flames; (3) Open windows and doors (ventilate); (4) Turn off gas supply at the meter if safe; (5) Leave the building; (6) Call gas emergency services from outside. Even a mobile phone operated indoors could ignite gas.",
         "h": "Gas smell: NO switches or flames; open windows; turn off supply; leave immediately; call emergency services.",
@@ -4021,7 +6598,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Why should a well-lit kitchen be considered a safety measure specifically for preventing cuts?",
-        "o": ["Good lighting makes food look more attractive", "Good lighting allows cooks to see sharp objects (knife edges, glass fragments, can lids) clearly, reducing the risk of accidental contact with sharp surfaces", "Lighting prevents fire hazards", "Good lighting only helps with reading recipes"],
+        "o": [
+          "Good lighting makes food look more attractive",
+          "Good lighting allows cooks to see sharp objects (knife edges, glass fragments, can lids) clearly, reducing the risk of accidental contact with sharp surfaces",
+          "Lighting prevents fire hazards",
+          "Good lighting only helps with reading recipes"
+        ],
         "a": 1,
         "e": "Poor lighting in kitchens increases cut risk: difficulty seeing the knife edge relative to fingers; inability to spot broken glass on the floor or counter; confusion about where sharp utensils are placed; and difficulty seeing where to place the knife safely. Well-lit work surfaces are a basic safety requirement.",
         "h": "Good kitchen lighting: clearly sees sharp objects (knife edges, glass) → reduces accidental cuts.",
@@ -4029,7 +6611,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Ensuring that gas hoses and connections are regularly checked and replaced when worn is important because:",
-        "o": ["Worn hoses are less efficient for cooking", "Worn, cracked, or loose gas connections are a major source of gas leaks — which can cause explosions and carbon monoxide poisoning", "Gas hose replacement is required annually by law", "New hoses provide more gas pressure"],
+        "o": [
+          "Worn hoses are less efficient for cooking",
+          "Worn, cracked, or loose gas connections are a major source of gas leaks — which can cause explosions and carbon monoxide poisoning",
+          "Gas hose replacement is required annually by law",
+          "New hoses provide more gas pressure"
+        ],
         "a": 1,
         "e": "Gas hoses (rubber connections between the gas supply and cooker) degrade over time — cracking, hardening, and loosening from fittings. Worn hoses are a major source of gas leaks. Gas hoses should be: inspected regularly for cracks and wear; replaced every 3-5 years; and connections checked for tightness.",
         "h": "Gas hose inspection: worn/cracked hoses = gas leak source → explosion and CO poisoning risk.",
@@ -4037,7 +6624,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "The Kitchen Fire Triangle consists of three elements that must all be present for fire to occur. They are:",
-        "o": ["Oil, water, and heat", "Fuel (combustible material), oxygen, and heat (ignition source) — removing any one element extinguishes the fire", "Gas, electricity, and fat", "Flame, smoke, and steam"],
+        "o": [
+          "Oil, water, and heat",
+          "Fuel (combustible material), oxygen, and heat (ignition source) — removing any one element extinguishes the fire",
+          "Gas, electricity, and fat",
+          "Flame, smoke, and steam"
+        ],
         "a": 1,
         "e": "The fire triangle: Fuel (anything combustible — oil, paper, wood, gas), Oxygen (from air), and Heat (ignition source — flame, spark, hot surface). Remove any one: remove fuel (take away paper), remove oxygen (fire blanket smothers), remove heat (cool with water on non-fat fires). Understanding the triangle guides fire prevention.",
         "h": "Fire triangle: Fuel + Oxygen + Heat — remove any ONE element to prevent or extinguish fire.",
@@ -4045,7 +6637,12 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "A mandoline slicer presents a particularly high cut risk because:",
-        "o": ["It requires electricity to operate", "Its extremely sharp blade is exposed during use, and the rapid slicing motion brings fingers very close to the blade — always use the hand guard provided", "It only cuts vegetables", "It is too heavy to hold safely"],
+        "o": [
+          "It requires electricity to operate",
+          "Its extremely sharp blade is exposed during use, and the rapid slicing motion brings fingers very close to the blade — always use the hand guard provided",
+          "It only cuts vegetables",
+          "It is too heavy to hold safely"
+        ],
         "a": 1,
         "e": "Mandoline slicers are responsible for many serious kitchen cuts — the blade is razor-sharp and exposed; the rapid slicing motion can easily bring fingers into the blade's path. Always use the hand guard, use cut-resistant gloves, and slow down as food becomes small.",
         "h": "Mandoline: exposed sharp blade + rapid slicing → high cut risk (always use hand guard and cut-resistant gloves).",
@@ -4053,10 +6650,627 @@ export const WAEC_FOOD_NUTRITION_LEARN_SS1 = [
       },
       {
         "q": "Reading food labels as a prevention measure against accidental poisoning includes checking for:",
-        "o": ["Only the price and brand name", "Allergen declarations, expiry dates, storage instructions, and ingredient lists that warn of potential hazards or harmful substances", "Only the calorie count", "Only the country of origin"],
+        "o": [
+          "Only the price and brand name",
+          "Allergen declarations, expiry dates, storage instructions, and ingredient lists that warn of potential hazards or harmful substances",
+          "Only the calorie count",
+          "Only the country of origin"
+        ],
         "a": 1,
         "e": "Food labels contain critical safety information: allergen declarations (nuts, gluten, dairy — important for allergic individuals), expiry dates (food past expiry may be unsafe), storage instructions (refrigerate after opening), and ingredient lists. Reading labels prevents accidental allergic reactions and consumption of spoiled or hazardous food.",
         "h": "Read food labels: allergens, expiry, storage instructions, ingredients — prevents accidental harm.",
+        "yr": "SS1"
+      }
+    ]
+  },
+  {
+    "topic": "Measures to Prevent Cuts, Suffocation and Accidental Poisoning",
+    "topicCode": "SS1-FN-26",
+    "module": "Kitchen Tools, Safety and First Aid",
+    "term": "Third Term",
+    "contentHTML": "<div class=\"learn-intro\">An <span class=\"learn-keyword\">accident</span> is something unplanned that causes injury or harm. The kitchen is one of the places in the home where accidents often happen, because it has sharp knives, hot things, gas and chemicals. In this topic we study three dangers: <span class=\"learn-keyword\">cuts</span> (a break in the skin made by a sharp object), <span class=\"learn-keyword\">suffocation</span> (not being able to breathe enough air) and <span class=\"learn-keyword\">accidental poisoning</span> (swallowing or breathing a harmful substance by mistake). Picture a small child in a Lagos home who finds a bottle of kerosene that was put in an empty drink bottle. The child may drink it, thinking it is juice. Simple habits can prevent such tragedies, and this lesson shows you how.</div>\n\n<h3 class=\"learn-subheading\">1. Why prevention matters</h3>\n<p class=\"learn-p\"><span class=\"learn-keyword\">Prevention</span> means stopping something bad from happening before it starts. It is better, cheaper and safer to prevent an accident than to treat the injury. Most kitchen accidents happen because of carelessness, hurry, poor storage or lack of knowledge. Children and old people are in the greatest danger.</p>\n\n<h3 class=\"learn-subheading\">2. Measures to prevent cuts</h3>\n<p class=\"learn-p\">Cuts happen mostly from knives, broken glass, tin edges, graters and slicing machines. Follow these measures:</p>\n<ul class=\"learn-list\">\n<li>Keep knives sharp. A blunt knife needs more force and slips, so it cuts the hand.</li>\n<li>Always cut on a firm chopping board. Never cut food while holding it in your palm.</li>\n<li>Cut away from your body and keep the fingers of the holding hand curled back.</li>\n<li>Carry a knife with the point down and the blade away from the body. Never run with a knife.</li>\n<li>Pass a knife handle first to another person, never blade first.</li>\n<li>Wash knives one at a time. Do not leave them hidden in soapy water.</li>\n<li>Store knives in a rack, block or drawer with a guard, out of reach of small children.</li>\n<li>Sweep up broken glass with a brush and pan, then wrap it in thick paper before putting it in the bin. Never pick glass with bare hands.</li>\n<li>Open tins carefully with a good tin opener, and bend back or dispose of the sharp lid at once.</li>\n<li>Keep the working area tidy, dry and well lit, so you see what you are doing.</li>\n<li>Do not talk, play or rush while cutting. Give the job your full attention.</li>\n</ul>\n\n<h3 class=\"learn-subheading\">3. Measures to prevent suffocation</h3>\n<p class=\"learn-p\"><span class=\"learn-keyword\">Suffocation</span> happens when air cannot reach the lungs. In and around the kitchen it has three main causes: choking on food, poisonous gas such as carbon monoxide from burning fuel in a closed room, and plastic bags or covers over the face. Use these measures:</p>\n<ol class=\"learn-ordered\">\n<li>Step 1: Cook in a room with good ventilation. <span class=\"learn-keyword\">Ventilation</span> means a free flow of fresh air through windows, doors and vents.</li>\n<li>Step 2: Never use a charcoal or firewood stove, a kerosene stove or a generator inside a closed room or a closed kitchen. These give off carbon monoxide, a colourless gas with no smell that can make a person unconscious and kill.</li>\n<li>Step 3: Check gas cylinders, pipes and cookers for leaks. If you smell gas, turn off the cylinder, open the doors and windows and do not light a match or switch on any electrical item.</li>\n<li>Step 4: Cut food for small children into small pieces. Do not give whole nuts, hard sweets or large pieces of meat to babies and toddlers.</li>\n<li>Step 5: Sit children down to eat. Do not let them eat while running, laughing or playing, because food can enter the windpipe.</li>\n<li>Step 6: Chew food well and do not talk with a full mouth.</li>\n<li>Step 7: Keep plastic bags, nylon and small objects such as buttons and bottle caps away from babies and young children.</li>\n<li>Step 8: Do not leave a child alone in a car or closed room with the windows shut.</li>\n</ol>\n\n<h3 class=\"learn-subheading\">4. Measures to prevent accidental poisoning</h3>\n<p class=\"learn-p\"><span class=\"learn-keyword\">Poison</span> is a substance that harms the body when swallowed, breathed in or touched. Poisoning is <span class=\"learn-keyword\">accidental</span> when it happens by mistake. Common poisons in homes are kerosene, bleach, disinfectant, insecticide (such as \"Sniper\" type sprays), rat poison, medicines taken wrongly, and spoilt food. Preventive measures are:</p>\n<ul class=\"learn-list\">\n<li>Keep all chemicals and medicines in their original containers with clear labels. Never put kerosene, petrol, insecticide or bleach into a drink bottle or food container.</li>\n<li>Store chemicals and medicines high up or in a locked cupboard, away from food and out of the reach of children.</li>\n<li>Read and follow the instructions on every label before use.</li>\n<li>Do not store cleaning products near food, or on the same shelf as food.</li>\n<li>Wash fruits and vegetables well to remove insecticide and dirt. Peel where possible.</li>\n<li>Do not eat food that smells bad, is mouldy or has been kept too long. Cook meat, fish and eggs properly, and keep cooked food covered and cool.</li>\n<li>Do not eat wild plants, berries or mushrooms unless you are sure they are safe.</li>\n<li>Never mix cleaning chemicals such as bleach and other cleaners, because they can give off poisonous fumes.</li>\n<li>Cook with clean utensils, and do not use containers that once held chemicals for storing food or water.</li>\n<li>Wash your hands after using chemicals and before eating.</li>\n<li>Throw away old or expired medicines safely. Give medicine only as directed by a doctor, nurse or pharmacist.</li>\n<li>Know the numbers of emergency services and the nearest hospital, and take the container of the poison with the patient to hospital.</li>\n</ul>\n\n<h3 class=\"learn-subheading\">5. Putting the three together: a safety summary table</h3>\n<div class=\"learn-table-wrap\"><table class=\"learn-table\"><thead><tr><th>Danger</th><th>Common causes</th><th>Best preventive measures</th></tr></thead><tbody>\n<tr><td>Cuts</td><td>Blunt or loose knives, broken glass, tin lids, hurry</td><td>Sharp knives, chopping board, correct handling, safe storage, careful clearing of glass</td></tr>\n<tr><td>Suffocation</td><td>Choking on food, carbon monoxide, plastic bags</td><td>Ventilation, no stoves or generators in closed rooms, small pieces of food, children seated to eat</td></tr>\n<tr><td>Accidental poisoning</td><td>Unlabelled chemicals, drink bottles with kerosene, spoilt food, wrong medicine</td><td>Original labelled containers, locked storage, washing food, reading labels, fresh food</td></tr>\n</tbody></table></div>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">✏️</span><strong>Case Example 1:</strong> Tolu was cutting yam in a hurry with a blunt knife while holding the yam in her hand. The knife slipped and cut her finger. What mistakes did she make, and what should she have done? Mistakes: she was hurrying, the knife was blunt and she held the yam in her palm. Correct action: sharpen the knife first, place the yam on a chopping board, curl her fingers back, cut away from her body and work slowly. Answer: careless handling and a blunt knife caused the cut, and both are preventable.</div>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">✏️</span><strong>Case Example 2:</strong> A family cooks with a charcoal stove inside a small closed kitchen on a cold harmattan night so that the room will be warm. The windows are closed. Why is this dangerous? Charcoal gives off carbon monoxide when it burns, and in a closed room this gas builds up. A person breathing it becomes dizzy, sleepy and may die because the blood cannot carry enough oxygen. Answer: the stove should be used outside or in a well-ventilated place, with doors or windows open.</div>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">⚠️</span><strong>Common Mistakes:</strong> (1) Believing that a blunt knife is safer than a sharp one. It is not, because it slips more easily. (2) Pouring kerosene or insecticide into drink bottles, which children later drink. Always keep the original, labelled container. (3) Keeping the kitchen windows closed while burning charcoal or firewood. (4) Mixing up \"suffocation\" with \"poisoning\". Suffocation is not getting enough air to breathe; poisoning is harm from a harmful substance that is swallowed, breathed in or touched. (5) Leaving small objects where a toddler can reach them.</div>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">💡</span><strong>Exam Tip:</strong> Typical questions are \"State four ways of preventing cuts in the kitchen\", \"List three measures to prevent suffocation\" and \"Mention four ways of preventing accidental poisoning in the home\". Give short, clear points, one point per line, and write the exact number asked for. Marks are lost when you write only one long sentence for four points. Start each point with an action word such as \"Keep\", \"Store\", \"Use\" or \"Wash\".</div>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">🎯</span><strong>Summary:</strong> Accidents are unplanned events that cause harm; prevention is better than treatment.<br>Prevent cuts with sharp knives, a chopping board, correct carrying and safe storage of knives and glass.<br>Prevent suffocation with good ventilation, no stoves or generators in closed rooms, small food pieces for children and safe handling of plastic bags.<br>Prevent poisoning with labelled original containers, locked storage, reading labels and washing food.<br>Never put chemicals in food or drink containers.<br>Children are most at risk, so keep dangerous items out of their reach.</div>",
+    "questions": [
+      {
+        "q": "A cut is best defined as",
+        "o": [
+          "a break in the skin made by a sharp object",
+          "a burn caused by hot water",
+          "swallowing a harmful substance",
+          "not getting enough air"
+        ],
+        "a": 0,
+        "e": "A cut is a break in the skin caused by something sharp, such as a knife or broken glass. Burns are caused by heat and poisoning is from harmful substances.",
+        "h": "Think of a knife.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which of these helps to prevent cuts in the kitchen?",
+        "o": [
+          "Cutting food held in the palm",
+          "Using a chopping board",
+          "Running with a knife",
+          "Washing knives in cloudy water"
+        ],
+        "a": 1,
+        "e": "A chopping board gives a firm surface so the knife does not slip towards the hand. Holding food in the palm or running with a knife increases the danger.",
+        "h": "Firm surface.",
+        "yr": "SS1"
+      },
+      {
+        "q": "When passing a knife to another person, it should be held",
+        "o": [
+          "with the blade towards the person",
+          "by the blade end only",
+          "with the handle towards the person",
+          "with the point up"
+        ],
+        "a": 2,
+        "e": "The person receiving the knife should be able to hold the handle safely. Pointing the blade towards them could injure them.",
+        "h": "Which end is safe to grab?",
+        "yr": "SS1"
+      },
+      {
+        "q": "Suffocation means",
+        "o": [
+          "a burn from hot oil",
+          "eating spoilt food",
+          "cutting the skin",
+          "not getting enough air to breathe"
+        ],
+        "a": 3,
+        "e": "Suffocation happens when air cannot reach the lungs, for example when choking or breathing in carbon monoxide. Poisoning is different, since it is harm from a harmful substance.",
+        "h": "The word links to breathing.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which gas from burning charcoal can cause death in a closed room?",
+        "o": [
+          "Oxygen",
+          "Carbon monoxide",
+          "Nitrogen",
+          "Water vapour"
+        ],
+        "a": 1,
+        "e": "Burning charcoal in a closed room produces carbon monoxide, a colourless, odourless gas that stops the blood from carrying enough oxygen. Oxygen and nitrogen are normal parts of air.",
+        "h": "It has no smell or colour.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Accidental poisoning is best prevented by",
+        "o": [
+          "putting kerosene in a drink bottle",
+          "keeping insecticide beside the food",
+          "keeping chemicals in original labelled containers",
+          "leaving medicines on a low table"
+        ],
+        "a": 2,
+        "e": "Labelled original containers show what the substance is, and children cannot mistake it for a drink. Drink bottles, shelves near food and low tables are all dangerous.",
+        "h": "Labels tell the truth.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Why should cooking not be done with a charcoal stove in a closed kitchen?",
+        "o": [
+          "The food will become too hot",
+          "The stove will become heavy",
+          "The smoke makes food sweeter",
+          "Poisonous gas can build up and cause suffocation"
+        ],
+        "a": 3,
+        "e": "In a closed room, fumes such as carbon monoxide gather and the person breathes them in. Good ventilation lets fresh air replace the gas.",
+        "h": "What happens to gas in a closed room?",
+        "yr": "SS1"
+      },
+      {
+        "q": "A two-year-old child should not be given whole groundnuts or hard sweets because",
+        "o": [
+          "they can choke the child",
+          "they are too sweet",
+          "they cost too much",
+          "they make the child tall"
+        ],
+        "a": 0,
+        "e": "Small children can breathe in hard or round pieces, which block the windpipe. Food for toddlers should be cut small and the child should sit while eating.",
+        "h": "Think of the windpipe.",
+        "yr": "SS1"
+      },
+      {
+        "q": "You smell cooking gas in the kitchen. What should you do first?",
+        "o": [
+          "Light a match to find the leak",
+          "Switch on the light to look",
+          "Turn off the cylinder and open doors and windows",
+          "Close all the windows"
+        ],
+        "a": 2,
+        "e": "Gas can catch fire from a flame or an electric spark. Turn off the supply and let fresh air in. Closing windows would let the gas collect.",
+        "h": "Avoid anything that can make a spark.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which habit reduces the risk of poisoning from food?",
+        "o": [
+          "Eating mouldy bread",
+          "Keeping cooked food uncovered for days",
+          "Using chemical containers to store water",
+          "Washing fruits and vegetables before eating"
+        ],
+        "a": 3,
+        "e": "Washing removes dirt and insecticide, and fresh food is less likely to carry harmful germs. Mouldy food and chemical containers may carry poison.",
+        "h": "Think about cleanliness.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which statement about a blunt knife is correct?",
+        "o": [
+          "It can slip easily and cause cuts",
+          "It is the safest knife",
+          "It never needs sharpening",
+          "It cuts food better than a sharp knife"
+        ],
+        "a": 0,
+        "e": "A blunt knife needs a lot of force, which makes slips and cuts more likely. Regular sharpening keeps the knife safe.",
+        "h": "Think about force.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Broken glass has fallen on the kitchen floor. The safest action is to",
+        "o": [
+          "pick it up with bare hands",
+          "sweep it up with a brush and pan and wrap it before throwing it away",
+          "leave it for the children to remove",
+          "push it under the cooker"
+        ],
+        "a": 1,
+        "e": "A brush and pan keep hands away from the sharp pieces, and wrapping it protects whoever handles the bin. Leaving it or hiding it is a danger to others.",
+        "h": "Do not use bare hands.",
+        "yr": "SS1"
+      },
+      {
+        "q": "A mother kept kerosene in an empty juice bottle. Her child drank it. Which rule was broken?",
+        "o": [
+          "Cut food in small pieces",
+          "Use a chopping board",
+          "Open windows when cooking",
+          "Never store chemicals in food or drink containers"
+        ],
+        "a": 3,
+        "e": "A chemical in a juice bottle looks like a drink, so a child may drink it by mistake. Chemicals must stay in their original labelled containers, out of reach.",
+        "h": "Which container should a chemical be in?",
+        "yr": "SS1"
+      },
+      {
+        "q": "A family cooks with a kerosene stove in a room with all windows and doors shut. Which two dangers are increased?",
+        "o": [
+          "Suffocation and poisoning from fumes",
+          "Cuts and burns only",
+          "Tooth decay and hunger",
+          "Rust and mould only"
+        ],
+        "a": 0,
+        "e": "Fuel burning in a closed room uses up air and gives off harmful gases, so people may suffocate or be poisoned by fumes. Opening windows allows fresh air to enter.",
+        "h": "Think of air and fumes.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which advice should a nurse give to a family with a small child to prevent accidental poisoning?",
+        "o": [
+          "Keep medicines in the child's bedroom",
+          "Store bleach in a water bottle",
+          "Lock medicines and cleaning products in a high cupboard",
+          "Taste a chemical to know what it is"
+        ],
+        "a": 2,
+        "e": "Locked, high storage keeps dangerous items from children who explore with their hands and mouths. A bottle of bleach looks like water, and tasting an unknown chemical is dangerous.",
+        "h": "Out of reach and locked.",
+        "yr": "SS1"
+      }
+    ]
+  },
+  {
+    "topic": "Content and Use of First Aid Box; Simple First Aid Treatment",
+    "topicCode": "SS1-FN-27",
+    "module": "Kitchen Tools, Safety and First Aid",
+    "term": "Third Term",
+    "contentHTML": "<div class=\"learn-intro\"><span class=\"learn-keyword\">First aid</span> is the quick, simple help given to a sick or injured person before a doctor, nurse or ambulance arrives. Its aims are to save life, stop the problem from getting worse and help the person to recover. Imagine a student in the school canteen who touches a hot pot and burns her hand, or a trader in the market whose hand is cut by a tin lid. The person nearby who knows first aid can reduce pain and prevent infection. In this topic we learn what first aid means, what a first aid box should contain and how to treat cuts, burns and scalds.</div>\n\n<h3 class=\"learn-subheading\">1. Definition and aims of first aid</h3>\n<p class=\"learn-p\"><strong>Definition:</strong> First aid is the immediate help given to a person who is injured or suddenly ill, using simple materials, until proper medical help is available. The person giving it is the <span class=\"learn-keyword\">first aider</span>.</p>\n<p class=\"learn-p\">The aims of first aid are:</p>\n<ul class=\"learn-list\">\n<li>To preserve (save) life.</li>\n<li>To prevent the condition from becoming worse.</li>\n<li>To help the person recover, by reducing pain and fear.</li>\n<li>To arrange for the person to get proper medical care where needed.</li>\n</ul>\n<p class=\"learn-p\">A good first aider stays calm, thinks before acting, protects himself or herself from danger and keeps the patient comforted. First aid is <strong>not</strong> a replacement for a doctor. For serious injuries, call for medical help or take the patient to hospital.</p>\n\n<h3 class=\"learn-subheading\">2. The first aid box</h3>\n<p class=\"learn-p\">A <span class=\"learn-keyword\">first aid box</span> is a container that holds the basic items needed for first aid. It should be kept in a clean, dry, easy-to-reach place in the kitchen or home, marked clearly (a white cross on a green or red background is a common sign), kept out of reach of small children, and checked regularly so that items are not finished or expired.</p>\n<div class=\"learn-table-wrap\"><table class=\"learn-table\"><thead><tr><th>Content</th><th>Use</th></tr></thead><tbody>\n<tr><td>Adhesive plasters (bandaids) of different sizes</td><td>Cover small cuts and grazes to keep out dirt</td></tr>\n<tr><td>Sterile gauze and cotton wool</td><td>Clean wounds, press on bleeding and cover wounds</td></tr>\n<tr><td>Roller bandages</td><td>Hold dressings in place and support injured limbs</td></tr>\n<tr><td>Triangular bandage</td><td>Make a sling to support an arm, or cover a large area</td></tr>\n<tr><td>Antiseptic solution or cream (for example, Dettol or similar)</td><td>Clean around wounds and kill germs</td></tr>\n<tr><td>Surgical tape or adhesive tape</td><td>Fix dressings and bandages</td></tr>\n<tr><td>Scissors</td><td>Cut bandages, tape and clothing</td></tr>\n<tr><td>Safety pins</td><td>Fasten bandages and slings</td></tr>\n<tr><td>Forceps or tweezers</td><td>Remove splinters and small objects</td></tr>\n<tr><td>Disposable gloves</td><td>Protect the first aider and the patient from infection</td></tr>\n<tr><td>Burn dressing or burn cream</td><td>Cover and protect burns</td></tr>\n<tr><td>Pain relief tablets such as paracetamol (for adults only)</td><td>Reduce mild pain and fever</td></tr>\n<tr><td>Thermometer</td><td>Measure body temperature</td></tr>\n<tr><td>Clean water or saline in a bottle</td><td>Wash wounds</td></tr>\n<tr><td>First aid manual and a notebook with emergency numbers</td><td>Guide the first aider and record what was done</td></tr>\n</tbody></table></div>\n<p class=\"learn-p\">Remember: a first aid box must be clean, well stocked and not used as a store for other things. Items that have been used must be replaced at once.</p>\n\n<h3 class=\"learn-subheading\">3. First aid for cuts</h3>\n<p class=\"learn-p\">A <span class=\"learn-keyword\">cut</span> is a break in the skin made by a sharp object. Minor cuts may stop bleeding on their own, but dirt can cause infection, so they need cleaning. Treat a simple cut like this:</p>\n<ol class=\"learn-ordered\">\n<li>Step 1: Wash your hands with soap and water, and wear gloves if you have them.</li>\n<li>Step 2: Press a clean cloth or gauze firmly on the wound to stop the bleeding. If the cut is on the arm or leg, raise the part above the level of the heart if you can.</li>\n<li>Step 3: When the bleeding has stopped, wash the cut gently with clean running water to remove dirt. Clean around the wound with antiseptic.</li>\n<li>Step 4: Dry the area and cover it with a clean plaster or sterile dressing.</li>\n<li>Step 5: Change the dressing when it is wet or dirty. Watch for signs of infection: redness, swelling, heat, pus and increasing pain.</li>\n</ol>\n<p class=\"learn-p\">Take the patient to hospital if the bleeding does not stop after about 10 minutes of firm pressure, if the cut is deep or wide, if dirt or glass is stuck in it, or if it was caused by a rusty or dirty object (a doctor may need to give a tetanus injection). Never apply powder, soil, ash or cobweb to a wound.</p>\n\n<h3 class=\"learn-subheading\">4. First aid for burns and scalds</h3>\n<p class=\"learn-p\">A <span class=\"learn-keyword\">burn</span> is an injury caused by dry heat, such as fire, a hot iron or a hot pot. A <span class=\"learn-keyword\">scald</span> is an injury caused by wet heat, such as boiling water, hot oil or steam. Both damage the skin. In the kitchen, scalds from boiling water and burns from cooking oil are very common.</p>\n<p class=\"learn-p\">Treat minor burns and scalds like this:</p>\n<ol class=\"learn-ordered\">\n<li>Step 1: Remove the person from the source of heat to stop further damage. Put out any flames on clothing by laying the person down and smothering with a thick blanket or by rolling on the ground, not by running.</li>\n<li>Step 2: Cool the burn at once with cool (not ice-cold) running water for at least 10 minutes. This reduces pain and stops the burn from going deeper.</li>\n<li>Step 3: Gently remove rings, watches or tight clothing from the area before it swells, but do not pull off clothing that is stuck to the skin.</li>\n<li>Step 4: Cover loosely with a clean, non-fluffy dressing or clean cling film to protect the area from germs.</li>\n<li>Step 5: Do not burst any blisters, because they protect the skin underneath.</li>\n<li>Step 6: Give small sips of water if the person is awake and calm, and comfort the person.</li>\n</ol>\n<p class=\"learn-p\"><strong>Do not</strong> put butter, oil, toothpaste, ice, egg or powder on a burn. These can trap heat, cause infection or damage the skin more. Get medical help quickly when the burn is larger than the patient's hand, is deep, is on the face, hands, feet or joints, is caused by chemicals or electricity, or when the patient is a small child or an old person.</p>\n<div class=\"learn-table-wrap\"><table class=\"learn-table\"><thead><tr><th>Point</th><th>Burn</th><th>Scald</th></tr></thead><tbody>\n<tr><td>Cause</td><td>Dry heat: fire, hot iron, hot metal</td><td>Wet heat: boiling water, steam, hot oil</td></tr>\n<tr><td>Immediate action</td><td>Move away from heat; cool with running water for 10 minutes</td><td>Move away from the liquid; remove wet clothing near the area if it is not stuck; cool with running water for 10 minutes</td></tr>\n<tr><td>Covering</td><td>Loose, clean, non-fluffy dressing</td><td>Loose, clean, non-fluffy dressing</td></tr>\n</tbody></table></div>\n\n<h3 class=\"learn-subheading\">5. Good habits of a first aider</h3>\n<ul class=\"learn-list\">\n<li>Stay calm and speak kindly to the patient, because fear makes pain feel worse.</li>\n<li>Make sure the place is safe for you and the patient before you help.</li>\n<li>Wash your hands or wear gloves before touching a wound, to avoid spreading germs.</li>\n<li>Use only clean materials, and never give food or drink to a person who is unconscious.</li>\n<li>Send for help early, and tell the doctor or nurse exactly what you did.</li>\n</ul>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">✏️</span><strong>Case Example 1:</strong> While cooking, Amaka spills boiling water on her forearm. The skin turns red and a blister forms. What should her friend do? Step 1: move Amaka away from the cooker. Step 2: hold the arm under cool running water for at least 10 minutes. Step 3: gently remove her bangle before the arm swells. Step 4: cover the area loosely with a clean non-fluffy dressing. Step 5: do not burst the blister and do not apply oil or toothpaste. Answer: this is a scald treated by cooling, covering and getting medical help if the area is large or deep.</div>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">✏️</span><strong>Case Example 2:</strong> A student cuts his finger with a kitchen knife and the cut is bleeding. Model answer: wash your hands; press a clean cloth firmly on the cut to stop the bleeding; raise the hand; wash the cut with clean water and antiseptic when the bleeding stops; cover with a plaster. If the bleeding continues after about 10 minutes, take the student to the clinic.</div>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">⚠️</span><strong>Common Mistakes:</strong> (1) Putting butter, oil, toothpaste or ice on burns. Use cool running water. (2) Bursting blisters. Leave them to protect the skin. (3) Using dirty cloth or cobweb on a cut. Use a clean dressing. (4) Keeping a first aid box with empty or expired items. Check it regularly. (5) Mixing up burn and scald: a burn is from dry heat, a scald is from wet heat.</div>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">💡</span><strong>Exam Tip:</strong> WAEC questions include \"Define first aid\", \"List six items found in a first aid box and state the use of each\" and \"Describe the first aid treatment for a scald\". Give the definition in one clear sentence, write the items with their uses, and present treatment as ordered steps. Remember to state the difference between a burn and a scald, because it is often tested.</div>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">🎯</span><strong>Summary:</strong> First aid is immediate help given to an injured or suddenly ill person before medical help arrives.<br>Its aims are to save life, prevent the condition from worsening and aid recovery.<br>A first aid box holds plasters, gauze, bandages, antiseptic, scissors, gloves, tape, burn dressing and more, and must be checked often.<br>For cuts: press to stop bleeding, clean, dry and cover.<br>For burns and scalds: cool under running water for 10 minutes, cover loosely, do not burst blisters, and do not use butter or oil.<br>Get medical help for serious injuries.</div>",
+    "questions": [
+      {
+        "q": "First aid is best defined as",
+        "o": [
+          "immediate help given to an injured or suddenly ill person before medical help arrives",
+          "the final treatment given in hospital",
+          "a long course of medicine",
+          "the cooking of invalid food"
+        ],
+        "a": 0,
+        "e": "First aid is the quick, simple help given at once, using basic materials. It does not replace a doctor, who gives the full treatment.",
+        "h": "The word \"first\".",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which is NOT an aim of first aid?",
+        "o": [
+          "To save life",
+          "To replace the doctor completely",
+          "To prevent the condition from getting worse",
+          "To help recovery"
+        ],
+        "a": 1,
+        "e": "First aid saves life, prevents worsening and helps recovery. It is only a first step, and serious cases still need a doctor.",
+        "h": "One option is wrong about doctors.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which item in a first aid box is used to cut bandages and tape?",
+        "o": [
+          "Thermometer",
+          "Cotton wool",
+          "Scissors",
+          "Safety pin"
+        ],
+        "a": 2,
+        "e": "Scissors cut bandages, tape and clothing. A thermometer measures temperature and a safety pin fastens bandages.",
+        "h": "Which tool cuts?",
+        "yr": "SS1"
+      },
+      {
+        "q": "A triangular bandage is used to",
+        "o": [
+          "measure temperature",
+          "kill germs on a wound",
+          "clean the skin",
+          "make a sling to support an arm"
+        ],
+        "a": 3,
+        "e": "A triangular bandage can be folded or tied into a sling for an injured arm. A thermometer measures temperature and antiseptic kills germs.",
+        "h": "Its shape helps it hold an arm.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Antiseptic in a first aid box is used to",
+        "o": [
+          "cut tape",
+          "kill germs around a wound",
+          "measure fever",
+          "hold a dressing"
+        ],
+        "a": 1,
+        "e": "Antiseptic solution or cream destroys germs and reduces infection. Tape holds dressings and a thermometer measures fever.",
+        "h": "Anti means against.",
+        "yr": "SS1"
+      },
+      {
+        "q": "A scald is caused by",
+        "o": [
+          "dry heat such as a hot iron",
+          "a sharp knife",
+          "wet heat such as boiling water",
+          "a bite from an insect"
+        ],
+        "a": 2,
+        "e": "A scald is an injury from wet heat, such as boiling water, steam or hot oil. A burn is from dry heat.",
+        "h": "Wet or dry?",
+        "yr": "SS1"
+      },
+      {
+        "q": "What is the first thing to do for a minor burn or scald?",
+        "o": [
+          "Rub butter on it",
+          "Cover it with toothpaste",
+          "Burst any blisters",
+          "Cool it under cool running water for at least 10 minutes"
+        ],
+        "a": 3,
+        "e": "Cool running water reduces pain and stops the burn from going deeper. Butter, toothpaste and bursting blisters can trap heat and cause infection.",
+        "h": "Cooling comes first.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which of these should NOT be put on a burn?",
+        "o": [
+          "Butter",
+          "Cool running water",
+          "A clean non-fluffy dressing",
+          "Clean cling film"
+        ],
+        "a": 0,
+        "e": "Butter and oil trap heat and can cause infection. Cool water and a clean loose covering are the correct treatments.",
+        "h": "Which item is greasy?",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which is the correct first step for a small, bleeding cut?",
+        "o": [
+          "Wash it with soil",
+          "Apply cobweb",
+          "Press a clean cloth firmly on the cut",
+          "Leave it open to the air"
+        ],
+        "a": 2,
+        "e": "Firm pressure with a clean cloth helps blood to clot and stops bleeding. Soil and cobweb carry germs and must never be put on a wound.",
+        "h": "Stop the bleeding.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Why should a first aid box be checked regularly?",
+        "o": [
+          "To make it heavier",
+          "To count how many children are at home",
+          "To remove the label",
+          "To replace used or expired items"
+        ],
+        "a": 3,
+        "e": "A first aid box is only useful if the items in it are available and in good condition, so used or expired items must be replaced.",
+        "h": "Think about what happens when supplies run out.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Where is the best place to keep a first aid box?",
+        "o": [
+          "In a clean, dry, easy-to-reach place out of the reach of small children",
+          "In a locked box with the key lost",
+          "Under a wet sink",
+          "Inside the freezer"
+        ],
+        "a": 0,
+        "e": "The box must be easy for adults to find quickly but safe from young children. Damp places spoil the items.",
+        "h": "Quick for adults, safe from kids.",
+        "yr": "SS1"
+      },
+      {
+        "q": "A cook spills hot oil on her arm and it turns red. She wears a bangle. What should the helper do before the arm swells?",
+        "o": [
+          "Rub the arm with oil",
+          "Cool the arm and remove the bangle gently",
+          "Tighten the bangle",
+          "Burst the skin"
+        ],
+        "a": 1,
+        "e": "Swelling can make rings and bangles tight, so they are removed gently first while cooling the burn. Oil and tightening make it worse.",
+        "h": "Think about swelling.",
+        "yr": "SS1"
+      },
+      {
+        "q": "A boy cut his finger and the bleeding has not stopped after 10 minutes of firm pressure. What should be done?",
+        "o": [
+          "Apply more soil",
+          "Remove the cloth to check often",
+          "Do nothing",
+          "Take him to a clinic or hospital"
+        ],
+        "a": 3,
+        "e": "Bleeding that does not stop after firm pressure for about 10 minutes needs medical help. Removing the cloth often disturbs clotting.",
+        "h": "Some injuries need a doctor.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which pair is correctly matched?",
+        "o": [
+          "Gauze - to cover wounds and press on bleeding",
+          "Forceps - to measure temperature",
+          "Thermometer - to cut bandages",
+          "Safety pin - to kill germs"
+        ],
+        "a": 0,
+        "e": "Gauze is a clean covering used on wounds. Forceps remove splinters, a thermometer measures temperature and a safety pin fastens bandages.",
+        "h": "Match each tool with its main job.",
+        "yr": "SS1"
+      },
+      {
+        "q": "A burn differs from a scald because a burn is caused by",
+        "o": [
+          "boiling water only",
+          "a sharp object",
+          "dry heat, such as fire or a hot pot",
+          "cold weather"
+        ],
+        "a": 2,
+        "e": "Burns are from dry heat sources such as fire, hot iron or hot metal. Scalds come from wet heat, such as boiling water or steam.",
+        "h": "Burn is dry, scald is wet.",
+        "yr": "SS1"
+      }
+    ]
+  },
+  {
+    "topic": "ICPC",
+    "topicCode": "SS1-FN-28",
+    "module": "Family Food Management and Honesty",
+    "term": "Third Term",
+    "contentHTML": "<div class=\"learn-intro\">Every family has to feed its members, and money is always limited. A <span class=\"learn-keyword\">family food budget</span> is a written plan showing how much money the family will spend on food in a given time, and what the money will be spent on. When the person managing the food money spends it on things other than the planned food, we call this <span class=\"learn-keyword\">misappropriation</span>. In Nigeria, the <span class=\"learn-keyword\">ICPC</span> (Independent Corrupt Practices and Other Related Offences Commission) is the public body set up by law to fight corruption, which includes the dishonest use of money entrusted to someone. Think of a mother given N60,000 for the month's food. If part of it is quietly used for something else, the family may go hungry before the month ends. This topic links honest food budgeting at home to the wider value of honesty and accountability that ICPC teaches.</div>\n\n<h3 class=\"learn-subheading\">1. What is a family food budget?</h3>\n<p class=\"learn-p\">A <span class=\"learn-keyword\">budget</span> is a plan of expected income (money coming in) and expenditure (money going out) for a period of time. A <span class=\"learn-keyword\">food budget</span> is the part of the family budget meant only for food and cooking needs, such as grains, tubers, meat or fish, vegetables, oil, seasoning and cooking gas or kerosene. Families often plan weekly or monthly, depending on when money comes in.</p>\n<p class=\"learn-p\">A good food budget helps the family to:</p>\n<ul class=\"learn-list\">\n<li>Buy enough food of the right kind for every person.</li>\n<li>Avoid wasting money and food.</li>\n<li>Keep a balanced diet without overspending.</li>\n<li>Save a little for emergencies.</li>\n<li>Know where the money went, so there is no quarrel.</li>\n</ul>\n\n<h3 class=\"learn-subheading\">2. Steps in making a food budget</h3>\n<ol class=\"learn-ordered\">\n<li>Step 1: Find out the total money available for food for the period (for example, one month).</li>\n<li>Step 2: Count the family members and think about their needs. A growing child, a pregnant woman and a working man need different amounts of food.</li>\n<li>Step 3: List the foods needed under the food groups: energy foods, body-building foods, protective foods, oil and seasoning, and fuel for cooking.</li>\n<li>Step 4: Find the current market prices. Compare shops and markets, and consider foods that are in season, because they are cheaper.</li>\n<li>Step 5: Share the money among the items, putting the most important needs first.</li>\n<li>Step 6: Write down the plan clearly so that the family can see it.</li>\n</ol>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">✏️</span><strong>Worked Example 1 (sharing a budget):</strong> A family has N60,000 for food for one month. The planned sharing is: staple foods (rice, garri, yam, beans) N20,000; protein foods (fish, meat, eggs) N18,000; vegetables and fruits N10,000; oil, salt and seasoning N6,000; cooking gas or fuel N4,000; emergency savings N2,000. Check the total: 20,000 + 18,000 + 10,000 + 6,000 + 4,000 + 2,000 = N60,000. The plan uses all the money and none is left unplanned. Answer: the budget balances at N60,000.</div>\n\n<h3 class=\"learn-subheading\">3. Executing (carrying out) the budget</h3>\n<p class=\"learn-p\"><span class=\"learn-keyword\">Executing</span> a budget means following the plan when spending. A budget that is written but not followed is useless. To execute a food budget well:</p>\n<ul class=\"learn-list\">\n<li>Go to the market with a written shopping list and stick to it.</li>\n<li>Buy staple foods in bulk when prices are low, if there is safe storage.</li>\n<li>Keep receipts or write down every amount spent.</li>\n<li>Compare what you planned to spend with what you actually spent, every week.</li>\n<li>Cut down on waste: store food properly, use left-overs wisely and cook the right amounts.</li>\n<li>Adjust the plan if prices change, but tell the family about the change.</li>\n<li>Do not buy unplanned expensive items on impulse.</li>\n</ul>\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">✏️</span><strong>Worked Example 2 (daily cost per person):</strong> The family in Example 1 has 5 members and 30 days in the month. Food money per day = 60,000 ÷ 30 = N2,000. Food money per person per day = 2,000 ÷ 5 = N400. Answer: the family can spend N400 per person each day, so a mother who plans meals must keep each person's daily food cost near N400.</div>\n\n<h3 class=\"learn-subheading\">4. Misappropriation of food money</h3>\n<p class=\"learn-p\"><span class=\"learn-keyword\">Misappropriation</span> means using money or property that was given for one purpose for a different and often selfish purpose, without permission. When it happens with a family food budget, the money meant for feeding the family is wrongly spent on other things. It is a form of <span class=\"learn-keyword\">dishonesty</span> and a breach of trust, and it is the small-scale version of the same wrong that ICPC fights at national level.</p>\n<p class=\"learn-p\"><strong>Examples at home:</strong></p>\n<ul class=\"learn-list\">\n<li>Spending part of the food money on gambling, betting, parties or unnecessary clothes.</li>\n<li>Reporting a higher price than the real price of foodstuff and keeping the difference.</li>\n<li>Using the food money to pay a personal debt or to buy items for oneself, without telling the family.</li>\n<li>Buying cheap, poor-quality food but claiming to have bought good food.</li>\n<li>Not keeping records, so that no one can check how the money was spent.</li>\n</ul>\n<p class=\"learn-p\"><strong>Effects of misappropriation of the food budget:</strong></p>\n<ul class=\"learn-list\">\n<li>The family does not get enough food or a balanced diet, which causes hunger and poor health (malnutrition).</li>\n<li>Children may perform poorly at school because they are hungry or sick.</li>\n<li>Money runs out before the end of the month, which leads to borrowing.</li>\n<li>Trust and peace in the home are destroyed.</li>\n<li>It teaches children that dishonesty is acceptable.</li>\n</ul>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">✏️</span><strong>Worked Example 3 (finding the amount diverted):</strong> Mr Ade gives his wife N60,000 for the month's food. At the end of the month, receipts show that N48,000 was spent on food items. The rest cannot be explained. Money not accounted for = 60,000 − 48,000 = N12,000. As a percentage of the budget: 12,000 ÷ 60,000 × 100 = 20%. Answer: N12,000, which is 20% of the budget, is unaccounted for. This is not automatically proof of dishonesty, because some money may have been used for a genuine emergency, but it shows why records are needed. Without them the family cannot tell the difference.</div>\n\n<h3 class=\"learn-subheading\">5. Prevention and the role of ICPC</h3>\n<p class=\"learn-p\">The <span class=\"learn-keyword\">ICPC</span> was set up under the Corrupt Practices and Other Related Offences Act of 2000. Its work includes receiving and investigating complaints about corruption, prosecuting offenders, and educating the public and teaching people to reject corruption. Corruption is the dishonest misuse of position or trust to gain unfairly. The ICPC teaches honesty, accountability (being ready to explain how one used money or duty) and transparency (being open and clear about what one does). These same values must be practised in the home.</p>\n<p class=\"learn-p\">Ways of preventing misappropriation of family food money:</p>\n<ol class=\"learn-ordered\">\n<li>Step 1: Make the budget together and put it in writing so that all adults know the plan.</li>\n<li>Step 2: Keep a simple record book. Write the date, item, price and amount for every purchase.</li>\n<li>Step 3: Keep receipts, or ask the seller for a note of the price when possible.</li>\n<li>Step 4: Review the record weekly or monthly with the person who gave the money.</li>\n<li>Step 5: Keep emergency savings separate, so that sudden needs do not eat into food money.</li>\n<li>Step 6: Teach children honesty and let them take part in simple shopping so that they learn accountability.</li>\n<li>Step 7: Settle disputes openly and fairly, and correct any wrongdoing early.</li>\n</ol>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">⚠️</span><strong>Common Mistakes:</strong> (1) Thinking ICPC only deals with big government money. It also teaches honesty in all use of money and trust, including at home. (2) Confusing a budget with an actual expense. A budget is the plan; an expense is what was truly spent. (3) Not keeping records and then being unable to prove how the money was used. (4) Treating a change of plan because of a price rise as misappropriation. Honest adjustment, openly explained, is not misappropriation. (5) Forgetting to include cooking fuel in the food budget.</div>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">💡</span><strong>Exam Tip:</strong> Questions may be \"What is a family food budget?\", \"State four ways of carrying out a food budget well\", \"Explain misappropriation of food money and its effects\" or \"State three ways of preventing it\". Define the word first, then give clear numbered points. If a calculation is set, show the sharing of the money and check that the total equals the amount given.</div>\n\n<div class=\"learn-tip-box\"><span class=\"learn-tip-icon\">🎯</span><strong>Summary:</strong> A family food budget is a plan for spending money on food in a set period.<br>To make it, find the money available, count the members, list needs, check prices and share the money.<br>To execute it, use a shopping list, keep records and avoid waste and impulse buying.<br>Misappropriation is using money meant for food for another purpose without permission; it leads to hunger, debt and loss of trust.<br>ICPC fights corruption and teaches honesty, accountability and transparency.<br>Records, receipts, open review and separate emergency savings help to prevent misuse.</div>",
+    "questions": [
+      {
+        "q": "A family food budget is",
+        "o": [
+          "a plan showing how money will be spent on food in a period",
+          "a list of foods eaten last year",
+          "a type of cooking pot",
+          "a food storage method"
+        ],
+        "a": 0,
+        "e": "A food budget is a plan of the money available and how it will be shared among the food needs of a family. It is made before spending.",
+        "h": "Plan before spending.",
+        "yr": "SS1"
+      },
+      {
+        "q": "ICPC stands for",
+        "o": [
+          "Independent Cooking Practices Commission",
+          "Independent Corrupt Practices and Other Related Offences Commission",
+          "International Children's Protection Council",
+          "Internal Credit and Pricing Committee"
+        ],
+        "a": 1,
+        "e": "ICPC is the Nigerian commission set up by law to fight corruption and related offences. The other options are invented names.",
+        "h": "The C in ICPC is for corrupt.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Misappropriation of a food budget means",
+        "o": [
+          "buying food on a list",
+          "saving some money for emergencies",
+          "using money meant for food for another purpose without permission",
+          "sharing the budget openly"
+        ],
+        "a": 2,
+        "e": "Misappropriation is the wrong use of money entrusted for a certain purpose. Saving and buying listed food are proper uses.",
+        "h": "Wrong use of entrusted money.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which is the first step in making a food budget?",
+        "o": [
+          "Buy the food",
+          "Cook the food",
+          "Throw away old food",
+          "Find out the total money available for food"
+        ],
+        "a": 3,
+        "e": "We cannot plan until we know how much money there is. The other steps follow after the amount is known.",
+        "h": "Start with the money.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which is an effect of misappropriating food money?",
+        "o": [
+          "The family eats more balanced meals",
+          "The family may not get enough food",
+          "Children perform better in school",
+          "Trust grows in the home"
+        ],
+        "a": 1,
+        "e": "When food money is spent on something else, there is less food, which can cause hunger and poor health. Trust is also broken.",
+        "h": "Less money, less food.",
+        "yr": "SS1"
+      },
+      {
+        "q": "A good way of preventing misuse of family food money is to",
+        "o": [
+          "hide the money from everybody",
+          "spend without a list",
+          "keep records and receipts of what is spent",
+          "avoid talking about money"
+        ],
+        "a": 2,
+        "e": "Records show where the money went and make it easy to check. Hiding money and having no list lead to confusion and suspicion.",
+        "h": "Written proof helps.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which action shows proper execution of a food budget?",
+        "o": [
+          "Buying anything that looks nice",
+          "Skipping the planning",
+          "Spending all the money in the first week",
+          "Going to the market with a written shopping list"
+        ],
+        "a": 3,
+        "e": "A shopping list keeps the spending in line with the plan. Impulse buying and poor planning make the money finish early.",
+        "h": "Plan then follow the plan.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which is a form of misappropriation?",
+        "o": [
+          "Reporting a higher price than the real one and keeping the difference",
+          "Buying foodstuff in season",
+          "Comparing prices in two markets",
+          "Writing down the amount spent"
+        ],
+        "a": 0,
+        "e": "Giving a false price and keeping the extra money is dishonest use of money. Comparing prices and keeping records are good practices.",
+        "h": "Which option involves lying?",
+        "yr": "SS1"
+      },
+      {
+        "q": "Why is it good to keep emergency savings separate from the food money?",
+        "o": [
+          "It makes the food cheaper",
+          "It removes the need for a budget",
+          "Sudden needs will not use up the food money",
+          "It increases prices in the market"
+        ],
+        "a": 2,
+        "e": "Emergency savings cover unexpected costs so that food money is not used for them. They do not change the market price.",
+        "h": "What happens when an emergency arises?",
+        "yr": "SS1"
+      },
+      {
+        "q": "ICPC was set up under the",
+        "o": [
+          "Land Use Act",
+          "Companies Act",
+          "Child Rights Act",
+          "Corrupt Practices and Other Related Offences Act of 2000"
+        ],
+        "a": 3,
+        "e": "The ICPC was created by the Corrupt Practices and Other Related Offences Act, 2000. The other laws deal with land, companies and children.",
+        "h": "Look for the word corrupt.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Which value does ICPC encourage that also applies to family food money?",
+        "o": [
+          "Accountability",
+          "Waste",
+          "Secrecy",
+          "Greed"
+        ],
+        "a": 0,
+        "e": "Accountability means being ready to explain how money was used. Records and open review of food spending practise accountability.",
+        "h": "Being able to explain spending.",
+        "yr": "SS1"
+      },
+      {
+        "q": "A family has N60,000 for food for 30 days. How much can be spent per day?",
+        "o": [
+          "N200",
+          "N2,000",
+          "N1,800",
+          "N20,000"
+        ],
+        "a": 1,
+        "e": "Amount per day = 60,000 ÷ 30 = N2,000. N200 comes from a decimal error and N20,000 is wrong because it divides by 3.",
+        "h": "Divide by the number of days.",
+        "yr": "SS1"
+      },
+      {
+        "q": "The 5-member family above has N2,000 a day for food. How much is that per person per day?",
+        "o": [
+          "N500",
+          "N2,500",
+          "N10,000",
+          "N400"
+        ],
+        "a": 3,
+        "e": "Per person = 2,000 ÷ 5 = N400. N10,000 comes from multiplying instead of dividing.",
+        "h": "Share equally among the members.",
+        "yr": "SS1"
+      },
+      {
+        "q": "Mrs Eze was given N50,000 for food. Receipts show N42,000 spent on food. How much is unaccounted for, and what percentage of the budget is it?",
+        "o": [
+          "N8,000, which is 16%",
+          "N8,000, which is 8%",
+          "N7,000, which is 14%",
+          "N92,000, which is 184%"
+        ],
+        "a": 0,
+        "e": "Unaccounted money = 50,000 − 42,000 = N8,000. Percentage = 8,000 ÷ 50,000 × 100 = 16%. Adding the amounts instead of subtracting gives the wrong 92,000.",
+        "h": "Subtract first, then find the percentage.",
+        "yr": "SS1"
+      },
+      {
+        "q": "The price of tomato rose sharply, so Mrs Aliyu reduced the tomato money, told her husband and used the difference for other food. This is",
+        "o": [
+          "misappropriation",
+          "corruption",
+          "honest adjustment, not misappropriation",
+          "stealing"
+        ],
+        "a": 2,
+        "e": "She changed the plan openly because of a price rise and the money was still used for food. Misappropriation means secret or wrong use of money for another purpose.",
+        "h": "Was the money still used for food? Was it open?",
         "yr": "SS1"
       }
     ]
