@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { makeApi, fmtDT, ago } from './adminApi';
 
 const ORIGIN = typeof window !== 'undefined' ? window.location.origin : 'https://elitescholars.site';
-const STAGES = [['submitted', 'To review'], ['applied', 'Applied'], ['invited', 'Research sent'], ['approved', 'Approved'], ['joined', 'Joined'], ['rejected', 'Not taken']];
-const STAGE_COLOR = { submitted: '#f59e0b', applied: '#60a5fa', invited: '#a78bfa', approved: '#34d399', joined: '#22c55e', rejected: '#94a3b8' };
+const STAGES = [['submitted', 'To review'], ['applied', 'Applied'], ['invited', 'Task sent'], ['approved', 'Approved'], ['joined', 'Joined'], ['expired', 'Expired'], ['rejected', 'Not taken']];
+const STAGE_COLOR = { submitted: '#f59e0b', applied: '#60a5fa', invited: '#a78bfa', approved: '#34d399', joined: '#22c55e', expired: '#f87171', rejected: '#94a3b8' };
 const pad = (n) => String(n).padStart(2, '0');
 const toParts = (iso) => { if (!iso) return { d: '', t: '' }; const x = new Date(iso); return { d: `${x.getFullYear()}-${pad(x.getMonth() + 1)}-${pad(x.getDate())}`, t: `${pad(x.getHours())}:${pad(x.getMinutes())}` }; };
 const fromParts = (p) => (p && p.d ? new Date(`${p.d}T${p.t || '00:00'}`).toISOString() : '');
@@ -15,7 +15,8 @@ const UNIT_MS = { hours: 3600000, days: 86400000 };
 const mkDl = (iso) => ({ mode: 'date', ...toParts(iso), n: 2, unit: 'days' });
 const mkRel = (h, dflt) => (h ? (h % 24 === 0 ? { mode: 'rel', d: '', t: '18:00', n: h / 24, unit: 'days' } : { mode: 'rel', d: '', t: '18:00', n: h, unit: 'hours' }) : { ...dflt });
 const toHours = (r) => Math.max(1, Math.round((Number(r.n) || 0) * (r.unit === 'days' ? 24 : 1)));
-const EMPTY = { title: 'Promoter', description: '', commission_pct: 40, open: true, apply: { mode: 'rel', d: '', t: '18:00', n: 3, unit: 'days' }, research: { mode: 'rel', d: '', t: '18:00', n: 2, unit: 'days' }, auto_email: true, auto_approve: false, group_url: '' };
+const EMPTY = { title: 'Promoter', description: '', commission_pct: 40, open: true, apply: { mode: 'rel', d: '', t: '18:00', n: 3, unit: 'days' }, research: { mode: 'rel', d: '', t: '18:00', n: 2, unit: 'days' }, auto_email: true, auto_approve: false, group_url: '', kind: 'promoter', task_days: 2, join_days: 2 };
+const EMPTY_VIDEO = { ...EMPTY, kind: 'video_editor', title: 'Volunteer Video Editor', commission_pct: 0, description: 'Help us make short, scroll-stopping study videos for students. This is a volunteer role: unpaid, but you build your portfolio and join a creative team.' };
 // Timer mode ("rel" on applications): nothing is dated yet. The clock starts when the link is first opened.
 const calcApply = (a) => (a.mode === 'rel' ? '' : fromParts(a));
 const calcResearch = (r, applyIso, applyMode) => (applyMode === 'rel' ? '' : r.mode === 'rel' ? (applyIso ? new Date(new Date(applyIso).getTime() + (Number(r.n) || 0) * UNIT_MS[r.unit]).toISOString() : '') : fromParts(r));
@@ -67,7 +68,7 @@ export default function AdminHiring({ token, onAuthFail }) {
   const applyIso = form ? calcApply(form.apply) : '';
   const researchIso = form ? calcResearch(form.research, applyIso, form.apply.mode) : '';
   const save = async () => {
-    const body = { id: form.id, title: form.title, description: form.description, commission_pct: form.commission_pct, open: form.open, apply_deadline: applyIso, research_deadline: researchIso, apply_duration_h: form.apply.mode === 'rel' ? toHours(form.apply) : null, research_duration_h: form.apply.mode === 'rel' ? toHours(form.research) : (form.research.mode === 'rel' ? null : null), auto_email: form.auto_email, auto_approve: form.auto_approve, group_url: form.group_url, slug: form.slug };
+    const body = { kind: form.kind, task_duration_h: Math.max(1, Math.round((Number(form.task_days) || 2) * 24)), join_duration_h: Math.max(1, Math.round((Number(form.join_days) || 2) * 24)), id: form.id, title: form.title, description: form.description, commission_pct: form.commission_pct, open: form.open, apply_deadline: applyIso, research_deadline: researchIso, apply_duration_h: form.apply.mode === 'rel' ? toHours(form.apply) : null, research_duration_h: form.apply.mode === 'rel' ? toHours(form.research) : (form.research.mode === 'rel' ? null : null), auto_email: form.auto_email, auto_approve: form.auto_approve, group_url: form.group_url, slug: form.slug };
     const d = await run('hiring-save', body);
     if (d) setForm(null);
   };
@@ -79,7 +80,7 @@ export default function AdminHiring({ token, onAuthFail }) {
     if (!a || !a.cv_name || cvs[a.id]) return;
     api(`hiring-cv?id=${encodeURIComponent(a.id)}`).then((d) => { if (d.url) setCvs((c) => ({ ...c, [a.id]: d })); }).catch((e) => { if (e.message !== 'auth') setCvs((c) => ({ ...c, [a.id]: { error: e.message } })); });
   }, [seeApp, data, api]); // eslint-disable-line
-  const edit = (j) => setForm({ id: j.id, slug: j.slug, title: j.title, description: j.description, commission_pct: j.commission_pct, open: j.open, apply: j.apply_duration_h ? mkRel(j.apply_duration_h, EMPTY.apply) : mkDl(j.apply_deadline), research: j.apply_duration_h ? mkRel(j.research_duration_h, EMPTY.research) : mkDl(j.research_deadline), auto_email: j.auto_email, auto_approve: j.auto_approve, group_url: j.group_url });
+  const edit = (j) => setForm({ id: j.id, slug: j.slug, title: j.title, description: j.description, commission_pct: j.commission_pct, open: j.open, apply: j.apply_duration_h ? mkRel(j.apply_duration_h, EMPTY.apply) : mkDl(j.apply_deadline), research: j.apply_duration_h ? mkRel(j.research_duration_h, EMPTY.research) : mkDl(j.research_deadline), auto_email: j.auto_email, auto_approve: j.auto_approve, group_url: j.group_url, kind: j.kind || 'promoter', task_days: (j.task_duration_h || 48) / 24, join_days: (j.join_duration_h || 48) / 24 });
 
   if (!data) return <div className="adm-card">{err || 'Loading…'}</div>;
   const now = new Date(data.now).getTime();
@@ -96,27 +97,29 @@ export default function AdminHiring({ token, onAuthFail }) {
       {sub === 'jobs' && (
         <>
       <section className="adm-card">
-        <div className="adm-card-head"><h2>Hiring</h2><button className="adm-btn" onClick={() => { setForm({ ...EMPTY }); setMsg(''); setErr(''); }}>+ New job</button></div>
-        <p className="adm-note">Create a job, share its link (LinkedIn, WhatsApp). Applicants apply, get the research task by email at your deadline, send in their research, and you approve the ones you want. Approved people get the partner signup link and your group chat.</p>
+        <div className="adm-card-head"><h2>Hiring</h2><div className="adm-inline"><button className="adm-btn" onClick={() => { setForm({ ...EMPTY }); setMsg(''); setErr(''); }}>+ Promoter job</button><button className="adm-btn" onClick={() => { setForm({ ...EMPTY_VIDEO }); setMsg(''); setErr(''); }}>+ Volunteer video editor</button></div></div>
+        <p className="adm-note">Create a job, share its link (LinkedIn, WhatsApp). Promoters apply, get the research task by email straight away, send it in, and you approve. Volunteer video editors apply, get the video task by email straight away, have 2 days to upload it, and you approve after watching. Approved editors get the group chat link with a join deadline.</p>
         {msg && <div className="adm-ok">{msg}</div>}
         {err && <div className="adm-error">{err}</div>}
       </section>
 
       {form && (
         <section className="adm-card hire-adm-form">
-          <h2>{form.id ? 'Edit job' : 'New job'}</h2>
+          <h2>{form.id ? 'Edit job' : 'New job'}{form.kind === 'video_editor' ? ' · volunteer video editor' : ''}</h2>
           <label className="adm-field">Job title<input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} maxLength={80} /></label>
           <label className="adm-field">What the job is about (shown on the apply page)<textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} maxLength={3000} /></label>
           <div className="hire-adm-grid">
-            <label className="adm-field">Commission %<input type="number" min="1" max="90" value={form.commission_pct} onChange={(e) => setForm({ ...form, commission_pct: e.target.value })} /></label>
-            <label className="adm-field">Group chat link (sent when approved)<input placeholder="https://chat.whatsapp.com/…" value={form.group_url} onChange={(e) => setForm({ ...form, group_url: e.target.value })} /></label>
+            {form.kind === 'video_editor'
+              ? <label className="adm-field">Time to send the video (days, starts when the task email is sent)<input type="number" min="1" max="30" step="0.5" value={form.task_days} onChange={(e) => setForm({ ...form, task_days: e.target.value })} /></label>
+              : <label className="adm-field">Commission %<input type="number" min="1" max="90" value={form.commission_pct} onChange={(e) => setForm({ ...form, commission_pct: e.target.value })} /></label>}
+            <label className="adm-field">Group chat link (sent when you approve)<input placeholder="https://chat.whatsapp.com/…" value={form.group_url} onChange={(e) => setForm({ ...form, group_url: e.target.value })} /></label>
           </div>
           <div className="hire-adm-grid">
             <DeadlinePicker label="Applications stay open" value={form.apply} onChange={(v) => setForm({ ...form, apply: v, research: v.mode === 'rel' && form.research.mode !== 'rel' ? { ...form.research, mode: 'rel' } : form.research })} relLabel="Timer: starts when link is first opened" preview={form.apply.mode === 'rel' ? `The clock starts the moment someone first opens the link. Applications then stay open ${toHours(form.apply) % 24 === 0 ? `${toHours(form.apply) / 24} day(s)` : `${toHours(form.apply)} hour(s)`}.` : `Closes: ${prettyDt(applyIso)}`} />
-            <DeadlinePicker label="Research must be in" value={form.research} onChange={(v) => setForm({ ...form, research: v })} relLabel="After applications close" relOnly={form.apply.mode === 'rel'} preview={form.apply.mode === 'rel' ? `Due ${toHours(form.research) % 24 === 0 ? `${toHours(form.research) / 24} day(s)` : `${toHours(form.research)} hour(s)`} after applications close.` : `Due: ${prettyDt(researchIso)}`} />
+            {form.kind === 'video_editor' ? <label className="adm-field">Join the group within (days after approval)<input type="number" min="1" max="30" step="0.5" value={form.join_days} onChange={(e) => setForm({ ...form, join_days: e.target.value })} /></label> : <DeadlinePicker label="Research must be in" value={form.research} onChange={(v) => setForm({ ...form, research: v })} relLabel="After applications close" relOnly={form.apply.mode === 'rel'} preview={form.apply.mode === 'rel' ? `Due ${toHours(form.research) % 24 === 0 ? `${toHours(form.research) / 24} day(s)` : `${toHours(form.research)} hour(s)`} after applications close.` : `Due: ${prettyDt(researchIso)}`} />}
           </div>
-          <label className="adm-check"><input type="checkbox" checked={form.auto_email} onChange={(e) => setForm({ ...form, auto_email: e.target.checked })} /> Email the research task to everyone automatically when applications close</label>
-          <label className="adm-check"><input type="checkbox" checked={form.auto_approve} onChange={(e) => setForm({ ...form, auto_approve: e.target.checked })} /> Approve everyone who sent research automatically when the research deadline passes</label>
+          <label className="adm-check"><input type="checkbox" checked={form.auto_email} onChange={(e) => setForm({ ...form, auto_email: e.target.checked })} /> {form.kind === 'video_editor' ? 'Email the video task to each applicant automatically the moment they apply' : 'Email the research task to everyone automatically the moment they apply'}</label>
+          <label className="adm-check"><input type="checkbox" checked={form.auto_approve} onChange={(e) => setForm({ ...form, auto_approve: e.target.checked })} /> {form.kind === 'video_editor' ? 'Approve automatically as soon as a video is submitted (otherwise you watch it first)' : 'Approve everyone who sent research automatically when the research deadline passes'}</label>
           <label className="adm-check"><input type="checkbox" checked={form.open} onChange={(e) => setForm({ ...form, open: e.target.checked })} /> Job is open</label>
           <p className="adm-note">Times are your device time (Lagos). Automatic steps run when the deadline passes: within minutes if you have Hiring open, otherwise at the next scheduled run (morning or evening).</p>
           <div className="adm-inline"><button className="adm-btn" disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save job'}</button><button className="adm-ghost" onClick={() => setForm(null)}>Cancel</button></div>
@@ -131,7 +134,7 @@ export default function AdminHiring({ token, onAuthFail }) {
         const shown = apps.filter((a) => f === 'all' || a.status === f);
         return (
           <section className="adm-card hire-job" key={j.id}>
-            <div className="adm-card-head"><h2>{j.title}{!j.open && <span className="adm-chip"> closed</span>}</h2>
+            <div className="adm-card-head"><h2>{j.title}{j.kind === 'video_editor' && <span className="adm-chip"> volunteer</span>}{!j.open && <span className="adm-chip"> closed</span>}</h2>
               <div className="adm-inline"><button className="adm-ghost" onClick={() => edit(j)}>Edit</button>
                 <button className="adm-ghost" disabled={busy} onClick={() => window.confirm('Delete this job and all its applications?') && run('hiring-delete', { id: j.id }, 'Deleted.')}>Delete</button></div></div>
             <div className="hire-link"><code>{link}</code><button className="adm-btn" onClick={() => { copy(link); setMsg('Link copied. Share it on LinkedIn.'); }}>Copy link</button></div>
@@ -139,15 +142,15 @@ export default function AdminHiring({ token, onAuthFail }) {
               {j.apply_duration_h && !j.opened_at && <span>⏳ <b>Timer not started.</b> It starts the moment someone first opens the link ({j.apply_duration_h % 24 === 0 ? `${j.apply_duration_h / 24} day(s)` : `${j.apply_duration_h}h`} to apply{j.research_duration_h ? `, then ${j.research_duration_h % 24 === 0 ? `${j.research_duration_h / 24} day(s)` : `${j.research_duration_h}h`} for research` : ''}).</span>}
               {j.opened_at && <span>🔗 Link first opened: <b>{fmtDT(j.opened_at)}</b></span>}
               <span>⏰ Applications close: <b>{j.apply_deadline ? `${fmtDT(j.apply_deadline)} (${left(j.apply_deadline, now)})` : 'no deadline'}</b></span>
-              <span>📝 Research due: <b>{j.research_deadline ? `${fmtDT(j.research_deadline)} (${left(j.research_deadline, now)})` : 'no deadline'}</b></span>
-              <span>✉️ Auto email: <b>{j.auto_email ? (j.invites_sent_at ? 'sent' : 'on') : 'off'}</b> · Auto approve: <b>{j.auto_approve ? 'on' : 'off'}</b> · {j.commission_pct}%</span>
+              {j.kind === 'video_editor' ? <span>🎬 Each applicant has <b>{(j.task_duration_h || 48) / 24} day(s)</b> to send the video · must join the group within <b>{(j.join_duration_h || 48) / 24} day(s)</b> of approval</span> : <span>📝 Research due: <b>{j.research_deadline ? `${fmtDT(j.research_deadline)} (${left(j.research_deadline, now)})` : 'no deadline'}</b></span>}
+              <span>✉️ Auto email: <b>{j.auto_email ? (j.invites_sent_at ? 'sent' : 'on') : 'off'}</b> · Auto approve: <b>{j.auto_approve ? 'on' : 'off'}</b>{j.kind === 'video_editor' ? ' · no commission' : ` · ${j.commission_pct}%`}{j.group_url ? '' : ' · ⚠️ no group link yet'}</span>
             </div>
             <div className="hire-stages">
               {STAGES.map(([k, l]) => <button key={k} className={f === k ? 'on' : ''} style={{ '--c': STAGE_COLOR[k] }} onClick={() => { setFilter({ ...filter, [j.id]: k }); setOpen(j.id); }}><b>{cnt(k)}</b><span>{l}</span></button>)}
               <button className={f === 'all' ? 'on' : ''} style={{ '--c': '#e2e8f0' }} onClick={() => { setFilter({ ...filter, [j.id]: 'all' }); setOpen(j.id); }}><b>{apps.length}</b><span>All</span></button>
             </div>
             <div className="adm-inline pad">
-              {cnt('applied') > 0 && <button className="adm-btn" disabled={busy} onClick={() => window.confirm(`Email the research task to ${cnt('applied')} applicant(s) now?`) && run('hiring-job-action', { id: j.id, action: 'invite-all' })}>Send research task to {cnt('applied')} now</button>}
+              {cnt('applied') > 0 && <button className="adm-btn" disabled={busy} onClick={() => window.confirm(`Email the task to ${cnt('applied')} applicant(s) now?`) && run('hiring-job-action', { id: j.id, action: 'invite-all' })}>Send the task to {cnt('applied')} now</button>}
               <button className="adm-ghost" onClick={() => setOpen(open === j.id ? '' : j.id)}>{open === j.id ? 'Hide applicants' : 'Show applicants'}</button>
             </div>
             {open === j.id && (
@@ -156,7 +159,7 @@ export default function AdminHiring({ token, onAuthFail }) {
                   <div className="hire-app" key={a.id} style={{ '--c': STAGE_COLOR[a.status] }}>
                     <div className="hire-app-top">
                       <div><b>{a.name}</b> {a.status === 'submitted' && <span className="hire-new">NEW</span>} <span className="hire-chip">{(STAGES.find((s) => s[0] === a.status) || [0, a.status])[1]}</span>
-                        <small>{a.email} · <a href={`https://wa.me/${String(a.whatsapp).replace(/\D/g, '').replace(/^0/, '234')}`} target="_blank" rel="noreferrer">WhatsApp {a.whatsapp}</a> · applied {ago(a.created_at)}{a.submitted_at ? ` · research ${ago(a.submitted_at)}` : ''}</small></div>
+                        <small>{a.email} · <a href={`https://wa.me/${String(a.whatsapp).replace(/\D/g, '').replace(/^0/, '234')}`} target="_blank" rel="noreferrer">WhatsApp {a.whatsapp}</a> · applied {ago(a.created_at)}{a.submitted_at ? ` · ${j.kind === 'video_editor' ? 'video' : 'research'} ${ago(a.submitted_at)}` : ''}{a.status === 'invited' && a.task_due_at ? ` · task due ${fmtDT(a.task_due_at)}` : ''}{a.status === 'approved' && a.group_deadline_at ? ` · join by ${fmtDT(a.group_deadline_at)}` : ''}</small></div>
                       <button className="adm-ghost" onClick={() => setSeeApp(seeApp === a.id ? '' : a.id)}>{seeApp === a.id ? 'Close' : 'Read'}</button>
                     </div>
                     {seeApp === a.id && (
@@ -172,13 +175,13 @@ export default function AdminHiring({ token, onAuthFail }) {
                               <a className="adm-ghost hire-cv-open" href={c.kind === 'pdf' ? c.url : `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(c.url)}`} target="_blank" rel="noreferrer">Open full screen ↗</a>
                             </>)}
                           </div>); })()}
-                        <h4>Research{a.submitted_at ? '' : ' (not sent yet)'}</h4><div className="hire-text">{a.research || '—'}</div>
+                        {j.kind === 'video_editor' ? <VideoView a={a} api={api} /> : <><h4>Research{a.submitted_at ? '' : ' (not sent yet)'}</h4><div className="hire-text">{a.research || '—'}</div></>}
                       </div>
                     )}
                     <div className="adm-inline pad">
-                      {a.status === 'applied' && <button className="adm-btn" disabled={busy} onClick={() => run('hiring-app', { id: a.id, action: 'invite' })}>Send research task</button>}
+                      {a.status === 'applied' && <button className="adm-btn" disabled={busy} onClick={() => run('hiring-app', { id: a.id, action: 'invite' })}>Send task</button>}
                       {a.status === 'invited' && <button className="adm-ghost" disabled={busy} onClick={() => run('hiring-app', { id: a.id, action: 'invite' })}>Send task again</button>}
-                      {['submitted', 'invited', 'applied'].includes(a.status) && a.status === 'submitted' && <button className="adm-btn" disabled={busy} onClick={() => window.confirm(`Approve ${a.name}? They get the partner signup link by email. The group chat link and welcome email follow automatically once they register.`) && run('hiring-app', { id: a.id, action: 'approve' })}>Approve and email</button>}
+                      {['submitted', 'invited', 'applied'].includes(a.status) && a.status === 'submitted' && <button className="adm-btn" disabled={busy} onClick={() => window.confirm(`Approve ${a.name}? ${j.kind === 'video_editor' ? 'They get the group chat link by email, with a join deadline.' : 'They get the partner signup link by email. The group chat link and welcome email follow automatically once they register.'}`) && run('hiring-app', { id: a.id, action: 'approve' })}>Approve and email</button>}
                       {a.status === 'approved' && <button className="adm-ghost" disabled={busy} onClick={() => run('hiring-app', { id: a.id, action: 'approve' })}>Resend approval email</button>}
                       {!['rejected', 'joined'].includes(a.status) && <button className="adm-ghost" disabled={busy} onClick={() => window.confirm(`Not take ${a.name} forward? They get a polite email.`) && run('hiring-app', { id: a.id, action: 'reject' })}>Not this time</button>}
                       {a.status === 'rejected' && <button className="adm-ghost" disabled={busy} onClick={() => run('hiring-app', { id: a.id, action: 'reset' })}>Move back to applied</button>}
@@ -198,8 +201,32 @@ export default function AdminHiring({ token, onAuthFail }) {
   );
 }
 
+function VideoView({ a, api }) {
+  const [v, setV] = useState(null);
+  useEffect(() => {
+    if (!a.video_name) return;
+    api(`hiring-video?id=${encodeURIComponent(a.id)}`).then(setV).catch((e) => { if (e.message !== 'auth') setV({ error: e.message }); });
+  }, [a.id, a.video_name, api]);
+  if (!a.video_name) return <><h4>Video</h4><div className="hire-text">Not sent yet.</div></>;
+  return (
+    <div className="hire-cv">
+      <h4>Video{a.topic ? ` · ${a.topic}` : ''}</h4>
+      {!v && <p className="adm-note">Loading video…</p>}
+      {v && v.error && <p className="adm-note">{v.error}</p>}
+      {v && v.url && (
+        <>
+          <video className="hire-video" controls playsInline preload="metadata" poster={v.thumb || undefined} src={v.url} />
+          <p className="adm-note">{v.name}{v.size ? ` · ${(v.size / 1048576).toFixed(1)} MB` : ''}</p>
+          {v.thumb && <><h4>Thumbnail</h4><img className="hire-thumb" src={v.thumb} alt="Thumbnail" /></>}
+        </>
+      )}
+    </div>
+  );
+}
+
 /* ── Activity: everything that happens, newest first, colour-coded ── */
 const EV = {
+  expired: ['⌛', '#f87171', 'Window closed'],
   link_opened: ['🔗', '#a78bfa', 'Link opened'], apply: ['📨', '#60a5fa', 'Application'], invite: ['✉️', '#c084fc', 'Research task sent'],
   research: ['📝', '#f59e0b', 'Research'], approved: ['✅', '#34d399', 'Approved'], rejected: ['🚫', '#94a3b8', 'Not taken'],
   joined: ['🎉', '#22c55e', 'Joined as partner'], signup_click: ['👆', '#2dd4bf', 'Opened signup link'], group_sent: ['💬', '#38bdf8', 'Group link sent'], group_click: ['✅', '#4ade80', 'Opened group chat'], welcomed: ['🤝', '#fb923c', 'Welcome sent'], auto: ['⚙️', '#38bdf8', 'Automatic step'], job: ['💼', '#e2e8f0', 'Job'],

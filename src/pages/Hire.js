@@ -69,16 +69,17 @@ export function HireApply() {
 
   if (!job && !err) return <Shell><p className="hire-mute">Loading…</p></Shell>;
   if (!job) return <Shell><h1>Link not valid</h1><p className="hire-mute">{err}</p></Shell>;
-  if (done) return <Shell step={2}><div className="hire-big">✅</div><h1>Application received</h1><p className="hire-mute">{done}</p><div className="hire-closed">Next: open the email we sent and complete the short research task.</div></Shell>;
+  if (done) return <Shell step={2}><div className="hire-big">✅</div><h1>Application received</h1><p className="hire-mute">{done}</p><div className="hire-closed">Next: open the email we sent and complete your task.</div></Shell>;
   const open = job.phase === 'applying';
+  const vid = job.kind === 'video_editor';
   return (
     <Shell step={1}>
-      <div className="hire-tagrow"><span className="hire-tag">We are hiring</span></div>
+      <div className="hire-tagrow"><span className="hire-tag">{vid ? 'Volunteer role' : 'We are hiring'}</span></div>
       <h1>{job.title}</h1>
       {job.description && <p className="hire-desc">{job.description}</p>}
       <ul className="hire-facts">
-        <li><i>💰</i><span><b>{job.commissionPct}% commission</b> on every paying student you bring</span></li>
-        <li><i>📝</i><span>Apply here, then complete a short research task we email you</span></li>
+        {vid ? <li><i>🤝</i><span><b>Volunteer role.</b> Unpaid, but you build your portfolio and join a creative team</span></li> : <li><i>💰</i><span><b>{job.commissionPct}% commission</b> on every paying student you bring</span></li>}
+        <li><i>{vid ? '🎬' : '📝'}</i><span>{vid ? `Apply here. We email you a short video task straight away, and you have ${job.taskHours % 24 === 0 ? `${job.taskHours / 24} days` : `${job.taskHours} hours`} to send it` : 'Apply here, then complete a short research task we email you'}</span></li>
         {job.applyDeadline && <li><i>⏰</i><span>Applications {open ? 'close' : 'closed'}: <b>{when(job.applyDeadline)}</b></span></li>}
       </ul>
       {!open ? <div className="hire-closed">Applications for this role are closed.</div> : (
@@ -86,9 +87,9 @@ export function HireApply() {
           <label>Full name<input value={f.name} onChange={set('name')} autoComplete="name" required /></label>
           <label>Email<input type="email" value={f.email} onChange={set('email')} autoComplete="email" required /></label>
           <label>WhatsApp number<input type="tel" value={f.whatsapp} onChange={set('whatsapp')} placeholder="e.g. 0803 000 0000" autoComplete="tel" required /></label>
-          <label>Why should we choose you?<textarea rows={5} value={f.why} onChange={set('why')} maxLength={1500} required /><small>{f.why.length}/1500</small></label>
+          <label>{vid ? 'Tell us about your editing experience and why we should choose you' : 'Why should we choose you?'}<textarea rows={5} value={f.why} onChange={set('why')} maxLength={1500} required /><small>{f.why.length}/1500</small></label>
           <label>Your CV (PDF or Word only, up to 2.5 MB)<input type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={pickCv} />{cv && <small className="hire-file">✓ {cv.name}</small>}</label>
-          <label className="hire-check"><input type="checkbox" checked={f.accept} onChange={set('accept')} /> I accept the {job.commissionPct}% commission</label>
+          <label className="hire-check"><input type="checkbox" checked={f.accept} onChange={set('accept')} /> {vid ? 'I understand this is a volunteer (unpaid) role' : `I accept the ${job.commissionPct}% commission`}</label>
           {err && <div className="hire-err">{err}</div>}
           <button className="hire-btn" disabled={busy}>{busy ? 'Sending…' : 'Submit application'}</button>
         </form>
@@ -119,6 +120,7 @@ export function HireResearch() {
 
   if (!d && !err) return <Shell><p className="hire-mute">Loading…</p></Shell>;
   if (!d) return <Shell><h1>Link not valid</h1><p className="hire-mute">{err}</p></Shell>;
+  if (d.kind === 'video_editor') return <VideoTask d={d} token={token} reload={load} />;
   const can = ['invited', 'submitted'].includes(d.status) && !d.closed;
   return (
     <Shell step={['approved', 'joined'].includes(d.status) ? 3 : 2}>
@@ -143,6 +145,99 @@ export function HireResearch() {
               {err && <div className="hire-err">{err}</div>}
               {msg && <div className="hire-ok">{msg}</div>}
               <button className="hire-btn" disabled={busy}>{busy ? 'Sending…' : d.status === 'submitted' ? 'Update my research' : 'Submit research'}</button>
+            </form>
+          ) : <div className="hire-closed">Submissions are closed.</div>}
+        </>
+      )}
+    </Shell>
+  );
+}
+
+
+// ── Volunteer video editor: task + upload ──
+const stripTags = (h) => String(h).replace(/<[^>]+>/g, '');
+const MAX_BYTES = 100 * 1024 * 1024;
+function putFile(url, file, onProgress) {
+  return new Promise((resolve, reject) => {
+    const x = new XMLHttpRequest();
+    x.open('PUT', url);
+    x.setRequestHeader('x-upsert', 'true');
+    x.upload.onprogress = (e) => { if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total); };
+    x.onload = () => (x.status >= 200 && x.status < 300 ? resolve() : reject(Object.assign(new Error('upload'), { status: x.status })));
+    x.onerror = () => reject(new Error('network'));
+    const fd = new FormData(); fd.append('cacheControl', '3600'); fd.append('', file);
+    x.send(fd);
+  });
+}
+function VideoTask({ d, token, reload }) {
+  const [topic, setTopic] = useState(d.topic || '');
+  const [video, setVideo] = useState(null);
+  const [thumb, setThumb] = useState(null);
+  const [pct, setPct] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const [msg, setMsg] = useState('');
+  const can = ['invited', 'submitted'].includes(d.status) && !d.closed;
+  const pickVideo = (e) => {
+    const f = e.target.files && e.target.files[0]; setErr('');
+    if (!f) { setVideo(null); return; }
+    if (!/\.mp4$/i.test(f.name)) { setErr('Only MP4 videos are accepted.'); e.target.value = ''; setVideo(null); return; }
+    if (f.size > MAX_BYTES) { setErr('That video is larger than 100 MB. Please compress it, then choose it again.'); e.target.value = ''; setVideo(null); return; }
+    setVideo(f);
+  };
+  const pickThumb = (e) => {
+    const f = e.target.files && e.target.files[0]; setErr('');
+    if (!f) { setThumb(null); return; }
+    if (!/\.(jpe?g|png|webp)$/i.test(f.name)) { setErr('Add your thumbnail as a JPG, PNG or WEBP image.'); e.target.value = ''; setThumb(null); return; }
+    setThumb(f);
+  };
+  const submit = async (e) => {
+    e.preventDefault(); setErr(''); setMsg('');
+    if (!topic) { setErr('Choose the topic you made your video about.'); return; }
+    if (!video) { setErr('Choose your MP4 video.'); return; }
+    if (!thumb) { setErr('Add a thumbnail image.'); return; }
+    setBusy(true); setPct(0);
+    try {
+      const u = await call('upload-url', { method: 'POST', body: { t: token, videoName: video.name, thumbName: thumb.name } });
+      if (!u.success) throw new Error(u.error || 'Could not start the upload.');
+      await putFile(u.thumb, thumb);
+      try { await putFile(u.video, video, setPct); }
+      catch (ex) { throw new Error(ex.status === 413 ? 'That video is larger than 100 MB. Please compress it, then upload it again.' : 'The upload did not finish. Check your connection and try again.'); }
+      const r = await call('video-submit', { method: 'POST', body: { t: token, topic, videoName: video.name, thumbName: thumb.name } });
+      if (!r.success) throw new Error(r.error || 'Something went wrong.');
+      setMsg(r.message); reload();
+    } catch (ex) { setErr(ex.message || 'Something went wrong.'); }
+    setBusy(false);
+  };
+  const b = d.brief || { topics: [], direction: [], assets: [] };
+  return (
+    <Shell step={['approved', 'joined'].includes(d.status) ? 3 : 2}>
+      <div className="hire-tagrow"><span className="hire-tag">Volunteer role</span></div>
+      <h1>Your video task</h1>
+      <p className="hire-mute">Hi {d.name.split(' ')[0]}, for <b>{d.job.title}</b>. This is a volunteer (unpaid) role.</p>
+      {['approved', 'joined'].includes(d.status) && <div className="hire-ok">You passed. Check your email for the group chat link.</div>}
+      {d.status === 'rejected' && <div className="hire-closed">Thank you for applying. We are not taking you forward this time.</div>}
+      {d.status === 'expired' && <div className="hire-closed">The time for this task has ended.</div>}
+      {['invited', 'submitted'].includes(d.status) && (
+        <>
+          {d.dueAt && <div className={d.closed ? 'hire-closed' : 'hire-warn'}>{d.closed ? 'The deadline has passed: ' : 'Send your video before '}<b>{when(d.dueAt)}</b></div>}
+          <h3 className="hire-h3">1. Pick ONE topic</h3>
+          <ul className="hire-topics">{b.topics.map((t) => (<li key={t}><label><input type="radio" name="topic" checked={topic === t} onChange={() => setTopic(t)} disabled={!can} /><span>{t}</span></label></li>))}</ul>
+          <h3 className="hire-h3">2. Creative direction</h3>
+          <ul className="hire-dir">{b.direction.map((t) => <li key={t}>{stripTags(t)}</li>)}</ul>
+          <h3 className="hire-h3">3. Our logos and inspiration</h3>
+          <div className="hire-assets">{b.assets.map((a) => (<a key={a.url} href={a.url} download target="_blank" rel="noreferrer"><span style={{ background: a.bg }}><img src={a.url} alt="" /></span><em>{a.label}</em><small>Tap to download</small></a>))}</div>
+          <p className="hire-mute">For inspiration, explore the website <a href="/" target="_blank" rel="noreferrer">elitescholars.site</a> and open the app <a href="/app" target="_blank" rel="noreferrer">elitescholars.site/app</a>.</p>
+          <h3 className="hire-h3">4. Upload</h3>
+          {d.status === 'submitted' && !msg && <div className="hire-ok">You have submitted ({d.videoName}). You can send a new one until the deadline.</div>}
+          {can ? (
+            <form onSubmit={submit} className="hire-form">
+              <label>Your video (MP4 only)<input type="file" accept=".mp4,video/mp4" onChange={pickVideo} disabled={busy} />{video && <small className="hire-file">✓ {video.name} · {(video.size / 1048576).toFixed(1)} MB</small>}</label>
+              <label>Thumbnail (JPG, PNG or WEBP)<input type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" onChange={pickThumb} disabled={busy} />{thumb && <small className="hire-file">✓ {thumb.name}</small>}</label>
+              {busy && <div className="hire-prog"><div style={{ width: `${Math.round(pct * 100)}%` }} /><span>{pct ? `Uploading ${Math.round(pct * 100)}%` : 'Starting…'}</span></div>}
+              {err && <div className="hire-err">{err}</div>}
+              {msg && <div className="hire-ok">{msg}</div>}
+              <button className="hire-btn" disabled={busy}>{busy ? 'Uploading, keep this page open…' : d.status === 'submitted' ? 'Send a new video' : 'Submit my video'}</button>
             </form>
           ) : <div className="hire-closed">Submissions are closed.</div>}
         </>

@@ -4,7 +4,7 @@ import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { checkRateLimit } from "../_helpers/rateLimit.js";
 import { adminFromToken } from "./admin.js";
 import { sendHtml, notifyAdmin } from "../_helpers/mail.js";
-import { onGroupClick, newToken, processDue, sendInvite, sendApproval, rejectedEmail, applicationReceivedEmail, sendWithCopy, logEvent } from "../_helpers/hiring.js";
+import { VIDEO_TOPICS, VIDEO_DIRECTION, BRAND_ASSETS, isVideoJob, onGroupClick, newToken, processDue, sendInvite, sendApproval, rejectedEmail, applicationReceivedEmail, sendWithCopy, logEvent } from "../_helpers/hiring.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ip = (req) => req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
@@ -19,7 +19,10 @@ function phase(job) {
   if (job.apply_deadline && new Date(job.apply_deadline).getTime() <= now) return "applications_closed";
   return "applying";
 }
-const pubJob = (j) => ({ slug: j.slug, title: j.title, description: j.description, commissionPct: j.commission_pct, applyDeadline: j.apply_deadline, phase: phase(j) });
+const pubJob = (j) => ({ slug: j.slug, title: j.title, description: j.description, commissionPct: j.commission_pct, applyDeadline: j.apply_deadline, phase: phase(j), kind: j.kind || "promoter", taskHours: j.task_duration_h || 48 });
+const VIDEO_BUCKET = "hiring-videos";
+const MAX_VIDEO = 100 * 1024 * 1024;
+const THUMB_EXT = /\.(jpe?g|png|webp)$/i;
 
 export default async function handler(req, res) {
   setCors(res);
@@ -66,7 +69,14 @@ export default async function handler(req, res) {
       }
       return go(`https://elitescholars.site/partner?hire=${encodeURIComponent(a.token)}`);
     }
-    if (!j || !j.group_url) return go("https://elitescholars.site/partner");
+    if (!j || !j.group_url) return go(j && isVideoJob(j) ? "https://elitescholars.site/" : "https://elitescholars.site/partner");
+    if (isVideoJob(j)) {
+      const expired = a.status === "expired" || (!a.group_clicked_at && a.group_deadline_at && new Date(a.group_deadline_at).getTime() < Date.now());
+      if (expired) { res.statusCode = 410; res.setHeader("Content-Type", "text/html; charset=utf-8"); return res.end("<!doctype html><meta name=viewport content='width=device-width,initial-scale=1'><body style='font-family:sans-serif;text-align:center;padding:48px 20px;color:#1B0A47'><h1>This invitation has expired</h1><p>The time to join the group has passed.</p><p><a href='https://elitescholars.site/'>Go to EliteScholars</a></p>"); }
+      if (!["approved", "joined"].includes(a.status)) return go("https://elitescholars.site/");
+      if (!bot) await onGroupClick(sb, j, a);
+      return go(j.group_url);
+    }
     if (!bot && ["joined"].includes(a.status)) await onGroupClick(sb, j, a);
     return go(j.group_url);
   }
@@ -84,7 +94,7 @@ export default async function handler(req, res) {
     if (!EMAIL_RE.test(email)) return sendErr(res, "Enter a valid email address.");
     if (whatsapp.replace(/\D/g, "").length < 10) return sendErr(res, "Enter a valid WhatsApp number.");
     if (why.length < 30) return sendErr(res, "Tell us a little more about why we should choose you (at least a couple of sentences).");
-    if (b.accept !== true) return sendErr(res, `Please confirm that you accept the ${j.commission_pct}% commission.`);
+    if (b.accept !== true) return sendErr(res, isVideoJob(j) ? "Please confirm that you understand this is a volunteer (unpaid) role." : `Please confirm that you accept the ${j.commission_pct}% commission.`);
     const { data: ex } = await sb.from("hiring_applications").select("id").eq("job_id", j.id).eq("email", email).maybeSingle();
     if (ex) return sendErr(res, "You have already applied with this email.");
     // Optional CV (PDF / Word, up to 2.5 MB), stored privately
@@ -103,7 +113,7 @@ export default async function handler(req, res) {
       const up = await sb.storage.from("hiring-cvs").upload(cvPath, buf, { contentType: ext === "pdf" ? "application/pdf" : ext === "docx" ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document" : "application/msword", upsert: true });
       if (up.error) { console.error("[hiring] cv upload", up.error.message); return sendErr(res, "Could not upload your CV. Try again, or apply without it.", 500); }
     }
-    const { error } = await sb.from("hiring_applications").insert({ job_id: j.id, name, email, whatsapp, why, accepts_commission: true, token, cv_path: cvPath, cv_name: cvName });
+    const { error } = await sb.from("hiring_applications").insert({ job_id: j.id, name, email, whatsapp, why, accepts_commission: !isVideoJob(j), token, cv_path: cvPath, cv_name: cvName });
     if (error) return sendErr(res, "Could not save your application. Try again.", 500);
     { const { data: na } = await sb.from("hiring_applications").select("id").eq("job_id", j.id).eq("email", email).maybeSingle(); await logEvent(sb, j.id, na && na.id, "apply", `${name} applied${cvName ? " (CV attached)" : ""}`); }
     // Automatic: the research task goes out straight away (no waiting for the deadline) when auto-email is on.
@@ -122,9 +132,15 @@ export default async function handler(req, res) {
     if (!a) return sendErr(res, "This link is not valid.", 404);
     const { data: j } = await sb.from("hiring_jobs").select("*").eq("id", a.job_id).maybeSingle();
     if (!j) return sendErr(res, "This role no longer exists.", 404);
-    const closed = !!(j.research_deadline && new Date(j.research_deadline).getTime() <= Date.now());
+    const video = isVideoJob(j);
+    const closed = video ? (a.status === "expired" || !!(a.task_due_at && new Date(a.task_due_at).getTime() <= Date.now())) : !!(j.research_deadline && new Date(j.research_deadline).getTime() <= Date.now());
+    if (video && req.method === "GET") {
+      return sendOk(res, { kind: "video_editor", name: a.name, status: a.status, closed, job: { title: j.title }, dueAt: a.task_due_at, topic: a.topic || "", videoName: a.video_name || "", groupDeadline: a.group_deadline_at,
+        brief: { topics: VIDEO_TOPICS, direction: VIDEO_DIRECTION, assets: BRAND_ASSETS.map((x) => ({ label: x.label, url: x.url, bg: x.bg })) } });
+    }
+    if (video && op === "research" && req.method === "POST") return sendErr(res, "Use the upload page to send your video.");
     if (req.method === "GET") {
-      return sendOk(res, { name: a.name, status: a.status, job: { title: j.title, researchDeadline: j.research_deadline, commissionPct: j.commission_pct }, closed, research: a.status === "submitted" || a.status === "approved" || a.status === "joined" ? a.research : "" });
+      return sendOk(res, { kind: "promoter", name: a.name, status: a.status, job: { title: j.title, researchDeadline: j.research_deadline, commissionPct: j.commission_pct }, closed, research: a.status === "submitted" || a.status === "approved" || a.status === "joined" ? a.research : "" });
     }
     if (req.method !== "POST") return sendMethodNotAllowed(res);
     if (!["invited", "submitted"].includes(a.status)) return sendErr(res, a.status === "applied" ? "The research stage has not opened for you yet. We will email you." : "You can no longer change this.");
@@ -135,6 +151,51 @@ export default async function handler(req, res) {
     await logEvent(sb, j.id, a.id, "research", `${a.name} ${a.status === "submitted" ? "updated" : "submitted"} their research`);
     await notifyAdmin("New hiring research submitted", `${a.name} sent in their research for ${j.title}.`, { emoji: "📝", heading: "Research submitted", rows: [["Name", a.name], ["Role", j.title]], cta: { label: "Review in admin", url: "https://elitescholars.site/admin" } });
     return sendOk(res, { message: "Received. We will email you after we have read everything." });
+  }
+
+  // Volunteer video: the file goes straight to private storage through signed upload links (the video is too big for a normal request).
+  if (op === "upload-url" || op === "video-submit") {
+    if (req.method !== "POST") return sendMethodNotAllowed(res);
+    const bb = readBody(req);
+    const t = clean(bb.t, 60);
+    const { data: a } = await sb.from("hiring_applications").select("*").eq("token", t).maybeSingle();
+    if (!a) return sendErr(res, "This link is not valid.", 404);
+    const { data: j } = await sb.from("hiring_jobs").select("*").eq("id", a.job_id).maybeSingle();
+    if (!j || !isVideoJob(j)) return sendErr(res, "This link is not valid.", 404);
+    if (!["invited", "submitted"].includes(a.status)) return sendErr(res, "You can no longer send a video.");
+    if (a.task_due_at && new Date(a.task_due_at).getTime() <= Date.now()) return sendErr(res, "The deadline has passed.");
+    const vPath = `${a.job_id}/${a.token}-video.mp4`;
+    const tExt = ((String(bb.thumbName || "").toLowerCase().match(THUMB_EXT) || [])[1] || "jpg").toLowerCase().replace("jpeg", "jpg");
+    const tPath = `${a.job_id}/${a.token}-thumb.${tExt}`;
+    if (op === "upload-url") {
+      if (!/\.mp4$/i.test(String(bb.videoName || ""))) return sendErr(res, "Only MP4 videos are accepted.");
+      if (!THUMB_EXT.test(String(bb.thumbName || ""))) return sendErr(res, "Add your thumbnail as a JPG, PNG or WEBP image.");
+      const [v, th] = await Promise.all([
+        sb.storage.from(VIDEO_BUCKET).createSignedUploadUrl(vPath, { upsert: true }),
+        sb.storage.from(VIDEO_BUCKET).createSignedUploadUrl(tPath, { upsert: true }),
+      ]);
+      if (v.error || th.error) { console.error("[hiring] upload url", (v.error || th.error).message); return sendErr(res, "Could not start the upload. Try again.", 500); }
+      return sendOk(res, { video: v.data.signedUrl, thumb: th.data.signedUrl, thumbExt: tExt });
+    }
+    // video-submit: check both files really arrived and the video is within the limit, then record the submission
+    const topic = clean(bb.topic, 160);
+    if (!VIDEO_TOPICS.includes(topic)) return sendErr(res, "Choose the topic you made your video about.");
+    const info = async (path) => {
+      const dir = path.split("/")[0], file = path.split("/")[1];
+      const { data: ls } = await sb.storage.from(VIDEO_BUCKET).list(dir, { search: file, limit: 5 });
+      return (ls || []).find((x) => x.name === file) || null;
+    };
+    const [vi, ti] = await Promise.all([info(vPath), info(tPath)]);
+    const size = vi && vi.metadata ? Number(vi.metadata.size) : 0;
+    if (!vi || !size) return sendErr(res, "We did not receive your video. Please upload it again.");
+    if (size > MAX_VIDEO) { await sb.storage.from(VIDEO_BUCKET).remove([vPath]); return sendErr(res, "That video is larger than 100 MB. Please compress it, then upload it again."); }
+    if (!ti) return sendErr(res, "We did not receive your thumbnail. Please upload it again.");
+    const first = a.status !== "submitted";
+    await sb.from("hiring_applications").update({ status: "submitted", submitted_at: new Date().toISOString(), video_path: vPath, thumb_path: tPath, video_name: clean(bb.videoName, 120).replace(/[^\w .()\-]/g, "_"), video_size: size, topic }).eq("id", a.id);
+    await logEvent(sb, j.id, a.id, "research", `${a.name} ${first ? "submitted" : "re-submitted"} their video`);
+    await notifyAdmin("New volunteer video submitted", `${a.name} sent in their video for ${j.title}.`, { emoji: "🎬", heading: "Video submitted", rows: [["Name", a.name], ["Role", j.title], ["Topic", topic]], cta: { label: "Watch it in admin", url: "https://elitescholars.site/admin" } });
+    if (j.auto_approve && first) await sendApproval(sb, j, { ...a, status: "submitted" });
+    return sendOk(res, { message: j.auto_approve ? "Received. Check your email for what happens next." : "Received. We will watch it and email you." });
   }
 
   // ───────────── admin ─────────────
@@ -148,7 +209,7 @@ export default async function handler(req, res) {
     await processDue(sb);
     const [{ data: jobs }, { data: apps }] = await Promise.all([
       sb.from("hiring_jobs").select("*").order("created_at", { ascending: false }),
-      sb.from("hiring_applications").select("id,job_id,name,email,whatsapp,why,accepts_commission,status,research,cv_name,invited_at,submitted_at,approved_at,joined_at,group_sent_at,group_clicked_at,welcomed_at,signup_clicked_at,created_at").order("created_at", { ascending: false }).limit(1500),
+      sb.from("hiring_applications").select("id,job_id,name,email,whatsapp,why,accepts_commission,status,research,cv_name,invited_at,submitted_at,approved_at,joined_at,group_sent_at,group_clicked_at,welcomed_at,signup_clicked_at,task_due_at,group_deadline_at,topic,video_name,video_size,created_at").order("created_at", { ascending: false }).limit(1500),
     ]);
     const since = new Date(Date.now() - 60 * 86400000).toISOString();
     const [{ data: evs }, { data: vws }] = await Promise.all([
@@ -166,14 +227,16 @@ export default async function handler(req, res) {
     if (title.length < 3) return sendErr(res, "Give the job a title.");
     const groupUrl = clean(b.group_url, 300);
     if (groupUrl && !URL_RE.test(groupUrl)) return sendErr(res, "The group chat link must start with https://");
-    const pct = Math.min(90, Math.max(1, Math.round(Number(b.commission_pct) || 40)));
+    const pct = b.kind === "video_editor" ? 0 : Math.min(90, Math.max(1, Math.round(Number(b.commission_pct) || 40)));
     const durH = (v) => { const n = Math.round(Number(v)); return Number.isFinite(n) && n > 0 && n <= 24 * 365 ? n : null; };
     const row = {
       apply_duration_h: durH(b.apply_duration_h), research_duration_h: durH(b.research_duration_h),
+      kind: b.kind === "video_editor" ? "video_editor" : "promoter", task_duration_h: durH(b.task_duration_h), join_duration_h: durH(b.join_duration_h),
       title, description: clean(b.description, 3000), commission_pct: pct, open: b.open !== false,
       apply_deadline: isoOrNull(b.apply_deadline), research_deadline: isoOrNull(b.research_deadline),
       auto_email: b.auto_email !== false, auto_approve: !!b.auto_approve, group_url: groupUrl,
     };
+    if (row.kind === "video_editor") { row.research_deadline = null; row.research_duration_h = null; row.task_duration_h = row.task_duration_h || 48; row.join_duration_h = row.join_duration_h || 48; }
     if (row.apply_deadline && row.research_deadline && row.research_deadline <= row.apply_deadline) return sendErr(res, "The research deadline must be after the application deadline.");
     // timer mode: the deadlines are worked out from the moment the link is first opened
     if (row.apply_duration_h) { row.apply_deadline = null; row.research_deadline = null; } else row.research_duration_h = null;
@@ -225,6 +288,14 @@ export default async function handler(req, res) {
     return sendErr(res, "Unknown action.");
   }
 
+  if (op === "admin-video") {
+    const { data: a } = await sb.from("hiring_applications").select("video_path,thumb_path,video_name,video_size,topic").eq("id", clean(req.query.id || b.id, 60)).maybeSingle();
+    if (!a || !a.video_path) return sendErr(res, "No video on file.", 404);
+    const [v, th] = await Promise.all([sb.storage.from(VIDEO_BUCKET).createSignedUrl(a.video_path, 7200), a.thumb_path ? sb.storage.from(VIDEO_BUCKET).createSignedUrl(a.thumb_path, 7200) : Promise.resolve({})]);
+    if (v.error || !v.data) return sendErr(res, "Could not open the video.", 500);
+    return sendOk(res, { url: v.data.signedUrl, thumb: th.data ? th.data.signedUrl : "", name: a.video_name, size: a.video_size, topic: a.topic });
+  }
+
   if (op === "admin-cv") {
     const { data: a } = await sb.from("hiring_applications").select("cv_path,cv_name").eq("id", clean(req.query.id || b.id, 60)).maybeSingle();
     if (!a || !a.cv_path) return sendErr(res, "No CV on file.", 404);
@@ -242,7 +313,7 @@ export default async function handler(req, res) {
     if (!j) return sendErr(res, "Job not found.", 404);
     const act = String(b.action || "");
     if (act === "invite") { const ok = await sendInvite(sb, j, a); return sendOk(res, { message: ok ? "Research brief emailed." : "Moved on, but the email could not be sent." }); }
-    if (act === "approve") { const ok = await sendApproval(sb, j, a); return sendOk(res, { message: ok ? "Approved. They were emailed the partner signup link. The group chat link follows automatically when they register." : "Approved, but the email could not be sent." }); }
+    if (act === "approve") { const ok = await sendApproval(sb, j, a); return sendOk(res, { message: ok ? `Approved. They were emailed ${isVideoJob(j) ? "the group chat link, with a join deadline." : "the partner signup link. The group chat link follows automatically when they register."}` : "Approved, but the email could not be sent." }); }
     if (act === "reject") {
       await sb.from("hiring_applications").update({ status: "rejected" }).eq("id", a.id);
       await logEvent(sb, j.id, a.id, "rejected", `${a.name} not taken forward`);

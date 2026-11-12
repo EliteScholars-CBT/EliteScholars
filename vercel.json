@@ -470,6 +470,18 @@
       "destination": "/api/data?route=admin/hiring-job-action"
     },
     {
+      "source": "/api/hire/upload-url",
+      "destination": "/api/data?route=hire/upload-url"
+    },
+    {
+      "source": "/api/hire/video-submit",
+      "destination": "/api/data?route=hire/video-submit"
+    },
+    {
+      "source": "/api/admin/hiring-video",
+      "destination": "/api/data?route=admin/hiring-video"
+    },
+    {
       "source": "/api/admin/hiring-cv",
       "destination": "/api/data?route=admin/hiring-cv"
     },

@@ -810,3 +810,8 @@ alter table hiring_events enable row level security;
 
 -- update21: hiring onboarding tracking
 alter table hiring_applications add column if not exists joined_at timestamptz, add column if not exists group_sent_at timestamptz, add column if not exists group_clicked_at timestamptz, add column if not exists welcomed_at timestamptz, add column if not exists signup_clicked_at timestamptz;
+
+-- update22: volunteer video editor role
+alter table hiring_jobs add column if not exists kind text not null default 'promoter', add column if not exists task_duration_h int, add column if not exists join_duration_h int;
+alter table hiring_applications add column if not exists task_due_at timestamptz, add column if not exists group_deadline_at timestamptz, add column if not exists video_path text default '', add column if not exists thumb_path text default '', add column if not exists video_name text default '', add column if not exists video_size bigint, add column if not exists topic text default '';
+insert into storage.buckets (id, name, public, file_size_limit) values ('hiring-videos', 'hiring-videos', false, 104857600) on conflict (id) do nothing;

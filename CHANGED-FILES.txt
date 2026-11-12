@@ -1,10 +1,9 @@
-Update 21 - hiring onboarding
-SQL already applied to Supabase (update21_hiring_onboarding); supabase/schema.sql updated for the record.
+Blog update (all blog files) + Update 22 (volunteer video editor)
+SQL for update 22 already applied.
 
+Update 22 files:
 api/_helpers/hiring.js
 api/_routes/hiring.js
-api/_routes/partner.js
-api/_routes/admin-ops.js
 api/data.js
 vercel.json
 src/pages/Hire.js
@@ -12,3 +11,7 @@ src/components/AdminHiring.js
 src/styles/hire.css
 src/styles/admin.css
 supabase/schema.sql
+public/brand/elitescholars-logo-transparent.png
+public/brand/elitescholars-logo-black-background.png
+
+Blog: everything under public/blog, content/blog, scripts/blog-queue, public/sitemap.xml, public/robots.txt
