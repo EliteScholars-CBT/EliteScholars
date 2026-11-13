@@ -39,6 +39,7 @@ import report from "./_routes/report.js";
 import adminOps from "./_routes/admin-ops.js";
 import squadChat from "./_routes/squad-chat.js";
 import hiring from "./_routes/hiring.js";
+import adminPayroll from "./_routes/admin-payroll.js";
 
 // Several routes share one handler and are told which operation via ?op=
 function withOp(fn, op) {
@@ -180,6 +181,10 @@ const ROUTES = {
   "admin/group-delete": withOp(adminOps, "group-delete"),
   "admin/status-action": withOp(adminOps, "status-action"),
   "admin/status-suspend": withOp(adminOps, "status-suspend"),
+  "admin/payroll": withOp(adminPayroll, "payroll"),
+  "admin/payroll-save": withOp(adminPayroll, "payroll-save"),
+  "admin/payroll-pay": withOp(adminPayroll, "payroll-pay"),
+  "admin/payroll-delete": withOp(adminPayroll, "payroll-delete"),
   "admin/team": withOp(adminOps, "team"),
   "admin/team-save": withOp(adminOps, "team-save"),
   "admin/team-reset": withOp(adminOps, "team-reset"),

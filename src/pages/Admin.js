@@ -9,6 +9,7 @@ import AdminActivity from '../components/AdminActivity';
 import AdminStatus from '../components/AdminStatus';
 import AdminBlog from '../components/AdminBlog';
 import AdminTeam from '../components/AdminTeam';
+import AdminPayroll from '../components/AdminPayroll';
 import AdminAI from '../components/AdminAI';
 import AdminAds from '../components/AdminAds';
 import AdminSecurity from '../components/AdminSecurity';
@@ -59,6 +60,7 @@ const TABS = [
   { id: 'mail', label: 'Email', perms: ['mail'] },
   { id: 'reports', label: 'Reports', perms: ['reports'], badge: ['reports'] },
   { id: 'ai', label: 'AI keys', perms: ['ai'] },
+  { id: 'payroll', label: 'Payroll', perms: [], owner: true },
   { id: 'team', label: 'Team', perms: [], owner: true },
 ];
 
@@ -242,6 +244,7 @@ export default function Admin() {
       {cur === 'schools' && <AdminSchools token={token} onAuthFail={authFail} />}
       {cur === 'prices' && <AdminPrices token={token} onAuthFail={authFail} />}
       {cur === 'ai' && <AdminAI token={token} onAuthFail={authFail} />}
+      {cur === 'payroll' && <AdminPayroll token={token} onAuthFail={authFail} />}
       {cur === 'team' && <AdminTeam token={token} onAuthFail={authFail} />}
       {cur === 'access' && <AdminAccess token={token} onAuthFail={authFail} />}
       {cur === 'reports' && <AdminReports token={token} onAuthFail={authFail} />}
