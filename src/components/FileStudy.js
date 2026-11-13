@@ -115,6 +115,12 @@ export default function FileStudyHub() {
         )}
       </div>
 
+      <a className="fs-engine" href="/study-engine/">
+        <span className="fs-engine-ic"><Icon name="zap" size={20} /></span>
+        <span className="fs-engine-tx"><b>Study Engine</b><em>Type a problem and get the working step by step. Physics, Chemistry, Maths and Biology.</em></span>
+        <span className="fs-engine-go">Open</span>
+      </a>
+
       <div
         className={`fs-drop${drag ? ' over' : ''}${busy ? ' busy' : ''}`}
         onDragOver={(e) => { e.preventDefault(); setDrag(true); }}

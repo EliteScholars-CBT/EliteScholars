@@ -670,6 +670,14 @@
       "destination": "/blog/index.html"
     },
     {
+      "source": "/study-engine",
+      "destination": "/study-engine/index.html"
+    },
+    {
+      "source": "/study-engine/",
+      "destination": "/study-engine/index.html"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
