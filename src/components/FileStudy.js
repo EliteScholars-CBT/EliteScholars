@@ -7,24 +7,35 @@ import { reserve, refreshEntitlement, remaining } from '../utils/entitlement';
 import { SFX } from '../utils/sounds';
 import { buildScramble, buildScrambleDeck, buildMatchDeck, normalizeAnswer } from '../utils/gameEngine';
 import {
+  SUPPORTED_HINT,
   extractTextFromFile,
-  buildSmartPack,
+  analyse,
+  solve,
+  makeNotes,
+  notesFromAsk,
+  answersToText,
+  hashText,
+  prettyTitle,
   loadLibrary,
   saveToLibrary,
   updateInLibrary,
   removeFromLibrary,
   newFileId,
 } from '../utils/studyEngine';
+import { AnswerSheet, NotesView, SourcesFoot } from './StudyViews';
 import '../styles/filestudy.css';
+import '../styles/studyask.css';
 
 // ============================================================================
 // FileStudy — "Study from your own files"
-// Upload a PDF / DOCX / TXT → an on-device engine builds a summary, lessons,
-// flashcards and questions → pick any mix of modes → study. Everything is
-// saved to localStorage; nothing is uploaded anywhere.
+// Ask a question, paste notes, ask for notes on a topic, or add a file. The study
+// engine works out which it is: questions are answered step by step (looked up
+// across the web when needed), notes become a study pack to learn from in any mix
+// of modes. Everything is saved on this device.
 // ============================================================================
 
 const MODES = [
+  { id: 'notes',   label: 'Notes',      icon: 'file',      desc: 'Full written notes' },
   { id: 'learn',   label: 'Learn',      icon: 'bookOpen',  desc: 'Bit-by-bit lessons' },
   { id: 'cards',   label: 'Flashcards', icon: 'cards',     desc: 'Flip and recall' },
   { id: 'cbt',     label: 'CBT',        icon: 'clipboard', desc: 'Exam-style practice' },
@@ -41,9 +52,9 @@ const shuffled = (arr) => {
 const MAX_BYTES = 25 * 1024 * 1024;
 const LETTERS = ['A', 'B', 'C', 'D'];
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════════════════════
    HUB — sits on the home screen under the exam grid
-   ══════════════════════════════════════════════════════════════════════════ */
+   ══════════════════════════════════════════════════════════════════════════════════════ */
 export default function FileStudyHub() {
   const [files, setFiles] = useState(() => loadLibrary());
   const [busy, setBusy] = useState(null);      // { name, stage, pct }
@@ -53,41 +64,101 @@ export default function FileStudyHub() {
   const [drag, setDrag] = useState(false);
   const [confirmDel, setConfirmDel] = useState(null);
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [text, setText] = useState('');
+  const [answers, setAnswers] = useState(null); // entry of answered questions being read
   const inputRef = useRef(null);
-  const [left, setLeft] = useState(() => remaining(loadUser().email, 'file_study')); // uploads left today (Infinity = unlimited)
+  const [left, setLeft] = useState(() => remaining(loadUser().email, 'file_study')); // uses left today (Infinity = unlimited)
   const syncLeft = useCallback(() => setLeft(remaining(loadUser().email, 'file_study')), []);
   useEffect(() => { refreshEntitlement(loadUser().email).then(syncLeft); }, [syncLeft]);
+
+  const track = (type, payload) => {
+    try { fetch('/api/events/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type, ...payload }) }).catch(() => {}); } catch { /* analytics only */ }
+  };
+  const fail = (e, fallback) => { setBusy(null); setError(e?.message || fallback); SFX.wrong?.(); };
+
+  // Saves a study pack and opens the "how do you want to study" sheet
+  const openPack = (pack, name, size) => {
+    const entry = { id: newFileId(), name, title: pack.title, size: size || 0, addedAt: Date.now(), pack, best: {}, modes: [] };
+    entry.modes = pack.notes && pack.notes.length ? ['notes', 'cards', 'cbt'] : ['learn', 'cards', 'cbt'];
+    setFiles(saveToLibrary(entry));
+    setBusy(null);
+    SFX.roundComplete?.();
+    setSetup(entry);
+    return entry;
+  };
+
+  // Everything that is given to the engine goes through here: typed, pasted or read from a file.
+  const handleInput = useCallback(async (raw, meta = {}) => {
+    setError('');
+    const me = loadUser();
+    const label = meta.name || 'What you asked';
+    try {
+      setBusy({ name: label, stage: 'Reading it', pct: 0.1 });
+      const A = await analyse(raw);
+      // One quick question is free to ask; files, papers, notes and notes-on-a-topic use up one of today's free turns.
+      const quick = !meta.fromFile && A.intent === 'solve' && (A.items || []).length <= 1;
+      if (!quick) {
+        const slot = await reserve(me.email, 'file_study', meta.ref || hashText(raw));
+        syncLeft();
+        if (!slot.allowed) { setBusy(null); setLeft(0); setShowUpgrade(true); return; }
+      }
+      SFX.select?.();
+
+      if (A.intent === 'ask-notes') {
+        setBusy({ name: A.topic, stage: 'Looking it up across the web', pct: 0.35 });
+        const pack = await notesFromAsk(A.topic);
+        track('learn_notes', { topic: String(A.topic).slice(0, 80), from: 'ask' });
+        setText('');
+        openPack(pack, A.topic);
+        return;
+      }
+      if (A.intent === 'notes') {
+        setBusy({ name: label, stage: 'Writing your notes', pct: 0.4 });
+        const pack = await makeNotes(raw, meta.name ? prettyTitle(meta.name) : 'My notes');
+        if (meta.fromFile) {
+          fetch('/api/events/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'file_upload', fileName: String(meta.name || '').slice(0, 80), sizeKB: Math.round((meta.size || 0) / 1024), engine: 'study-engine' }) }).catch(() => {});
+        } else track('learn_notes', { topic: pack.title.slice(0, 80), from: 'paste' });
+        setText('');
+        openPack(pack, meta.name || pack.title, meta.size);
+        return;
+      }
+
+      // a question, or a whole paper of them
+      setBusy({ name: label, stage: (A.items || []).length > 1 ? `Working through ${A.items.length} questions` : 'Working it out', pct: 0.45 });
+      const res = await solve(raw);
+      const items = res.items || [];
+      const title = meta.name ? prettyTitle(meta.name) : (items.length > 1 ? `Question paper · ${items.length} questions` : (items[0]?.text || 'Question').slice(0, 70));
+      const entry = { id: newFileId(), kind: 'qa', name: meta.name || title, title, size: meta.size || 0, addedAt: Date.now(), items, sources: res.sources || [], pack: { cards: [], questions: [], sections: [] }, best: {}, modes: [] };
+      setFiles(saveToLibrary(entry));
+      if (meta.fromFile) {
+        fetch('/api/events/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'file_upload', fileName: String(meta.name || '').slice(0, 80), sizeKB: Math.round((meta.size || 0) / 1024), engine: 'study-engine' }) }).catch(() => {});
+      }
+      track(items.length > 1 ? 'learn_paper' : 'learn_ask', { topic: (items[0]?.text || '').slice(0, 80), questions: items.length, solved: items.filter((i) => i.st === 'ok').length });
+      setText('');
+      setBusy(null);
+      SFX.roundComplete?.();
+      setAnswers(entry);
+    } catch (e) { fail(e, 'Something went wrong. Please try again.'); }
+  }, [syncLeft]);
 
   const handleFile = useCallback(async (file) => {
     if (!file) return;
     setError('');
     if (file.size > MAX_BYTES) { setError('That file is over 25 MB. Try a smaller one.'); return; }
-    // Free students get a few uploads per day (set in Admin); Pro (and trial / free-access) is unlimited.
-    const me = loadUser();
-    const slot = await reserve(me.email, 'file_study', `${file.name}:${file.size}`);
-    syncLeft();
-    if (!slot.allowed) { setLeft(0); setShowUpgrade(true); return; }
     try {
       SFX.select?.();
       setBusy({ name: file.name, stage: 'Reading your file', pct: 0.05 });
-      const { text } = await extractTextFromFile(file, (p) => setBusy((b) => (b ? { ...b, pct: 0.05 + p * 0.55 } : b)));
-      setBusy({ name: file.name, stage: 'Rewriting it in simple words', pct: 0.66 });
-      const { pack } = await buildSmartPack(text, file.name, (p) => setBusy((b) => (b ? { ...b, pct: 0.66 + p * 0.26 } : b)));
-      setBusy({ name: file.name, stage: 'Building flashcards and questions', pct: 0.95 });
-      await new Promise((r) => setTimeout(r, 200));
-      const entry = { id: newFileId(), name: file.name, title: pack.title, size: file.size, addedAt: Date.now(), pack, best: {}, modes: ['learn', 'cards', 'cbt'] };
-      setFiles(saveToLibrary(entry));
-      // logged for the admin activity feed (server numbers each student's uploads)
-      fetch('/api/events/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'file_upload', fileName: file.name.slice(0, 80), sizeKB: Math.round(file.size / 1024), engine: pack.engine || 'local' }) }).catch(() => {});
-      setBusy(null);
-      SFX.roundComplete?.();
-      setSetup(entry);
-    } catch (e) {
-      setBusy(null);
-      setError(e?.message || 'Something went wrong reading that file.');
-      SFX.wrong?.();
-    }
-  }, [syncLeft]);
+      const { text: raw } = await extractTextFromFile(file, (p) => setBusy((b) => (b ? { ...b, pct: 0.05 + p * 0.3 } : b)));
+      await handleInput(raw, { name: file.name, size: file.size, fromFile: true, ref: `${file.name}:${file.size}` });
+    } catch (e) { fail(e, 'Something went wrong reading that file.'); }
+  }, [handleInput]);
+
+  const submit = () => {
+    const t = text.trim();
+    if (busy) return;
+    if (t.length < 3) { setError('Type a question, paste some notes, or add a file.'); return; }
+    handleInput(t, {});
+  };
 
   const onDrop = (e) => {
     e.preventDefault();
@@ -109,34 +180,23 @@ export default function FileStudyHub() {
         {left !== Infinity && (
           <div className={`fs-left${left === 0 ? ' out' : ''}`}>
             {left > 0
-              ? `${left} file${left === 1 ? '' : 's'} left to upload today`
-              : <>No uploads left today. <button onClick={() => setShowUpgrade(true)}>Upgrade to Pro for unlimited</button></>}
+              ? `${left} study turn${left === 1 ? '' : 's'} left today`
+              : <>No study turns left today. <button onClick={() => setShowUpgrade(true)}>Upgrade to Pro for unlimited</button></>}
           </div>
         )}
       </div>
 
-      <a className="fs-engine" href="/study-engine/">
-        <span className="fs-engine-ic"><Icon name="zap" size={20} /></span>
-        <span className="fs-engine-tx"><b>Study Engine</b><em>Type a problem and get the working step by step. Physics, Chemistry, Maths and Biology.</em></span>
-        <span className="fs-engine-go">Open</span>
-      </a>
-
       <div
-        className={`fs-drop${drag ? ' over' : ''}${busy ? ' busy' : ''}`}
+        className={`fs-ask${drag ? ' over' : ''}${busy ? ' busy' : ''}`}
         onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
         onDragLeave={() => setDrag(false)}
         onDrop={onDrop}
-        onClick={() => !busy && inputRef.current?.click()}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && !busy) { e.preventDefault(); inputRef.current?.click(); } }}
-        aria-label="Upload a file to study"
       >
         <input
           ref={inputRef}
           type="file"
           hidden
-          accept=".pdf,.docx,.txt,.md,.markdown,.csv,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          accept=".pdf,.docx,.pptx,.txt,.md,.markdown,.csv,image/*,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation"
           onChange={(e) => { handleFile(e.target.files?.[0]); e.target.value = ''; }}
         />
         {busy ? (
@@ -148,9 +208,25 @@ export default function FileStudyHub() {
           </div>
         ) : (
           <>
-            <div className="fs-drop-icon"><Icon name="upload" size={28} /></div>
-            <div className="fs-drop-title">Upload a file</div>
-            <span className="fs-drop-btn"><Icon name="plus" size={16} /> Choose file</span>
+            <textarea
+              className="fs-ask-box"
+              value={text}
+              rows={3}
+              maxLength={60000}
+              placeholder="Ask a question, paste your notes, or say “make notes on…”"
+              aria-label="Ask a question or paste notes"
+              onChange={(e) => setText(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); submit(); } }}
+            />
+            <div className="fs-ask-row">
+              <button className="fs-ask-attach" onClick={() => inputRef.current?.click()} aria-label="Add a file">
+                <Icon name="upload" size={17} /> <span>Add a file</span>
+              </button>
+              <span className="fs-ask-hint">{SUPPORTED_HINT}</span>
+              <button className="fs-ask-send" onClick={submit} disabled={text.trim().length < 3} aria-label="Send">
+                <Icon name="send" size={18} />
+              </button>
+            </div>
           </>
         )}
       </div>
@@ -174,12 +250,12 @@ export default function FileStudyHub() {
                 style={{ animationDelay: `${i * 60}ms` }}
                 role="button"
                 tabIndex={0}
-                onClick={() => { SFX.select?.(); setSetup(f); }}
-                onKeyDown={(e) => { if (e.key === 'Enter') setSetup(f); }}
+                onClick={() => { SFX.select?.(); if (f.kind === 'qa') setAnswers(f); else setSetup(f); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') { if (f.kind === 'qa') setAnswers(f); else setSetup(f); } }}
               >
-                <div className="fs-file-icon"><Icon name="file" size={22} /></div>
+                <div className="fs-file-icon"><Icon name={f.kind === 'qa' ? 'pen' : 'file'} size={22} /></div>
                 <div className="fs-file-name">{f.title || f.name}</div>
-                <div className="fs-file-meta">{f.pack.cards.length} cards · {f.pack.questions.length} Qs</div>
+                <div className="fs-file-meta">{f.kind === 'qa' ? `${(f.items || []).length} answer${(f.items || []).length === 1 ? '' : 's'}` : `${f.pack.cards.length} cards · ${f.pack.questions.length} Qs`}</div>
                 {f.best?.cbt != null && <div className="fs-file-best"><Icon name="trophy" size={11} /> {f.best.cbt}%</div>}
                 <button
                   className="fs-file-del"
@@ -199,6 +275,36 @@ export default function FileStudyHub() {
             ))}
           </div>
         </>
+      )}
+
+      {answers && (
+        <AnswerSheet
+          entry={answers}
+          onClose={() => setAnswers(null)}
+          onNotes={async () => {
+            const e = answers;
+            try {
+              setAnswers(null);
+              setBusy({ name: e.title, stage: 'Writing your notes', pct: 0.4 });
+              const pack = await makeNotes(`${e.title}\n\n${answersToText(e.items)}`, e.title);
+              pack.sources = [...(pack.sources || []), ...(e.sources || [])];
+              openPack(pack, e.title);
+              track('learn_notes', { topic: String(e.title).slice(0, 80), from: 'answers' });
+            } catch (err) { fail(err, 'Could not make notes from that.'); }
+          }}
+          onNotesFor={async (q) => {
+            const slot = await reserve(loadUser().email, 'file_study', hashText(`notes:${q}`));
+            syncLeft();
+            if (!slot.allowed) { setLeft(0); setAnswers(null); setShowUpgrade(true); return; }
+            try {
+              setAnswers(null);
+              setBusy({ name: q.slice(0, 60), stage: 'Looking it up across the web', pct: 0.35 });
+              const pack = await notesFromAsk(q);
+              openPack(pack, pack.title);
+              track('learn_notes', { topic: String(q).slice(0, 80), from: 'question' });
+            } catch (err) { fail(err, 'Could not find enough on that to write notes.'); }
+          }}
+        />
       )}
 
       {setup && (
@@ -233,11 +339,11 @@ export default function FileStudyHub() {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════════════════════
    SETUP SHEET — pick any pills, then go
-   ══════════════════════════════════════════════════════════════════════════ */
+   ══════════════════════════════════════════════════════════════════════════════════════ */
 function StudySetup({ entry, onClose, onStart }) {
-  const [picked, setPicked] = useState(() => (entry.modes?.length ? entry.modes : ['learn', 'cards', 'cbt']));
+  const [picked, setPicked] = useState(() => (entry.modes?.length ? entry.modes : (entry.pack.notes?.length ? ['notes', 'cards', 'cbt'] : ['learn', 'cards', 'cbt'])));
   const { pack } = entry;
   const allOn = picked.length === MODES.length;
 
@@ -249,6 +355,7 @@ function StudySetup({ entry, onClose, onStart }) {
   const ordered = MODES.filter((m) => picked.includes(m.id)).map((m) => m.id);
 
   const unavailable = {
+    notes: !(pack.notes && pack.notes.length),
     learn: !pack.sections.length,
     cards: !pack.cards.length,
     cbt: pack.questions.length < 4,
@@ -318,9 +425,9 @@ function StudySetup({ entry, onClose, onStart }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════════════════════
    PLAYER — full-screen, tabs for each chosen mode
-   ══════════════════════════════════════════════════════════════════════════ */
+   ══════════════════════════════════════════════════════════════════════════════════════ */
 function StudyPlayer({ entry, modes, onClose }) {
   const [active, setActive] = useState(modes[0]);
   const { pack } = entry;
@@ -355,6 +462,7 @@ function StudyPlayer({ entry, modes, onClose }) {
         </div>
       )}
       <div className="fs-player-body" key={active}>
+        {active === 'notes' && <NotesView pack={pack} onNext={hasNext ? next : null} />}
         {active === 'summary' && <SummaryView pack={pack} onNext={hasNext ? next : null} />}
         {active === 'learn' && <LearnView pack={pack} onNext={hasNext ? next : null} />}
         {active === 'cards' && <CardsView pack={pack} onNext={hasNext ? next : null} />}
@@ -372,7 +480,7 @@ const NextBtn = ({ onNext, label = 'Next mode' }) =>
     </button>
   ) : null;
 
-/* ── Summary ─────────────────────────────────────────────────────────────── */
+/* ── Summary ─────────────────────────────────────────────────────────────────────────────────── */
 function SummaryView({ pack, onNext }) {
   const { overview, points, terms } = pack.summary;
   const [copied, setCopied] = useState(false);
@@ -400,6 +508,7 @@ function SummaryView({ pack, onNext }) {
           </div>
         </>
       )}
+      <SourcesFoot sources={pack.sources} />
       <div className="fs-actions">
         <button className="fs-ghost" onClick={copy}><Icon name={copied ? 'check' : 'share'} size={16} /> {copied ? 'Copied' : 'Copy summary'}</button>
         <NextBtn onNext={onNext} />
@@ -408,7 +517,7 @@ function SummaryView({ pack, onNext }) {
   );
 }
 
-/* ── Learn (bit by bit) ─────────────────────────────────────────────────── */
+/* ── Learn (bit by bit) ───────────────────────────────────────────────────────────────────── */
 function LearnView({ pack, onNext }) {
   const secs = pack.sections;
   const [i, setI] = useState(0);
@@ -426,6 +535,7 @@ function LearnView({ pack, onNext }) {
         <div className="fs-medal"><Icon name="trophy" size={40} /></div>
         <h3>Lesson complete</h3>
         <p>You worked through all {secs.length} parts. Lock it in with a quiz or flashcards.</p>
+        {pack.sources?.length > 0 && <div className="fs-center-sources"><SourcesFoot sources={pack.sources} /></div>}
         <NextBtn onNext={onNext} label="Keep going" />
         <button className="fs-ghost" onClick={() => { setDone(false); setI(0); }}><Icon name="refresh" size={16} /> Start over</button>
       </div>
@@ -494,7 +604,7 @@ function LearnView({ pack, onNext }) {
   );
 }
 
-/* ── Flashcards ──────────────────────────────────────────────────────────── */
+/* ── Flashcards ───────────────────────────────────────────────────────────────────────────── */
 function CardsView({ pack, onNext }) {
   const [deck, setDeck] = useState(() => pack.cards.slice());
   const [i, setI] = useState(0);
@@ -556,7 +666,7 @@ function CardsView({ pack, onNext }) {
   );
 }
 
-/* ── CBT quiz ────────────────────────────────────────────────────────────── */
+/* ── CBT quiz ────────────────────────────────────────────────────────────────────────────── */
 function QuizView({ pack, onNext, onScore }) {
   const all = pack.questions;
   const sizes = [10, 20, all.length].filter((n, k, a) => n <= all.length && a.indexOf(n) === k);
