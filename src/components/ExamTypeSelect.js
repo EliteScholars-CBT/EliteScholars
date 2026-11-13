@@ -3,6 +3,10 @@ import { EXAM_TYPES } from '../utils/constants';
 import { GOLD } from '../utils/colors';
 import Icon, { EmojiIcon } from './Icon';
 import FileStudyHub from './FileStudy';
+import { loadUser } from '../utils/storage';
+
+// The file study hub and the Study Engine are still in development: only this account can see them.
+const STUDY_PREVIEW_EMAIL = 'michaelokpegboro@gmail.com';
 
 // ============================================================================
 // ExamTypeSelect — Compact grid layout (3 cols / 2 cols alternating)
@@ -10,6 +14,8 @@ import FileStudyHub from './FileStudy';
 // ============================================================================
 
 export default function ExamTypeSelect({ onSelectExam }) {
+  const showStudyHub = String(loadUser()?.email || '').trim().toLowerCase() === STUDY_PREVIEW_EMAIL;
+
   // Keyboard navigation
   const handleKeyDown = (e, id) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -49,8 +55,8 @@ export default function ExamTypeSelect({ onSelectExam }) {
         ))}
       </div>
 
-      {/* Study from your own files — upload, save locally, learn any way you like */}
-      <FileStudyHub />
+      {/* Study from your own files + Study Engine — owner-only while in development */}
+      {showStudyHub && <FileStudyHub />}
     </div>
   );
 }
