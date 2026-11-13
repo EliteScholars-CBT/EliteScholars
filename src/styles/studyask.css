@@ -1,0 +1,112 @@
+/* ============================================================================
+   STUDY ASK — the "ask / paste / add a file" card on the hub, worked answers,
+   written notes and the sources list. Follows the app's own look (violet glass
+   on the home screen, theme-aware inside the full-screen player).
+   ============================================================================ */
+
+/* -- ask card (hub) ---------------------------------------------------- */
+.fs-ask {
+  position: relative; display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 22px;
+  background:
+    radial-gradient(120% 90% at 0% 0%, rgba(139,92,246,.35), transparent 60%),
+    radial-gradient(100% 80% at 100% 100%, rgba(255,197,61,.18), transparent 60%),
+    rgba(255,255,255,.07);
+  border: 1.5px solid rgba(255,255,255,.22);
+  transition: border-color .2s, transform .2s var(--ease-spring), background .2s;
+}
+.fs-ask.over { border-color: #FFC53D; background-color: rgba(255,197,61,.12); transform: scale(1.01); }
+.fs-ask.busy { padding: 22px 14px; }
+.fs-ask-box {
+  width: 100%; box-sizing: border-box; resize: vertical; min-height: 84px; max-height: 260px;
+  padding: 12px 14px; border-radius: 16px; font: inherit; font-size: 14.5px; line-height: 1.5;
+  color: #fff; background: rgba(10,4,30,.38); border: 1.5px solid rgba(255,255,255,.16); outline: none;
+  transition: border-color .2s, background .2s;
+}
+.fs-ask-box::placeholder { color: rgba(255,255,255,.5); }
+.fs-ask-box:focus { border-color: #FFC53D; background: rgba(10,4,30,.5); }
+.fs-ask-row { display: flex; align-items: center; gap: 10px; }
+.fs-ask-attach {
+  display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: 99px; cursor: pointer;
+  font: inherit; font-size: 12.5px; font-weight: 800; color: #fff;
+  background: rgba(255,255,255,.12); border: 1.5px solid rgba(255,255,255,.22);
+  transition: transform .15s var(--ease-spring), background .2s;
+}
+.fs-ask-attach:active { transform: scale(.94); }
+.fs-ask-hint { flex: 1; min-width: 0; font-size: 10.5px; color: rgba(255,255,255,.5); line-height: 1.3; }
+.fs-ask-send {
+  flex-shrink: 0; width: 44px; height: 44px; border-radius: 15px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; color: #2E1065;
+  background: linear-gradient(135deg, #FFE8A3, #FFC53D); box-shadow: 0 8px 20px rgba(255,197,61,.35);
+  transition: transform .15s var(--ease-spring), opacity .2s;
+}
+.fs-ask-send:active { transform: scale(.9); }
+.fs-ask-send:disabled { opacity: .4; box-shadow: none; cursor: default; }
+.fs-ask .fs-busy { padding: 4px 0; }
+
+/* -- sources (always at the bottom of a finished item) ------------------ */
+.fs-sources { margin-top: 26px; padding-top: 4px; border-top: 1px solid var(--border-color); }
+.fs-sources ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.fs-sources a {
+  display: flex; flex-direction: column; gap: 1px; padding: 10px 12px; border-radius: 14px; text-decoration: none;
+  color: var(--text-primary); background: var(--card-bg); border: 1px solid var(--border-color);
+}
+.fs-src-title { font-size: 13px; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
+.fs-src-host { font-size: 11px; color: var(--text-secondary); overflow-wrap: anywhere; }
+.fs-center-sources { width: 100%; max-width: 360px; text-align: left; margin-bottom: 8px; }
+.fs-empty { color: var(--text-secondary); font-size: 14px; text-align: center; padding: 30px 10px; }
+
+/* -- worked answers ----------------------------------------------------- */
+.fs-qa-count { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-secondary); margin: 2px 2px 12px; }
+.fs-qa { margin-bottom: 14px; padding: 14px; border-radius: 18px; background: var(--card-bg); border: 1px solid var(--border-color); box-shadow: 0 6px 18px rgba(0,0,0,.06); }
+.fs-qa-head { display: flex; align-items: center; gap: 8px; }
+.fs-qa-head:empty { display: none; }
+.fs-qa-n { width: 26px; height: 26px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #2E1065; background: linear-gradient(135deg, #FFE8A3, #FFC53D); }
+.fs-qa-marks { font-size: 11px; font-weight: 800; color: var(--text-secondary); }
+.fs-qa-q { margin: 8px 0 10px; font-size: 14.5px; font-weight: 700; line-height: 1.5; overflow-wrap: anywhere; }
+.fs-qa-warn { display: flex; align-items: center; gap: 6px; margin: 0 0 8px; font-size: 12px; font-weight: 700; color: #B45309; }
+.fs-ghost.sm { width: auto; padding: 9px 14px; font-size: 12.5px; margin-top: 10px; }
+
+/* the engine's own answer markup */
+.fs-qa-body { font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+.fs-qa-body .worked { counter-reset: st pt; margin: 10px 0; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--border-color); background: rgba(124,58,237,.06); }
+.fs-qa-body .wk-h { font-size: 11px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; color: var(--purple); margin-bottom: 6px; }
+.fs-qa-body .wk-p { font-weight: 700; margin: 4px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.fs-qa-body .wk-s { margin: 8px 0; }
+.fs-qa-body .wk-l { margin: 5px 0; padding-left: 10px; border-left: 2px solid var(--border-color); }
+.fs-qa-body .wk-l.step::before { counter-increment: st; content: 'Step ' counter(st) '. '; font-weight: 800; color: var(--purple); }
+.fs-qa-body .wk-l.pt::before { counter-increment: pt; content: counter(pt) '. '; font-weight: 800; color: var(--purple); }
+.fs-qa-body .wk-a { margin-top: 8px; padding: 8px 12px; border-radius: 12px; font-weight: 800; color: #166534; background: rgba(34,197,94,.14); border: 1px solid rgba(34,197,94,.35); }
+.fs-qa-body .gr-wrap { margin: 8px 0; max-width: 420px; }
+.fs-qa-body .gr-svg { width: 100%; height: auto; display: block; }
+.fs-qa-body details { margin: 8px 0; }
+.fs-qa-body summary { cursor: pointer; font-weight: 700; color: #B45309; }
+.fs-qa-body .status { font-size: 12px; color: var(--text-secondary); }
+.fs-qa-body sup, .fs-qa-body sub { font-size: .68em; line-height: 0; }
+.fs-qa-body .eq { margin: 8px 0; padding: 10px 12px; text-align: center; border-radius: 12px; background: var(--bg-primary); border: 1px solid var(--border-color); font: italic 400 19px/1.9 'Cambria Math', 'STIX Two Math', Georgia, serif; overflow-x: auto; max-width: 100%; white-space: nowrap; }
+.fs-qa-body .eq.inl { display: inline-block; margin: 2px 0; padding: 3px 10px; font-size: 1.05em; line-height: 1.7; white-space: normal; }
+.fs-qa-body .eq i { font-style: italic; }
+.fs-qa-body .eq .op { font-style: normal; margin: 0 .35em; color: var(--text-secondary); }
+.fs-qa-body .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 .2em; line-height: 1.25; }
+.fs-qa-body .frac .num { border-bottom: 1.5px solid currentColor; padding: 0 .4em .1em; }
+.fs-qa-body .frac .den { padding: .1em .4em 0; }
+.fs-qa-body .rad { display: inline-flex; align-items: flex-start; }
+.fs-qa-body .radc { border-top: 1.5px solid currentColor; padding: 0 .2em; margin-left: 1px; }
+
+/* -- written notes ------------------------------------------------------ */
+.fs-note { margin-bottom: 22px; }
+.fs-note h3 { font-size: 20px; font-weight: 800; line-height: 1.25; margin: 4px 0 10px; }
+.fs-note p { margin: 0 0 10px; font-size: 14.5px; line-height: 1.65; overflow-wrap: anywhere; }
+.fs-note p.lead { font-size: 15.5px; }
+.fs-note-list { margin: 0 0 10px; padding-left: 22px; font-size: 14.5px; line-height: 1.65; }
+.fs-note-list li { margin-bottom: 6px; overflow-wrap: anywhere; }
+.fs-note-why { margin: 8px 0; padding: 10px 14px; border-radius: 0 12px 12px 0; border-left: 3px solid var(--purple); background: rgba(124,58,237,.09); font-size: 14px; line-height: 1.6; }
+.fs-note p.fs-note-eg { margin: 12px 0 4px; font-style: italic; color: var(--text-secondary); font-size: 13px; }
+.fs-note-eq { margin: 10px 0; padding: 10px 14px; border-radius: 14px; background: var(--card-bg); border: 1px solid var(--border-color); font: 700 15px/1.9 'Cambria Math', 'STIX Two Math', Georgia, serif; overflow-x: auto; }
+.fs-note-worked { margin: 12px 0; padding: 12px 14px; border-radius: 14px; background: rgba(124,58,237,.06); border: 1px solid var(--border-color); }
+.fs-note-wh { font-size: 11px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; color: var(--purple); margin-bottom: 6px; }
+.fs-note p.fs-note-wp { font-weight: 700; margin: 0 0 6px; }
+.fs-note-ws { margin: 4px 0; padding-left: 10px; border-left: 2px solid var(--border-color); font-size: 14px; line-height: 1.55; }
+.fs-note-wa { margin-top: 8px; padding: 7px 12px; border-radius: 12px; font-weight: 800; color: #166534; background: rgba(34,197,94,.14); border: 1px solid rgba(34,197,94,.35); }
+.fs-note-words { margin: 10px 0 0; font-size: 13.5px; line-height: 1.55; }
+.fs-note-words dt { font-weight: 800; margin-top: 6px; }
+.fs-note-words dd { margin: 0; color: var(--text-secondary); }
