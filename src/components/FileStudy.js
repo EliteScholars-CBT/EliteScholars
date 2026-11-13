@@ -7,7 +7,6 @@ import { reserve, refreshEntitlement, remaining } from '../utils/entitlement';
 import { SFX } from '../utils/sounds';
 import { buildScramble, buildScrambleDeck, buildMatchDeck, normalizeAnswer } from '../utils/gameEngine';
 import {
-  SUPPORTED_HINT,
   extractTextFromFile,
   analyse,
   solve,
@@ -28,10 +27,10 @@ import '../styles/studyask.css';
 
 // ============================================================================
 // FileStudy — "Study from your own files"
-// Ask a question, paste notes, ask for notes on a topic, or add a file. The study
-// engine works out which it is: questions are answered step by step (looked up
-// across the web when needed), notes become a study pack to learn from in any mix
-// of modes. Everything is saved on this device.
+// Same upload card as before. The study engine works behind it: a file (or a
+// typed question / topic) is read, the engine decides whether it holds questions
+// (answered step by step, looked up across the web when needed) or notes (made
+// into a study pack to learn from in any mix of modes). Saved on this device.
 // ============================================================================
 
 const MODES = [
@@ -52,7 +51,7 @@ const shuffled = (arr) => {
 const MAX_BYTES = 25 * 1024 * 1024;
 const LETTERS = ['A', 'B', 'C', 'D'];
 
-/* ══════════════════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════════════
    HUB — sits on the home screen under the exam grid
    ══════════════════════════════════════════════════════════════════════════════════════ */
 export default function FileStudyHub() {
@@ -156,7 +155,7 @@ export default function FileStudyHub() {
   const submit = () => {
     const t = text.trim();
     if (busy) return;
-    if (t.length < 3) { setError('Type a question, paste some notes, or add a file.'); return; }
+    if (t.length < 3) { setError('Type a question or a topic, or upload a file.'); return; }
     handleInput(t, {});
   };
 
@@ -180,17 +179,22 @@ export default function FileStudyHub() {
         {left !== Infinity && (
           <div className={`fs-left${left === 0 ? ' out' : ''}`}>
             {left > 0
-              ? `${left} study turn${left === 1 ? '' : 's'} left today`
-              : <>No study turns left today. <button onClick={() => setShowUpgrade(true)}>Upgrade to Pro for unlimited</button></>}
+              ? `${left} file${left === 1 ? '' : 's'} left today`
+              : <>No uploads left today. <button onClick={() => setShowUpgrade(true)}>Upgrade to Pro for unlimited</button></>}
           </div>
         )}
       </div>
 
       <div
-        className={`fs-ask${drag ? ' over' : ''}${busy ? ' busy' : ''}`}
+        className={`fs-drop${drag ? ' over' : ''}${busy ? ' busy' : ''}`}
         onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
         onDragLeave={() => setDrag(false)}
         onDrop={onDrop}
+        onClick={() => !busy && inputRef.current?.click()}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ') && !busy) { e.preventDefault(); inputRef.current?.click(); } }}
+        aria-label="Upload a file to study"
       >
         <input
           ref={inputRef}
@@ -208,25 +212,19 @@ export default function FileStudyHub() {
           </div>
         ) : (
           <>
-            <textarea
-              className="fs-ask-box"
-              value={text}
-              rows={3}
-              maxLength={60000}
-              placeholder="Ask a question, paste your notes, or say “make notes on…”"
-              aria-label="Ask a question or paste notes"
-              onChange={(e) => setText(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); submit(); } }}
-            />
-            <div className="fs-ask-row">
-              <button className="fs-ask-attach" onClick={() => inputRef.current?.click()} aria-label="Add a file">
-                <Icon name="upload" size={17} /> <span>Add a file</span>
-              </button>
-              <span className="fs-ask-hint">{SUPPORTED_HINT}</span>
-              <button className="fs-ask-send" onClick={submit} disabled={text.trim().length < 3} aria-label="Send">
-                <Icon name="send" size={18} />
-              </button>
-            </div>
+            <div className="fs-drop-icon"><Icon name="upload" size={28} /></div>
+            <div className="fs-drop-title">Upload a file</div>
+            <span className="fs-drop-btn"><Icon name="plus" size={16} /> Choose file</span>
+            <form className="fs-drop-type" onClick={(e) => e.stopPropagation()} onSubmit={(e) => { e.preventDefault(); submit(); }}>
+              <input
+                value={text}
+                maxLength={60000}
+                placeholder={'Or type a question, or “make notes on…”'}
+                aria-label="Type a question or a topic"
+                onChange={(e) => setText(e.target.value)}
+              />
+              <button type="submit" disabled={text.trim().length < 3} aria-label="Send"><Icon name="send" size={16} /></button>
+            </form>
           </>
         )}
       </div>
@@ -339,7 +337,7 @@ export default function FileStudyHub() {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════════════
    SETUP SHEET — pick any pills, then go
    ══════════════════════════════════════════════════════════════════════════════════════ */
 function StudySetup({ entry, onClose, onStart }) {
@@ -425,7 +423,7 @@ function StudySetup({ entry, onClose, onStart }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════════════
    PLAYER — full-screen, tabs for each chosen mode
    ══════════════════════════════════════════════════════════════════════════════════════ */
 function StudyPlayer({ entry, modes, onClose }) {

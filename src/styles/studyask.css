@@ -4,7 +4,7 @@
    on the home screen, theme-aware inside the full-screen player).
    ============================================================================ */
 
-/* -- ask card (hub) ---------------------------------------------------- */
+/* ── ask card (hub) ─────────────────────────────────────────────────────────────────────── */
 .fs-ask {
   position: relative; display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 22px;
   background:
@@ -43,7 +43,7 @@
 .fs-ask-send:disabled { opacity: .4; box-shadow: none; cursor: default; }
 .fs-ask .fs-busy { padding: 4px 0; }
 
-/* -- sources (always at the bottom of a finished item) ------------------ */
+/* ── sources (always at the bottom of a finished item) ────────────────── */
 .fs-sources { margin-top: 26px; padding-top: 4px; border-top: 1px solid var(--border-color); }
 .fs-sources ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .fs-sources a {
@@ -55,7 +55,7 @@
 .fs-center-sources { width: 100%; max-width: 360px; text-align: left; margin-bottom: 8px; }
 .fs-empty { color: var(--text-secondary); font-size: 14px; text-align: center; padding: 30px 10px; }
 
-/* -- worked answers ----------------------------------------------------- */
+/* ── worked answers ─────────────────────────────────────────────────────────────── */
 .fs-qa-count { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-secondary); margin: 2px 2px 12px; }
 .fs-qa { margin-bottom: 14px; padding: 14px; border-radius: 18px; background: var(--card-bg); border: 1px solid var(--border-color); box-shadow: 0 6px 18px rgba(0,0,0,.06); }
 .fs-qa-head { display: flex; align-items: center; gap: 8px; }
@@ -92,7 +92,7 @@
 .fs-qa-body .rad { display: inline-flex; align-items: flex-start; }
 .fs-qa-body .radc { border-top: 1.5px solid currentColor; padding: 0 .2em; margin-left: 1px; }
 
-/* -- written notes ------------------------------------------------------ */
+/* ── written notes ───────────────────────────────────────────────────────────────────── */
 .fs-note { margin-bottom: 22px; }
 .fs-note h3 { font-size: 20px; font-weight: 800; line-height: 1.25; margin: 4px 0 10px; }
 .fs-note p { margin: 0 0 10px; font-size: 14.5px; line-height: 1.65; overflow-wrap: anywhere; }
@@ -110,3 +110,17 @@
 .fs-note-words { margin: 10px 0 0; font-size: 13.5px; line-height: 1.55; }
 .fs-note-words dt { font-weight: 800; margin-top: 6px; }
 .fs-note-words dd { margin: 0; color: var(--text-secondary); }
+
+/* ── type a question inside the upload card ───────────────────────────────────── */
+.fs-drop-type { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 420px; margin-top: 12px; cursor: default; }
+.fs-drop-type input {
+  flex: 1; min-width: 0; box-sizing: border-box; padding: 10px 14px; border-radius: 99px; font: inherit; font-size: 13.5px;
+  color: #fff; background: rgba(10,4,30,.38); border: 1.5px solid rgba(255,255,255,.2); outline: none;
+}
+.fs-drop-type input::placeholder { color: rgba(255,255,255,.55); }
+.fs-drop-type input:focus { border-color: #FFC53D; }
+.fs-drop-type button {
+  flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; color: #2E1065;
+  display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #FFE8A3, #FFC53D);
+}
+.fs-drop-type button:disabled { opacity: .4; cursor: default; }
