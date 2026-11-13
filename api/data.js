@@ -29,6 +29,7 @@ import partner from "./_routes/partner.js";
 import adminPartners from "./_routes/admin-partners.js";
 import authVerify from "./_routes/auth-verify.js";
 import studyRewrite from "./_routes/study-rewrite.js";
+import studyWeb from "./_routes/study-web.js";
 import status from "./_routes/status.js";
 import adminMail from "./_routes/admin-mail.js";
 import push from "./_routes/push.js";
@@ -75,6 +76,7 @@ const ROUTES = {
   "auth/verify": authVerify,
   "events/batch": eventsBatch,
   "study/rewrite": studyRewrite,
+  "study/web": studyWeb,
   "admin/mail-audience": withOp(adminMail, "mail-audience"),
   "admin/mail-history": withOp(adminMail, "mail-history"),
   "admin/mail-send": withOp(adminMail, "mail-send"),

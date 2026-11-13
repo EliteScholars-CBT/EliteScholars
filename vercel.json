@@ -5,731 +5,204 @@
     }
   },
   "rewrites": [
-    {
-      "source": "/api/partner/signup",
-      "destination": "/api/data?route=partner/signup"
-    },
-    {
-      "source": "/api/partner/login",
-      "destination": "/api/data?route=partner/login"
-    },
-    {
-      "source": "/api/partner/me",
-      "destination": "/api/data?route=partner/me"
-    },
-    {
-      "source": "/api/partner/bank",
-      "destination": "/api/data?route=partner/bank"
-    },
-    {
-      "source": "/api/partner/payout",
-      "destination": "/api/data?route=partner/payout"
-    },
-    {
-      "source": "/api/partner/password",
-      "destination": "/api/data?route=partner/password"
-    },
-    {
-      "source": "/api/partner/track",
-      "destination": "/api/data?route=partner/track"
-    },
-    {
-      "source": "/api/admin/partners",
-      "destination": "/api/data?route=admin/partners"
-    },
-    {
-      "source": "/api/admin/partner",
-      "destination": "/api/data?route=admin/partner"
-    },
-    {
-      "source": "/api/admin/partner-action",
-      "destination": "/api/data?route=admin/partner-action"
-    },
-    {
-      "source": "/api/admin/commission-action",
-      "destination": "/api/data?route=admin/commission-action"
-    },
-    {
-      "source": "/api/admin/payouts",
-      "destination": "/api/data?route=admin/payouts"
-    },
-    {
-      "source": "/api/admin/payout-action",
-      "destination": "/api/data?route=admin/payout-action"
-    },
-    {
-      "source": "/api/admin/settings",
-      "destination": "/api/data?route=admin/settings"
-    },
-    {
-      "source": "/api/admin/login",
-      "destination": "/api/data?route=admin/login"
-    },
-    {
-      "source": "/api/admin/stats",
-      "destination": "/api/data?route=admin/stats"
-    },
-    {
-      "source": "/api/events/batch",
-      "destination": "/api/data?route=events/batch"
-    },
-    {
-      "source": "/api/leaderboard/get",
-      "destination": "/api/data?route=leaderboard/get"
-    },
-    {
-      "source": "/api/leaderboard/rank",
-      "destination": "/api/data?route=leaderboard/rank"
-    },
-    {
-      "source": "/api/leaderboard/users",
-      "destination": "/api/data?route=leaderboard/users"
-    },
-    {
-      "source": "/api/profile/sync",
-      "destination": "/api/data?route=profile/sync"
-    },
-    {
-      "source": "/api/profile/check-username",
-      "destination": "/api/data?route=profile/check-username"
-    },
-    {
-      "source": "/api/profile/guardian",
-      "destination": "/api/data?route=profile/guardian"
-    },
-    {
-      "source": "/api/status/post",
-      "destination": "/api/data?route=status/post"
-    },
-    {
-      "source": "/api/status/feed",
-      "destination": "/api/data?route=status/feed"
-    },
-    {
-      "source": "/api/status/delete",
-      "destination": "/api/data?route=status/delete"
-    },
-    {
-      "source": "/api/status/react",
-      "destination": "/api/data?route=status/react"
-    },
-    {
-      "source": "/api/status/thread",
-      "destination": "/api/data?route=status/thread"
-    },
-    {
-      "source": "/api/status/reply",
-      "destination": "/api/data?route=status/reply"
-    },
-    {
-      "source": "/api/status/reshare",
-      "destination": "/api/data?route=status/reshare"
-    },
-    {
-      "source": "/api/status/blocked",
-      "destination": "/api/data?route=status/blocked"
-    },
-    {
-      "source": "/api/status/view",
-      "destination": "/api/data?route=status/view"
-    },
-    {
-      "source": "/api/status/insights",
-      "destination": "/api/data?route=status/insights"
-    },
-    {
-      "source": "/api/admin/status-list",
-      "destination": "/api/data?route=admin/status-list"
-    },
-    {
-      "source": "/api/admin/group-delete",
-      "destination": "/api/data?route=admin/group-delete"
-    },
-    {
-      "source": "/api/admin/group-save",
-      "destination": "/api/data?route=admin/group-save"
-    },
-    {
-      "source": "/api/admin/groups",
-      "destination": "/api/data?route=admin/groups"
-    },
-    {
-      "source": "/api/game/board",
-      "destination": "/api/data?route=game/board"
-    },
-    {
-      "source": "/api/game/score",
-      "destination": "/api/data?route=game/score"
-    },
-    {
-      "source": "/api/site/groups",
-      "destination": "/api/data?route=site/groups"
-    },
-    {
-      "source": "/api/admin/games",
-      "destination": "/api/data?route=admin/games"
-    },
-    {
-      "source": "/api/admin/reminders",
-      "destination": "/api/data?route=admin/reminders"
-    },
-    {
-      "source": "/api/admin/security",
-      "destination": "/api/data?route=admin/security"
-    },
-    {
-      "source": "/api/admin/status-media",
-      "destination": "/api/data?route=admin/status-media"
-    },
-    {
-      "source": "/api/admin/status-action",
-      "destination": "/api/data?route=admin/status-action"
-    },
-    {
-      "source": "/api/admin/status-suspend",
-      "destination": "/api/data?route=admin/status-suspend"
-    },
-    {
-      "source": "/api/status/report",
-      "destination": "/api/data?route=status/report"
-    },
-    {
-      "source": "/api/admin/mail-audience",
-      "destination": "/api/data?route=admin/mail-audience"
-    },
-    {
-      "source": "/api/admin/mail-history",
-      "destination": "/api/data?route=admin/mail-history"
-    },
-    {
-      "source": "/api/admin/mail-send",
-      "destination": "/api/data?route=admin/mail-send"
-    },
-    {
-      "source": "/api/mail/unsubscribe",
-      "destination": "/api/data?route=mail/unsubscribe"
-    },
-    {
-      "source": "/api/push/key",
-      "destination": "/api/data?route=push/key"
-    },
-    {
-      "source": "/api/push/subscribe",
-      "destination": "/api/data?route=push/subscribe"
-    },
-    {
-      "source": "/api/push/unsubscribe",
-      "destination": "/api/data?route=push/unsubscribe"
-    },
-    {
-      "source": "/api/portal/:op",
-      "destination": "/api/data?route=portal&op=:op"
-    },
-    {
-      "source": "/api/school/classes",
-      "destination": "/api/data?route=school/classes"
-    },
-    {
-      "source": "/api/school/mock-questions",
-      "destination": "/api/data?route=school/mock-questions"
-    },
-    {
-      "source": "/api/school/mock-list",
-      "destination": "/api/data?route=school/mock-list"
-    },
-    {
-      "source": "/api/school/mock-submit",
-      "destination": "/api/data?route=school/mock-submit"
-    },
-    {
-      "source": "/api/school/class-create",
-      "destination": "/api/data?route=school/class-create"
-    },
-    {
-      "source": "/api/school/class-join",
-      "destination": "/api/data?route=school/class-join"
-    },
-    {
-      "source": "/api/school/class-leave",
-      "destination": "/api/data?route=school/class-leave"
-    },
-    {
-      "source": "/api/school/class-delete",
-      "destination": "/api/data?route=school/class-delete"
-    },
-    {
-      "source": "/api/school/class-members",
-      "destination": "/api/data?route=school/class-members"
-    },
-    {
-      "source": "/api/school/class-remove",
-      "destination": "/api/data?route=school/class-remove"
-    },
-    {
-      "source": "/api/school/assign-create",
-      "destination": "/api/data?route=school/assign-create"
-    },
-    {
-      "source": "/api/school/assign-list",
-      "destination": "/api/data?route=school/assign-list"
-    },
-    {
-      "source": "/api/school/assign-get",
-      "destination": "/api/data?route=school/assign-get"
-    },
-    {
-      "source": "/api/school/assign-done",
-      "destination": "/api/data?route=school/assign-done"
-    },
-    {
-      "source": "/api/school/assign-delete",
-      "destination": "/api/data?route=school/assign-delete"
-    },
-    {
-      "source": "/api/report/submit",
-      "destination": "/api/data?route=report/submit"
-    },
-    {
-      "source": "/api/report/crash",
-      "destination": "/api/data?route=report/crash"
-    },
-    {
-      "source": "/api/admin/crash-list",
-      "destination": "/api/data?route=admin/crash-list"
-    },
-    {
-      "source": "/api/admin/crash-action",
-      "destination": "/api/data?route=admin/crash-action"
-    },
-    {
-      "source": "/api/admin/reports",
-      "destination": "/api/data?route=admin/reports"
-    },
-    {
-      "source": "/api/admin/report-action",
-      "destination": "/api/data?route=admin/report-action"
-    },
-    {
-      "source": "/api/study/rewrite",
-      "destination": "/api/data?route=study/rewrite"
-    },
-    {
-      "source": "/api/xp/add",
-      "destination": "/api/data?route=xp/add"
-    },
-    {
-      "source": "/api/site/school-info",
-      "destination": "/api/data?route=site/school-info"
-    },
-    {
-      "source": "/api/site/showcase",
-      "destination": "/api/data?route=site/showcase"
-    },
-    {
-      "source": "/api/site/showcase-logo",
-      "destination": "/api/data?route=site/showcase-logo"
-    },
-    {
-      "source": "/api/site/school-demo",
-      "destination": "/api/data?route=site/school-demo"
-    },
-    {
-      "source": "/api/site/config",
-      "destination": "/api/data?route=site/config"
-    },
-    {
-      "source": "/api/admin/sources",
-      "destination": "/api/data?route=admin/sources"
-    },
-    {
-      "source": "/api/admin/ads",
-      "destination": "/api/data?route=admin/ads"
-    },
-    {
-      "source": "/api/admin/ads-save",
-      "destination": "/api/data?route=admin/ads-save"
-    },
-    {
-      "source": "/api/admin/ads-adsterra",
-      "destination": "/api/data?route=admin/ads-adsterra"
-    },
-    {
-      "source": "/api/admin/ads-stats",
-      "destination": "/api/data?route=admin/ads-stats"
-    },
-    {
-      "source": "/api/admin/shop-list",
-      "destination": "/api/data?route=admin/shop-list"
-    },
-    {
-      "source": "/api/admin/shop-save",
-      "destination": "/api/data?route=admin/shop-save"
-    },
-    {
-      "source": "/api/admin/shop-delete",
-      "destination": "/api/data?route=admin/shop-delete"
-    },
-    {
-      "source": "/api/admin/shop-flags",
-      "destination": "/api/data?route=admin/shop-flags"
-    },
-    {
-      "source": "/api/site/shop",
-      "destination": "/api/data?route=site/shop"
-    },
-    {
-      "source": "/api/site/media",
-      "destination": "/api/data?route=site/media"
-    },
-    {
-      "source": "/api/admin/blog-covers",
-      "destination": "/api/data?route=admin/blog-covers"
-    },
-    {
-      "source": "/api/admin/blog-cover-save",
-      "destination": "/api/data?route=admin/blog-cover-save"
-    },
-    {
-      "source": "/api/admin/blog-cover-clear",
-      "destination": "/api/data?route=admin/blog-cover-clear"
-    },
-    {
-      "source": "/api/site/blog-covers",
-      "destination": "/api/data?route=site/blog-covers"
-    },
-    {
-      "source": "/api/events/track",
-      "destination": "/api/data?route=events/track"
-    },
-    {
-      "source": "/api/squads/chat",
-      "destination": "/api/data?route=squads/chat"
-    },
-    {
-      "source": "/api/squads/chat-send",
-      "destination": "/api/data?route=squads/chat-send"
-    },
-    {
-      "source": "/api/squads/chat-typing",
-      "destination": "/api/data?route=squads/chat-typing"
-    },
-    {
-      "source": "/api/squads/chat-react",
-      "destination": "/api/data?route=squads/chat-react"
-    },
-    {
-      "source": "/api/squads/chat-pin",
-      "destination": "/api/data?route=squads/chat-pin"
-    },
-    {
-      "source": "/api/squads/chat-edit",
-      "destination": "/api/data?route=squads/chat-edit"
-    },
-    {
-      "source": "/api/squads/chat-delete",
-      "destination": "/api/data?route=squads/chat-delete"
-    },
-    {
-      "source": "/api/media/get",
-      "destination": "/api/data?route=media/get"
-    },
-    {
-      "source": "/api/admin/me",
-      "destination": "/api/data?route=admin/me"
-    },
-    {
-      "source": "/api/hire/job",
-      "destination": "/api/data?route=hire/job"
-    },
-    {
-      "source": "/api/hire/apply",
-      "destination": "/api/data?route=hire/apply"
-    },
-    {
-      "source": "/api/hire/go",
-      "destination": "/api/data?route=hire/go"
-    },
-    {
-      "source": "/api/hire/research",
-      "destination": "/api/data?route=hire/research"
-    },
-    {
-      "source": "/api/admin/hiring",
-      "destination": "/api/data?route=admin/hiring"
-    },
-    {
-      "source": "/api/admin/hiring-save",
-      "destination": "/api/data?route=admin/hiring-save"
-    },
-    {
-      "source": "/api/admin/hiring-delete",
-      "destination": "/api/data?route=admin/hiring-delete"
-    },
-    {
-      "source": "/api/admin/hiring-job-action",
-      "destination": "/api/data?route=admin/hiring-job-action"
-    },
-    {
-      "source": "/api/hire/upload-url",
-      "destination": "/api/data?route=hire/upload-url"
-    },
-    {
-      "source": "/api/hire/video-submit",
-      "destination": "/api/data?route=hire/video-submit"
-    },
-    {
-      "source": "/api/admin/hiring-video",
-      "destination": "/api/data?route=admin/hiring-video"
-    },
-    {
-      "source": "/api/admin/hiring-cv",
-      "destination": "/api/data?route=admin/hiring-cv"
-    },
-    {
-      "source": "/api/admin/hiring-app",
-      "destination": "/api/data?route=admin/hiring-app"
-    },
-    {
-      "source": "/api/admin/alerts",
-      "destination": "/api/data?route=admin/alerts"
-    },
-    {
-      "source": "/api/admin/students",
-      "destination": "/api/data?route=admin/students"
-    },
-    {
-      "source": "/api/admin/student",
-      "destination": "/api/data?route=admin/student"
-    },
-    {
-      "source": "/api/admin/activity",
-      "destination": "/api/data?route=admin/activity"
-    },
-    {
-      "source": "/api/admin/blog",
-      "destination": "/api/data?route=admin/blog"
-    },
-    {
-      "source": "/api/admin/team",
-      "destination": "/api/data?route=admin/team"
-    },
-    {
-      "source": "/api/admin/team-save",
-      "destination": "/api/data?route=admin/team-save"
-    },
-    {
-      "source": "/api/admin/team-reset",
-      "destination": "/api/data?route=admin/team-reset"
-    },
-    {
-      "source": "/api/admin/team-delete",
-      "destination": "/api/data?route=admin/team-delete"
-    },
-    {
-      "source": "/api/admin/audit",
-      "destination": "/api/data?route=admin/audit"
-    },
-    {
-      "source": "/api/admin/prices",
-      "destination": "/api/data?route=admin/prices"
-    },
-    {
-      "source": "/api/admin/prices-save",
-      "destination": "/api/data?route=admin/prices-save"
-    },
-    {
-      "source": "/api/admin/school-plans",
-      "destination": "/api/data?route=admin/school-plans"
-    },
-    {
-      "source": "/api/admin/school-settings",
-      "destination": "/api/data?route=admin/school-settings"
-    },
-    {
-      "source": "/api/admin/showcase-list",
-      "destination": "/api/data?route=admin/showcase-list"
-    },
-    {
-      "source": "/api/admin/showcase-set",
-      "destination": "/api/data?route=admin/showcase-set"
-    },
-    {
-      "source": "/api/admin/school-account",
-      "destination": "/api/data?route=admin/school-account"
-    },
-    {
-      "source": "/api/admin/ai-status",
-      "destination": "/api/data?route=admin/ai-status"
-    },
-    {
-      "source": "/api/admin/ai-test",
-      "destination": "/api/data?route=admin/ai-test"
-    },
-    {
-      "source": "/api/squads/create",
-      "destination": "/api/data?route=squads/create"
-    },
-    {
-      "source": "/api/squads/join",
-      "destination": "/api/data?route=squads/join"
-    },
-    {
-      "source": "/api/squads/get",
-      "destination": "/api/data?route=squads/get"
-    },
-    {
-      "source": "/api/group/get",
-      "destination": "/api/data?route=group/get"
-    },
-    {
-      "source": "/api/group/add",
-      "destination": "/api/data?route=group/add"
-    },
-    {
-      "source": "/api/group/remove",
-      "destination": "/api/data?route=group/remove"
-    },
-    {
-      "source": "/api/squads/leave",
-      "destination": "/api/data?route=squads/leave"
-    },
-    {
-      "source": "/api/challenges/create",
-      "destination": "/api/data?route=challenges/create"
-    },
-    {
-      "source": "/api/challenges/accept",
-      "destination": "/api/data?route=challenges/accept"
-    },
-    {
-      "source": "/api/challenges/decline",
-      "destination": "/api/data?route=challenges/decline"
-    },
-    {
-      "source": "/api/challenges/submit-score",
-      "destination": "/api/data?route=challenges/submit-score"
-    },
-    {
-      "source": "/api/challenges/list",
-      "destination": "/api/data?route=challenges/list"
-    },
-    {
-      "source": "/api/challenges/lookup",
-      "destination": "/api/data?route=challenges/lookup"
-    },
-    {
-      "source": "/api/auth/verify",
-      "destination": "/api/data?route=auth/verify"
-    },
-    {
-      "source": "/api/entitlement/get",
-      "destination": "/api/data?route=entitlement/get"
-    },
-    {
-      "source": "/api/entitlement/use",
-      "destination": "/api/data?route=entitlement/use"
-    },
-    {
-      "source": "/api/entitlement/share-start",
-      "destination": "/api/data?route=entitlement/share-start"
-    },
-    {
-      "source": "/api/entitlement/share-claim",
-      "destination": "/api/data?route=entitlement/share-claim"
-    },
-    {
-      "source": "/api/admin/access",
-      "destination": "/api/data?route=admin/access"
-    },
-    {
-      "source": "/api/admin/access-action",
-      "destination": "/api/data?route=admin/access-action"
-    },
-    {
-      "source": "/partner",
-      "destination": "/api/data?route=site/page&p=partner"
-    },
-    {
-      "source": "/school",
-      "destination": "/api/data?route=site/page&p=school"
-    },
-    {
-      "source": "/schools",
-      "destination": "/api/data?route=site/page&p=school"
-    },
-    {
-      "source": "/centre",
-      "destination": "/api/data?route=site/page&p=centre"
-    },
-    {
-      "source": "/centres",
-      "destination": "/api/data?route=site/page&p=centre"
-    },
-    {
-      "source": "/blog",
-      "destination": "/blog/index.html"
-    },
-    {
-      "source": "/study-engine",
-      "destination": "/study-engine/index.html"
-    },
-    {
-      "source": "/study-engine/",
-      "destination": "/study-engine/index.html"
-    },
-    {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
-    }
+    { "source": "/api/partner/signup", "destination": "/api/data?route=partner/signup" },
+    { "source": "/api/partner/login", "destination": "/api/data?route=partner/login" },
+    { "source": "/api/partner/me", "destination": "/api/data?route=partner/me" },
+    { "source": "/api/partner/bank", "destination": "/api/data?route=partner/bank" },
+    { "source": "/api/partner/payout", "destination": "/api/data?route=partner/payout" },
+    { "source": "/api/partner/password", "destination": "/api/data?route=partner/password" },
+    { "source": "/api/partner/track", "destination": "/api/data?route=partner/track" },
+    { "source": "/api/admin/partners", "destination": "/api/data?route=admin/partners" },
+    { "source": "/api/admin/partner", "destination": "/api/data?route=admin/partner" },
+    { "source": "/api/admin/partner-action", "destination": "/api/data?route=admin/partner-action" },
+    { "source": "/api/admin/commission-action", "destination": "/api/data?route=admin/commission-action" },
+    { "source": "/api/admin/payouts", "destination": "/api/data?route=admin/payouts" },
+    { "source": "/api/admin/payout-action", "destination": "/api/data?route=admin/payout-action" },
+    { "source": "/api/admin/settings", "destination": "/api/data?route=admin/settings" },
+    { "source": "/api/admin/login", "destination": "/api/data?route=admin/login" },
+    { "source": "/api/admin/stats", "destination": "/api/data?route=admin/stats" },
+    { "source": "/api/events/batch", "destination": "/api/data?route=events/batch" },
+    { "source": "/api/leaderboard/get", "destination": "/api/data?route=leaderboard/get" },
+    { "source": "/api/leaderboard/rank", "destination": "/api/data?route=leaderboard/rank" },
+    { "source": "/api/leaderboard/users", "destination": "/api/data?route=leaderboard/users" },
+    { "source": "/api/profile/sync", "destination": "/api/data?route=profile/sync" },
+    { "source": "/api/profile/check-username", "destination": "/api/data?route=profile/check-username" },
+    { "source": "/api/profile/guardian", "destination": "/api/data?route=profile/guardian" },
+    { "source": "/api/status/post", "destination": "/api/data?route=status/post" },
+    { "source": "/api/status/feed", "destination": "/api/data?route=status/feed" },
+    { "source": "/api/status/delete", "destination": "/api/data?route=status/delete" },
+    { "source": "/api/status/react", "destination": "/api/data?route=status/react" },
+    { "source": "/api/status/thread", "destination": "/api/data?route=status/thread" },
+    { "source": "/api/status/reply", "destination": "/api/data?route=status/reply" },
+    { "source": "/api/status/reshare", "destination": "/api/data?route=status/reshare" },
+    { "source": "/api/status/blocked", "destination": "/api/data?route=status/blocked" },
+    { "source": "/api/status/view", "destination": "/api/data?route=status/view" },
+    { "source": "/api/status/insights", "destination": "/api/data?route=status/insights" },
+    { "source": "/api/admin/status-list", "destination": "/api/data?route=admin/status-list" },
+    { "source": "/api/admin/group-delete", "destination": "/api/data?route=admin/group-delete" },
+    { "source": "/api/admin/group-save", "destination": "/api/data?route=admin/group-save" },
+    { "source": "/api/admin/groups", "destination": "/api/data?route=admin/groups" },
+    { "source": "/api/game/board", "destination": "/api/data?route=game/board" },
+    { "source": "/api/game/score", "destination": "/api/data?route=game/score" },
+    { "source": "/api/site/groups", "destination": "/api/data?route=site/groups" },
+    { "source": "/api/admin/games", "destination": "/api/data?route=admin/games" },
+    { "source": "/api/admin/reminders", "destination": "/api/data?route=admin/reminders" },
+    { "source": "/api/admin/security", "destination": "/api/data?route=admin/security" },
+    { "source": "/api/admin/status-media", "destination": "/api/data?route=admin/status-media" },
+    { "source": "/api/admin/status-action", "destination": "/api/data?route=admin/status-action" },
+    { "source": "/api/admin/status-suspend", "destination": "/api/data?route=admin/status-suspend" },
+    { "source": "/api/status/report", "destination": "/api/data?route=status/report" },
+    { "source": "/api/admin/mail-audience", "destination": "/api/data?route=admin/mail-audience" },
+    { "source": "/api/admin/mail-history", "destination": "/api/data?route=admin/mail-history" },
+    { "source": "/api/admin/mail-send", "destination": "/api/data?route=admin/mail-send" },
+    { "source": "/api/mail/unsubscribe", "destination": "/api/data?route=mail/unsubscribe" },
+    { "source": "/api/push/key", "destination": "/api/data?route=push/key" },
+    { "source": "/api/push/subscribe", "destination": "/api/data?route=push/subscribe" },
+    { "source": "/api/push/unsubscribe", "destination": "/api/data?route=push/unsubscribe" },
+    { "source": "/api/portal/:op", "destination": "/api/data?route=portal&op=:op" },
+    { "source": "/api/school/classes", "destination": "/api/data?route=school/classes" },
+    { "source": "/api/school/mock-questions", "destination": "/api/data?route=school/mock-questions" },
+    { "source": "/api/school/mock-list", "destination": "/api/data?route=school/mock-list" },
+    { "source": "/api/school/mock-submit", "destination": "/api/data?route=school/mock-submit" },
+    { "source": "/api/school/class-create", "destination": "/api/data?route=school/class-create" },
+    { "source": "/api/school/class-join", "destination": "/api/data?route=school/class-join" },
+    { "source": "/api/school/class-leave", "destination": "/api/data?route=school/class-leave" },
+    { "source": "/api/school/class-delete", "destination": "/api/data?route=school/class-delete" },
+    { "source": "/api/school/class-members", "destination": "/api/data?route=school/class-members" },
+    { "source": "/api/school/class-remove", "destination": "/api/data?route=school/class-remove" },
+    { "source": "/api/school/assign-create", "destination": "/api/data?route=school/assign-create" },
+    { "source": "/api/school/assign-list", "destination": "/api/data?route=school/assign-list" },
+    { "source": "/api/school/assign-get", "destination": "/api/data?route=school/assign-get" },
+    { "source": "/api/school/assign-done", "destination": "/api/data?route=school/assign-done" },
+    { "source": "/api/school/assign-delete", "destination": "/api/data?route=school/assign-delete" },
+    { "source": "/api/report/submit", "destination": "/api/data?route=report/submit" },
+    { "source": "/api/report/crash", "destination": "/api/data?route=report/crash" },
+    { "source": "/api/admin/crash-list", "destination": "/api/data?route=admin/crash-list" },
+    { "source": "/api/admin/crash-action", "destination": "/api/data?route=admin/crash-action" },
+    { "source": "/api/admin/reports", "destination": "/api/data?route=admin/reports" },
+    { "source": "/api/admin/report-action", "destination": "/api/data?route=admin/report-action" },
+    { "source": "/api/study/rewrite", "destination": "/api/data?route=study/rewrite" },
+    { "source": "/api/study/web", "destination": "/api/data?route=study/web" },
+    { "source": "/api/xp/add", "destination": "/api/data?route=xp/add" },
+    { "source": "/api/site/school-info", "destination": "/api/data?route=site/school-info" },
+    { "source": "/api/site/showcase", "destination": "/api/data?route=site/showcase" },
+    { "source": "/api/site/showcase-logo", "destination": "/api/data?route=site/showcase-logo" },
+    { "source": "/api/site/school-demo", "destination": "/api/data?route=site/school-demo" },
+    { "source": "/api/site/config", "destination": "/api/data?route=site/config" },
+    { "source": "/api/admin/sources", "destination": "/api/data?route=admin/sources" },
+    { "source": "/api/admin/ads", "destination": "/api/data?route=admin/ads" },
+    { "source": "/api/admin/ads-save", "destination": "/api/data?route=admin/ads-save" },
+    { "source": "/api/admin/ads-adsterra", "destination": "/api/data?route=admin/ads-adsterra" },
+    { "source": "/api/admin/ads-stats", "destination": "/api/data?route=admin/ads-stats" },
+    { "source": "/api/admin/shop-list", "destination": "/api/data?route=admin/shop-list" },
+    { "source": "/api/admin/shop-save", "destination": "/api/data?route=admin/shop-save" },
+    { "source": "/api/admin/shop-delete", "destination": "/api/data?route=admin/shop-delete" },
+    { "source": "/api/admin/shop-flags", "destination": "/api/data?route=admin/shop-flags" },
+    { "source": "/api/site/shop", "destination": "/api/data?route=site/shop" },
+    { "source": "/api/site/media", "destination": "/api/data?route=site/media" },
+    { "source": "/api/admin/blog-covers", "destination": "/api/data?route=admin/blog-covers" },
+    { "source": "/api/admin/blog-cover-save", "destination": "/api/data?route=admin/blog-cover-save" },
+    { "source": "/api/admin/blog-cover-clear", "destination": "/api/data?route=admin/blog-cover-clear" },
+    { "source": "/api/site/blog-covers", "destination": "/api/data?route=site/blog-covers" },
+    { "source": "/api/events/track", "destination": "/api/data?route=events/track" },
+    { "source": "/api/squads/chat", "destination": "/api/data?route=squads/chat" },
+    { "source": "/api/squads/chat-send", "destination": "/api/data?route=squads/chat-send" },
+    { "source": "/api/squads/chat-typing", "destination": "/api/data?route=squads/chat-typing" },
+    { "source": "/api/squads/chat-react", "destination": "/api/data?route=squads/chat-react" },
+    { "source": "/api/squads/chat-pin", "destination": "/api/data?route=squads/chat-pin" },
+    { "source": "/api/squads/chat-edit", "destination": "/api/data?route=squads/chat-edit" },
+    { "source": "/api/squads/chat-delete", "destination": "/api/data?route=squads/chat-delete" },
+    { "source": "/api/media/get", "destination": "/api/data?route=media/get" },
+    { "source": "/api/admin/me", "destination": "/api/data?route=admin/me" },
+    { "source": "/api/hire/job", "destination": "/api/data?route=hire/job" },
+    { "source": "/api/hire/apply", "destination": "/api/data?route=hire/apply" },
+    { "source": "/api/hire/go", "destination": "/api/data?route=hire/go" },
+    { "source": "/api/hire/research", "destination": "/api/data?route=hire/research" },
+    { "source": "/api/admin/hiring", "destination": "/api/data?route=admin/hiring" },
+    { "source": "/api/admin/hiring-save", "destination": "/api/data?route=admin/hiring-save" },
+    { "source": "/api/admin/hiring-delete", "destination": "/api/data?route=admin/hiring-delete" },
+    { "source": "/api/admin/hiring-job-action", "destination": "/api/data?route=admin/hiring-job-action" },
+    { "source": "/api/hire/upload-url", "destination": "/api/data?route=hire/upload-url" },
+    { "source": "/api/hire/video-submit", "destination": "/api/data?route=hire/video-submit" },
+    { "source": "/api/admin/hiring-video", "destination": "/api/data?route=admin/hiring-video" },
+    { "source": "/api/admin/hiring-cv", "destination": "/api/data?route=admin/hiring-cv" },
+    { "source": "/api/admin/hiring-app", "destination": "/api/data?route=admin/hiring-app" },
+    { "source": "/api/admin/alerts", "destination": "/api/data?route=admin/alerts" },
+    { "source": "/api/admin/students", "destination": "/api/data?route=admin/students" },
+    { "source": "/api/admin/student", "destination": "/api/data?route=admin/student" },
+    { "source": "/api/admin/activity", "destination": "/api/data?route=admin/activity" },
+    { "source": "/api/admin/blog", "destination": "/api/data?route=admin/blog" },
+    { "source": "/api/admin/team", "destination": "/api/data?route=admin/team" },
+    { "source": "/api/admin/team-save", "destination": "/api/data?route=admin/team-save" },
+    { "source": "/api/admin/team-reset", "destination": "/api/data?route=admin/team-reset" },
+    { "source": "/api/admin/team-delete", "destination": "/api/data?route=admin/team-delete" },
+    { "source": "/api/admin/audit", "destination": "/api/data?route=admin/audit" },
+    { "source": "/api/admin/prices", "destination": "/api/data?route=admin/prices" },
+    { "source": "/api/admin/prices-save", "destination": "/api/data?route=admin/prices-save" },
+    { "source": "/api/admin/school-plans", "destination": "/api/data?route=admin/school-plans" },
+    { "source": "/api/admin/school-settings", "destination": "/api/data?route=admin/school-settings" },
+    { "source": "/api/admin/showcase-list", "destination": "/api/data?route=admin/showcase-list" },
+    { "source": "/api/admin/showcase-set", "destination": "/api/data?route=admin/showcase-set" },
+    { "source": "/api/admin/school-account", "destination": "/api/data?route=admin/school-account" },
+    { "source": "/api/admin/ai-status", "destination": "/api/data?route=admin/ai-status" },
+    { "source": "/api/admin/ai-test", "destination": "/api/data?route=admin/ai-test" },
+    { "source": "/api/squads/create", "destination": "/api/data?route=squads/create" },
+    { "source": "/api/squads/join", "destination": "/api/data?route=squads/join" },
+    { "source": "/api/squads/get", "destination": "/api/data?route=squads/get" },
+    { "source": "/api/group/get", "destination": "/api/data?route=group/get" },
+    { "source": "/api/group/add", "destination": "/api/data?route=group/add" },
+    { "source": "/api/group/remove", "destination": "/api/data?route=group/remove" },
+    { "source": "/api/squads/leave", "destination": "/api/data?route=squads/leave" },
+    { "source": "/api/challenges/create", "destination": "/api/data?route=challenges/create" },
+    { "source": "/api/challenges/accept", "destination": "/api/data?route=challenges/accept" },
+    { "source": "/api/challenges/decline", "destination": "/api/data?route=challenges/decline" },
+    { "source": "/api/challenges/submit-score", "destination": "/api/data?route=challenges/submit-score" },
+    { "source": "/api/challenges/list", "destination": "/api/data?route=challenges/list" },
+    { "source": "/api/challenges/lookup", "destination": "/api/data?route=challenges/lookup" },
+    { "source": "/api/auth/verify", "destination": "/api/data?route=auth/verify" },
+    { "source": "/api/entitlement/get", "destination": "/api/data?route=entitlement/get" },
+    { "source": "/api/entitlement/use", "destination": "/api/data?route=entitlement/use" },
+    { "source": "/api/entitlement/share-start", "destination": "/api/data?route=entitlement/share-start" },
+    { "source": "/api/entitlement/share-claim", "destination": "/api/data?route=entitlement/share-claim" },
+    { "source": "/api/admin/access", "destination": "/api/data?route=admin/access" },
+    { "source": "/api/admin/access-action", "destination": "/api/data?route=admin/access-action" },
+    { "source": "/partner", "destination": "/api/data?route=site/page&p=partner" },
+    { "source": "/school", "destination": "/api/data?route=site/page&p=school" },
+    { "source": "/schools", "destination": "/api/data?route=site/page&p=school" },
+    { "source": "/centre", "destination": "/api/data?route=site/page&p=centre" },
+    { "source": "/centres", "destination": "/api/data?route=site/page&p=centre" },
+    { "source": "/blog", "destination": "/blog/index.html" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
+      "source": "/study-engine/index.html",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=(), payment=()"
-        },
-        {
-          "key": "Strict-Transport-Security",
-          "value": "max-age=31536000; includeSubDomains"
-        },
-        {
-          "key": "Content-Security-Policy",
-          "value": "frame-ancestors 'none'; base-uri 'self'; object-src 'none'"
-        }
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=()" },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" },
+        { "key": "Content-Security-Policy", "value": "frame-ancestors 'none'; base-uri 'self'; object-src 'none'" }
       ]
     },
     {
       "source": "/api/(.*)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store"
-        }
+        { "key": "Cache-Control", "value": "no-store" }
       ]
     }
   ],
   "crons": [
-    {
-      "path": "/api/cron",
-      "schedule": "0 16 * * *"
-    },
-    {
-      "path": "/api/cron",
-      "schedule": "0 7 * * *"
-    }
+    { "path": "/api/cron", "schedule": "0 16 * * *" },
+    { "path": "/api/cron", "schedule": "0 7 * * *" }
   ]
 }
