@@ -95,6 +95,25 @@ const FRONT = {
 const rows = (txt) => txt.trim().split('\n').map((l) => { const [id, cap, eyes, mouth, brows, prop, pal, anim] = l.trim().split('|'); return { id, cap, eyes, mouth, brows, prop, pal, anim }; });
 
 export const PACKS = [
+  { id: 'es', name: 'Elite Scholars', icon: 'E', items: rows(`
+es-scholar|ELITE SCHOLAR|shades|smile|none|trophy|gold|pop
+es-squad|SQUAD GOALS|wink|grin|up|sparkles|violet|bounce
+es-study|GO STUDY!|open|flat|angry|book|teal|nod
+es-waec|WAEC READY|open|smile|none|pencil|green|nod
+es-jamb|JAMB LOADING|open|o|up|clock|blue|pulse
+es-streak|STREAK ON|star|grin|none|flames|orange|pop
+es-xp|XP GRIND|open|clench|angry|bolt|lime|wiggle
+es-a1|A1 INCOMING|star|grin|none|sparkles|gold|bounce
+es-cbt|CBT MODE|side|flat|none|lock|slate|nod
+es-brain|ELITE BRAIN|happy|smirk|up|bulb|violet|float
+es-quiz|QUIZ ME|wink|smirk|up|question|teal|wiggle
+es-leader|TOP OF BOARD|shades|grin|none|trophy|gold|bounce
+es-late|NO LATE NOW|wide|gasp|worried|clock|red|shake
+es-rest|BREAK TIME|closed|smile|none|coffee|rose|float
+es-help|HELP ME O|wide|wail|worried|sweat|blue|shake
+es-gist|GIST LATER|open|flat|none|phones|slate|nod
+es-win|WE DID IT|happy|grin|none|party|green|bounce
+es-love|SQUAD LOVE|heart|smile|none|hearts|rose|pulse`) },
   { id: 'n', name: 'Naija Vibes', icon: 'N', items: rows(`
 n-omo|OMO!|wide|o|up|exclaim|orange|shake
 n-wahala|WAHALA|open|frown|worried|sweat|slate|wiggle
