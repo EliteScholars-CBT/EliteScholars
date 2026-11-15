@@ -89,6 +89,15 @@ const FRONT = {
   phones: () => `<path d="M18 54 Q16 6 60 6 Q104 6 102 54" ${stroke(5.500)}/><rect x="10" y="46" width="14" height="26" rx="6" fill="#7C3AED" stroke="#fff" stroke-width="2.400"/><rect x="96" y="46" width="14" height="26" rx="6" fill="#7C3AED" stroke="#fff" stroke-width="2.400"/>${rise('&#9835;', 100, 24, 16, '#EC4899', 0.2)}`,
   lock: () => `<g transform="translate(86 62)" class="pa-bob"><path d="M5 12 V8 a7 7 0 0 1 14 0 V12" ${stroke(3.200)}/><rect y="11" width="24" height="19" rx="4.500" fill="#FFC53D" stroke="#fff" stroke-width="2.400"/><circle cx="12" cy="19.500" r="2.600" fill="${INK}"/><rect x="11" y="20" width="2" height="6" fill="${INK}"/></g>`,
   clock: () => `<g class="pa-shake"><circle cx="98" cy="22" r="13" fill="#fff" stroke="${INK}" stroke-width="3"/><path d="M98 14 v8 l6 4" ${stroke(2.800)}/><path d="M88 8 l-5 -4 M108 8 l5 -4" stroke="#EF4444" stroke-width="3.600" stroke-linecap="round"/></g>`,
+  ball: () => `<g transform="translate(84 58)" class="pa-bob"><circle cx="15" cy="15" r="14" fill="#fff" stroke="${INK}" stroke-width="2.600"/><path d="M15 8 l6 4.500 l-2.300 7 h-7.400 l-2.300 -7z" fill="${INK}"/><path d="M15 8 V1 M21 12.500 l7 -2 M18.700 19.500 l4 6 M11.300 19.500 l-4 6 M9 12.500 l-7 -2" stroke="${INK}" stroke-width="1.800"/></g>`,
+  gift: () => `<g class="pa-bob" transform="translate(84 44)"><rect y="8" width="30" height="22" rx="3" fill="#EC4899" stroke="#fff" stroke-width="2.200"/><rect x="12.500" y="8" width="5" height="22" fill="#FFE066"/><rect y="15" width="30" height="5" fill="#FFE066"/><path d="M15 8 q-10 -12 -13 -4 q1 6 13 4 q12 2 13 -4 q-3 -8 -13 4" fill="#FFE066" stroke="#fff" stroke-width="1.600"/></g>`,
+  pad: () => `<g transform="translate(78 62)" class="pa-bob"><path d="M6 6 h28 q8 0 8 12 q0 10 -7 10 q-4 0 -7 -6 h-16 q-3 6 -7 6 q-7 0 -7 -10 q0 -12 8 -12z" fill="${INK}" stroke="#fff" stroke-width="2.200" stroke-linejoin="round"/><path d="M10 12 v8 M6 16 h8" stroke="#fff" stroke-width="2.400" stroke-linecap="round"/><circle cx="30" cy="13" r="2.300" fill="#F43F5E"/><circle cx="35" cy="18" r="2.300" fill="#38BDF8"/></g>`,
+  rain: () => `<g class="pa-bob"><path d="M82 26 q-4 -14 10 -15 q5 -9 15 -3 q12 -1 13 11 q0 8 -9 7 h-27 q-6 0 -2 0z" fill="#E2E8F0" stroke="#fff" stroke-width="2.400" stroke-linejoin="round"/></g><path class="pa-drop" d="M92 38 q-3 5 0 7 q3 -2 0 -7z" fill="#7DD3FC" stroke="#fff" stroke-width="1.200"/><path class="pa-drop" style="animation-delay:.4s" d="M104 40 q-3 5 0 7 q3 -2 0 -7z" fill="#7DD3FC" stroke="#fff" stroke-width="1.200"/>`,
+  moon: () => `<g class="pa-bob"><path d="M100 4 a18 18 0 1 0 14 28 a14 14 0 1 1 -14 -28z" fill="#FFE066" stroke="#fff" stroke-width="2.400" stroke-linejoin="round"/></g>${sparkle(84, 14, 6, .4)}`,
+  sun: () => `<g class="pa-pulse"><circle cx="98" cy="20" r="11" fill="#FFD34D" stroke="#fff" stroke-width="2.600"/><path d="M98 2 v-3 M98 38 v3 M80 20 h-3 M116 20 h3 M85 7 l-2 -2 M111 7 l2 -2 M85 33 l-2 2 M111 33 l2 2" stroke="#FFB020" stroke-width="2.600" stroke-linecap="round"/></g>`,
+  burger: () => `<g transform="translate(84 60)" class="pa-bob"><path d="M2 12 q0 -12 14 -12 q14 0 14 12z" fill="#F59E0B" stroke="#fff" stroke-width="2"/><rect y="13" width="32" height="5" rx="2" fill="#65A30D" stroke="#fff" stroke-width="1.400"/><rect x="2" y="18" width="28" height="5" rx="2" fill="#7C2D12" stroke="#fff" stroke-width="1.400"/><path d="M2 24 h28 q0 6 -14 6 q-14 0 -14 -6z" fill="#F59E0B" stroke="#fff" stroke-width="2"/></g>`,
+  drink: () => `<g transform="translate(88 58)" class="pa-bob"><path d="M4 8 h20 l-3 24 h-14z" fill="#F43F5E" stroke="#fff" stroke-width="2.200" stroke-linejoin="round"/><rect x="2" y="4" width="24" height="5" rx="2" fill="#fff" stroke="${INK}" stroke-width="1.600"/><path d="M16 4 l4 -12" stroke="${INK}" stroke-width="2.600" stroke-linecap="round"/></g>`,
+  car: () => `<g transform="translate(76 62)" class="pa-bob"><rect y="6" width="42" height="20" rx="5" fill="#FFC53D" stroke="#fff" stroke-width="2.200"/><rect x="4" y="9" width="10" height="8" rx="2" fill="#7DD3FC"/><rect x="17" y="9" width="10" height="8" rx="2" fill="#7DD3FC"/><rect x="30" y="9" width="9" height="8" rx="2" fill="#7DD3FC"/><rect y="19" width="42" height="3" fill="${INK}"/><circle cx="10" cy="28" r="5" fill="${INK}" stroke="#fff" stroke-width="1.800"/><circle cx="32" cy="28" r="5" fill="${INK}" stroke="#fff" stroke-width="1.800"/></g>`,
 };
 
 // ---- the catalogue: id|caption|eyes|mouth|brows|prop|palette|animation -------------------------------
@@ -247,6 +256,90 @@ f-blush|AWWW|closed|smile|none|hearts|rose|pulse
 f-bored|BORED|side|flat|none|none|slate|nod
 f-nervous|NERVOUS|wide|clench|worried|sweat|orange|shake
 f-vibing|VIBING|closed|smile|none|sparkles|violet|nod`) },
+  { id: 'ch', name: 'Chop Time', icon: 'C', items: rows(`
+ch-hungry|I'M HUNGRY|wide|o|worried|burger|orange|wiggle
+ch-wars|JOLLOF WARS|open|smirk|angry|jollof|red|shake
+ch-chop|TIME TO CHOP|closed|tongue|none|burger|orange|bounce
+ch-suya|SUYA NIGHT|closed|grin|none|flames|red|pulse
+ch-zobo|ZOBO VIBES|happy|smile|none|drink|rose|float
+ch-puff|PUFF-PUFF|happy|grin|none|sparkles|gold|bounce
+ch-share|SHARE THE FOOD|side|smirk|up|burger|violet|nod
+ch-full|I'M FULL|closed|smile|none|zzz|green|float
+ch-mama|MAMA COOKED|star|grin|none|jollof|orange|pop
+ch-last|LAST PIECE?!|wide|gasp|angry|burger|red|shake
+ch-water|DRINK WATER|open|smile|none|drink|blue|nod
+ch-sweet|SO SWEET|heart|tongue|none|hearts|rose|pulse`) },
+  { id: 'lg', name: 'Lagos Life', icon: 'L', items: rows(`
+lg-traffic|GO-SLOW|x|wail|angry|car|red|shake
+lg-danfo|DANFO STRESS|wide|clench|worried|car|gold|wiggle
+lg-nepa|LIGHT DON GO|sleepy|frown|none|bolt|slate|float
+lg-rain|RAIN DON FALL|open|o|worried|rain|blue|shake
+lg-sun|NA SUN BEAT AM|x|tongue|none|sun|orange|wiggle
+lg-owambe|OWAMBE!|shades|grin|none|party|rose|bounce
+lg-detty|DETTY DECEMBER|wink|grin|up|sparkles|gold|pop
+lg-flex|NO BE SMALL FLEX|shades|smirk|none|money|green|nod
+lg-hustle|HUSTLE|open|clench|angry|bolt|orange|pulse
+lg-lagos|LAGOS IS LAGOS|side|smirk|up|none|slate|nod
+lg-wait|WAIT FOR ME!|wide|gasp|worried|car|blue|shake
+lg-network|BAD NETWORK|side|flat|angry|phone|slate|nod`) },
+  { id: 'fb', name: 'Football', icon: 'B', items: rows(`
+fb-goal|GOAAAL!|star|grin|up|ball|green|pop
+fb-miss|OH NOOO|wide|gasp|worried|ball|red|shake
+fb-var|CHECK VAR|side|flat|up|question|slate|nod
+fb-ref|REF, WAKE UP!|open|clench|angry|exclaim|red|shake
+fb-eagles|UP SUPER EAGLES|shades|grin|none|flag|green|bounce
+fb-won|WE WON!|happy|grin|none|trophy|gold|bounce
+fb-lost|WE DON LOSE|x|wail|worried|tears|blue|shake
+fb-day|MATCHDAY|open|grin|angry|flames|orange|pulse
+fb-pass|PASS THE BALL|open|smirk|up|ball|teal|nod
+fb-offside|OFFSIDE!|wide|o|up|exclaim|orange|wiggle
+fb-goat|WHO'S THE GOAT?|side|smirk|up|question|violet|wiggle`) },
+  { id: 'mn', name: 'Money Talk', icon: '$', items: rows(`
+mn-broke|I'M BROKE|x|frown|worried|sweat|slate|wiggle
+mn-alert|CREDIT ALERT!|naira|grin|none|money|green|bounce
+mn-send|SEND MONEY O|open|smirk|up|money|gold|nod
+mn-owe|PAY ME BACK|side|smirk|angry|exclaim|red|nod
+mn-rich|NA ME RICH|shades|smirk|none|money|gold|pop
+mn-data|DATA FINISH|wide|gasp|worried|phone|red|shake
+mn-lend|ABEG LEND ME|open|wail|worried|sparkles|rose|bounce
+mn-save|SAVE AM|open|smile|up|lock|green|nod
+mn-none|NO MONEY|closed|frown|worried|tears|blue|float
+mn-gift|GIFT FOR YOU|happy|grin|none|gift|rose|bounce`) },
+  { id: 'wk', name: 'Weekend', icon: 'W', items: rows(`
+wk-fri|IT'S FRIDAY|star|grin|up|party|violet|bounce
+wk-sleep|SLEEP MODE|sleepy|o|none|moon|blue|float
+wk-party|PARTY TIME|shades|grin|none|party|rose|bounce
+wk-repeat|ON REPEAT|closed|smile|none|phones|violet|float
+wk-scaries|SUNDAY SCARIES|wide|clench|worried|moon|slate|shake
+wk-movie|MOVIE NIGHT|open|smile|none|drink|teal|nod
+wk-chill|CHILLING|shades|smile|none|sun|teal|float
+wk-bday|HAPPY BIRTHDAY|happy|grin|up|gift|gold|pop
+wk-night|GOOD NIGHT|sleepy|smile|none|moon|violet|float
+wk-morning|GOOD MORNING|open|smile|none|sun|gold|bounce`) },
+  { id: 'gm', name: 'Gamer', icon: 'P', items: rows(`
+gm-on|GAME ON|open|grin|angry|pad|violet|bounce
+gm-ez|GG EZ|shades|smirk|none|pad|blue|nod
+gm-lag|LAG KILLED ME|x|clench|angry|phone|red|shake
+gm-noob|NOOB!|open|tongue|up|none|lime|wiggle
+gm-clutch|CLUTCH!|star|grin|angry|flames|orange|pop
+gm-afk|BRB AFK|sleepy|flat|none|clock|slate|nod
+gm-rage|RAGE QUIT|x|wail|angry|anger|red|shake
+gm-loot|LOOT!|star|grin|up|sparkles|gold|pop
+gm-one|ONE MORE GAME|open|smirk|worried|pad|teal|wiggle
+gm-boss|BOSS FIGHT|open|clench|angry|bolt|red|pulse`) },
+  { id: 'fr', name: 'Friends', icon: 'R', items: rows(`
+fr-gist|GIST ME NOW|wide|grin|up|phones|rose|wiggle
+fr-person|MY PERSON|heart|smile|none|hearts|rose|pulse
+fr-lies|YOU'RE LYING|side|smirk|angry|question|orange|nod
+fr-come|COME ON NOW|open|flat|up|none|slate|nod
+fr-miss|I MISS YOU|closed|frown|worried|hearts|violet|float
+fr-calm|CALM DOWN|closed|smile|up|none|teal|float
+fr-howfar|HOW FAR?|wink|grin|up|none|lime|bounce
+fr-wetin|WETIN DEY?|open|smile|up|question|blue|wiggle
+fr-bad|MY BAD|open|frown|worried|sweat|blue|wiggle
+fr-wow|WOW!|wide|gasp|up|sparkles|gold|pop
+fr-tea|SPILL THE TEA|side|smirk|up|drink|violet|nod
+fr-later|CATCH YOU LATER|wink|grin|none|none|teal|nod`) },
 ];
 
 export const ALL_STICKERS = PACKS.flatMap((p) => p.items.map((s) => ({ ...s, pack: p.id })));
