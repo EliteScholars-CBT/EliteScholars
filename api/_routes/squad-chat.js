@@ -19,6 +19,7 @@ import { logBlocked } from "../_helpers/security.js";
 
 const clean = (v, n) => String(v || "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").replace(/\n{3,}/g, "\n\n").trim().slice(0, n);
 const UUID = /^[\w-]{6,64}$/;
+const DAILY_CHAT_LIMIT = 100;
 const EDIT_MS = 15 * 60 * 1000;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "🙏", "🔥", "👏"];
 
@@ -179,6 +180,13 @@ export default async function handler(req, res) {
       kind = "image"; mediaId = m.id;
     } else if (sticker) kind = "sticker";
     if (kind === "text" && !text) return sendErr(res, "Type a message first.");
+    // daily cap: 100 new messages per person per day (Lagos day), across all squads
+    {
+      const LAGOS = 3600000, now = Date.now();
+      const dayStart = new Date(Math.floor((now + LAGOS) / 86400000) * 86400000 - LAGOS).toISOString();
+      const { count: sentToday } = await sb.from("squad_messages").select("id", { count: "exact", head: true }).eq("email", email).gte("created_at", dayStart);
+      if ((sentToday || 0) >= DAILY_CHAT_LIMIT) return sendErr(res, "You have used all 100 squad messages for today. Go and study! 📚 Your chat opens again tomorrow.", 429);
+    }
     const body = voiceText || (kind === "sticker" ? sticker : text);
     const { data, error } = await sb.from("squad_messages").insert({ squad_id: squadId, email, display_name: mem.display_name || email.split("@")[0], kind, text: body, media_id: mediaId }).select("id,created_at").single();
     if (error) { console.error("[chat] send", error.message); return sendErr(res, "Could not send.", 500); }
