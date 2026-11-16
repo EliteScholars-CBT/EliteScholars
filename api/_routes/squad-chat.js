@@ -185,7 +185,10 @@ export default async function handler(req, res) {
       const LAGOS = 3600000, now = Date.now();
       const dayStart = new Date(Math.floor((now + LAGOS) / 86400000) * 86400000 - LAGOS).toISOString();
       const { count: sentToday } = await sb.from("squad_messages").select("id", { count: "exact", head: true }).eq("email", email).gte("created_at", dayStart);
-      if ((sentToday || 0) >= DAILY_CHAT_LIMIT) return sendErr(res, "You have used all 100 squad messages for today. Go and study! 📚 Your chat opens again tomorrow.", 429);
+      if ((sentToday || 0) >= DAILY_CHAT_LIMIT) {
+        if (sentToday === DAILY_CHAT_LIMIT) sb.from("events").insert({ type: "limit_hit", email, payload: { subject: `Squad chat daily limit reached (${DAILY_CHAT_LIMIT} messages)` } }).then(() => {}, () => {});
+        return sendErr(res, "You have used all 100 squad messages for today. Go and study! 📚 Your chat opens again tomorrow.", 429);
+      }
     }
     const body = voiceText || (kind === "sticker" ? sticker : text);
     const { data, error } = await sb.from("squad_messages").insert({ squad_id: squadId, email, display_name: mem.display_name || email.split("@")[0], kind, text: body, media_id: mediaId }).select("id,created_at").single();
