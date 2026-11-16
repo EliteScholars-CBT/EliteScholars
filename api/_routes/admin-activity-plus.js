@@ -1,20 +1,39 @@
 // /api/admin/activity wrapper. Normal calls go straight to admin-ops. With ?squads=1 it returns
 // squad NUMBERS only (never chat text): totals, today's messages, busiest squads, per-squad sizes.
 // With ?wa=1 it returns WhatsApp Channel tap counts and the latest taps.
+// With ?contact=list / ?contact=act it serves the contact-page messages.
 import adminOps from "./admin-ops.js";
 import { adminFromToken } from "./admin.js";
-import { sendOk, sendErr, setCors } from "../_helpers/response.js";
+import { sendOk, sendErr, setCors, readBody } from "../_helpers/response.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 
 export default async function handler(req, res) {
   const wantSquads = String(req.query.squads || "") === "1", wantWa = String(req.query.wa || "") === "1";
-  if (!wantSquads && !wantWa) return adminOps(req, res);
+  const contactOp = String(req.query.contact || "");
+  if (!wantSquads && !wantWa && !contactOp) return adminOps(req, res);
   setCors(res);
   res.setHeader("Cache-Control", "no-store");
   const who = adminFromToken((req.headers.authorization || "").replace(/^Bearer\s+/i, ""));
   if (!who) return sendErr(res, "Session expired. Please sign in again.", 401);
   if (!who.owner && !(who.perms || []).includes("students")) return sendErr(res, "You don't have access to that.", 403);
   if (!supabaseEnabled()) return sendErr(res, "Supabase is not configured.", 503);
+  if (contactOp) {
+    try {
+      const sb = getSupabase();
+      if (contactOp === "act") {
+        if (req.method !== "POST") return sendErr(res, "POST only.", 405);
+        const b = readBody(req), id = String(b.id || "");
+        if (!/^[0-9a-f-]{36}$/i.test(id)) return sendErr(res, "Bad id.");
+        if (b.status === "delete") await sb.from("contact_messages").delete().eq("id", id);
+        else if (["new", "read", "done"].includes(b.status)) await sb.from("contact_messages").update({ status: b.status }).eq("id", id);
+        else return sendErr(res, "Bad status.");
+        return sendOk(res, {});
+      }
+      const { data } = await sb.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(200);
+      const rows = data || [];
+      return sendOk(res, { contact: { unread: rows.filter((r) => r.status === "new").length, rows } });
+    } catch (e) { console.error("[admin contact]", e && e.message); return sendErr(res, "Could not load messages.", 500); }
+  }
   if (wantWa) {
     try {
       const sb = getSupabase(), D = 86400000;
