@@ -82,6 +82,32 @@ export default function AdminHiring({ token, onAuthFail }) {
   }, [seeApp, data, api]); // eslint-disable-line
   const edit = (j) => setForm({ id: j.id, slug: j.slug, title: j.title, description: j.description, commission_pct: j.commission_pct, open: j.open, apply: j.apply_duration_h ? mkRel(j.apply_duration_h, EMPTY.apply) : mkDl(j.apply_deadline), research: j.apply_duration_h ? mkRel(j.research_duration_h, EMPTY.research) : mkDl(j.research_deadline), auto_email: j.auto_email, auto_approve: j.auto_approve, group_url: j.group_url, kind: j.kind || 'promoter', task_days: (j.task_duration_h || 48) / 24, join_days: (j.join_duration_h || 48) / 24 });
 
+  // The edit form opens right inside the job being edited (new jobs: at the top), and scrolls into view.
+  const formCard = form ? (
+        <section className="adm-card hire-adm-form" id="hire-form">
+          <h2>{form.id ? 'Edit job' : 'New job'}{form.kind === 'video_editor' ? ' · volunteer video editor' : ''}</h2>
+          <label className="adm-field">Job title<input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} maxLength={80} /></label>
+          <label className="adm-field">What the job is about (shown on the apply page)<textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} maxLength={3000} /></label>
+          <div className="hire-adm-grid">
+            {form.kind === 'video_editor'
+              ? <label className="adm-field">Time to send the video (days, starts when the task email is sent)<input type="number" min="1" max="30" step="0.5" value={form.task_days} onChange={(e) => setForm({ ...form, task_days: e.target.value })} /></label>
+              : <label className="adm-field">Commission %<input type="number" min="1" max="90" value={form.commission_pct} onChange={(e) => setForm({ ...form, commission_pct: e.target.value })} /></label>}
+            <label className="adm-field">Group chat link (sent when you approve)<input placeholder="https://chat.whatsapp.com/…" value={form.group_url} onChange={(e) => setForm({ ...form, group_url: e.target.value })} /></label>
+          </div>
+          <div className="hire-adm-grid">
+            <DeadlinePicker label="Applications stay open" value={form.apply} onChange={(v) => setForm({ ...form, apply: v, research: v.mode === 'rel' && form.research.mode !== 'rel' ? { ...form.research, mode: 'rel' } : form.research })} relLabel="Timer: starts when link is first opened" preview={form.apply.mode === 'rel' ? `The clock starts the moment someone first opens the link. Applications then stay open ${toHours(form.apply) % 24 === 0 ? `${toHours(form.apply) / 24} day(s)` : `${toHours(form.apply)} hour(s)`}.` : `Closes: ${prettyDt(applyIso)}`} />
+            {form.kind === 'video_editor' ? <label className="adm-field">Join the group within (days after approval)<input type="number" min="1" max="30" step="0.5" value={form.join_days} onChange={(e) => setForm({ ...form, join_days: e.target.value })} /></label> : <DeadlinePicker label="Research must be in" value={form.research} onChange={(v) => setForm({ ...form, research: v })} relLabel="After applications close" relOnly={form.apply.mode === 'rel'} preview={form.apply.mode === 'rel' ? `Due ${toHours(form.research) % 24 === 0 ? `${toHours(form.research) / 24} day(s)` : `${toHours(form.research)} hour(s)`} after applications close.` : `Due: ${prettyDt(researchIso)}`} />}
+          </div>
+          <label className="adm-check"><input type="checkbox" checked={form.auto_email} onChange={(e) => setForm({ ...form, auto_email: e.target.checked })} /> {form.kind === 'video_editor' ? 'Email the video task to each applicant automatically the moment they apply' : 'Email the research task to everyone automatically the moment they apply'}</label>
+          <label className="adm-check"><input type="checkbox" checked={form.auto_approve} onChange={(e) => setForm({ ...form, auto_approve: e.target.checked })} /> {form.kind === 'video_editor' ? 'Approve automatically as soon as a video is submitted (otherwise you watch it first)' : 'Approve everyone who sent research automatically when the research deadline passes'}</label>
+          <label className="adm-check"><input type="checkbox" checked={form.open} onChange={(e) => setForm({ ...form, open: e.target.checked })} /> Job is open</label>
+          <p className="adm-note">Times are your device time (Lagos). Automatic steps run when the deadline passes: within minutes if you have Hiring open, otherwise at the next scheduled run (morning or evening).</p>
+          <div className="adm-inline"><button className="adm-btn" disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save job'}</button><button className="adm-ghost" onClick={() => setForm(null)}>Cancel</button></div>
+        </section>
+  ) : null;
+  const formKey = form ? (form.id || 'new') : '';
+  useEffect(() => { if (!formKey) return; const t = setTimeout(() => { const el = document.getElementById('hire-form'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60); return () => clearTimeout(t); }, [formKey]);
+
   if (!data) return <div className="adm-card">{err || 'Loading…'}</div>;
   const now = new Date(data.now).getTime();
   const appsOf = (jid) => data.applications.filter((a) => a.job_id === jid);
@@ -103,28 +129,7 @@ export default function AdminHiring({ token, onAuthFail }) {
         {err && <div className="adm-error">{err}</div>}
       </section>
 
-      {form && (
-        <section className="adm-card hire-adm-form">
-          <h2>{form.id ? 'Edit job' : 'New job'}{form.kind === 'video_editor' ? ' · volunteer video editor' : ''}</h2>
-          <label className="adm-field">Job title<input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} maxLength={80} /></label>
-          <label className="adm-field">What the job is about (shown on the apply page)<textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} maxLength={3000} /></label>
-          <div className="hire-adm-grid">
-            {form.kind === 'video_editor'
-              ? <label className="adm-field">Time to send the video (days, starts when the task email is sent)<input type="number" min="1" max="30" step="0.5" value={form.task_days} onChange={(e) => setForm({ ...form, task_days: e.target.value })} /></label>
-              : <label className="adm-field">Commission %<input type="number" min="1" max="90" value={form.commission_pct} onChange={(e) => setForm({ ...form, commission_pct: e.target.value })} /></label>}
-            <label className="adm-field">Group chat link (sent when you approve)<input placeholder="https://chat.whatsapp.com/…" value={form.group_url} onChange={(e) => setForm({ ...form, group_url: e.target.value })} /></label>
-          </div>
-          <div className="hire-adm-grid">
-            <DeadlinePicker label="Applications stay open" value={form.apply} onChange={(v) => setForm({ ...form, apply: v, research: v.mode === 'rel' && form.research.mode !== 'rel' ? { ...form.research, mode: 'rel' } : form.research })} relLabel="Timer: starts when link is first opened" preview={form.apply.mode === 'rel' ? `The clock starts the moment someone first opens the link. Applications then stay open ${toHours(form.apply) % 24 === 0 ? `${toHours(form.apply) / 24} day(s)` : `${toHours(form.apply)} hour(s)`}.` : `Closes: ${prettyDt(applyIso)}`} />
-            {form.kind === 'video_editor' ? <label className="adm-field">Join the group within (days after approval)<input type="number" min="1" max="30" step="0.5" value={form.join_days} onChange={(e) => setForm({ ...form, join_days: e.target.value })} /></label> : <DeadlinePicker label="Research must be in" value={form.research} onChange={(v) => setForm({ ...form, research: v })} relLabel="After applications close" relOnly={form.apply.mode === 'rel'} preview={form.apply.mode === 'rel' ? `Due ${toHours(form.research) % 24 === 0 ? `${toHours(form.research) / 24} day(s)` : `${toHours(form.research)} hour(s)`} after applications close.` : `Due: ${prettyDt(researchIso)}`} />}
-          </div>
-          <label className="adm-check"><input type="checkbox" checked={form.auto_email} onChange={(e) => setForm({ ...form, auto_email: e.target.checked })} /> {form.kind === 'video_editor' ? 'Email the video task to each applicant automatically the moment they apply' : 'Email the research task to everyone automatically the moment they apply'}</label>
-          <label className="adm-check"><input type="checkbox" checked={form.auto_approve} onChange={(e) => setForm({ ...form, auto_approve: e.target.checked })} /> {form.kind === 'video_editor' ? 'Approve automatically as soon as a video is submitted (otherwise you watch it first)' : 'Approve everyone who sent research automatically when the research deadline passes'}</label>
-          <label className="adm-check"><input type="checkbox" checked={form.open} onChange={(e) => setForm({ ...form, open: e.target.checked })} /> Job is open</label>
-          <p className="adm-note">Times are your device time (Lagos). Automatic steps run when the deadline passes: within minutes if you have Hiring open, otherwise at the next scheduled run (morning or evening).</p>
-          <div className="adm-inline"><button className="adm-btn" disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save job'}</button><button className="adm-ghost" onClick={() => setForm(null)}>Cancel</button></div>
-        </section>
-      )}
+      {form && !form.id && formCard}
 
       {data.jobs.map((j) => {
         const apps = appsOf(j.id);
@@ -137,6 +142,7 @@ export default function AdminHiring({ token, onAuthFail }) {
             <div className="adm-card-head"><h2>{j.title}{j.kind === 'video_editor' && <span className="adm-chip"> volunteer</span>}{!j.open && <span className="adm-chip"> closed</span>}</h2>
               <div className="adm-inline"><button className="adm-ghost" onClick={() => edit(j)}>Edit</button>
                 <button className="adm-ghost" disabled={busy} onClick={() => window.confirm('Delete this job and all its applications?') && run('hiring-delete', { id: j.id }, 'Deleted.')}>Delete</button></div></div>
+            {form && form.id === j.id && formCard}
             <div className="hire-link"><code>{link}</code><button className="adm-btn" onClick={() => { copy(link); setMsg('Link copied. Share it on LinkedIn.'); }}>Copy link</button></div>
             <div className="hire-dates">
               {j.apply_duration_h && !j.opened_at && <span>⏳ <b>Timer not started.</b> It starts the moment someone first opens the link ({j.apply_duration_h % 24 === 0 ? `${j.apply_duration_h / 24} day(s)` : `${j.apply_duration_h}h`} to apply{j.research_duration_h ? `, then ${j.research_duration_h % 24 === 0 ? `${j.research_duration_h / 24} day(s)` : `${j.research_duration_h}h`} for research` : ''}).</span>}
