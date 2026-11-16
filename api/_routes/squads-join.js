@@ -30,5 +30,9 @@ export default async function handler(req, res) {
     { squad_id: squad.id, email, display_name: String(b.username || email.split("@")[0]).slice(0, 40) },
     { onConflict: "squad_id,email", ignoreDuplicates: true }
   );
+  if (!existing) {
+    const { data: sq } = await sb.from("squads").select("name").eq("id", squad.id).maybeSingle();
+    sb.from("events").insert({ type: "squad_joined", email, payload: { subject: `Joined squad "${(sq && sq.name) || code}"`, topic: `${(count || 0) + 1} members now` } }).then(() => {}, () => {});
+  }
   return sendOk(res, { squad: await loadSquadById(squad.id) });
 }
