@@ -33,6 +33,7 @@ export default function SiteShell({ eyebrow, title, intro, updated, wide, childr
             <a href="/centre">Tutorial centres</a>
             <a href="/blog/">Blog</a>
             <a href="/app/about">About</a>
+            <a href="/contact">Contact</a>
           </div>
           <button className="land-nav-cta" onClick={() => navigate('/app?src=page')}>Open App</button>
         </div>
@@ -63,6 +64,7 @@ export default function SiteShell({ eyebrow, title, intro, updated, wide, childr
             <a href="/centre">For tutorial centres</a>
             <a href="/blog/">Blog</a>
             <a href="/app/about">About</a>
+            <a href="/contact">Contact</a>
             <a href="/app/terms">Terms</a>
             <a href="/app/privacy">Privacy</a>
             <a href="/partner">Become a partner</a>

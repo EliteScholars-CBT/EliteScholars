@@ -5,6 +5,8 @@ import { ThemeProvider } from './context/ThemeContext';
 import App from './App';
 import Landing from './pages/Landing';
 import About from './pages/About';
+import Contact from './pages/Contact';
+import ContactTab from './components/ContactTab';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import NotFound from './pages/NotFound';
@@ -44,6 +46,8 @@ root.render(
               URLs were updated to match (see api/payment/verify.js,
               api/payment/webhook.js and public/sw.js). */}
           <Route path="/app/about" element={<About />} />
+          <Route path="/app/contact" element={<Contact />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/app/terms" element={<TermsOfService />} />
           <Route path="/app/privacy" element={<PrivacyPolicy />} />
           <Route path="/app/*" element={<App />} />
@@ -77,8 +81,8 @@ root.render(
           {/* Anything else */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <ContactTab />
       </ThemeProvider>
     </BrowserRouter>
   </StrictMode>
 );
-
