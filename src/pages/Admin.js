@@ -175,6 +175,12 @@ export default function Admin() {
     try { localStorage.setItem('adm_sec_seen', new Date().toISOString()); } catch { /* ignore */ }
     setAlerts((a) => ({ ...a, counts: { ...a.counts, security: 0 }, items: a.items.filter((x) => x.kind !== 'security'), total: Math.max(0, a.total - (a.counts.security || 0)) }));
   }, [view]);
+  // Tap a floating message to dismiss it early (they also fade away on their own after 10 seconds).
+  useEffect(() => {
+    const h = (e) => { const t = e.target && e.target.closest ? e.target.closest('.adm-wrap:not(.adm-login) .adm-ok, .adm-wrap:not(.adm-login) .adm-error') : null; if (t) t.style.display = 'none'; };
+    document.addEventListener('click', h);
+    return () => document.removeEventListener('click', h);
+  }, []);
   if (!token) {
     return (
       <div className="adm-wrap adm-login">
@@ -202,6 +208,7 @@ export default function Admin() {
 
   return (
     <div className="adm-wrap">
+      <style>{`.adm-wrap:not(.adm-login) .adm-ok,.adm-wrap:not(.adm-login) .adm-error{position:fixed;top:16px;left:50%;z-index:99999;width:max-content;max-width:min(560px,calc(100vw - 24px));margin:0;padding:13px 18px;border-radius:14px;font-size:.95rem;font-weight:600;line-height:1.4;box-shadow:0 14px 40px rgba(0,0,0,.55);cursor:pointer;animation:admToast 10s ease forwards;transform:translateX(-50%)}.adm-wrap:not(.adm-login) .adm-ok{background:#0f3a26;border:1px solid #22a366;color:#b7f5d2}.adm-wrap:not(.adm-login) .adm-error{background:#3b1219;border:1px solid #dc4a5a;color:#fecdd3}@keyframes admToast{0%{opacity:0;top:0}4%{opacity:1;top:16px}94%{opacity:1;top:16px}100%{opacity:0;top:16px;visibility:hidden;pointer-events:none}}`}</style>
       <header className="adm-head">
         <div>
           <h1>EliteScholars Admin</h1>
