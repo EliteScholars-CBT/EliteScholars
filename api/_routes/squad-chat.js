@@ -13,6 +13,7 @@ import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { pushToEmails } from "../_helpers/push.js";
 import { saveMedia, saveAudio } from "../_helpers/media.js";
 import { eliteEmails } from "../_helpers/elite.js";
+import { lagosDay } from "../_helpers/access.js";
 import { judgePhoto } from "../_helpers/imageGuard.js";
 import { checkText } from "../_helpers/contentGuard.js";
 import { logBlocked } from "../_helpers/security.js";
@@ -180,19 +181,25 @@ export default async function handler(req, res) {
       kind = "image"; mediaId = m.id;
     } else if (sticker) kind = "sticker";
     if (kind === "text" && !text) return sendErr(res, "Type a message first.");
+    let sentCount = 0;
     // daily cap: 100 new messages per person per day (Lagos day), across all squads
     {
       const LAGOS = 3600000, now = Date.now();
       const dayStart = new Date(Math.floor((now + LAGOS) / 86400000) * 86400000 - LAGOS).toISOString();
-      const { count: sentToday } = await sb.from("squad_messages").select("id", { count: "exact", head: true }).eq("email", email).gte("created_at", dayStart);
-      if ((sentToday || 0) >= DAILY_CHAT_LIMIT) {
+      const { count: shown } = await sb.from("squad_messages").select("id", { count: "exact", head: true }).eq("email", email).gte("created_at", dayStart);
+      // deleting messages must not give the quota back, so also count what was sent via a per-day counter
+      const { data: ctr } = await sb.from("usage_counters").select("count").eq("email", email).eq("kind", "squad_chat").eq("period", lagosDay(now)).maybeSingle();
+      const sentToday = Math.max(shown || 0, ctr?.count || 0);
+      if (sentToday >= DAILY_CHAT_LIMIT) {
         if (sentToday === DAILY_CHAT_LIMIT) sb.from("events").insert({ type: "limit_hit", email, payload: { subject: `Squad chat daily limit reached (${DAILY_CHAT_LIMIT} messages)` } }).then(() => {}, () => {});
         return sendErr(res, "You have used all 100 squad messages for today. Go and study! 📚 Your chat opens again tomorrow.", 429);
       }
+      sentCount = sentToday;
     }
     const body = voiceText || (kind === "sticker" ? sticker : text);
     const { data, error } = await sb.from("squad_messages").insert({ squad_id: squadId, email, display_name: mem.display_name || email.split("@")[0], kind, text: body, media_id: mediaId }).select("id,created_at").single();
     if (error) { console.error("[chat] send", error.message); return sendErr(res, "Could not send.", 500); }
+    sb.from("usage_counters").upsert({ email, kind: "squad_chat", period: lagosDay(), count: sentCount + 1, refs: [], updated_at: new Date().toISOString() }, { onConflict: "email,kind,period" }).then(() => {}, () => {});
     // housekeeping: keep the last 30 days only
     sb.from("squad_messages").delete().lt("created_at", new Date(Date.now() - 30 * 86400000).toISOString()).then(() => {}, () => {});
 

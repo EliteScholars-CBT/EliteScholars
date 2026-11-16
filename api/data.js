@@ -36,6 +36,7 @@ import push from "./_routes/push.js";
 import school from "./_routes/school.js";
 import schoolPortal from "./_routes/school-portal.js";
 import report from "./_routes/report.js";
+import contact from "./_routes/contact.js";
 import adminOps from "./_routes/admin-ops.js";
 import adminActivityPlus from "./_routes/admin-activity-plus.js";
 import squadChat from "./_routes/squad-chat.js";
@@ -102,6 +103,7 @@ const ROUTES = {
   "school/assign-get": withOp(school, "assign-get"),
   "school/assign-done": withOp(school, "assign-done"),
   "school/assign-delete": withOp(school, "assign-delete"),
+  "contact/submit": contact,
   "report/submit": withOp(report, "submit"),
   "report/crash": withOp(report, "crash"),
   "admin/crash-list": withOp(report, "crash-list"),
