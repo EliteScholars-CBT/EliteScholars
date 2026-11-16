@@ -48,7 +48,19 @@ textarea.ct-in{resize:vertical;min-height:130px;line-height:1.5}
 export default function Contact() {
   const [f, setF] = useState({ name: '', reply: '', topic: TOPICS[0], msg: '' });
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
+  const [state, setState] = useState('idle'); // idle | sending | sent | failed
   const ok = f.msg.trim().length >= 5;
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!ok || state === 'sending') return;
+    setState('sending');
+    try {
+      const r = await fetch('/api/data?route=contact/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: f.name, reply: f.reply, topic: f.topic, message: f.msg, page: '/contact' }) });
+      const d = await r.json().catch(() => ({}));
+      if (!d.success) throw new Error('x');
+      setState('sent'); setF({ name: '', reply: '', topic: TOPICS[0], msg: '' });
+    } catch { setState('failed'); }
+  };
   const href = mail(`[${f.topic}] ${f.name.trim() || 'Message from the website'}`, `${f.msg.trim()}\n\n— ${f.name.trim() || 'Name not given'}\nReply to: ${f.reply.trim() || 'this email'}`);
 
   return (
@@ -80,7 +92,7 @@ export default function Contact() {
           <p className="ct-note" style={{ textAlign: 'left' }}>EliteScholars is an independent platform and is not affiliated with JAMB, WAEC or NECO.</p>
         </aside>
 
-        <form className="ct-form" onSubmit={(e) => e.preventDefault()}>
+        <form className="ct-form" onSubmit={submit}>
           <h2>Send us a message</h2>
           <p className="sub">Tell us a little and we will get back to you.</p>
 
@@ -102,10 +114,12 @@ export default function Contact() {
             <span className="ct-count">{f.msg.length}/1500</span>
           </div>
 
-          <a className="ct-send" href={ok ? href : undefined} aria-disabled={!ok} onClick={(e) => { if (!ok) e.preventDefault(); }}>
-            {I.send}<span>Send message</span>
-          </a>
-          <span className="ct-note">{ok ? 'This opens your email app with the message ready to send.' : 'Write your message (at least a few words) to send.'}</span>
+          {state === 'sent' && <div className="ct-note" role="status" style={{ color: '#15803d', fontWeight: 700 }}>Message sent. Thank you, we will get back to you.</div>}
+          {state === 'failed' && <div className="ct-note" role="alert" style={{ color: '#b91c1c' }}>We could not send that. <a href={href}>Send it by email instead</a>.</div>}
+          <button type="submit" className="ct-send" aria-disabled={!ok || state === 'sending'} disabled={state === 'sending'}>
+            {I.send}<span>{state === 'sending' ? 'Sending…' : 'Send message'}</span>
+          </button>
+          <span className="ct-note">{ok ? 'Your message goes straight to the EliteScholars team.' : 'Write your message (at least a few words) to send.'}</span>
         </form>
       </div>
     </SiteShell>
