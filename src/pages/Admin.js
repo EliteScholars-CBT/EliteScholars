@@ -214,7 +214,7 @@ export default function Admin() {
             {bell && <div onClick={() => setBell(false)} style={{ position: 'fixed', inset: 0, zIndex: 59 }} aria-hidden="true" />}
             {bell && (
               <div className="adm-pop">
-                <style>{`.adm-bellwrap .adm-pop{position:fixed;top:70px;right:20px;left:auto;width:min(420px,calc(100vw - 24px));max-height:75vh;overflow-y:auto;z-index:60}@media (max-width:600px){.adm-bellwrap .adm-pop{left:12px;right:12px;top:64px;width:auto}}`}</style>
+                <style>{`.adm-bellwrap .adm-pop{position:fixed;top:70px;right:20px;left:auto;width:min(680px,calc(100vw - 40px));max-height:80vh;overflow-y:auto;z-index:60;padding:18px;gap:10px}.adm-bellwrap .adm-pop .adm-pop-row{font-size:1rem;padding:14px 16px;flex-direction:row;align-items:center;justify-content:space-between;gap:16px}.adm-bellwrap .adm-pop .adm-pop-head b{font-size:1.1rem}@media (max-width:600px){.adm-bellwrap .adm-pop{left:12px;right:12px;top:64px;width:auto;padding:14px}.adm-bellwrap .adm-pop .adm-pop-row{flex-direction:column;align-items:flex-start;font-size:.9rem;padding:11px 12px;gap:3px}.adm-bellwrap .adm-pop .adm-pop-head b{font-size:.95rem}}`}</style>
                 <div className="adm-pop-head"><b>Needs your attention</b><button type="button" className="adm-pop-x" onClick={() => setBell(false)} aria-label="Close">✕</button></div>
                 {alerts.items.length ? alerts.items.map((it, i) => (
                   <button key={i} className="adm-pop-row" onClick={() => { setView(it.tab); setBell(false); }}><span className="adm-pop-text">{it.text}</span>{it.at && <small>{ago(it.at)}</small>}</button>
