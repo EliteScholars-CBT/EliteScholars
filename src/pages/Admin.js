@@ -106,7 +106,13 @@ export default function Admin() {
   const refreshAlerts = useCallback(() => {
     if (!token) return;
     let secSince = ''; try { secSince = localStorage.getItem('adm_sec_seen') || ''; } catch { /* ignore */ }
-    api('alerts', secSince ? { query: { secSince } } : undefined).then(setAlerts).catch(() => {});
+    // WhatsApp Channel taps in the last 24h join the bell (needs the Activity permission)
+    const wa = api('activity', { query: { wa: '1' } }).then((d) => d.wa).catch(() => null);
+    Promise.all([api('alerts', secSince ? { query: { secSince } } : undefined), wa]).then(([a, w]) => {
+      const n = (w && w.last24h) || 0;
+      if (!n) { setAlerts(a); return; }
+      setAlerts({ ...a, counts: { ...a.counts, whatsapp: n }, total: (a.total || 0) + n, items: [{ kind: 'whatsapp', text: `📲 ${n} WhatsApp Channel tap${n === 1 ? '' : 's'} in the last 24 hours`, at: w.recent[0] && w.recent[0].at, tab: 'activity' }, ...a.items] });
+    }).catch(() => {});
   }, [token, api]);
   const markSeen = useCallback((keys) => {
     setSeen((prev) => {
@@ -205,8 +211,10 @@ export default function Admin() {
         <div className="adm-head-actions">
           <div className="adm-bellwrap">
             <button className="adm-ghost adm-bell" onClick={() => { const o = !bell; setBell(o); refreshAlerts(); if (o) markSeen(Object.keys(alerts.counts)); }} aria-label="Things needing attention">🔔{unseenTotal > 0 && <i className="adm-dot">{unseenTotal > 9 ? '9+' : unseenTotal}</i>}</button>
+            {bell && <div onClick={() => setBell(false)} style={{ position: 'fixed', inset: 0, zIndex: 59 }} aria-hidden="true" />}
             {bell && (
               <div className="adm-pop">
+                <style>{`.adm-bellwrap .adm-pop{position:fixed;top:70px;right:20px;left:auto;width:min(420px,calc(100vw - 24px));max-height:75vh;overflow-y:auto;z-index:60}@media (max-width:600px){.adm-bellwrap .adm-pop{left:12px;right:12px;top:64px;width:auto}}`}</style>
                 <div className="adm-pop-head"><b>Needs your attention</b><button type="button" className="adm-pop-x" onClick={() => setBell(false)} aria-label="Close">✕</button></div>
                 {alerts.items.length ? alerts.items.map((it, i) => (
                   <button key={i} className="adm-pop-row" onClick={() => { setView(it.tab); setBell(false); }}><span className="adm-pop-text">{it.text}</span>{it.at && <small>{ago(it.at)}</small>}</button>
