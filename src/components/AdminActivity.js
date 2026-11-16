@@ -6,6 +6,7 @@ const CATS = [
   ['learn', 'Learning', /^(quiz|learn|flash|file_upload|topic)/],
   ['game', 'Games', /^(game|challenge)/],
   ['social', 'Status & squads', /^(status_view|status_comment|status_reply|status_post|squad|status_react)/],
+  ['limit', 'Limits & shares', /^limit_/],
   ['money', 'Pro & payments', /^(premium|payment|prices|plan)/],
   ['join', 'Sign-ups & logins', /^(signup|register|login|referral|pwa|visit)/],
   ['warn', 'Blocked / security', /(blocked|bypass|anomaly|suspicious|multi_account)/],
@@ -22,6 +23,7 @@ export default function AdminActivity({ token, onAuthFail }) {
   const [f, setF] = useState({ q: '', type: '', days: '1' });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
+  const [sq, setSq] = useState(null);
   const [auto, setAuto] = useState(true);
 
   const load = useCallback(async (before) => {
@@ -34,6 +36,7 @@ export default function AdminActivity({ token, onAuthFail }) {
     setBusy(false);
   }, [api, f]);
 
+  useEffect(() => { let on = true; const go = () => api('activity', { query: { squads: '1' } }).then((d) => { if (on) setSq(d.squadStats || null); }).catch(() => {}); go(); const t = setInterval(go, 60000); return () => { on = false; clearInterval(t); }; }, [api]);
   useEffect(() => { const t = setTimeout(() => load(), f.q ? 350 : 0); return () => clearTimeout(t); }, [load, f.q]);
   useEffect(() => { if (!auto) return undefined; const t = setInterval(() => load(), 30000); return () => clearInterval(t); }, [auto, load]);
 
@@ -51,6 +54,16 @@ export default function AdminActivity({ token, onAuthFail }) {
           <label>Period<select value={f.days} onChange={(e) => setF({ ...f, days: e.target.value })}><option value="1">Last 24 hours</option><option value="2">Last 2 days</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select></label>
         </div>
       </section>
+      <style>{`.adm-timeline li.cat-limit{border-left-color:#fb923c}.adm-timeline li.cat-limit span b{color:#fdba74}.adm-legend .cat-limit i{background:#fb923c}`}</style>
+      {sq && (
+        <section className="adm-card">
+          <div className="adm-card-head"><h2>Squads right now</h2></div>
+          <p style={{ margin: '4px 0 8px' }}>
+            <b>{sq.squads}</b> squads · <b>{sq.members}</b> students in squads · avg <b>{sq.avgSize}</b> per squad · today <b>{sq.messagesToday}</b> messages from <b>{sq.chattersToday}</b> students{sq.nearCap ? <> · <b>{sq.nearCap}</b> near the 100 cap</> : null}
+          </p>
+          {sq.top.length > 0 && <small>Busiest today: {sq.top.map((t) => `${t.name} (${t.messages} msgs, ${t.members} members)`).join(' · ')}</small>}
+        </section>
+      )}
       <div className="adm-legend">{CATS.map((c) => <span key={c[0]} className={`cat-${c[0]}`}><i />{c[1]}</span>)}</div>
       {err && <div className="adm-error">{err}</div>}
       <section className="adm-card">

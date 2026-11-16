@@ -142,7 +142,7 @@ export default function FreeLimitGate({ email, name, reason = 'session', onClose
           {/* Actions */}
           <button
             className="limit-gate-premium-btn"
-            onClick={() => setShowPremium(true)}
+            onClick={() => { try { fetch('/api/events/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'limit_go_pro', subject: `Tapped Go Pro at the ${reason || 'free'} limit` }) }).catch(() => {}); } catch { /* analytics only */ } setShowPremium(true); }}
           >
             ⭐ Go Pro — Remove All Limits
           </button>

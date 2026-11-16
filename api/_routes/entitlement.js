@@ -39,6 +39,9 @@ export default async function handler(req, res) {
   if (!email) return;
   if (!(await rateLimitOk(req, res, "ent", 120, 60, email))) return;
   const sb = getSupabase();
+  // admin activity feed: plain events, shown as "Limit hit — CBT sessions used up (3 of 3)"
+  const KIND_NAME = { topic: "Learn topics", cbt: "CBT sessions", game: "Games", file_study: "File study" };
+  const logEv = (type, payload) => sb.from("events").insert({ type, email, payload }).then(() => {}, () => {});
   const cfg = await getAccessConfig();
   const row = await profileRow(sb, email);
   const baseEnt = entitlementFor(row, cfg);      // unlimited everywhere: old Pro, gifts, trial
@@ -76,6 +79,14 @@ export default async function handler(req, res) {
     if (ref && refs.includes(ref)) return sendOk(res, { allowed: true, used: count, limit, repeat: true });
 
     if (count >= limit) {
+      // first time today this student hits this limit: tell the admin feed (later taps today are only counted)
+      try {
+        const hitKind = `hit:${b.kind}`;
+        const { data: h } = await sb.from("usage_counters").select("count").eq("email", email).eq("kind", hitKind).eq("period", period).maybeSingle();
+        const n = h?.count || 0;
+        await sb.from("usage_counters").upsert({ email, kind: hitKind, period, count: n + 1, refs: [], updated_at: new Date().toISOString() }, { onConflict: "email,kind,period" });
+        if (n === 0) await logEv("limit_hit", { subject: `${KIND_NAME[b.kind]} used up (${count} of ${limit})`, exam: String(b.exam || req.query.exam || "").slice(0, 12) || undefined });
+      } catch { /* logging never blocks the student */ }
       return res.status(403).json({ success: false, code: "LIMIT", kind: b.kind, used: count, limit, daily: meta.daily });
     }
     const next = ref ? [...refs, ref].slice(-200) : refs;
@@ -104,6 +115,7 @@ export default async function handler(req, res) {
 
     if (op === "share-start") {
       await save(claimsMade, [Date.now()]);
+      logEv("limit_share_started", { subject: `Tapped Share for more ${KIND_NAME[b.kind]}` });
       return sendOk(res, { verifySeconds: sbc.verifySeconds, amount: sbc.amount });
     }
     const startedAt = Array.isArray(cur?.refs) && cur.refs[0] ? Number(cur.refs[0]) : 0;
@@ -112,6 +124,7 @@ export default async function handler(req, res) {
     if (waited < sbc.verifySeconds - 1) return res.status(400).json({ success: false, code: "SHARE_WAIT", error: "Give your friends a moment to see it, then claim.", waitSeconds: Math.ceil(sbc.verifySeconds - waited) });
     if (waited > 3600) return sendErr(res, "That share expired. Tap Share again.", 400);
     await save(claimsMade + 1, []);
+    logEv("limit_share_claimed", { subject: `Claimed +${sbc.amount} ${KIND_NAME[b.kind]} after sharing` });
     return sendOk(res, { granted: sbc.amount, kind: b.kind });
   }
   return sendErr(res, "Unknown op.");
