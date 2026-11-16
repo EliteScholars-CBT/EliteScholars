@@ -7,6 +7,7 @@ import Landing from './pages/Landing';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import ContactTab from './components/ContactTab';
+import { installChannelClicks } from './utils/channelClicks';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import NotFound from './pages/NotFound';
@@ -21,6 +22,7 @@ installLoginPersistence();
 installSessionFetch();
 installContentGuard();
 applyDataSaver();
+installChannelClicks();
 
 // Loaded on demand so students never download the admin dashboard code.
 const Admin = lazy(() => import('./pages/Admin'));
@@ -86,3 +88,4 @@ root.render(
     </BrowserRouter>
   </StrictMode>
 );
+

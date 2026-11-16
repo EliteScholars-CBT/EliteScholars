@@ -24,6 +24,7 @@ export default function AdminActivity({ token, onAuthFail }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [sq, setSq] = useState(null);
+  const [wa, setWa] = useState(null);
   const [auto, setAuto] = useState(true);
 
   const load = useCallback(async (before) => {
@@ -36,7 +37,7 @@ export default function AdminActivity({ token, onAuthFail }) {
     setBusy(false);
   }, [api, f]);
 
-  useEffect(() => { let on = true; const go = () => api('activity', { query: { squads: '1' } }).then((d) => { if (on) setSq(d.squadStats || null); }).catch(() => {}); go(); const t = setInterval(go, 60000); return () => { on = false; clearInterval(t); }; }, [api]);
+  useEffect(() => { let on = true; const go = () => api('activity', { query: { squads: '1' } }).then((d) => { if (on) setSq(d.squadStats || null); }).catch(() => {}); const go2 = () => api('activity', { query: { wa: '1' } }).then((d) => { if (on) setWa(d.wa || null); }).catch(() => {}); go(); go2(); const t = setInterval(() => { go(); go2(); }, 60000); return () => { on = false; clearInterval(t); }; }, [api]);
   useEffect(() => { const t = setTimeout(() => load(), f.q ? 350 : 0); return () => clearTimeout(t); }, [load, f.q]);
   useEffect(() => { if (!auto) return undefined; const t = setInterval(() => load(), 30000); return () => clearInterval(t); }, [auto, load]);
 
@@ -55,6 +56,13 @@ export default function AdminActivity({ token, onAuthFail }) {
         </div>
       </section>
       <style>{`.adm-timeline li.cat-limit{border-left-color:#fb923c}.adm-timeline li.cat-limit span b{color:#fdba74}.adm-legend .cat-limit i{background:#fb923c}`}</style>
+      {wa && (
+        <section className="adm-card">
+          <div className="adm-card-head"><h2>WhatsApp Channel taps</h2></div>
+          <p style={{ margin: '4px 0 8px' }}><b>{wa.last24h}</b> in the last 24 hours · <b>{wa.last7d}</b> in 7 days ({wa.signedIn7d} signed-in students, {wa.guests7d} visitors)</p>
+          {wa.recent.length > 0 && <small>Latest: {wa.recent.slice(0, 8).map((r) => `${r.who} (${r.where}, ${ago(r.at)})`).join(' · ')}</small>}
+        </section>
+      )}
       {sq && (
         <section className="adm-card">
           <div className="adm-card-head"><h2>Squads right now</h2></div>

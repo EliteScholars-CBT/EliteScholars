@@ -1,18 +1,35 @@
 // /api/admin/activity wrapper. Normal calls go straight to admin-ops. With ?squads=1 it returns
 // squad NUMBERS only (never chat text): totals, today's messages, busiest squads, per-squad sizes.
+// With ?wa=1 it returns WhatsApp Channel tap counts and the latest taps.
 import adminOps from "./admin-ops.js";
 import { adminFromToken } from "./admin.js";
 import { sendOk, sendErr, setCors } from "../_helpers/response.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 
 export default async function handler(req, res) {
-  if (String(req.query.squads || "") !== "1") return adminOps(req, res);
+  const wantSquads = String(req.query.squads || "") === "1", wantWa = String(req.query.wa || "") === "1";
+  if (!wantSquads && !wantWa) return adminOps(req, res);
   setCors(res);
   res.setHeader("Cache-Control", "no-store");
   const who = adminFromToken((req.headers.authorization || "").replace(/^Bearer\s+/i, ""));
   if (!who) return sendErr(res, "Session expired. Please sign in again.", 401);
   if (!who.owner && !(who.perms || []).includes("students")) return sendErr(res, "You don't have access to that.", 403);
   if (!supabaseEnabled()) return sendErr(res, "Supabase is not configured.", 503);
+  if (wantWa) {
+    try {
+      const sb = getSupabase(), D = 86400000;
+      const { data } = await sb.from("events").select("email,payload,created_at").eq("type", "whatsapp_channel_click").gte("created_at", new Date(Date.now() - 7 * D).toISOString()).order("created_at", { ascending: false }).limit(500);
+      const rows = data || [], now = Date.now();
+      const emails = [...new Set(rows.slice(0, 15).map((r) => r.email).filter(Boolean))];
+      const nm = {};
+      if (emails.length) { const { data: ps } = await sb.from("profiles").select("email,username,first_name").in("email", emails); for (const p of ps || []) nm[p.email] = p.username || p.first_name || p.email.split("@")[0]; }
+      return sendOk(res, { wa: {
+        last24h: rows.filter((r) => now - new Date(r.created_at).getTime() < D).length, last7d: rows.length,
+        signedIn7d: rows.filter((r) => r.email).length, guests7d: rows.filter((r) => !r.email).length,
+        recent: rows.slice(0, 15).map((r) => ({ at: r.created_at, who: r.email ? nm[r.email] || r.email.split("@")[0] : "Visitor (not signed in)", where: (r.payload && r.payload.where) || "/" })),
+      } });
+    } catch (e) { console.error("[admin wa]", e && e.message); return sendErr(res, "Could not load WhatsApp clicks.", 500); }
+  }
   try {
     const sb = getSupabase();
     const LAGOS = 3600000, dayStart = new Date(Math.floor((Date.now() + LAGOS) / 86400000) * 86400000 - LAGOS).toISOString();
