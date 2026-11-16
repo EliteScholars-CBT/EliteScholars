@@ -37,6 +37,7 @@ import school from "./_routes/school.js";
 import schoolPortal from "./_routes/school-portal.js";
 import report from "./_routes/report.js";
 import adminOps from "./_routes/admin-ops.js";
+import adminActivityPlus from "./_routes/admin-activity-plus.js";
 import squadChat from "./_routes/squad-chat.js";
 import hiring from "./_routes/hiring.js";
 import adminPayroll from "./_routes/admin-payroll.js";
@@ -157,7 +158,7 @@ const ROUTES = {
   "admin/alerts": withOp(adminOps, "alerts"),
   "admin/students": withOp(adminOps, "students"),
   "admin/student": withOp(adminOps, "student"),
-  "admin/activity": withOp(adminOps, "activity"),
+  "admin/activity": withOp(adminActivityPlus, "activity"),
   "admin/blog": withOp(adminOps, "blog"),
   "admin/blog-covers": withOp(adminOps, "blog-covers"),
   "admin/blog-cover-save": withOp(adminOps, "blog-cover-save"),
