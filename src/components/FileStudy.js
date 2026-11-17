@@ -24,6 +24,7 @@ import {
 import { AnswerSheet, NotesView, SourcesFoot } from './StudyViews';
 import '../styles/filestudy.css';
 import '../styles/studyask.css';
+import '../styles/filestudy-fix.css';
 
 // ============================================================================
 // FileStudy — "Study from your own files"
@@ -34,7 +35,6 @@ import '../styles/studyask.css';
 // ============================================================================
 
 const MODES = [
-  { id: 'notes',   label: 'Notes',      icon: 'file',      desc: 'Full written notes' },
   { id: 'learn',   label: 'Learn',      icon: 'bookOpen',  desc: 'Bit-by-bit lessons' },
   { id: 'cards',   label: 'Flashcards', icon: 'cards',     desc: 'Flip and recall' },
   { id: 'cbt',     label: 'CBT',        icon: 'clipboard', desc: 'Exam-style practice' },
@@ -51,9 +51,9 @@ const shuffled = (arr) => {
 const MAX_BYTES = 25 * 1024 * 1024;
 const LETTERS = ['A', 'B', 'C', 'D'];
 
-/* ══════════════════════════════════════════════════════════════════════════════
+/* ==============================================================================
    HUB — sits on the home screen under the exam grid
-   ══════════════════════════════════════════════════════════════════════════════════════ */
+   ============================================================================== */
 export default function FileStudyHub() {
   const [files, setFiles] = useState(() => loadLibrary());
   const [busy, setBusy] = useState(null);      // { name, stage, pct }
@@ -78,7 +78,7 @@ export default function FileStudyHub() {
   // Saves a study pack and opens the "how do you want to study" sheet
   const openPack = (pack, name, size) => {
     const entry = { id: newFileId(), name, title: pack.title, size: size || 0, addedAt: Date.now(), pack, best: {}, modes: [] };
-    entry.modes = pack.notes && pack.notes.length ? ['notes', 'cards', 'cbt'] : ['learn', 'cards', 'cbt'];
+    entry.modes = ['learn', 'cards', 'cbt'];
     setFiles(saveToLibrary(entry));
     setBusy(null);
     SFX.roundComplete?.();
@@ -112,7 +112,7 @@ export default function FileStudyHub() {
         return;
       }
       if (A.intent === 'notes') {
-        setBusy({ name: label, stage: 'Writing your notes', pct: 0.4 });
+        setBusy({ name: label, stage: 'Preparing your lesson', pct: 0.4 });
         const pack = await makeNotes(raw, meta.name ? prettyTitle(meta.name) : 'My notes');
         if (meta.fromFile) {
           fetch('/api/events/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'file_upload', fileName: String(meta.name || '').slice(0, 80), sizeKB: Math.round((meta.size || 0) / 1024), engine: 'study-engine' }) }).catch(() => {});
@@ -219,7 +219,7 @@ export default function FileStudyHub() {
               <input
                 value={text}
                 maxLength={60000}
-                placeholder={'Or type a question, or “make notes on…”'}
+                placeholder={'Ask a question, or say “teach me…”'}
                 aria-label="Type a question or a topic"
                 onChange={(e) => setText(e.target.value)}
               />
@@ -283,7 +283,7 @@ export default function FileStudyHub() {
             const e = answers;
             try {
               setAnswers(null);
-              setBusy({ name: e.title, stage: 'Writing your notes', pct: 0.4 });
+              setBusy({ name: e.title, stage: 'Preparing your lesson', pct: 0.4 });
               const pack = await makeNotes(`${e.title}\n\n${answersToText(e.items)}`, e.title);
               pack.sources = [...(pack.sources || []), ...(e.sources || [])];
               openPack(pack, e.title);
@@ -320,7 +320,7 @@ export default function FileStudyHub() {
       {studying && (
         <StudyPlayer
           entry={studying.entry}
-          modes={studying.modes}
+          modes={studying.modes.filter((m) => m !== 'notes')}
           onClose={() => { setStudying(null); refreshFiles(); }}
         />
       )}
@@ -337,11 +337,11 @@ export default function FileStudyHub() {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════════
+/* ==============================================================================
    SETUP SHEET — pick any pills, then go
-   ══════════════════════════════════════════════════════════════════════════════════════ */
+   ============================================================================== */
 function StudySetup({ entry, onClose, onStart }) {
-  const [picked, setPicked] = useState(() => (entry.modes?.length ? entry.modes : (entry.pack.notes?.length ? ['notes', 'cards', 'cbt'] : ['learn', 'cards', 'cbt'])));
+  const [picked, setPicked] = useState(() => (entry.modes?.length ? entry.modes.filter((m) => m !== 'notes') : ['learn', 'cards', 'cbt']));
   const { pack } = entry;
   const allOn = picked.length === MODES.length;
 
@@ -353,8 +353,7 @@ function StudySetup({ entry, onClose, onStart }) {
   const ordered = MODES.filter((m) => picked.includes(m.id)).map((m) => m.id);
 
   const unavailable = {
-    notes: !(pack.notes && pack.notes.length),
-    learn: !pack.sections.length,
+    learn: !pack.sections.length && !(pack.notes && pack.notes.length),
     cards: !pack.cards.length,
     cbt: pack.questions.length < 4,
     game: pack.questions.length < 4,
@@ -423,11 +422,11 @@ function StudySetup({ entry, onClose, onStart }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════════
+/* ==============================================================================
    PLAYER — full-screen, tabs for each chosen mode
-   ══════════════════════════════════════════════════════════════════════════════════════ */
+   ============================================================================== */
 function StudyPlayer({ entry, modes, onClose }) {
-  const [active, setActive] = useState(modes[0]);
+  const [active, setActive] = useState(modes.find((m) => m !== 'notes') || 'learn');
   const { pack } = entry;
 
   const saveBest = (key, value) => {
@@ -460,9 +459,8 @@ function StudyPlayer({ entry, modes, onClose }) {
         </div>
       )}
       <div className="fs-player-body" key={active}>
-        {active === 'notes' && <NotesView pack={pack} onNext={hasNext ? next : null} />}
         {active === 'summary' && <SummaryView pack={pack} onNext={hasNext ? next : null} />}
-        {active === 'learn' && <LearnView pack={pack} onNext={hasNext ? next : null} />}
+        {active === 'learn' && <LearnPane pack={pack} onNext={hasNext ? next : null} />}
         {active === 'cards' && <CardsView pack={pack} onNext={hasNext ? next : null} />}
         {active === 'cbt' && <QuizView pack={pack} onNext={hasNext ? next : null} onScore={(p) => saveBest('cbt', p)} />}
         {active === 'game' && <GameView pack={pack} onNext={hasNext ? next : null} onScore={(s) => saveBest('game', s)} />}
@@ -478,7 +476,7 @@ const NextBtn = ({ onNext, label = 'Next mode' }) =>
     </button>
   ) : null;
 
-/* ── Summary ─────────────────────────────────────────────────────────────────────────────────── */
+/* -- Summary -- */
 function SummaryView({ pack, onNext }) {
   const { overview, points, terms } = pack.summary;
   const [copied, setCopied] = useState(false);
@@ -515,7 +513,24 @@ function SummaryView({ pack, onNext }) {
   );
 }
 
-/* ── Learn (bit by bit) ───────────────────────────────────────────────────────────────────── */
+/* -- Learn (bit by bit) -- */
+// Learn = the tutor's teaching: bit-by-bit lessons, with the written notes one tap away
+function LearnPane({ pack, onNext }) {
+  const hasNotes = !!(pack.notes && pack.notes.length);
+  const hasLessons = !!(pack.sections && pack.sections.length);
+  const [view, setView] = useState(hasLessons ? 'lessons' : 'notes');
+  if (!hasNotes || !hasLessons) return hasLessons ? <LearnView pack={pack} onNext={onNext} /> : <NotesView pack={pack} onNext={onNext} />;
+  return (
+    <>
+      <div className="fs-seg" role="tablist">
+        <button role="tab" aria-selected={view === 'lessons'} className={view === 'lessons' ? 'on' : ''} onClick={() => { SFX.select?.(); setView('lessons'); }}>Lessons</button>
+        <button role="tab" aria-selected={view === 'notes'} className={view === 'notes' ? 'on' : ''} onClick={() => { SFX.select?.(); setView('notes'); }}>Notes</button>
+      </div>
+      {view === 'lessons' ? <LearnView pack={pack} onNext={onNext} /> : <NotesView pack={pack} onNext={onNext} />}
+    </>
+  );
+}
+
 function LearnView({ pack, onNext }) {
   const secs = pack.sections;
   const [i, setI] = useState(0);
@@ -602,7 +617,7 @@ function LearnView({ pack, onNext }) {
   );
 }
 
-/* ── Flashcards ───────────────────────────────────────────────────────────────────────────── */
+/* -- Flashcards -- */
 function CardsView({ pack, onNext }) {
   const [deck, setDeck] = useState(() => pack.cards.slice());
   const [i, setI] = useState(0);
@@ -664,7 +679,7 @@ function CardsView({ pack, onNext }) {
   );
 }
 
-/* ── CBT quiz ────────────────────────────────────────────────────────────────────────────── */
+/* -- CBT quiz -- */
 function QuizView({ pack, onNext, onScore }) {
   const all = pack.questions;
   const sizes = [10, 20, all.length].filter((n, k, a) => n <= all.length && a.indexOf(n) === k);
@@ -768,8 +783,8 @@ function QuizView({ pack, onNext, onScore }) {
   );
 }
 
-/* ── Game: pick a mini-game, deliberately NOT multiple-choice — CBT already
-   covers that. Word Scramble tests recall; Match Rush tests pairing. ───── */
+/* -- Game: pick a mini-game, deliberately NOT multiple-choice — CBT already
+   covers that. Word Scramble tests recall; Match Rush tests pairing. -- */
 function GameView({ pack, onNext, onScore }) {
   const [kind, setKind] = useState(null);
   const clueSource = useMemo(
