@@ -6,7 +6,7 @@ import { sanitizeHtml, answersToText } from '../utils/studyEngine';
 // ============================================================================
 // Screens for what the study engine makes:
 //   AnswerSheet — worked answers for a question or a whole question paper
-//   NotesView   — written notes
+//   NotesView   — written notes (shown inside Learn)
 //   SourcesFoot — where the information came from (always at the bottom, never on each item)
 // ============================================================================
 
@@ -32,7 +32,7 @@ export function SourcesFoot({ sources }) {
   );
 }
 
-/* ── Notes ─────────────────────────────────────────────────────────────────────────────── */
+/* ── Notes ── */
 function NoteLine({ x }) {
   const t = x && x.text ? x.text : '';
   const m = /^([^:]{2,40}):\s(.*)$/.exec(t);
@@ -90,7 +90,7 @@ export function NotesView({ pack, onNext }) {
   );
 }
 
-/* ── Answers ─────────────────────────────────────────────────────────────────────── */
+/* ── Answers ── */
 const STATE = {
   ok: null,
   low: 'Check this one. The working may have misread the question.',
@@ -124,7 +124,7 @@ export function AnswerSheet({ entry, onClose, onNotes, onNotesFor }) {
               {STATE[it.st] && <div className="fs-qa-warn"><Icon name="alert" size={14} /> {STATE[it.st]}</div>}
               <div className="fs-qa-body" dangerouslySetInnerHTML={{ __html: sanitizeHtml(it.html) }} />
               {it.st === 'theory' && onNotesFor && (
-                <button className="fs-ghost sm" onClick={() => onNotesFor(it.text)}><Icon name="file" size={15} /> Make notes on this</button>
+                <button className="fs-ghost sm" onClick={() => onNotesFor(it.text)}><Icon name="file" size={15} /> Teach me this</button>
               )}
             </article>
           ))}
@@ -132,7 +132,7 @@ export function AnswerSheet({ entry, onClose, onNotes, onNotesFor }) {
           <div className="fs-actions">
             {onNotes && (
               <button className="fs-primary shine" onClick={() => { SFX.select?.(); onNotes(); }}>
-                <Icon name="bookOpen" size={18} /> Make study notes from this
+                <Icon name="bookOpen" size={18} /> Teach me this, step by step
               </button>
             )}
             <button className="fs-ghost" onClick={copy}><Icon name={copied ? 'check' : 'copy'} size={16} /> {copied ? 'Copied' : 'Copy answers'}</button>
