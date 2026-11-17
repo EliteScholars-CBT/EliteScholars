@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Icon from './Icon';
 import { SFX } from '../utils/sounds';
 import { sanitizeHtml, answersToText } from '../utils/studyEngine';
+import { askTutor } from '../utils/studyTutorAI';
 
 // ============================================================================
 // Screens for what the study engine makes:
@@ -98,6 +99,40 @@ const STATE = {
   theory: null,
 };
 
+/* ── AI tutor: explains or double-checks one question when the student asks ── */
+function TutorAsk({ item, weak }) {
+  const [state, setState] = useState('idle'); // idle | busy | done | err
+  const [out, setOut] = useState(null);
+  const [err, setErr] = useState('');
+  const go = async () => {
+    SFX.select?.();
+    setState('busy'); setErr('');
+    try { setOut(await askTutor(item.text, answersToText([item]).slice(0, 1400))); setState('done'); }
+    catch (e) { setErr(e.message || 'The AI tutor could not answer that.'); setState('err'); }
+  };
+  return (
+    <div className="fs-tutor">
+      {state !== 'done' && (
+        <button className={weak ? 'fs-primary sm' : 'fs-ghost sm'} onClick={go} disabled={state === 'busy'}>
+          <Icon name="sparkles" size={15} /> {state === 'busy' ? 'Thinking it through…' : weak ? 'Ask the AI tutor' : 'Explain with the AI tutor'}
+        </button>
+      )}
+      {state === 'err' && <div className="fs-qa-warn" role="alert"><Icon name="alert" size={14} /> {err}</div>}
+      {state === 'done' && out && (
+        <div className="fs-qa-body">
+          <div className="worked">
+            <div className="wk-h">AI tutor</div>
+            {out.steps.map((st, i) => <div className="wk-l step" key={i}>{st}</div>)}
+            <div className="wk-a">{out.answer}</div>
+            {out.tip ? <div className="wk-l"><b>Tip:</b> {out.tip}</div> : null}
+          </div>
+          <div className="status">Written by an AI tutor. Check important answers with your teacher.</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function AnswerSheet({ entry, onClose, onNotes, onNotesFor }) {
   const [copied, setCopied] = useState(false);
   const items = entry.items || [];
@@ -123,6 +158,7 @@ export function AnswerSheet({ entry, onClose, onNotes, onNotesFor }) {
               <p className="fs-qa-q">{it.text}</p>
               {STATE[it.st] && <div className="fs-qa-warn"><Icon name="alert" size={14} /> {STATE[it.st]}</div>}
               <div className="fs-qa-body" dangerouslySetInnerHTML={{ __html: sanitizeHtml(it.html) }} />
+              <TutorAsk item={it} weak={it.st === 'low' || it.st === 'fail'} />
               {it.st === 'theory' && onNotesFor && (
                 <button className="fs-ghost sm" onClick={() => onNotesFor(it.text)}><Icon name="file" size={15} /> Teach me this</button>
               )}
