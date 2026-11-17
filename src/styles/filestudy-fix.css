@@ -6,7 +6,3 @@
 .fs-player-head { padding-top: calc(16px + env(safe-area-inset-top, 0px)); flex-shrink: 0; }
 .fs-player-body { min-width: 0; overflow-x: hidden; }
 .fs-scroll { min-height: 0; min-width: 0; overflow-x: hidden; overscroll-behavior: contain; padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
-.fs-tutor { margin-top: 10px; }
-.fs-tutor .fs-primary.sm, .fs-tutor .fs-ghost.sm { width: auto; }
-.fs-tutor .status { margin-top: 6px; }
-.fs-tutor .fs-primary.sm { padding: 10px 16px; font-size: 13px; }

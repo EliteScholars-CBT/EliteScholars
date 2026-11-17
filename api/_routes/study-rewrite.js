@@ -8,7 +8,6 @@ import { sendOk, sendErr, sendMethodNotAllowed, setCors, readBody } from "../_he
 import { requireUser } from "../_helpers/session.js";
 import { rateLimitOk } from "../_helpers/guard.js";
 import { aiConfigured, generate } from "../_helpers/aiPool.js";
-import tutorAnswer from "./study-tutor.js";
 
 const MAX_CHARS = 4500;
 
@@ -72,7 +71,6 @@ export default async function handler(req, res) {
   if (!(await rateLimitOk(req, res, "studyai", 60, 3600, email))) return;
 
   const b = readBody(req);
-  if (b.mode === "tutor") return tutorAnswer(req, res, email, b); // the AI tutor button on a worked answer
   const text = str(String(b.text || ""), MAX_CHARS + 200).slice(0, MAX_CHARS);
   if (text.length < 200) return sendErr(res, "Not enough text to rewrite.");
 
