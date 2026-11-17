@@ -20,7 +20,7 @@ import { logBlocked } from "../_helpers/security.js";
 
 const clean = (v, n) => String(v || "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").replace(/\n{3,}/g, "\n\n").trim().slice(0, n);
 const UUID = /^[\w-]{6,64}$/;
-const DAILY_CHAT_LIMIT = 100;
+const DAILY_CHAT_LIMIT = 500;
 const EDIT_MS = 15 * 60 * 1000;
 const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "🙏", "🔥", "👏"];
 
@@ -182,7 +182,7 @@ export default async function handler(req, res) {
     } else if (sticker) kind = "sticker";
     if (kind === "text" && !text) return sendErr(res, "Type a message first.");
     let sentCount = 0;
-    // daily cap: 100 new messages per person per day (Lagos day), across all squads
+    // daily cap: 500 new messages per person per day (Lagos day), across all squads
     {
       const LAGOS = 3600000, now = Date.now();
       const dayStart = new Date(Math.floor((now + LAGOS) / 86400000) * 86400000 - LAGOS).toISOString();
@@ -192,7 +192,7 @@ export default async function handler(req, res) {
       const sentToday = Math.max(shown || 0, ctr?.count || 0);
       if (sentToday >= DAILY_CHAT_LIMIT) {
         if (sentToday === DAILY_CHAT_LIMIT) sb.from("events").insert({ type: "limit_hit", email, payload: { subject: `Squad chat daily limit reached (${DAILY_CHAT_LIMIT} messages)` } }).then(() => {}, () => {});
-        return sendErr(res, "You have used all 100 squad messages for today. Go and study! 📚 Your chat opens again tomorrow.", 429);
+        return sendErr(res, `You have used all ${DAILY_CHAT_LIMIT} squad messages for today. Go and study! 📚 Your chat opens again tomorrow.`, 429);
       }
       sentCount = sentToday;
     }

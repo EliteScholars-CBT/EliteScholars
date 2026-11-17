@@ -66,7 +66,7 @@ export default async function handler(req, res) {
       squads: n, members: new Set((mem || []).map((r) => r.email)).size,
       avgSize: n ? Math.round(((mem || []).length / n) * 10) / 10 : 0,
       messagesToday: (today || []).length, chattersToday: talkers.size,
-      nearCap: Object.values(per).filter((c) => c >= 90).length,
+      nearCap: Object.values(per).filter((c) => c >= 450).length,
       top: Object.entries(msgs).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([id, c]) => ({ name: nm[id] || "?", messages: c, members: size[id] || 0 })),
     } });
   } catch (e) { console.error("[admin squads]", e && e.message); return sendErr(res, "Could not load squad numbers.", 500); }
