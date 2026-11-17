@@ -279,6 +279,9 @@ async function buildStats(q) {
   const kpis = {
     signups: kv("signups"), quizzes: kv("quizzes"), revenue: kv("revenue"), challenges: kv("challenges"), xp: kv("xp"),
     active: { v: cur.activeAll.size, prev: prev.activeAll.size },
+    // site visits = one visit_source event per browser session (internal navigation is not counted)
+    visits: { v: curEvents.filter((e) => e.type === "visit_source").length, prev: events.filter((e) => e.type === "visit_source" && new Date(e.created_at).getTime() >= rg.prevFrom && new Date(e.created_at).getTime() <= rg.prevTo).length },
+    visitsNew: curEvents.filter((e) => e.type === "visit_source" && !(e.payload && e.payload.returning)).length,
     payments: { v: curPays.length, prev: payments.filter((p) => p.status === "successful" && new Date(p.created_at).getTime() >= rg.prevFrom && new Date(p.created_at).getTime() <= rg.prevTo).length },
   };
 
