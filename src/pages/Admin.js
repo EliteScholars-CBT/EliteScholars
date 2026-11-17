@@ -4,6 +4,7 @@ import AdminPartners from '../components/AdminPartners';
 import AdminAccess from '../components/AdminAccess';
 import AdminMail from '../components/AdminMail';
 import AdminReports from '../components/AdminReports';
+import AdminMessages from '../components/AdminMessages';
 import AdminStudents from '../components/AdminStudents';
 import AdminActivity from '../components/AdminActivity';
 import AdminStatus from '../components/AdminStatus';
@@ -58,6 +59,7 @@ const TABS = [
   { id: 'prices', label: 'Prices', perms: ['prices'] },
   { id: 'access', label: 'Access & trials', perms: ['access'] },
   { id: 'mail', label: 'Email', perms: ['mail'] },
+  { id: 'messages', label: 'Messages', perms: ['students'], badge: ['contact'] },
   { id: 'reports', label: 'Reports', perms: ['reports'], badge: ['reports'] },
   { id: 'ai', label: 'AI keys', perms: ['ai'] },
   { id: 'payroll', label: 'Payroll', perms: [], owner: true },
@@ -108,10 +110,14 @@ export default function Admin() {
     let secSince = ''; try { secSince = localStorage.getItem('adm_sec_seen') || ''; } catch { /* ignore */ }
     // WhatsApp Channel taps in the last 24h join the bell (needs the Activity permission)
     const wa = api('activity', { query: { wa: '1' } }).then((d) => d.wa).catch(() => null);
-    Promise.all([api('alerts', secSince ? { query: { secSince } } : undefined), wa]).then(([a, w]) => {
+    const msgs = api('activity', { query: { contact: 'list' } }).then((d) => d.contact).catch(() => null);
+    Promise.all([api('alerts', secSince ? { query: { secSince } } : undefined), wa, msgs]).then(([a, w, m]) => {
+      let out = a;
       const n = (w && w.last24h) || 0;
-      if (!n) { setAlerts(a); return; }
-      setAlerts({ ...a, counts: { ...a.counts, whatsapp: n }, total: (a.total || 0) + n, items: [{ kind: 'whatsapp', text: `📲 ${n} WhatsApp Channel tap${n === 1 ? '' : 's'} in the last 24 hours`, at: w.recent[0] && w.recent[0].at, tab: 'activity' }, ...a.items] });
+      if (n) out = { ...out, counts: { ...out.counts, whatsapp: n }, total: (out.total || 0) + n, items: [{ kind: 'whatsapp', text: `📲 ${n} WhatsApp Channel tap${n === 1 ? '' : 's'} in the last 24 hours`, at: w.recent[0] && w.recent[0].at, tab: 'activity' }, ...out.items] };
+      const u = (m && m.unread) || 0;
+      if (u) { const first = m.rows.find((r) => r.status === 'new'); out = { ...out, counts: { ...out.counts, contact: u }, total: (out.total || 0) + u, items: [{ kind: 'contact', text: `✉️ ${u} new contact message${u === 1 ? '' : 's'}`, at: first && first.created_at, tab: 'messages' }, ...out.items] }; }
+      setAlerts(out);
     }).catch(() => {});
   }, [token, api]);
   const markSeen = useCallback((keys) => {
@@ -262,6 +268,7 @@ export default function Admin() {
       {cur === 'payroll' && <AdminPayroll token={token} onAuthFail={authFail} />}
       {cur === 'team' && <AdminTeam token={token} onAuthFail={authFail} />}
       {cur === 'access' && <AdminAccess token={token} onAuthFail={authFail} />}
+      {cur === 'messages' && <AdminMessages token={token} onAuthFail={authFail} />}
       {cur === 'reports' && <AdminReports token={token} onAuthFail={authFail} />}
       {cur === 'mail' && <AdminMail token={token} onAuthFail={authFail} />}
       {cur === 'hiring' && <AdminHiring token={token} onAuthFail={authFail} />}
@@ -289,7 +296,7 @@ export default function Admin() {
 
       {s && (
         <div className={busy ? 'adm-dim' : ''}>
-          {s.truncated && <div className="adm-error">This range has a lot of activity; figures may be slightly understated. Try a shorter range for exact numbers.</div>}
+          {s.truncated && <div className="adm-hint" style={{ color: "#b45309", fontWeight: 600 }}>This range has a lot of activity; figures may be slightly understated. Try a shorter range for exact numbers.</div>}
 
           <section className="adm-grid adm-stats">
             <Kpi label="New signups" value={fmtN(s.kpis.signups.v)} k={s.kpis.signups} compare={compare} />
