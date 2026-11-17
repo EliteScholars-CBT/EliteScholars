@@ -9,11 +9,12 @@
 //   • turning notes (or a topic the student asks about) into a study pack: notes, summary, flashcards, CBT
 // The app never shows the engine's own page. Nothing here is specific to a subject.
 import { BRIDGE_SRC } from './studyBridge';
+import { TUTOR_SRC } from './studyTutor';
 
 export const SUPPORTED_HINT = 'PDF, Word, PowerPoint, photos or text';
 const ENGINE_URL = '/study-engine/index.html';
 
-/* ── loading the engine ─────────────────────────────────────────────────────────────────── */
+/* ── loading the engine ─────────────────────────────────────────────────────────────────────────────────────────────── */
 let enginePromise = null;
 
 function patchEngine(html) {
@@ -22,7 +23,7 @@ function patchEngine(html) {
   const t0 = h.indexOf('<section id="testCompare"');
   if (t0 > -1) { const t1 = h.lastIndexOf('</body>'); h = h.slice(0, t0) + (t1 > -1 ? h.slice(t1) : ''); }
   h = h.replace(/\$\('paste'\)\.value = SAMPLES\[0\]\.text;[^\n]*?setTimeout\(\(\) => go\(false\), 30\);/, '');
-  const tag = `<script>${BRIDGE_SRC.replace(/<\/script/gi, '<\\/script')}</script>`;
+  const tag = `<script>${(BRIDGE_SRC + TUTOR_SRC).replace(/<\/script/gi, '<\\/script')}</script>`;
   return h.includes('</body>') ? h.replace('</body>', `${tag}</body>`) : `${h}\n${tag}`;
 }
 
@@ -56,7 +57,7 @@ export function loadEngine() {
   return enginePromise;
 }
 
-/* ── reading a file ───────────────────────────────────────────────────────────────────── */
+/* ── reading a file ─────────────────────────────────────────────────────────────────────────────────────────────── */
 export async function extractTextFromFile(file, onProgress) {
   const name = (file.name || '').toLowerCase();
   if (/\.(txt|md|markdown|text|csv)$/.test(name) || (file.type || '').startsWith('text/')) {
@@ -73,7 +74,7 @@ export async function extractTextFromFile(file, onProgress) {
 
 const cleanErr = (e) => (e && e.message ? String(e.message) : '');
 
-/* ── what the engine does with the text ───────────────────────────────────────────────── */
+/* ── what the engine does with the text ────────────────────────────────────────────────────────────────────────────── */
 // → { intent: 'solve' | 'paper' | 'notes' | 'ask-notes', conf, items: [{ n, text, marks, kind }], topic? }
 export async function analyse(text) {
   const E = await loadEngine();
@@ -123,7 +124,7 @@ export function sanitizeHtml(html) {
   return doc.body.firstChild ? doc.body.firstChild.innerHTML : '';
 }
 
-/* ── small helpers ───────────────────────────────────────────────────────────────────── */
+/* ── small helpers ──────────────────────────────────────────────────────────────────────────────────────────────── */
 export function prettyTitle(fileName) {
   return String(fileName || 'Study file').replace(/\.[a-z0-9]{2,5}$/i, '').replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim()
     .replace(/\b\w/g, (c) => c.toUpperCase()).slice(0, 70) || 'Study file';
