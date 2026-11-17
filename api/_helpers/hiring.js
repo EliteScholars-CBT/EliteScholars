@@ -156,22 +156,18 @@ export const rejectedEmail = ({ name, job }) => layout({
   body: `${hi(name)}<p style="margin:0 0 12px">Thank you for the time and effort you put into applying for <b>${esc(job.title)}</b>.</p><p style="margin:0 0 12px">We are not taking you forward this time. This is not a judgement of your potential, and you are welcome to apply again when we open new roles.</p><p style="margin:0">In the meantime, keep studying and keep growing. 💜</p>`,
 });
 
-// Every hiring email is also copied to the owner so you can see exactly what applicants received.
-export const COPY_TO = () => process.env.HIRING_COPY_EMAIL || process.env.ADMIN_NOTIFY_EMAIL || "elitescholars.site@gmail.com";
-export const sendWithCopy = (to, subject, html) => sendHtml(to, subject, html, { bcc: COPY_TO() });
-
 export async function sendInvite(sb, job, app) {
   const link = `${APP}/hire/r/${app.token}`;
   const nowIso = new Date().toISOString();
   if (isVideoJob(job)) {
     const hours = job.task_duration_h || 48;
     const dueAt = new Date(Date.now() + hours * 3600000).toISOString();
-    const ok = await sendWithCopy(app.email, `Your volunteer video task (you have ${hoursText(hours)})`, videoTaskEmail({ name: app.name, job, link, dueAt, hours }));
+    const ok = await sendHtml(app.email, `Your volunteer video task (you have ${hoursText(hours)})`, videoTaskEmail({ name: app.name, job, link, dueAt, hours }));
     await sb.from("hiring_applications").update({ status: "invited", invited_at: nowIso, task_due_at: dueAt }).eq("id", app.id);
     await logEvent(sb, job.id, app.id, "invite", `Video task ${ok ? "emailed to" : "could not be emailed to"} ${app.name}. Due in ${hoursText(hours)}`);
     return ok;
   }
-  const ok = await sendWithCopy(app.email, `Next step for ${job.title}: your research task`, researchBriefEmail({ name: app.name, job, link }));
+  const ok = await sendHtml(app.email, `Next step for ${job.title}: your research task`, researchBriefEmail({ name: app.name, job, link }));
   await sb.from("hiring_applications").update({ status: "invited", invited_at: nowIso }).eq("id", app.id);
   await logEvent(sb, job.id, app.id, "invite", `Research task ${ok ? "emailed to" : "could not be emailed to"} ${app.name}`);
   return ok;
@@ -183,13 +179,13 @@ export async function sendApproval(sb, job, app) {
     const hours = job.join_duration_h || 48;
     const deadline = new Date(Date.now() + hours * 3600000).toISOString();
     const link = `${APP}/api/hire/go?t=${app.token}`;
-    const ok = await sendWithCopy(app.email, "You passed: join the EliteScholars volunteer group 🎉", videoGroupEmail({ name: app.name, job, link, deadline, hours }));
+    const ok = await sendHtml(app.email, "You passed: join the EliteScholars volunteer group 🎉", videoGroupEmail({ name: app.name, job, link, deadline, hours }));
     await sb.from("hiring_applications").update({ status: "approved", approved_at: new Date().toISOString(), group_deadline_at: deadline, group_sent_at: new Date().toISOString() }).eq("id", app.id);
     await logEvent(sb, job.id, app.id, "approved", `${app.name} approved. Group chat link ${ok ? "emailed" : "could not be emailed"} (join within ${hoursText(hours)})`);
     return ok;
   }
   const signupLink = `${APP}/api/hire/go?t=${app.token}&to=signup`;
-  const ok = await sendWithCopy(app.email, `You passed: welcome to the EliteScholars team 🎉`, approvedEmail({ name: app.name, job, signupLink }));
+  const ok = await sendHtml(app.email, `You passed: welcome to the EliteScholars team 🎉`, approvedEmail({ name: app.name, job, signupLink }));
   await sb.from("hiring_applications").update({ status: "approved", approved_at: new Date().toISOString() }).eq("id", app.id);
   await logEvent(sb, job.id, app.id, "approved", `${app.name} approved, partner signup link ${ok ? "emailed" : "could not be emailed"}`);
   return ok;
@@ -198,7 +194,7 @@ export async function sendApproval(sb, job, app) {
 // After they register: send the group chat link through a tracked redirect, so we can see when they open it.
 export async function sendGroupInvite(sb, job, app) {
   const link = `${APP}/api/hire/go?t=${app.token}`;
-  const ok = await sendWithCopy(app.email, "Your account is ready: join the team group chat", groupEmail({ name: app.name, job, link }));
+  const ok = await sendHtml(app.email, "Your account is ready: join the team group chat", groupEmail({ name: app.name, job, link }));
   await sb.from("hiring_applications").update({ group_sent_at: new Date().toISOString() }).eq("id", app.id);
   await logEvent(sb, job.id, app.id, "group_sent", `Group chat link ${ok ? "emailed to" : "could not be emailed to"} ${app.name}`);
   return ok;
@@ -212,7 +208,7 @@ export async function onGroupClick(sb, job, app) {
   if (claim.data && claim.data.length) {
     await logEvent(sb, job.id, app.id, "group_click", `${app.name} opened the group chat link`);
     if (video) await logEvent(sb, job.id, app.id, "joined", `${app.name} joined the volunteer group`);
-    const ok = await sendWithCopy(app.email, "Welcome to the EliteScholars team 🤝", video ? videoWelcomeEmail({ name: app.name, job }) : welcomeEmail({ name: app.name, job }));
+    const ok = await sendHtml(app.email, "Welcome to the EliteScholars team 🤝", video ? videoWelcomeEmail({ name: app.name, job }) : welcomeEmail({ name: app.name, job }));
     await logEvent(sb, job.id, app.id, "welcomed", `Welcome email ${ok ? "sent to" : "could not be sent to"} ${app.name}`);
   }
 }
@@ -228,7 +224,7 @@ export async function processDue(sb) {
       const { data: late } = await sb.from("hiring_applications").select("*").eq("job_id", vj.id).eq("status", "invited").lt("task_due_at", now);
       for (const a of late || []) {
         const c = await sb.from("hiring_applications").update({ status: "expired" }).eq("id", a.id).eq("status", "invited").select("id");
-        if (c.data && c.data.length) { await sendWithCopy(a.email, `Update on your ${vj.title} application`, videoExpiredEmail({ name: a.name, job: vj })); await logEvent(sb, vj.id, a.id, "expired", `${a.name} did not send the video in time. Closed`); }
+        if (c.data && c.data.length) { await sendHtml(a.email, `Update on your ${vj.title} application`, videoExpiredEmail({ name: a.name, job: vj })); await logEvent(sb, vj.id, a.id, "expired", `${a.name} did not send the video in time. Closed`); }
       }
       const { data: nojoin } = await sb.from("hiring_applications").select("*").eq("job_id", vj.id).eq("status", "approved").lt("group_deadline_at", now);
       for (const a of nojoin || []) {

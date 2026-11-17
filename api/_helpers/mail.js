@@ -7,7 +7,7 @@ let resend = null;
 const client = () => (resend ||= new Resend(process.env.RESEND_API_KEY));
 
 // Send ready-made HTML (see emailTemplates.js). No copies are sent to anyone else.
-export async function sendHtml(to, subject, html, opts = {}) {
+export async function sendHtml(to, subject, html) {
   if (!to || !process.env.RESEND_API_KEY || !FROM) return false;
   try { await client().emails.send({ from: `EliteScholars <${FROM}>`, to, subject, html }); return true; }
   catch (e) { console.warn("[mail]", e?.message); return false; }

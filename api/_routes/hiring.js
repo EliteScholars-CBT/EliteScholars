@@ -4,7 +4,7 @@ import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { checkRateLimit } from "../_helpers/rateLimit.js";
 import { adminFromToken } from "./admin.js";
 import { sendHtml, notifyAdmin } from "../_helpers/mail.js";
-import { VIDEO_TOPICS, VIDEO_DIRECTION, BRAND_ASSETS, isVideoJob, onGroupClick, newToken, processDue, sendInvite, sendApproval, rejectedEmail, applicationReceivedEmail, sendWithCopy, logEvent } from "../_helpers/hiring.js";
+import { VIDEO_TOPICS, VIDEO_DIRECTION, BRAND_ASSETS, isVideoJob, onGroupClick, newToken, processDue, sendInvite, sendApproval, rejectedEmail, applicationReceivedEmail, logEvent } from "../_helpers/hiring.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ip = (req) => req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
@@ -122,7 +122,7 @@ export default async function handler(req, res) {
       const sent = await sendInvite(sb, j, na2);
       return sendOk(res, { message: sent ? "Application received. We have emailed you your research task. Check your inbox and spam folder." : "Application received. Check your email for what happens next.", taskSent: !!sent });
     }
-    await sendWithCopy(email, `We received your application: ${j.title}`, applicationReceivedEmail({ name, job: j }));
+    await sendHtml(email, `We received your application: ${j.title}`, applicationReceivedEmail({ name, job: j }));
     return sendOk(res, { message: "Application received. Check your email for what happens next." });
   }
 
@@ -317,7 +317,7 @@ export default async function handler(req, res) {
     if (act === "reject") {
       await sb.from("hiring_applications").update({ status: "rejected" }).eq("id", a.id);
       await logEvent(sb, j.id, a.id, "rejected", `${a.name} not taken forward`);
-      if (b.email !== false) await sendWithCopy(a.email, `Update on your ${j.title} application`, rejectedEmail({ name: a.name, job: j }));
+      if (b.email !== false) await sendHtml(a.email, `Update on your ${j.title} application`, rejectedEmail({ name: a.name, job: j }));
       return sendOk(res, { message: "Marked as not taken forward." });
     }
     if (act === "reset") { await sb.from("hiring_applications").update({ status: "applied" }).eq("id", a.id); return sendOk(res, { message: "Moved back to applied." }); }
