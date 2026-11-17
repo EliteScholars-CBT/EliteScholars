@@ -208,6 +208,8 @@ export default function Admin() {
   const cur = view && visibleTabs.some((t) => t.id === view) ? view : (visibleTabs[0] ? visibleTabs[0].id : '');
   const m = METRICS[metric];
   const premRate = s && s.totals.students ? ((s.totals.premiumActive / s.totals.students) * 100).toFixed(1) : '0.0';
+  const payRate = s && s.kpis.active.v ? (s.kpis.payments.v / s.kpis.active.v) * 100 : 0;
+  const payRatePrev = s && s.kpis.active.prev ? (s.kpis.payments.prev / s.kpis.active.prev) * 100 : 0;
   const convRate = s && s.funnel.quizStarted ? Math.round((s.funnel.quizCompleted / s.funnel.quizStarted) * 100) : 0;
   const chData = s ? Object.entries(s.challengeStatus).map(([name, count]) => ({ name, count })) : [];
   const unit = s ? ({ hour: 'hour', day: 'day', month: 'month' })[s.range.bucket] : '';
@@ -303,7 +305,7 @@ export default function Admin() {
             <Kpi label="Active students" value={fmtN(s.kpis.active.v)} k={s.kpis.active} compare={compare} sub={`${fmtN(s.totals.students)} students overall`} />
             <Kpi label="Quizzes done" value={fmtN(s.kpis.quizzes.v)} k={s.kpis.quizzes} compare={compare} />
             <Kpi label="Revenue" value={fmtNaira(s.kpis.revenue.v)} k={s.kpis.revenue} compare={compare} money sub={`${fmtN(s.kpis.payments.v)} payments`} />
-            <Kpi label="XP earned" value={fmtN(s.kpis.xp.v)} k={s.kpis.xp} compare={compare} sub={s.kpis.active.v ? `${fmtN(Math.round(s.kpis.xp.v / s.kpis.active.v))} per active student` : ''} />
+            <Kpi label="Active → paying" value={`${payRate.toFixed(1)}%`} k={{ v: payRate, prev: payRatePrev }} compare={compare} sub={`${fmtN(s.kpis.payments.v)} payment${s.kpis.payments.v === 1 ? '' : 's'} from ${fmtN(s.kpis.active.v)} active students`} />
             <Kpi label="Pro now" value={fmtN(s.totals.premiumActive)} sub={`${premRate}% of all students`} />
           </section>
 
