@@ -11,6 +11,7 @@ import { installContentGuard } from './utils/contentGuard';
 import { applyDataSaver } from './utils/dataSaver';
 import { lazyRetry, prefetchWhenIdle, RouteFallback, RouteBoundary } from './utils/lazyRetry';
 import { installNetworkRecovery } from './utils/networkRecover';
+import './styles/admin-bg.css';
 
 installLoginPersistence();
 installSessionFetch();
@@ -98,4 +99,3 @@ root.render(
     </BrowserRouter>
   </StrictMode>
 );
-

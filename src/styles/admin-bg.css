@@ -1,0 +1,3 @@
+/* Admin keeps its dark background everywhere (page edges, overscroll, while loading) */
+html:has(.adm-wrap),body:has(.adm-wrap),#root:has(.adm-wrap){background:#0f0b1f!important;color-scheme:dark}
+.adm-wrap{background:#0f0b1f}
