@@ -293,7 +293,7 @@ export default function Admin() {
           {RANGES.map(([k, l]) => <button key={k} className={range === k ? 'on' : ''} onClick={() => { setMonth(''); setRange(k); }}>{l}</button>)}
         </div>
         <div className="adm-pills adm-months" aria-label="Previous months">
-          {Array.from({ length: 3 }, (_, i) => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); const v = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; return [v, d.toLocaleDateString('en-GB', { month: 'short', year: '2-digit' })]; }).filter(([v]) => v >= DATA_START).map(([v, l]) => <button key={v} className={range === `month:${v}` ? 'on' : ''} onClick={() => pickMonth(v)}>{l}</button>)}
+          {[1, 2].map((i) => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); const v = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; return [v, i === 1 ? 'Last month' : `${i} months ago`]; }).filter(([v]) => v >= DATA_START).map(([v, l]) => <button key={v} className={range === `month:${v}` ? 'on' : ''} onClick={() => pickMonth(v)}>{l}</button>)}
         </div>
         <div className="adm-pickers">
           <label>Month <input type="month" value={month} min={DATA_START} max={new Date().toISOString().slice(0, 7)} onChange={(e) => pickMonth(e.target.value)} /></label>
