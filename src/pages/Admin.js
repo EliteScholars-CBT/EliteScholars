@@ -26,6 +26,8 @@ import ForgotPassword from '../components/ForgotPassword';
 import '../styles/admin.css';
 
 const TOKEN_KEY = 'es_admin_token';
+// The month the database started recording (first events and students: October 2026). No month pills before it.
+const DATA_START = '2026-10';
 const RANGES = [
   ['today', 'Today'], ['7d', '7 days'], ['30d', '30 days'], ['90d', '90 days'],
   ['thismonth', 'This month'], ['365d', '1 year'], ['thisyear', 'This year'], ['all', 'All time'],
@@ -291,10 +293,10 @@ export default function Admin() {
           {RANGES.map(([k, l]) => <button key={k} className={range === k ? 'on' : ''} onClick={() => { setMonth(''); setRange(k); }}>{l}</button>)}
         </div>
         <div className="adm-pills adm-months" aria-label="Previous months">
-          {Array.from({ length: 12 }, (_, i) => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); const v = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; return [v, d.toLocaleDateString('en-GB', { month: 'short', year: '2-digit' })]; }).map(([v, l]) => <button key={v} className={range === `month:${v}` ? 'on' : ''} onClick={() => pickMonth(v)}>{l}</button>)}
+          {Array.from({ length: 3 }, (_, i) => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); const v = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; return [v, d.toLocaleDateString('en-GB', { month: 'short', year: '2-digit' })]; }).filter(([v]) => v >= DATA_START).map(([v, l]) => <button key={v} className={range === `month:${v}` ? 'on' : ''} onClick={() => pickMonth(v)}>{l}</button>)}
         </div>
         <div className="adm-pickers">
-          <label>Month <input type="month" value={month} max={new Date().toISOString().slice(0, 7)} onChange={(e) => pickMonth(e.target.value)} /></label>
+          <label>Month <input type="month" value={month} min={DATA_START} max={new Date().toISOString().slice(0, 7)} onChange={(e) => pickMonth(e.target.value)} /></label>
           <label>From <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} /></label>
           <label>To <input type="date" value={to} onChange={(e) => setTo(e.target.value)} /></label>
           <button onClick={applyCustom}>Apply</button>
