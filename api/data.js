@@ -26,6 +26,7 @@ import adminAccess from "./_routes/admin-access.js";
 import eventsBatch from "./_routes/events-batch.js";
 import admin from "./_routes/admin.js";
 import partner from "./_routes/partner.js";
+import recovery from "./_routes/recovery.js";
 import adminPartners from "./_routes/admin-partners.js";
 import authVerify from "./_routes/auth-verify.js";
 import studyRewrite from "./_routes/study-rewrite.js";
@@ -129,6 +130,8 @@ const ROUTES = {
   "status/blocked": withOp(status, "blocked"),
   "status/view": withOp(status, "view"),
   "status/report": withOp(status, "report"),
+  "recovery/forgot": withOp(recovery, "forgot"),
+  "recovery/reset": withOp(recovery, "reset"),
   "partner/signup": withOp(partner, "signup"),
   "partner/login": withOp(partner, "login"),
   "partner/me": withOp(partner, "me"),
