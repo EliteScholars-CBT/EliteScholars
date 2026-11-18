@@ -22,6 +22,7 @@ import AdminSources from '../components/AdminSources';
 import { AdminPrices, AdminSchools } from '../components/AdminPrices';
 import AdminHiring from '../components/AdminHiring';
 import { makeApi, ago } from '../components/adminApi';
+import ForgotPassword from '../components/ForgotPassword';
 import '../styles/admin.css';
 
 const TOKEN_KEY = 'es_admin_token';
@@ -72,6 +73,7 @@ const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 export default function Admin() {
   const [token, setToken] = useState(() => { try { return sessionStorage.getItem(TOKEN_KEY) || ''; } catch { return ''; } });
   const [password, setPassword] = useState('');
+  const [forgot, setForgot] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [stats, setStats] = useState(null);
@@ -190,6 +192,13 @@ export default function Admin() {
   if (!token) {
     return (
       <div className="adm-wrap adm-login">
+        {forgot ? (
+          <div className="adm-card adm-login-card">
+            <h1>EliteScholars Admin</h1>
+            <ForgotPassword kind="admin" owner={!teamMode} email={email} onBack={() => setForgot(false)}
+              onSignedIn={(d) => { try { sessionStorage.setItem(TOKEN_KEY, d.token); } catch { /* ignore */ } setForgot(false); setPassword(''); setToken(d.token); }} />
+          </div>
+        ) : (
         <form className="adm-card adm-login-card" onSubmit={login}>
           <h1>EliteScholars Admin</h1>
           <p>{teamMode ? 'Team sign-in. Use the email and password you were given.' : 'Private dashboard. Enter the admin password.'}</p>
@@ -197,8 +206,10 @@ export default function Admin() {
           <input type="password" autoComplete="current-password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} autoFocus={!teamMode} />
           {error && <div className="adm-error">{error}</div>}
           <button type="submit" disabled={busy || !password || (teamMode && !email)}>{busy ? 'Checking…' : 'Sign in'}</button>
+          <button type="button" className="adm-link" onClick={() => { setForgot(true); setError(''); }}>Forgot password?</button>
           <button type="button" className="adm-link" onClick={() => { setTeamMode(!teamMode); setError(''); }}>{teamMode ? 'Sign in as the owner' : 'Team member? Sign in with email'}</button>
         </form>
+        )}
       </div>
     );
   }
