@@ -9,8 +9,7 @@
 //   • turning notes (or a topic the student asks about) into a study pack: notes, summary, flashcards, CBT
 // The app never shows the engine's own page. Nothing here is specific to a subject.
 import { BRIDGE_SRC } from './studyBridge';
-import { TUTOR_SRC } from './studyTutor';
-import { ALGEBRA_SRC } from './studyAlgebra';
+import { SKILLS_SRC } from './studySkills';
 
 export const SUPPORTED_HINT = 'PDF, Word, PowerPoint, photos or text';
 const ENGINE_URL = '/study-engine/index.html';
@@ -24,7 +23,7 @@ function patchEngine(html) {
   const t0 = h.indexOf('<section id="testCompare"');
   if (t0 > -1) { const t1 = h.lastIndexOf('</body>'); h = h.slice(0, t0) + (t1 > -1 ? h.slice(t1) : ''); }
   h = h.replace(/\$\('paste'\)\.value = SAMPLES\[0\]\.text;[^\n]*?setTimeout\(\(\) => go\(false\), 30\);/, '');
-  const tag = `<script>${(BRIDGE_SRC + TUTOR_SRC + ALGEBRA_SRC).replace(/<\/script/gi, '<\\/script')}</script>`;
+  const tag = `<script>${(BRIDGE_SRC + SKILLS_SRC).replace(/<\/script/gi, '<\\/script')}</script>`;
   return h.includes('</body>') ? h.replace('</body>', `${tag}</body>`) : `${h}\n${tag}`;
 }
 
