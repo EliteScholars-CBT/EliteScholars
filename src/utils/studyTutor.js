@@ -78,9 +78,73 @@ export const TUTOR_SRC = String.raw`
       var ch = n - o, p = ch / o * 100, w = ch >= 0 ? 'increase' : 'decrease';
       return out('Percentage change', ['Percentage change = (new − old) ÷ old × 100. The old value is the one you start from: ' + nf(o) + '; the new value is ' + nf(n) + '.', 'Change = ' + nf(n) + ' − ' + nf(o) + ' = ' + nf(ch), nf(ch) + ' ÷ ' + nf(o) + ' × 100 = ' + nf(p) + '%'], 'A ' + nf(Math.abs(p)) + '% ' + w);
     }
+    /* -- tried only when the engine itself could not solve the question ------------------------------------------ */
+    function money(t) { var m = t.match(/(?:N|₦|NGN\s*)?\s*(\d[\d,]*\.?\d*)/); return m ? parseFloat(m[1].replace(/,/g, '')) : null; }
+    function interest(t) {
+      if (!/interest/i.test(t)) return null;
+      var P = money(t), r = t.match(/(\d+\.?\d*)\s*%/), n = t.match(/(\d+\.?\d*)\s*(year|yr|month)/i);
+      if (!P || !r || !n) return null;
+      r = +r[1]; var yrs = /month/i.test(n[2]) ? +n[1] / 12 : +n[1];
+      if (/compound/i.test(t)) {
+        var A = P * Math.pow(1 + r / 100, yrs), L = ['Compound interest: A = P(1 + r/100)<sup>n</sup>, and interest = A − P.', 'P = ' + nf(P) + ', r = ' + r + '%, n = ' + nf(yrs) + ' years', 'A = ' + nf(P) + ' × (1 + ' + nf(r / 100) + ')<sup>' + nf(yrs) + '</sup> = ' + nf(A), 'Interest = ' + nf(A) + ' − ' + nf(P) + ' = ' + nf(A - P)];
+        return out('Compound interest', L, 'Compound interest = ' + nf(A - P) + '  (amount = ' + nf(A) + ')');
+      }
+      var I = P * r * yrs / 100;
+      return out('Simple interest', ['Simple interest: I = P × R × T ÷ 100', 'I = ' + nf(P) + ' × ' + r + ' × ' + nf(yrs) + ' ÷ 100 = ' + nf(I), 'Amount after ' + nf(yrs) + ' years = ' + nf(P) + ' + ' + nf(I) + ' = ' + nf(P + I)], 'Simple interest = ' + nf(I));
+    }
+    function quad(t) {
+      var m = t.replace(/²/g, '^2').replace(/\s+/g, '').match(/([+-]?\d*\.?\d*)x\^2([+-]\d*\.?\d*)x([+-]\d+\.?\d*)?=0/i);
+      if (!m) return null;
+      var a = cf(m[1]), b = cf(m[2]), c = m[3] ? parseFloat(m[3]) : 0, D = b * b - 4 * a * c;
+      var L = ['Write it as ax² + bx + c = 0: a = ' + nf(a) + ', b = ' + nf(b) + ', c = ' + nf(c), 'Use x = (−b ± √(b² − 4ac)) ÷ 2a', 'Discriminant: b² − 4ac = ' + nf(b * b) + ' − ' + (4 * a * c < 0 ? '(' + nf(4 * a * c) + ')' : nf(4 * a * c)) + ' = ' + nf(D)];
+      if (D < 0) return out('Quadratic equation', L.concat(['The discriminant is negative, so there are no real roots.']), 'No real roots');
+      var sq = Math.sqrt(D), x1 = (-b + sq) / (2 * a), x2 = (-b - sq) / (2 * a);
+      if (D === 0) return out('Quadratic equation', L.concat(['The discriminant is 0, so the two roots are equal: x = −b ÷ 2a']), 'x = ' + nf(x1));
+      L.push('√' + nf(D) + ' = ' + nf(sq));
+      L.push('x = (' + nf(-b) + ' + ' + nf(sq) + ') ÷ ' + nf(2 * a) + ' = ' + nf(x1) + '   or   x = (' + nf(-b) + ' − ' + nf(sq) + ') ÷ ' + nf(2 * a) + ' = ' + nf(x2));
+      return out('Quadratic equation', L, 'x = ' + nf(x1) + ' or x = ' + nf(x2));
+    }
+    var TR = { sin: { 0: [0, '0'], 30: [0.5, '1/2'], 45: [Math.SQRT1_2, '√2/2'], 60: [Math.sqrt(3) / 2, '√3/2'], 90: [1, '1'] }, cos: { 0: [1, '1'], 30: [Math.sqrt(3) / 2, '√3/2'], 45: [Math.SQRT1_2, '√2/2'], 60: [0.5, '1/2'], 90: [0, '0'] }, tan: { 0: [0, '0'], 30: [1 / Math.sqrt(3), '1/√3'], 45: [1, '1'], 60: [Math.sqrt(3), '√3'] } };
+    function trig(t) {
+      var terms = [], re = /(sin|cos|tan)\s*(\d{1,2})\s*°?/gi, m;
+      if (/[a-wyz]\s*=|\bx\b/i.test(t.replace(/(sin|cos|tan)/gi, ''))) return null;
+      while ((m = re.exec(t))) { var v = TR[m[1].toLowerCase()][+m[2]]; if (!v) return null; terms.push({ f: m[1].toLowerCase(), a: +m[2], v: v }); }
+      if (!terms.length || terms.length > 3) return null;
+      var sign = /(\+|plus|and)/i.test(t) ? '+' : /(−|-|minus)/.test(t) ? '−' : /(×|\*|times|product)/i.test(t) ? '×' : (terms.length === 1 ? '' : null);
+      if (sign === null) return null;
+      var val = terms.reduce(function (acc, x, i) { return i === 0 ? x.v[0] : sign === '+' ? acc + x.v[0] : sign === '−' ? acc - x.v[0] : acc * x.v[0]; }, 0);
+      var L = ['Use the exact values of the special angles (0°, 30°, 45°, 60°, 90°):'].concat(terms.map(function (x) { return x.f + ' ' + x.a + '° = ' + x.v[1]; }));
+      if (terms.length > 1) L.push('Put them together: ' + terms.map(function (x) { return '(' + x.v[1] + ')'; }).join(' ' + sign + ' ') + ' = ' + nf(val));
+      return out('Trigonometric ratios', L, nf(val) + (Math.abs(val - Math.round(val)) < 1e-9 ? '' : '  (≈ ' + nf(val) + ')'));
+    }
+    function angles(t) {
+      var kind = /triangle/i.test(t) ? 180 : /straight line|angles on a line|supplementary/i.test(t) ? 180 : /quadrilateral/i.test(t) ? 360 : /around a point|at a point/i.test(t) ? 360 : /right[- ]angle|complementary/i.test(t) ? 90 : 0;
+      if (!kind) return null;
+      t = t.split(/\b(?:find|calculate|determine|what|solve)\b/i)[0];
+      var re = /(?:^|[\s,(])(\d*\.?\d*)\s*x\b(?:\s*([+-])\s*(\d+\.?\d*))?/gi, m, k = 0, c = 0, n = 0, parts = [];
+      while ((m = re.exec(t))) { var co = m[1] === '' ? 1 : parseFloat(m[1]); k += co; if (m[2]) c += (m[2] === '+' ? 1 : -1) * parseFloat(m[3]); n++; parts.push(m[0].trim()); }
+      if (n < 2 || !k) return null;
+      var x = (kind - c) / k, name = { 180: 'angles in a triangle (or on a straight line) add up to 180°', 360: 'angles in a quadrilateral (or round a point) add up to 360°', 90: 'complementary angles add up to 90°' }[kind];
+      return out('Angles', ['The ' + name + '.', 'Add the parts: ' + parts.join(' + ') + ' = ' + kind, 'Collect the x terms: ' + nf(k) + 'x' + (c ? (c > 0 ? ' + ' : ' − ') + nf(Math.abs(c)) : '') + ' = ' + kind, nf(k) + 'x = ' + nf(kind - c), 'x = ' + nf(kind - c) + ' ÷ ' + nf(k) + ' = ' + nf(x)], 'x = ' + nf(x) + '°');
+    }
+    function base(t) {
+      var m = t.match(/(?:convert|change|express|express|what is)?[^0-9a-f]*([0-9a-f]+)\s*(?:in\s+)?(?:base|\(?base)\s*(\d{1,2})\s*(?:to|into|in)\s*(?:base\s*)?(\d{1,2}|binary|decimal|octal|hexadecimal)/i);
+      if (!m) return null;
+      var NB = { binary: 2, octal: 8, decimal: 10, hexadecimal: 16 }, from = +m[2], to = isNaN(+m[3]) ? NB[m[3].toLowerCase()] : +m[3];
+      if (!(from >= 2 && from <= 16 && to >= 2 && to <= 16) || isNaN(parseInt(m[1], from))) return null;
+      var n = parseInt(m[1], from), digits = m[1].toUpperCase().split(''), L = [];
+      if (from !== 10) { L.push('Change to base 10: add each digit × ' + from + '<sup>place</sup>, counting places from the right starting at 0.'); L.push(digits.map(function (d, i) { return parseInt(d, 16) + '×' + from + '<sup>' + (digits.length - 1 - i) + '</sup>'; }).join(' + ') + ' = ' + n); }
+      if (to !== 10) { L.push('Change ' + n + ' to base ' + to + ' by dividing repeatedly by ' + to + ' and reading the remainders from the bottom up:'); var q = n, rs = []; if (q === 0) rs.push('0'); while (q > 0) { rs.push((q % to).toString(16).toUpperCase() + ' (' + q + ' ÷ ' + to + ' = ' + Math.floor(q / to) + ' r ' + (q % to) + ')'); q = Math.floor(q / to); } L = L.concat(rs); }
+      return out('Number bases', L, m[1] + '<sub>' + from + '</sub> = ' + n.toString(to).toUpperCase() + '<sub>' + to + '</sub>');
+    }
+    var FALLBACKS = [interest, quad, trig, angles, base];
     window.solveItem = function (q) {
       try { var t = String((q && q.text) || ''), r = coin(t) || dice(t) || pct(t) || sim(t) || stdForm(t) || index(t); if (r) return r; } catch (e) { /* fall through to the engine */ }
-      return _si.apply(this, arguments);
+      var res = _si.apply(this, arguments);
+      if (res && (res.st === 'fail' || res.st === 'low' || res.st === 'theory')) {
+        try { var t2 = String((q && q.text) || ''); for (var i = 0; i < FALLBACKS.length; i++) { var f = FALLBACKS[i](t2); if (f) return f; } } catch (e) { /* keep the engine's answer */ }
+      }
+      return res;
     };
   })();
 })();
