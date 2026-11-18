@@ -1,3 +1,4 @@
+import ForgotPassword from '../components/ForgotPassword';
 import useReveal from '../utils/useReveal';
 import '../styles/reveal.css';
 import React, { useState, useEffect, useCallback } from 'react';
@@ -28,6 +29,7 @@ export default function Partner() {
   const [trial, setTrial] = useState({ school: 0, centre: 0 }); // trial days for the schools/centres cards (public info)
   useEffect(() => { let off = false; fetch('/api/site/school-info').then((r) => r.json()).then((j) => { if (!off && j && j.success) setTrial({ school: Number(j.trialDays) || 0, centre: Number(j.centre && j.centre.trialDays) || 0 }); }).catch(() => {}); return () => { off = true; }; }, []);
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '' });
+  const [forgot, setForgot] = useState(false);
   const [hire] = useState(() => { try { return new URLSearchParams(window.location.search).get('hire') || ''; } catch { return ''; } }); // personal link from the hiring email
   useReveal('.pt-sec > h2, .pt-sec > p, .pt-steps > div, .pt-grid > div, .pt-faq > div, .pt-calc, .pt-form', token);
   const [busy, setBusy] = useState(false);
@@ -177,6 +179,11 @@ export default function Partner() {
         </section>
 
         <section className="pt-sec" id="pt-form">
+          {forgot ? (
+            <div className="pt-form">
+              <ForgotPassword kind="partner" email={form.email} onBack={() => setForgot(false)} />
+            </div>
+          ) : (
           <form className="pt-form" onSubmit={submit}>
             <h2 key={mode} className="pt-swap">{mode === 'login' ? 'Partner sign in' : 'Create your partner account'}</h2>
             <p>{mode === 'login' ? 'See your referrals and earnings.' : `Free. Start earning ${rate}% today.`}</p>
@@ -188,10 +195,12 @@ export default function Partner() {
             {error && <div className="adm-error">{error}</div>}
             {info && <div className="adm-ok">{info}</div>}
             <button type="submit" disabled={busy}>{busy ? 'Please wait…' : mode === 'login' ? 'Sign in' : 'Create partner account'}</button>
+            {mode === 'login' && <button type="button" className="adm-ghost" onClick={() => { setForgot(true); setError(''); setInfo(''); }}>Forgot password?</button>}
             <button type="button" className="adm-ghost" onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(''); setInfo(''); }}>
               {mode === 'login' ? 'New here? Become a partner' : 'I already have an account'}
             </button>
           </form>
+          )}
         </section>
         <footer className="pt-foot"><a href="/">EliteScholars</a> · <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a></footer>
       </div>
