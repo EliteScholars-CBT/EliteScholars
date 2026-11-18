@@ -68,7 +68,7 @@ export function TrendChart({ labels, values, prev, fmt, color = '#8b5cf6' }) {
   );
 }
 
-/* ── Vertical bars (hour of day / weekday) ───────────────────────────────── */
+/* ── Vertical bars (hour of day / weekday) ───────────────────────────────────────────────────────────── */
 export function ColumnChart({ values, labels, highlight }) {
   const max = Math.max(1, ...values);
   const W = 640, H = 150, B = 22, gap = 3;
@@ -135,7 +135,7 @@ export function Bars({ data }) {
 }
 
 export function Funnel({ steps }) {
-  const max = Math.max(1, steps[0].count);
+  const max = Math.max(1, ...steps.map((x) => x.count));
   return (
     <div className="adm-funnel">
       {steps.map((s, i) => {
@@ -168,4 +168,3 @@ export function Kpi({ label, value, k, compare, money, sub }) {
     </div>
   );
 }
-
