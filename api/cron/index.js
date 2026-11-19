@@ -6,8 +6,7 @@
 import { getUsersWithGuardians, getExpiringSubscriptions } from '../_helpers/queries.js';
 import { Resend }    from 'resend';
 import { getSupabase, supabaseEnabled } from '../_helpers/supabase.js';
-import { pushToEmails } from '../_helpers/push.js';
-import { lagosDay } from '../_helpers/access.js';
+import { runStudyReminders } from '../_helpers/studyReminders.js';
 import { runPartnerInactivity } from '../_helpers/partnerActivity.js';
 import { processDue as processHiring } from '../_helpers/hiring.js';
 
@@ -545,39 +544,6 @@ console.log('Finished calling getExpiringSubscriptions ', result);
 }
 
 // ============================================================================
-// JOB: Daily streak push (16:00 UTC = 5pm Lagos)
-// Students with a live streak who have not practised today get a nudge.
-// ============================================================================
-
-async function runStreakPushes() {
-  if (!supabaseEnabled()) return { type: 'streak_push', skipped: 'no database' };
-  const sb = getSupabase();
-  const today = lagosDay();
-  const { data: subs } = await sb.from('push_subscriptions').select('email');
-  const emails = [...new Set((subs || []).map((r) => r.email))];
-  let streakers = 0, comeback = 0;
-  const totals = { sent: 0, removed: 0, failed: 0 };
-  const add = (r) => { totals.sent += r.sent; totals.removed += r.removed; totals.failed += r.failed; };
-  for (let i = 0; i < emails.length; i += 200) {
-    const { data: rows } = await sb.from('profiles').select('email,first_name,current_streak,last_active').in('email', emails.slice(i, i + 200));
-    for (const u of rows || []) {
-      const last = u.last_active ? lagosDay(new Date(u.last_active).getTime()) : null;
-      if (last === today) continue; // already practised today
-      const name = u.first_name || 'Scholar';
-      const idle = u.last_active ? Math.floor((Date.now() - new Date(u.last_active).getTime()) / 86400000) : 99;
-      if ((u.current_streak || 0) >= 1 && idle <= 1) {
-        streakers++;
-        add(await pushToEmails([u.email], { title: `🔥 ${u.current_streak}-day streak at risk`, body: `${name}, practise for 5 minutes tonight to keep your streak alive.`, url: '/app', tag: 'streak', type: 'streak' }));
-      } else if (idle >= 3 && idle <= 7 && idle % 2 === 1) {
-        comeback++;
-        add(await pushToEmails([u.email], { title: 'We saved your seat 📚', body: `${name}, one quick quiz gets you back on track.`, url: '/app', tag: 'comeback', type: 'comeback' }));
-      }
-    }
-  }
-  return { type: 'streak_push', subscribers: emails.length, streakers, comeback, ...totals };
-}
-
-// ============================================================================
 // MAIN HANDLER
 // ============================================================================
 
@@ -615,16 +581,19 @@ export default async function handler(req, res) {
       result = await runSubscriptionReminders(true); // test = send everything
     }
     else if (req.query?.test === 'push') {
-      result = await runStreakPushes();
+      result = await runStudyReminders(hour < 12 ? 'morning' : 'evening');
     }
     else if (hour === 16) {
-      result = await runStreakPushes();
+      // 5pm Lagos: evening study reminder (streak-at-risk / come-back wording where it fits)
+      result = await runStudyReminders('evening');
     }
     else if (hour === 7) {
       const isSunday = day === 0;
       if (isSunday) { try { await runGuardianReports(); } catch (e) { console.error('Guardian reports failed:', e?.message); } }
       console.log(`📅 SCHEDULED: Subscription Reminders (Daily 7AM UTC) — isSunday: ${isSunday}`);
       result = await runSubscriptionReminders(isSunday);
+      // 8am Lagos: morning study reminder to everyone who allowed notifications
+      try { result = { ...result, studyReminders: await runStudyReminders('morning') }; } catch (e) { console.error('Study reminders failed:', e?.message); }
     } 
     else {
       result = {
