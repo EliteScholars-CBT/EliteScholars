@@ -47,6 +47,8 @@ export default function AdminHiring({ token, onAuthFail }) {
   const [filter, setFilter] = useState({});   // job id -> stage filter
   const [seeApp, setSeeApp] = useState('');
   const [sub, setSub] = useState('jobs');
+  // Activity count shows only what is new since the log was last opened; opening the log clears it.
+  const [hireSeen, setHireSeen] = useState(() => { try { return localStorage.getItem('adm_hire_seen') || ''; } catch { return ''; } });
   const [actJob, setActJob] = useState('all');
   const [anJob, setAnJob] = useState('all');
   const [busy, setBusy] = useState(false);
@@ -108,14 +110,21 @@ export default function AdminHiring({ token, onAuthFail }) {
   const formKey = form ? (form.id || 'new') : '';
   useEffect(() => { if (!formKey) return; const t = setTimeout(() => { const el = document.getElementById('hire-form'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60); return () => clearTimeout(t); }, [formKey]);
 
+  const newestEv = data && data.events && data.events[0] ? data.events[0].created_at : '';
+  useEffect(() => {
+    if (sub !== 'activity' || !newestEv || newestEv <= hireSeen) return;
+    setHireSeen(newestEv);
+    try { localStorage.setItem('adm_hire_seen', newestEv); } catch { /* ignore */ }
+  }, [sub, newestEv, hireSeen]);
   if (!data) return <div className="adm-card">{err || 'Loading…'}</div>;
+  const unseenEv = data.events.filter((e) => e.created_at > hireSeen).length;
   const now = new Date(data.now).getTime();
   const appsOf = (jid) => data.applications.filter((a) => a.job_id === jid);
 
   return (
     <div>
       <div className="adm-pills hire-sub">
-        {[['jobs', 'Jobs'], ['activity', 'Activity'], ['analytics', 'Analytics']].map(([k, l]) => <button key={k} className={sub === k ? 'on' : ''} onClick={() => setSub(k)}>{l}{k === 'activity' && data.events.length ? <i>{data.events.length > 99 ? '99+' : data.events.length}</i> : null}</button>)}
+        {[['jobs', 'Jobs'], ['activity', 'Activity'], ['analytics', 'Analytics']].map(([k, l]) => <button key={k} className={sub === k ? 'on' : ''} onClick={() => setSub(k)}>{l}{k === 'activity' && unseenEv > 0 && sub !== 'activity' ? <i>{unseenEv > 99 ? '99+' : unseenEv}</i> : null}</button>)}
       </div>
       {msg && sub !== 'jobs' && <div className="adm-ok">{msg}</div>}
       {sub === 'activity' && <HireActivity data={data} jobId={actJob} setJobId={setActJob} />}
