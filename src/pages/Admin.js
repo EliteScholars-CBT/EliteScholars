@@ -30,7 +30,7 @@ const TOKEN_KEY = 'es_admin_token';
 const DATA_START = '2026-10';
 const RANGES = [
   ['today', 'Today'], ['7d', '7 days'], ['30d', '30 days'], ['90d', '90 days'],
-  ['thismonth', 'This month'], ['365d', '1 year'], ['thisyear', 'This year'], ['all', 'All time'],
+  ['thismonth', 'This month'], ['thisyear', 'This year'], ['all', 'All time'],
 ];
 
 const METRICS = {
