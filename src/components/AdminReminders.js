@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { makeApi, ago } from './adminApi';
 import { fmtN } from './AdminCharts';
 
-const KIND = { reminder: 'Daily study reminder', streak_push: 'Streak reminder', 'squad-chat': 'Squad chat', challenge: 'Challenge', assignment: 'Class assignment', status: 'Status', general: 'Other' };
+const KIND = { study_morning: 'Morning study reminder (8am)', study_evening: 'Evening study reminder (5pm)', streak: 'Streak at risk', comeback: 'Come-back nudge', reminder: 'Study reminder set on the phone', streak_push: 'Streak reminder', 'squad-chat': 'Squad chat', challenge: 'Challenge', assignment: 'Class assignment', status: 'Status', general: 'Other' };
 const kindName = (k) => KIND[k] || k;
 const pct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : '–');
 
@@ -31,9 +31,9 @@ export default function AdminReminders({ token, onAuthFail }) {
           <div className="adm-stat"><div className="adm-stat-val">{fmtN(d.openers)}</div><div className="adm-stat-label">Students who opened the app from one</div></div>
         </div>
         <p className="adm-note">{fmtN(d.subscribers)} phones are subscribed right now. "Shown" counts reminders the phone displayed itself.</p>
-        <table className="adm-table"><thead><tr><th>Kind</th><th>Sent</th><th>Tapped</th><th>Opened app</th></tr></thead>
-          <tbody>{d.kinds.map((k) => <tr key={k.kind}><td>{kindName(k.kind)}</td><td>{fmtN(k.sent || k.shown)}</td><td>{fmtN(k.clicks)}</td><td>{fmtN(k.opens)}</td></tr>)}
-            {!d.kinds.length && <tr><td colSpan="4">Nothing yet.</td></tr>}</tbody></table>
+        <table className="adm-table"><thead><tr><th>Kind</th><th>Sent</th><th>Received on phone</th><th>Tapped to resume</th><th>Opened app</th></tr></thead>
+          <tbody>{d.kinds.map((k) => <tr key={k.kind}><td>{kindName(k.kind)}</td><td>{fmtN(k.sent)}</td><td>{fmtN(k.shown)}</td><td>{fmtN(k.clicks)}{k.shown ? ` (${pct(k.clicks, k.shown)})` : ''}</td><td>{fmtN(k.opens)}</td></tr>)}
+            {!d.kinds.length && <tr><td colSpan="5">Nothing yet.</td></tr>}</tbody></table>
       </section>
       <section className="adm-card">
         <h2>Did they allow notifications?</h2>

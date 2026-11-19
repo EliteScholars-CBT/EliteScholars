@@ -30,7 +30,7 @@ export async function pushToEmails(emails, payload) {
       const { data } = await sb.from("push_subscriptions").select("endpoint,p256dh,auth,email").in("email", list.slice(i, i + 200));
       subs.push(...(data || []));
     }
-    const body = JSON.stringify({ title: payload.title, body: payload.body, url: withNp(payload.url || "/app", payload.type || "general"), tag: payload.tag || "elitescholars", type: payload.type || "general" });
+    const body = JSON.stringify({ title: payload.title, body: payload.body, url: withNp(payload.url || "/app", payload.type || "general"), tag: payload.tag || "elitescholars", type: payload.type || "general", ...(Array.isArray(payload.actions) ? { actions: payload.actions.slice(0, 2) } : {}) });
     const dead = [];
     for (let i = 0; i < subs.length; i += 25) {
       await Promise.all(subs.slice(i, i + 25).map(async (s) => {
