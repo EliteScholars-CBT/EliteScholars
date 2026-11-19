@@ -43,6 +43,7 @@ import adminActivityPlus from "./_routes/admin-activity-plus.js";
 import squadChat from "./_routes/squad-chat.js";
 import hiring from "./_routes/hiring.js";
 import adminPayroll from "./_routes/admin-payroll.js";
+import nudge from "./_routes/nudge.js";
 
 // Several routes share one handler and are told which operation via ?op=
 function withOp(fn, op) {
@@ -51,6 +52,8 @@ function withOp(fn, op) {
 
 const ROUTES = {
   "xp/add": xpAdd,
+  "mail/nudge": nudge,
+  "admin/nudges": nudge,
   "events/track": eventsTrack,
   "site/school-info": withOp(sitePublic, "school-info"),
   "site/school-demo": withOp(sitePublic, "school-demo"),

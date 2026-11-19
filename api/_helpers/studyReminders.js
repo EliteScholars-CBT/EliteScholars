@@ -5,6 +5,7 @@
 import { getSupabase, supabaseEnabled } from "./supabase.js";
 import { pushToEmails, pushEnabled } from "./push.js";
 import { lagosDay } from "./access.js";
+import { runEmailNudges } from "./emailNudges.js";
 
 const DAY = 86400000;
 const pick = (arr, n) => arr[Math.abs(n) % arr.length];
@@ -19,7 +20,15 @@ function message(slot, { name, streak, idle }, seed) {
   return { title: `Evening, ${name} 📚`, body: pick(["Finish today strong with one quick quiz.", "Revise one topic before bed. It sticks better.", "Five minutes tonight keeps you ahead."], seed) };
 }
 
+// Morning slot: first the come-back emails (students without push), then the push reminders.
 export async function runStudyReminders(slot) {
+  let emailNudges = null;
+  if (slot === "morning") { try { emailNudges = await runEmailNudges(); } catch (e) { emailNudges = { error: String(e?.message || e) }; } }
+  const r = await runPush(slot);
+  return emailNudges ? { ...r, emailNudges } : r;
+}
+
+async function runPush(slot) {
   const out = { type: "study_reminders", slot, targeted: 0, sent: 0, failed: 0, removed: 0, skipped: { practisedToday: 0, alreadySent: 0, longIdle: 0 } };
   if (!supabaseEnabled()) return { ...out, skipped: "no database" };
   if (!pushEnabled()) return { ...out, skipped: "push keys not set (VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY)" };
