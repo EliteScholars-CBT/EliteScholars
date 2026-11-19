@@ -84,7 +84,10 @@ export function buildNudge(step, u, email) {
   };
 }
 
-const lastSeen = (r) => Math.max(r.last_active ? new Date(r.last_active).getTime() : 0, r.last_login ? new Date(r.last_login).getTime() : 0);
+// Last time the student did anything: practised, signed in, was seen online, or simply opened the app (session events).
+const ts = (v) => (v ? new Date(v).getTime() || 0 : 0);
+const lastSeen = (r, opened) => Math.max(ts(r.last_active), ts(r.last_login), ts(r.last_seen), (opened && opened.get(String(r.email || "").toLowerCase())) || 0);
+const OPEN_TYPES = ["session_start", "session_end", "session", "quiz_start", "quiz_complete"];
 const examOf = (r) => { try { const a = Array.isArray(r.selected_exams) ? r.selected_exams : []; const x = a[0]; return x ? String(typeof x === "string" ? x : x.name || x.id || "").toUpperCase().slice(0, 20) : ""; } catch { return ""; } };
 
 async function all(sb, table, cols, build) {
@@ -108,13 +111,24 @@ export async function runEmailNudges() {
   const now = Date.now();
 
   const [students, partners, optouts, pushers, states] = await Promise.all([
-    all(sb, "profiles", "email,first_name,username,quizzes_taken,level,total_xp,current_streak,best_streak,last_active,last_login,selected_exams,suspended"),
+    all(sb, "profiles", "email,first_name,username,quizzes_taken,level,total_xp,current_streak,best_streak,last_active,last_login,selected_exams,suspended,last_seen"),
     all(sb, "partners", "email"),
     all(sb, "email_optouts", "email"),
     all(sb, "push_subscriptions", "email"),
     all(sb, "email_nudges", "email,step,last_sent_at"),
   ]);
   const lc = (s) => String(s || "").toLowerCase();
+  // latest time each student opened the app (last 60 days)
+  const opened = new Map();
+  try {
+    const since = new Date(now - 60 * DAY).toISOString();
+    for (let from = 0; from < 30000; from += 1000) {
+      const { data } = await sb.from("events").select("email,created_at").in("type", OPEN_TYPES).gte("created_at", since).not("email", "is", null).order("created_at", { ascending: false }).range(from, from + 999);
+      if (!data || !data.length) break;
+      for (const r of data) { const e = lc(r.email), t = ts(r.created_at); if (e && t > (opened.get(e) || 0)) opened.set(e, t); }
+      if (data.length < 1000) break;
+    }
+  } catch { /* falls back to profile times */ }
   const skip = new Set([...partners, ...optouts, ...pushers].map((r) => lc(r.email)));
   const state = new Map(states.map((r) => [lc(r.email), r]));
   const byEmail = new Map(students.map((r) => [lc(r.email), r]));
@@ -124,7 +138,7 @@ export async function runEmailNudges() {
   for (const s of states) {
     const e = lc(s.email), u = byEmail.get(e);
     if (!u || !s.step || !s.last_sent_at) continue;
-    const seen = lastSeen(u), sentAt = new Date(s.last_sent_at).getTime();
+    const seen = lastSeen(u, opened), sentAt = new Date(s.last_sent_at).getTime();
     if (seen > sentAt) {
       events.push({ type: "nudge_return", email: e, payload: { step: s.step, hours: Math.round((seen - sentAt) / 3600000) } });
       await sb.from("email_nudges").update({ step: 0, updated_at: new Date().toISOString() }).eq("email", s.email);
@@ -138,7 +152,7 @@ export async function runEmailNudges() {
   for (const u of students) {
     const e = lc(u.email);
     if (!e || skip.has(e) || u.suspended || !(u.quizzes_taken >= 1)) continue;
-    const seen = lastSeen(u);
+    const seen = lastSeen(u, opened);
     if (!seen) continue;
     const idle = Math.floor((now - seen) / DAY);
     const st = state.get(e);
