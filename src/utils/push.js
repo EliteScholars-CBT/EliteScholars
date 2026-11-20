@@ -100,12 +100,24 @@ export async function enablePush() {
 
 // Run quietly every time a signed-in student opens the app: repairs a lost, expired or old-key subscription and
 // re-links this phone to whoever is signed in now. Does nothing unless notifications are already allowed.
+// Tell analytics what the quiet sync did (once a day per outcome), so a silent failure shows up in Admin.
+function reportSync(why) {
+  try {
+    const k = `es_pushsync_${why}`, day = new Date().toISOString().slice(0, 10);
+    if (localStorage.getItem(k) === day) return;
+    localStorage.setItem(k, day);
+    fetch('/api/events/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: why === 'saved' ? 'notif_sync_ok' : 'notif_sync_failed', why: String(why).slice(0, 80) }), keepalive: true }).catch(() => {});
+  } catch { /* ignore */ }
+}
+
 export async function syncPush() {
   try {
     if (!pushSupported() || Notification.permission !== 'granted') return 'skip';
     const reg = await getReg(6000);
-    if (!reg) return 'skip';
-    return await ensureSubscribed(reg);
+    if (!reg) { reportSync('service-worker-not-ready'); return 'skip'; }
+    const r = await ensureSubscribed(reg);
+    reportSync(r === 'on' ? 'saved' : lastPushError || r);
+    return r;
   } catch { return 'skip'; }
 }
 
