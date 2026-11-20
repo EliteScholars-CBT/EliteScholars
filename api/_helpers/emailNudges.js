@@ -1,7 +1,7 @@
 // Come-back emails for students who stopped practising. Runs once a day from the 8am study-reminder job.
 //
-// Who: students who have practised at least once, who are NOT also a partner, have no phone push set up, have not
-// opted out, and have been away for a while. What: up to five friendly emails, spaced further and further apart, ending
+// Who: students who have practised at least once, who are NOT also a partner, have not
+// opted out (students who also get phone push are emailed too), and have been away for a while. What: up to five friendly emails, spaced further and further apart, ending
 // with a "this is our last email" note. Then silence until they come back. Coming back resets the sequence.
 //
 // Logged in `events`: nudge_sent {step}, nudge_click {step}, nudge_return {step, hours}. State lives in `email_nudges`.
@@ -110,11 +110,10 @@ export async function runEmailNudges() {
   const sb = getSupabase();
   const now = Date.now();
 
-  const [students, partners, optouts, pushers, states] = await Promise.all([
+  const [students, partners, optouts, states] = await Promise.all([
     all(sb, "profiles", "email,first_name,username,quizzes_taken,level,total_xp,current_streak,best_streak,last_active,last_login,selected_exams,suspended,last_seen"),
     all(sb, "partners", "email"),
     all(sb, "email_optouts", "email"),
-    all(sb, "push_subscriptions", "email"),
     all(sb, "email_nudges", "email,step,last_sent_at"),
   ]);
   const lc = (s) => String(s || "").toLowerCase();
@@ -129,7 +128,7 @@ export async function runEmailNudges() {
       if (data.length < 1000) break;
     }
   } catch { /* falls back to profile times */ }
-  const skip = new Set([...partners, ...optouts, ...pushers].map((r) => lc(r.email)));
+  const skip = new Set([...partners, ...optouts].map((r) => lc(r.email)));
   const state = new Map(states.map((r) => [lc(r.email), r]));
   const byEmail = new Map(students.map((r) => [lc(r.email), r]));
 
