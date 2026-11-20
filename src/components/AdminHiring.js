@@ -84,10 +84,20 @@ export default function AdminHiring({ token, onAuthFail }) {
   }, [seeApp, data, api]); // eslint-disable-line
   const edit = (j) => setForm({ id: j.id, slug: j.slug, title: j.title, description: j.description, commission_pct: j.commission_pct, open: j.open, apply: j.apply_duration_h ? mkRel(j.apply_duration_h, EMPTY.apply) : mkDl(j.apply_deadline), research: j.apply_duration_h ? mkRel(j.research_duration_h, EMPTY.research) : mkDl(j.research_deadline), auto_email: j.auto_email, auto_approve: j.auto_approve, group_url: j.group_url, kind: j.kind || 'promoter', task_days: (j.task_duration_h || 48) / 24, join_days: (j.join_duration_h || 48) / 24 });
 
+  // A new job starts from the latest job of the same kind: same description, group chat link, commission, timers and switches.
+  const startNew = (kind) => {
+    const base = kind === 'video_editor' ? EMPTY_VIDEO : EMPTY;
+    const prev = data && data.jobs.find((j) => (j.kind || 'promoter') === kind);
+    setMsg(''); setErr('');
+    if (!prev) { setForm({ ...base }); return; }
+    setForm({ ...base, description: prev.description || base.description, commission_pct: prev.commission_pct ?? base.commission_pct, group_url: prev.group_url || '', apply: prev.apply_duration_h ? mkRel(prev.apply_duration_h, base.apply) : base.apply, research: prev.apply_duration_h ? mkRel(prev.research_duration_h, base.research) : base.research, auto_email: prev.auto_email, auto_approve: prev.auto_approve, task_days: (prev.task_duration_h || 48) / 24, join_days: (prev.join_duration_h || 48) / 24, copiedFrom: prev.title });
+  };
+
   // The edit form opens right inside the job being edited (new jobs: at the top), and scrolls into view.
   const formCard = form ? (
         <section className="adm-card hire-adm-form" id="hire-form">
           <h2>{form.id ? 'Edit job' : 'New job'}{form.kind === 'video_editor' ? ' · volunteer video editor' : ''}</h2>
+          {form.copiedFrom && <p className="adm-note">Filled in from your last job, “{form.copiedFrom}”: description, group chat link and settings. Change anything you like before saving.</p>}
           <label className="adm-field">Job title<input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} maxLength={80} /></label>
           <label className="adm-field">What the job is about (shown on the apply page)<textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} maxLength={3000} /></label>
           <div className="hire-adm-grid">
@@ -132,7 +142,7 @@ export default function AdminHiring({ token, onAuthFail }) {
       {sub === 'jobs' && (
         <>
       <section className="adm-card">
-        <div className="adm-card-head"><h2>Hiring</h2><div className="adm-inline"><button className="adm-btn" onClick={() => { setForm({ ...EMPTY }); setMsg(''); setErr(''); }}>+ Promoter job</button><button className="adm-btn" onClick={() => { setForm({ ...EMPTY_VIDEO }); setMsg(''); setErr(''); }}>+ Volunteer video editor</button></div></div>
+        <div className="adm-card-head"><h2>Hiring</h2><div className="adm-inline"><button className="adm-btn" onClick={() => startNew('promoter')}>+ Promoter job</button><button className="adm-btn" onClick={() => startNew('video_editor')}>+ Volunteer video editor</button></div></div>
         <p className="adm-note">Create a job, share its link (LinkedIn, WhatsApp). Promoters apply, get the research task by email straight away, send it in, and you approve. Volunteer video editors apply, get the video task by email straight away, have 2 days to upload it, and you approve after watching. Approved editors get the group chat link with a join deadline.</p>
         {msg && <div className="adm-ok">{msg}</div>}
         {err && <div className="adm-error">{err}</div>}
