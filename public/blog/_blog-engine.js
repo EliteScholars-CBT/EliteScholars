@@ -12,6 +12,7 @@
     gst: { bg: '#FEE2E2', color: '#DC2626', label: 'GST' },
     neco: { bg: '#FFEDD5', color: '#C2410C', label: 'NECO' },
     lessons: { bg: '#CCFBF1', color: '#0F766E', label: 'Lessons' },
+    career: { bg: '#FEF3C7', color: '#B45309', label: 'Career & Life' },
   };
 
   window.BlogEngine = {

@@ -9,7 +9,7 @@ vm.runInContext('const BLOG_POSTS = [];', ctx);
 let err = 0;
 try { vm.runInContext(fs.readFileSync(file, 'utf8'), ctx, { filename: file }); } catch (e) { console.error('SYNTAX/RUNTIME ERROR:', e.message); process.exit(1); }
 const posts = vm.runInContext('BLOG_POSTS', ctx);
-const CATS = ['jamb', 'waec', 'neco', 'study-tips', 'gst', 'lessons'];
+const CATS = ['jamb', 'waec', 'neco', 'study-tips', 'gst', 'lessons', 'career'];
 const ids = new Set();
 for (const p of posts) {
   const bad = (m) => { err++; console.error(`✗ ${p.id}: ${m}`); };
