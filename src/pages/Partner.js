@@ -2,10 +2,11 @@ import ForgotPassword from '../components/ForgotPassword';
 import useReveal from '../utils/useReveal';
 import '../styles/reveal.css';
 import React, { useState, useEffect, useCallback } from 'react';
-import { fmtN, fmtNaira, TrendChart, Kpi } from '../components/AdminCharts';
+import { fmtN, fmtNaira, TrendChart, ColumnChart, Donut, Funnel } from '../components/AdminCharts';
 import { SOURCE_LABELS } from '../utils/trafficSource';
 import '../styles/admin.css';
 import '../styles/partner.css';
+import '../styles/partner-dash.css';
 import logo from '../assets/elite-scholars-logo.png';
 
 const TOKEN_KEY = 'es_partner_token';
@@ -38,6 +39,8 @@ export default function Partner() {
   const [data, setData] = useState(null);
   const [tab, setTab] = useState('overview');
   const [metric, setMetric] = useState('signups');
+  const [range, setRange] = useState(30);
+  const [refFilter, setRefFilter] = useState('all');
   const [bank, setBank] = useState({ bankName: '', accountName: '', accountNumber: '' });
   const [pw, setPw] = useState({ current: '', next: '' });
   const [rate, setRate] = useState(40);
@@ -233,122 +236,229 @@ export default function Partner() {
     : !p.bank.saved ? 'Add your bank details in Account first.'
     : k.available < data.settings.minPayout ? `You need at least ${fmtNaira(data.settings.minPayout)} available (you have ${fmtNaira(k.available)}).` : '';
   const shareText = `Prepare for WAEC, NECO, JAMB & GST free with EliteScholars: past questions, flashcards, games and challenges. Join with my link: ${link}&src=whatsapp`;
+  const first = p.name.split(' ')[0];
+
+  // ── period numbers: the chosen range against the same-length range before it ──
+  const sr = data.series;
+  const cut = (arr, a, b) => (arr || []).slice(a, b);
+  const sum = (a) => a.reduce((x, y) => x + y, 0);
+  const cur = (key) => cut(sr[key], -range);
+  const prv = (key) => cut(sr[key], -2 * range, -range);
+  const per = (key) => ({ v: sum(cur(key)), prev: sum(prv(key)) });
+  const P = { clicks: per('clicks'), signups: per('signups'), paying: per('paying'), earnings: per('earnings') };
+  const delta = (o) => (o.prev > 0 ? Math.round(((o.v - o.prev) / o.prev) * 100) : o.v > 0 ? null : 0);
+  const rangeLabel = range === 7 ? 'last 7 days' : range === 30 ? 'last 30 days' : 'last 90 days';
+  const srcNow = (data.sourcesBy && data.sourcesBy[range]) || { sources: data.sources || [], tags: [] };
+  const pctOf = (a, b) => (b > 0 ? Math.round((a / b) * 1000) / 10 : 0);
+  const waiting = Math.max(0, k.signups - k.paying);
+  const goal = data.settings.minPayout;
+  const goalPct = Math.min(100, Math.round((k.available / goal) * 100));
+  const DAYN = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const hh = (h) => `${h % 12 || 12}${h < 12 ? 'am' : 'pm'}`;
+  const hrs = data.hours || new Array(24).fill(0), wds = data.weekdays || new Array(7).fill(0);
+  const clicks90 = sum(hrs);
+
+  const tips = [];
+  if (k.available >= goal) tips.push(['good', `You have ${fmtNaira(k.available)} ready to withdraw${p.bank.saved ? '. Open Earnings to request it.' : '. Add your bank details in Account first.'}`]);
+  else if (k.earnedTotal > 0 || k.signups > 0) tips.push(['info', `${fmtNaira(goal - k.available)} more and you reach the ${fmtNaira(goal)} payout minimum. About ${Math.max(1, Math.ceil((goal - k.available) / Math.max(1, perSale)))} more Pro sale${Math.ceil((goal - k.available) / Math.max(1, perSale)) === 1 ? '' : 's'}.`]);
+  const dS = delta(P.signups);
+  if (P.signups.v + P.signups.prev >= 3 && dS !== null && Math.abs(dS) >= 10) tips.push([dS > 0 ? 'good' : 'warn', `Signups are ${dS > 0 ? 'up' : 'down'} ${Math.abs(dS)}% on the previous ${range} days (${P.signups.prev} to ${P.signups.v}).`]);
+  if (clicks90 >= 15) { const bd = wds.indexOf(Math.max(...wds)), bh = hrs.indexOf(Math.max(...hrs)); tips.push(['info', `Your link is clicked most on ${DAYN[bd]}s, around ${hh(bh)}. Post just before then.`]); }
+  if (P.clicks.v >= 20) { const cv = pctOf(P.signups.v, P.clicks.v); tips.push([cv < 5 ? 'warn' : 'good', `${cv}% of clicks became signups in the ${rangeLabel}.${cv < 5 ? ' A short message that says what students get (free past questions) usually lifts this.' : ''}`]); }
+  if (srcNow.sources[0]) tips.push(['info', `Best source: ${SOURCE_LABELS[srcNow.sources[0].name] || srcNow.sources[0].name} (${fmtN(srcNow.sources[0].visits)} visits).`]);
+  if (waiting >= 3) tips.push(['info', `${waiting} students joined but have not gone Pro yet. A friendly reminder in your group about the Pro features can convert some of them.`]);
+  if (data.avgDaysToPay !== null && data.avgDaysToPay !== undefined && k.paying >= 2) tips.push(['info', `Students who pay usually do so about ${data.avgDaysToPay} day${data.avgDaysToPay === 1 ? '' : 's'} after joining.`]);
+  if (!tips.length) tips.push(['info', 'Share your link to start seeing insights here.']);
+
+  const NAV = [['overview', '📊', 'Overview'], ['referrals', '👥', 'Students'], ['earnings', '💰', 'Earnings'], ['resources', '🎁', 'Resources'], ['prices', '🏷️', 'Prices'], ['account', '⚙️', 'Account']];
+  const metricInfo = { clicks: ['Clicks', fmtN, '#8b5cf6'], signups: ['Signups', fmtN, '#22d3ee'], paying: ['New paying', fmtN, '#34d399'], earnings: ['Earnings', fmtNaira, '#f5b400'] };
+  const mi = metricInfo[metric] || metricInfo.signups;
+
+  const Spark = ({ vals, color }) => {
+    const mx = Math.max(1, ...vals), w = 90, h = 28;
+    const pts = vals.map((v, i) => `${((i / Math.max(1, vals.length - 1)) * w).toFixed(1)},${(h - 2 - (v / mx) * (h - 4)).toFixed(1)}`).join(' ');
+    return <svg viewBox={`0 0 ${w} ${h}`} className="pd-spark" aria-hidden="true"><polyline points={pts} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+  };
+  const Tile = ({ id, label, value, color, icon, sub }) => {
+    const d = delta(P[id]);
+    return (
+      <div className="pd-tile" style={{ '--c': color }}>
+        <div className="pd-tile-top"><span className="pd-tile-ico">{icon}</span><span>{label}</span></div>
+        <strong>{value}</strong>
+        <div className="pd-tile-foot">
+          <span className={`pd-delta ${d === null || d > 0 ? 'up' : d < 0 ? 'down' : ''}`}>{d === null ? 'new' : d === 0 ? '—' : `${d > 0 ? '▲' : '▼'} ${Math.abs(d)}%`}</span>
+          <Spark vals={cur(id)} color={color} />
+        </div>
+        {sub && <small>{sub}</small>}
+      </div>
+    );
+  };
+  const Seg = ({ value, onChange, items }) => (
+    <div className="pd-seg" role="group">{items.map(([v, l]) => <button key={v} type="button" className={value === v ? 'on' : ''} onClick={() => onChange(v)}>{l}</button>)}</div>
+  );
+  const shownRefs = data.referrals.filter((r) => refFilter === 'all' || (refFilter === 'paid' ? r.status === 'Paid' : r.status !== 'Paid'));
 
   return (
-    <div className="adm-wrap">
-      <header className="adm-head">
-        <div><h1>Hi {p.name.split(' ')[0]} 👋</h1><span className="adm-updated">EliteScholars partner dashboard</span></div>
-        <div className="adm-head-actions">
-          <button onClick={() => load(token)} disabled={busy}>{busy ? 'Loading…' : 'Refresh'}</button>
-          <button className="adm-ghost" onClick={() => signOut()}>Sign out</button>
+    <div className="adm-wrap pd-wrap">
+      <header className="pd-hero">
+        <div className="pd-hero-top">
+          <div><small>EliteScholars partner</small><h1>Hi {first} 👋</h1></div>
+          <div className="pd-hero-actions">
+            <button type="button" onClick={() => load(token)} disabled={busy}>{busy ? 'Loading…' : '↻ Refresh'}</button>
+            <button type="button" className="ghost" onClick={() => signOut()}>Sign out</button>
+          </div>
+        </div>
+        <div className="pd-hero-grid">
+          <div className="pd-balance">
+            <small>Available to withdraw</small>
+            <strong>{fmtNaira(k.available)}</strong>
+            <div className="pd-goal"><i style={{ width: `${goalPct}%` }} /></div>
+            <span>{k.available >= goal ? 'You can request a payout' : `${fmtNaira(Math.max(0, goal - k.available))} to the ${fmtNaira(goal)} minimum`}</span>
+            <div className="pd-balance-row"><b>{fmtNaira(k.earnedTotal)}</b> earned in total · <b>{fmtNaira(k.paid)}</b> paid to you</div>
+          </div>
+          <div className="pd-linkcard">
+            <small>Your link · code <b>{p.code}</b> · you earn <b>{p.rate}%</b></small>
+            <div className="pd-linkrow"><span>{link}</span><button type="button" onClick={() => { tcopy(link, 'student link'); setInfo('Link copied.'); }}>Copy</button></div>
+            <div className="pd-linkbtns">
+              <a href={`https://wa.me/?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noreferrer" onClick={() => track('copy_link', 'whatsapp share')}>Share on WhatsApp</a>
+              <button type="button" className="ghost" onClick={() => { tcopy(shareText, 'share message'); setInfo('Message copied.'); }}>Copy message</button>
+            </div>
+          </div>
         </div>
       </header>
 
-      <div className="adm-tabs adm-maintabs">
-        {[['overview', 'Overview'], ['referrals', 'Referrals'], ['earnings', 'Earnings & payouts'], ['resources', 'Resources'], ['prices', 'Prices'], ['account', 'Account']].map(([key, label]) =>
-          <button key={key} className={tab === key ? 'on' : ''} onClick={() => { setTab(key); setError(''); setInfo(''); if (key === 'prices') track('prices_view', 'Prices tab'); if (key === 'resources') track('resource_view', 'Resources tab'); }}>{label}</button>)}
-      </div>
+      <nav className="pd-nav" aria-label="Partner dashboard sections">
+        {NAV.map(([key, ico, label]) => (
+          <button key={key} type="button" className={tab === key ? 'on' : ''} onClick={() => { setTab(key); setError(''); setInfo(''); if (key === 'prices') track('prices_view', 'Prices tab'); if (key === 'resources') track('resource_view', 'Resources tab'); }}><span aria-hidden="true">{ico}</span>{label}</button>
+        ))}
+      </nav>
       {error && <div className="adm-error">{error}</div>}
       {info && <div className="adm-ok">{info}</div>}
 
       {tab === 'overview' && (
         <>
-
-
-          <section className="adm-grid adm-stats">
-            <Kpi label="Link clicks" value={fmtN(k.clicks)} />
-            <Kpi label="Signups" value={fmtN(k.signups)} />
-            <Kpi label="Paying students" value={fmtN(k.paying)} sub={`${k.conversion}% of signups`} />
-            <Kpi label="Total earned" value={fmtNaira(k.earnedTotal)} />
-            <Kpi label="Available now" value={fmtNaira(k.available)} />
-            <Kpi label="Paid to you" value={fmtNaira(k.paid)} />
+          <div className="pd-bar">
+            <h2>Performance</h2>
+            <Seg value={range} onChange={setRange} items={[[7, '7 days'], [30, '30 days'], [90, '90 days']]} />
+          </div>
+          <section className="pd-tiles">
+            <Tile id="clicks" label="Link clicks" icon="👆" color="#8b5cf6" value={fmtN(P.clicks.v)} sub={`${fmtN(k.clicks)} all time`} />
+            <Tile id="signups" label="Signups" icon="🙋" color="#22d3ee" value={fmtN(P.signups.v)} sub={`${pctOf(P.signups.v, P.clicks.v)}% of clicks`} />
+            <Tile id="paying" label="New paying" icon="⭐" color="#34d399" value={fmtN(P.paying.v)} sub={`${k.conversion}% of all signups pay`} />
+            <Tile id="earnings" label="Earned" icon="💰" color="#f5b400" value={fmtNaira(P.earnings.v)} sub={P.clicks.v ? `${fmtNaira(Math.round(P.earnings.v / P.clicks.v))} per click` : ' '} />
           </section>
 
-          <section className="adm-card">
+          <section className="adm-card pd-card">
             <div className="adm-card-head">
-              <h2>Last 30 days</h2>
-              <div className="adm-tabs">
-                {[['clicks', 'Clicks'], ['signups', 'Signups'], ['earnings', 'Earnings']].map(([key, l]) =>
-                  <button key={key} className={metric === key ? 'on' : ''} onClick={() => setMetric(key)}>{l}</button>)}
+              <h2>Trend</h2>
+              <Seg value={metric} onChange={setMetric} items={Object.entries(metricInfo).map(([v, m]) => [v, m[0]])} />
+            </div>
+            <TrendChart labels={cut(sr.labels, -range)} values={cur(metric)} prev={prv(metric)} fmt={mi[1]} color={mi[2]} />
+            <p className="adm-note">{mi[0]}: <b>{mi[1](P[metric].v)}</b> in the {rangeLabel}. The dashed line is the {range} days before.</p>
+          </section>
+
+          <section className="adm-card pd-card">
+            <h2>What your numbers say</h2>
+            <ul className="pd-tips">{tips.slice(0, 6).map(([tone, text], i) => <li key={i} className={tone}><i />{text}</li>)}</ul>
+          </section>
+
+          <section className="adm-grid adm-two">
+            <div className="adm-card pd-card">
+              <h2>From click to Pro</h2>
+              <Funnel steps={[{ name: 'Clicked your link', count: P.clicks.v }, { name: 'Signed up', count: P.signups.v }, { name: 'Went Pro', count: P.paying.v }]} />
+              <p className="adm-note">{pctOf(P.signups.v, P.clicks.v)}% of clicks sign up · {pctOf(P.paying.v, P.signups.v)}% of those signups went Pro in this period.</p>
+            </div>
+            <div className="adm-card pd-card">
+              <h2>Where visitors come from</h2>
+              {srcNow.sources.length ? <Donut data={srcNow.sources.map((x) => ({ name: SOURCE_LABELS[x.name] || x.name, count: x.visits || x.signups }))} /> : <p className="adm-empty">No visits yet. Add <code>&amp;src=whatsapp</code> or similar to your link to see sources.</p>}
+            </div>
+          </section>
+
+          <section className="adm-grid adm-two">
+            <div className="adm-card pd-card"><h2>Best day to post</h2><ColumnChart values={wds} labels={['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']} /><p className="adm-note">Clicks by day of week, last 90 days.</p></div>
+            <div className="adm-card pd-card"><h2>Best time to post</h2><ColumnChart values={hrs} labels={Array.from({ length: 24 }, (_, h) => `${h % 12 || 12}${h < 12 ? 'a' : 'p'}`)} /><p className="adm-note">Clicks by hour (Nigerian time), last 90 days.</p></div>
+          </section>
+
+          <section className="adm-card pd-card">
+            <h2>Sources and tagged links</h2>
+            {srcNow.sources.length ? (
+              <div className="pd-table">
+                <div className="pd-tr head"><span>Source</span><span>Clicks</span><span>Signups</span><span>Convert</span></div>
+                {srcNow.sources.map((x) => <div className="pd-tr" key={x.name}><span><b>{SOURCE_LABELS[x.name] || x.name}</b></span><span>{fmtN(x.visits)}</span><span>{fmtN(x.signups)}</span><span>{x.visits ? `${Math.round((x.signups / x.visits) * 100)}%` : '—'}</span></div>)}
               </div>
-            </div>
-            <TrendChart labels={data.series.labels} values={data.series[metric]} fmt={metric === 'earnings' ? fmtNaira : fmtN} color={metric === 'earnings' ? '#f5b400' : '#8b5cf6'} />
+            ) : <p className="adm-empty">Nothing recorded in the {rangeLabel}.</p>}
+            {srcNow.tags.length > 0 && (
+              <>
+                <h3 className="pd-h3">Your tags</h3>
+                <div className="pd-table">
+                  <div className="pd-tr head"><span>Tag</span><span>Clicks</span><span>Signups</span><span>Convert</span></div>
+                  {srcNow.tags.map((x) => <div className="pd-tr" key={x.name}><span><b>{x.name}</b></span><span>{fmtN(x.visits)}</span><span>{fmtN(x.signups)}</span><span>{x.visits ? `${Math.round((x.signups / x.visits) * 100)}%` : '—'}</span></div>)}
+                </div>
+              </>
+            )}
+            <p className="adm-note">Add a tag to any link, like <code>{link}&amp;campaign=whatsapp-group-1</code>, to learn which post or group brings the most students.</p>
           </section>
 
-          <section className="adm-card">
-            <h2>Where your clicks come from (30 days)</h2>
-            {(() => {
-              const src = data.sources || [];
-              const tv = src.reduce((a, x) => a + x.visits, 0), ts = src.reduce((a, x) => a + x.signups, 0);
-              if (!src.length) return <p className="adm-empty">No visits recorded yet. Share your link and sources will appear here.</p>;
-              const top = Math.max(1, ...src.map((x) => x.visits));
-              return (
-                <>
-                  <p className="adm-note" style={{ marginTop: 0 }}><b>{fmtN(tv)}</b> visits · <b>{fmtN(ts)}</b> sign-ups · best source: <b>{SOURCE_LABELS[src[0].name] || src[0].name}</b></p>
-                  <div className="adm-list tight">
-                    {src.map((x) => (
-                      <div className="adm-item" key={x.name}>
-                        <div className="adm-item-head static" style={{ flexWrap: 'wrap' }}>
-                          <span className="adm-item-main"><b>{SOURCE_LABELS[x.name] || x.name}</b><small> {tv ? Math.round((x.visits / tv) * 100) : 0}% of visits</small></span>
-                          <span className="adm-item-side"><b>{fmtN(x.visits)} clicks</b><small>{fmtN(x.signups)} sign-ups{x.visits ? ` · ${Math.round((x.signups / x.visits) * 100)}% convert` : ''}</small></span>
-                          <div style={{ flexBasis: '100%', height: 6, borderRadius: 4, background: 'rgba(139,92,246,.18)', marginTop: 6 }}><div style={{ width: `${Math.max(4, (x.visits / top) * 100)}%`, height: '100%', borderRadius: 4, background: '#8b5cf6' }} /></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              );
-            })()}
-          </section>
-
-          <section className="adm-card">
-            <h2>Your personal link</h2>
-            <div className="adm-linkbox"><span>{link}</span><button className="adm-small" onClick={() => { tcopy(link, 'student link'); setInfo('Link copied.'); }}>Copy</button></div>
-            <div className="adm-inline adm-gap">
-              <a className="adm-btn" href={`https://wa.me/?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noreferrer">Share on WhatsApp</a>
-              <button className="adm-ghost" onClick={() => { tcopy(shareText, 'share message'); setInfo('Message copied.'); }}>Copy message</button>
-            </div>
-            <h3 style={{ margin: '14px 0 6px' }}>Your link for schools</h3>
+          <section className="adm-card pd-card">
+            <h2>Links for schools and centres</h2>
+            <h3 className="pd-h3">Schools</h3>
             <div className="adm-linkbox"><span>{`https://elitescholars.site/school?ref=${p.code}`}</span><button className="adm-small" onClick={() => { tcopy(`https://elitescholars.site/school?ref=${p.code}`, 'school link'); setInfo('School link copied.'); }}>Copy</button></div>
-            <p className="adm-note">Share this with school owners, principals and teachers. When a school pays for its plan you earn <b>{p.rate}%</b> of what they pay, on every payment. Your normal link above also works: schools that sign up through either are credited to you.</p>
-            <h3 style={{ margin: '14px 0 6px' }}>Your link for tutorial centres</h3>
+            <p className="adm-note">Share with school owners, principals and teachers. When a school pays for its plan you earn <b>{p.rate}%</b> of what they pay, on every payment. <a href="/school" target="_blank" rel="noreferrer">Read about schools →</a></p>
+            <h3 className="pd-h3">Tutorial centres</h3>
             <div className="adm-linkbox"><span>{`https://elitescholars.site/centre?ref=${p.code}`}</span><button className="adm-small" onClick={() => { tcopy(`https://elitescholars.site/centre?ref=${p.code}`, 'centre link'); setInfo('Centre link copied.'); }}>Copy</button></div>
-            <p className="adm-note">Share this with tutorial centre owners and lesson-teachers. Centres that sign up through it are credited to you, and you earn <b>{p.rate}%</b> of every payment they make. <a href="/school" target="_blank" rel="noreferrer">Read about schools →</a> · <a href="/centre" target="_blank" rel="noreferrer">Read about centres →</a></p>
-            <p className="adm-note">You earn <b>{p.rate}%</b> of every Pro payment from students who join through your link, about <b>{fmtNaira(perSale)}</b> on a {fmtNaira(PREMIUM_PRICE)} plan. Your code is <b>{p.code}</b>. The link remembers a visitor for 60 days.</p>
+            <p className="adm-note">Share with centre owners and lesson teachers. You earn <b>{p.rate}%</b> of every payment they make. <a href="/centre" target="_blank" rel="noreferrer">Read about centres →</a></p>
+            <p className="adm-note">You earn <b>{p.rate}%</b> of every Pro payment from students who join through your link, about <b>{fmtNaira(perSale)}</b> on a {fmtNaira(PREMIUM_PRICE)} plan. The link remembers a visitor for 60 days.</p>
           </section>
         </>
       )}
 
       {tab === 'referrals' && (
-        <section className="adm-card">
-          <h2>Students who joined with your link ({data.referrals.length})</h2>
-          {!data.referrals.length && <p className="adm-empty">No signups yet. Share your link to get started.</p>}
-          <div className="adm-table">
-            {data.referrals.map((r, i) => (
-              <div className="adm-tr adm-tr5" key={i}><span>{r.name}</span><span>{r.email}</span><span>{dt(r.joined)}</span>
-                <span className={`adm-chip ${r.status === 'Paid' ? 'active' : 'pending'}`}>{r.status}</span><span>{r.earned ? fmtNaira(r.earned) : '—'}</span></div>
-            ))}
-          </div>
-          <p className="adm-note">Emails are partly hidden to protect students' privacy.</p>
-        </section>
+        <>
+          <section className="pd-tiles three">
+            <div className="pd-tile" style={{ '--c': '#22d3ee' }}><div className="pd-tile-top"><span className="pd-tile-ico">🙋</span><span>Joined</span></div><strong>{fmtN(k.signups)}</strong></div>
+            <div className="pd-tile" style={{ '--c': '#34d399' }}><div className="pd-tile-top"><span className="pd-tile-ico">⭐</span><span>Went Pro</span></div><strong>{fmtN(k.paying)}</strong><small>{k.conversion}% conversion</small></div>
+            <div className="pd-tile" style={{ '--c': '#f5b400' }}><div className="pd-tile-top"><span className="pd-tile-ico">⏳</span><span>Waiting</span></div><strong>{fmtN(waiting)}</strong><small>joined, not Pro yet</small></div>
+          </section>
+          <section className="adm-card pd-card">
+            <div className="adm-card-head"><h2>Students who joined with your link</h2>
+              <Seg value={refFilter} onChange={setRefFilter} items={[['all', `All ${data.referrals.length}`], ['paid', 'Went Pro'], ['wait', 'Not yet']]} /></div>
+            {!shownRefs.length && <p className="adm-empty">{data.referrals.length ? 'No students in this view.' : 'No signups yet. Share your link to get started.'}</p>}
+            <div className="adm-table">
+              {shownRefs.map((r, i) => (
+                <div className="adm-tr adm-tr5" key={i}><span>{r.name}</span><span>{r.email}</span><span>{dt(r.joined)}</span>
+                  <span className={`adm-chip ${r.status === 'Paid' ? 'active' : 'pending'}`}>{r.status}</span><span>{r.earned ? fmtNaira(r.earned) : '—'}</span></div>
+              ))}
+            </div>
+            <p className="adm-note">Emails are partly hidden to protect students' privacy.</p>
+          </section>
+        </>
       )}
 
       {tab === 'earnings' && (
         <>
-          <section className="adm-grid adm-stats">
-            <Kpi label="Available" value={fmtNaira(k.available)} sub="ready to withdraw" />
-            <Kpi label="In payout" value={fmtNaira(k.inPayout)} sub="being processed" />
-            <Kpi label="Paid to you" value={fmtNaira(k.paid)} />
+          <section className="pd-tiles three">
+            <div className="pd-tile" style={{ '--c': '#f5b400' }}><div className="pd-tile-top"><span className="pd-tile-ico">💵</span><span>Available</span></div><strong>{fmtNaira(k.available)}</strong><small>ready to withdraw</small></div>
+            <div className="pd-tile" style={{ '--c': '#8b5cf6' }}><div className="pd-tile-top"><span className="pd-tile-ico">⏱️</span><span>In payout</span></div><strong>{fmtNaira(k.inPayout)}</strong><small>being processed</small></div>
+            <div className="pd-tile" style={{ '--c': '#34d399' }}><div className="pd-tile-top"><span className="pd-tile-ico">✅</span><span>Paid to you</span></div><strong>{fmtNaira(k.paid)}</strong><small>{fmtNaira(k.earnedTotal)} earned in total</small></div>
           </section>
-          <section className="adm-card">
+          {data.monthly && (
+            <section className="adm-card pd-card">
+              <h2>Earnings by month</h2>
+              <ColumnChart values={data.monthly.values} labels={data.monthly.labels} />
+              <p className="adm-note">Commission earned each month, last 6 months.{data.monthly.values.some((v) => v > 0) ? ` Best month: ${fmtNaira(Math.max(...data.monthly.values))}.` : ''}</p>
+            </section>
+          )}
+          <section className="adm-card pd-card">
             <h2>Withdraw</h2>
+            <div className="pd-goal big"><i style={{ width: `${goalPct}%` }} /></div>
+            <p className="adm-note" style={{ marginTop: 6 }}>{fmtNaira(k.available)} of the {fmtNaira(goal)} minimum ({goalPct}%).</p>
             <button disabled={!canPay || busy} onClick={() => doAction('payout', {}, 'Payout requested. We will pay it to your bank account and email you.')}>
               Request payout of {fmtNaira(k.available)}
             </button>
             {whyNot && <p className="adm-note">{whyNot}</p>}
             {data.openPayout && <p className="adm-note">Waiting: {fmtNaira(data.openPayout.amount)} requested on {dt(data.openPayout.requested_at)}.</p>}
           </section>
-          <section className="adm-card">
+          <section className="adm-card pd-card">
             <h2>Commissions</h2>
             {!data.commissions.length && <p className="adm-empty">Nothing yet. You earn when a student you referred pays for Pro.</p>}
             <div className="adm-table">
@@ -358,7 +468,7 @@ export default function Partner() {
               ))}
             </div>
           </section>
-          <section className="adm-card">
+          <section className="adm-card pd-card">
             <h2>Payout history</h2>
             {!data.payouts.length && <p className="adm-empty">No payouts yet.</p>}
             <div className="adm-table">
@@ -372,7 +482,7 @@ export default function Partner() {
       )}
 
       {tab === 'resources' && (
-        <section className="adm-card">
+        <section className="adm-card pd-card">
           <h2>Resources</h2>
           <p className="adm-note" style={{ marginTop: 0 }}>Ready-made flyers to share in groups, on your status and on your page. Add your personal link when you post them.</p>
           <div className="pt-res">
@@ -397,18 +507,18 @@ export default function Partner() {
         const rowsP = [['JAMB Pro (1 year)', pl.jamb ?? pr.premiumAnnual], ['WAEC & NECO Pro (6 months)', pl.waecneco6], ['WAEC & NECO Pro (1 year)', pl.waecneco12], ['GST Pro (6 months)', pl.gst6], ['GST Pro (1 year)', pl.gst12], ['Squad plan, 50 seats', pr.group50], ['Squad plan, 100 seats', pr.group100]].filter(([, v]) => v > 0);
         return (
           <>
-            <section className="adm-card">
+            <section className="adm-card pd-card">
               <h2>Current prices</h2>
               <p className="adm-note" style={{ marginTop: 0 }}>These are always the latest prices. Your commission is <b>{p.rate}%</b> of every payment.</p>
               <div className="adm-table">
                 {rowsP.map(([n, v]) => (<div className="adm-tr adm-tr5" key={n}><span><b>{n}</b></span><span>{fmtNaira(v)}</span><span>You earn {earn(v)}</span></div>))}
               </div>
             </section>
-            <section className="adm-card">
+            <section className="adm-card pd-card">
               <h2>Schools (per {pr.school.period})</h2>
               <div className="adm-table">{pr.school.tiers.map((t) => (<div className="adm-tr adm-tr5" key={t.label}><span><b>{t.label}</b></span><span>{fmtNaira(t.price)}</span><span>You earn {earn(t.price)}</span></div>))}</div>
             </section>
-            <section className="adm-card">
+            <section className="adm-card pd-card">
               <h2>Tutorial centres (per month)</h2>
               <div className="adm-table">{pr.centre.tiers.map((t) => (<div className="adm-tr adm-tr5" key={t.label}><span><b>{t.label}</b></span><span>{fmtNaira(t.price)}{t.yearPrice ? ` · ${fmtNaira(t.yearPrice)}/yr` : ''}</span><span>You earn {earn(t.price)}</span></div>))}</div>
             </section>
@@ -418,7 +528,7 @@ export default function Partner() {
 
       {tab === 'account' && (
         <section className="adm-grid adm-two">
-          <div className="adm-card">
+          <div className="adm-card pd-card">
             <h2>Bank details for payouts</h2>
             {p.bank.saved && <p className="adm-note">Saved: {p.bank.bankName}, {p.bank.accountName}, {p.bank.accountMasked}. Enter new details below to replace them.</p>}
             <div className="adm-form">
@@ -429,7 +539,7 @@ export default function Partner() {
             </div>
             <p className="adm-note">Your account number is stored encrypted and only shown in full to EliteScholars when paying you.</p>
           </div>
-          <div className="adm-card">
+          <div className="adm-card pd-card">
             <h2>Change password</h2>
             <div className="adm-form">
               <input type="password" placeholder="Current password" value={pw.current} onChange={(e) => setPw({ ...pw, current: e.target.value })} autoComplete="current-password" />
