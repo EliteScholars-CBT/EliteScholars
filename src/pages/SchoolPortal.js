@@ -3,7 +3,7 @@ import { OrgFields, KindToggle, PasswordInput, EMPTY_DETAILS, validateDetails, d
 import { LogoCard, Notices, Mocks, CentreEarn, PrintBrand, waLink, waStudentText, waClassText } from '../components/PortalExtras';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { saveUser } from '../utils/storage';
-import { LineChart, BarChart, HBars, Donut, Delta, colorFor } from '../components/PortalCharts';
+import { LineChart, BarChart, HBars, Donut, DonutMulti, Spark, Delta, colorFor, pick } from '../components/PortalCharts';
 import { captureReferralFromURL, getReferralAttribution, getReferralClickedAt, sendReferralSignup } from '../utils/referral';
 import { captureTrafficSource, trackSignupSource } from '../utils/trafficSource';
 import logo from '../assets/elite-scholars-logo.png';
@@ -30,7 +30,7 @@ async function schoolApi(op, body) { // the existing class/assignment routes
 const getUser = () => { try { return JSON.parse(localStorage.getItem('ep_user') || 'null'); } catch { return null; } };
 const hasToken = (u) => !!(u && typeof u.passwordHash === 'string' && u.passwordHash.startsWith('u1.'));
 
-/* ── sign in / create account ─────────────────────────────────────────────── */
+/* ── sign in / create account ──────────────────────────────────────────────────────────────── */
 const EMAIL_RE = /^[^\s@,()"']+@[^\s@,()"']+\.[^\s@,()"']+$/;
 const qsGet = (k) => { try { return new URLSearchParams(window.location.search).get(k); } catch { return null; } };
 
@@ -138,12 +138,12 @@ function Gate({ onDone, initialKind }) {
   );
 }
 
-/* ── small pieces ─────────────────────────────────────────────────────────── */
+/* ── small pieces ──────────────────────────────────────────────────────────────────── */
 const Stat = ({ v, l }) => <div className="spt-stat"><b>{v}</b><span>{l}</span></div>;
 const Empty = ({ children }) => <p className="spt-empty">{children}</p>;
 function Msg({ m }) { return m ? <div className={m.ok ? 'spt-ok' : 'spt-err'}>{m.text}</div> : null; }
 
-/* ── contact details + "show us on the website" ───────────────────────────── */
+/* ── contact details + "show us on the website" ──────────────────────────────────────────────── */
 const SHOW_BADGE = { none: ['Not listed', 'no'], pending: ['Waiting for approval', 'warn'], approved: ['Showing on our site', 'ok'], rejected: ['Not approved', 'no'] };
 function ProfileCard({ sid, data, reload }) {
   const sc = data.school, kind = sc.kind || 'school', word = kind === 'centre' ? 'centre' : 'school';
@@ -180,10 +180,9 @@ function ProfileCard({ sid, data, reload }) {
   );
 }
 
-/* ── classes ──────────────────────────────────────────────────────────────── */
-function Classes({ sid, data, reload, isAdmin }) {
+/* ── classes ────────────────────────────────────────────────────────────────────── */
+function Classes({ sid, data, reload, isAdmin, setTab }) {
   const [form, setForm] = useState(null);
-  const [open, setOpen] = useState('');
   const [msg, setMsg] = useState(null);
   const teachers = (data.staff || []).filter((s) => s.registered || s.owner);
   const save = async () => {
@@ -214,11 +213,10 @@ function Classes({ sid, data, reload, isAdmin }) {
         <div className="spt-card" key={c.id}>
           <div className="spt-between"><div><b>{c.name}</b><small>Teacher: {c.teacher_name} · {c.students} student{c.students === 1 ? '' : 's'}</small></div><span className="spt-code" title="Students can join with this code in the app">{c.code}</span></div>
           <div className="spt-row">
-            <button className="spt-ghost" onClick={() => setOpen(open === c.id ? '' : c.id)}>{open === c.id ? 'Hide homework' : 'Homework'}</button>
+            <button className="spt-ghost" onClick={() => setTab('assignments')}>Homework</button>
             {(isAdmin || c.teacher === data.me) && <button className="spt-ghost" onClick={() => setForm({ id: c.id, name: c.name, teacher_email: c.teacher })}>Edit</button>}
             {isAdmin && <button className="spt-ghost danger" onClick={() => del(c)}>Delete</button>}
           </div>
-          {open === c.id && <Homework classId={c.id} />}
         </div>
       ))}
       <p className="spt-note">Students join a class in the EliteScholars app: Profile, School, then enter the class code. Or add them yourself in Students.</p>
@@ -226,37 +224,7 @@ function Classes({ sid, data, reload, isAdmin }) {
   );
 }
 
-function Homework({ classId }) {
-  const [list, setList] = useState(null);
-  const [f, setF] = useState({ title: '', body: '', due_at: '' });
-  const [msg, setMsg] = useState(null);
-  const [busy, setBusy] = useState(false);
-  const load = useCallback(async () => { const r = await schoolApi('assign-list', { class_id: classId }); setList(r.assignments || []); }, [classId]);
-  useEffect(() => { load(); }, [load]);
-  const post = async () => {
-    setBusy(true); setMsg(null);
-    const r = await schoolApi('assign-create', { class_id: classId, title: f.title, body: f.body, due_at: f.due_at || undefined });
-    setBusy(false);
-    if (!r.success) return setMsg({ text: r.error || 'Could not post.' });
-    setF({ title: '', body: '', due_at: '' }); setMsg({ ok: true, text: `Posted. ${r.notified || 0} students notified.` }); load();
-  };
-  const del = async (id) => { if (!window.confirm('Delete this homework?')) return; await schoolApi('assign-delete', { id }); load(); };
-  return (
-    <div className="spt-sub">
-      <input placeholder="Homework title" value={f.title} maxLength={120} onChange={(e) => setF({ ...f, title: e.target.value })} />
-      <textarea placeholder="What should students do? (questions, pages, topics)" rows={3} value={f.body} onChange={(e) => setF({ ...f, body: e.target.value })} />
-      <label className="spt-lbl">Due date (optional)<input type="date" value={f.due_at} onChange={(e) => setF({ ...f, due_at: e.target.value })} /></label>
-      <button className="spt-btn" disabled={busy} onClick={post}>{busy ? 'Posting…' : 'Post homework'}</button>
-      <Msg m={msg} />
-      {list && list.map((a) => (
-        <div className="spt-item" key={a.id}><div><b>{a.title}</b><small>{a.done_count || 0} done{a.due_at ? ` · due ${ngDate(a.due_at)}` : ''}</small></div><button className="spt-ghost danger" onClick={() => del(a.id)}>Delete</button></div>
-      ))}
-      {list && !list.length && <Empty>No homework yet.</Empty>}
-    </div>
-  );
-}
-
-/* ── students ─────────────────────────────────────────────────────────────── */
+/* ── students ───────────────────────────────────────────────────────────────────── */
 function csv(accounts) {
   const rows = [['Name', 'Login email', 'Password'], ...accounts.filter((a) => a.password).map((a) => [a.name, a.email, a.password])];
   return rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
@@ -361,7 +329,7 @@ function Students({ sid, data, isAdmin }) {
   );
 }
 
-/* ── staff ────────────────────────────────────────────────────────────────── */
+/* ── staff ──────────────────────────────────────────────────────────────────────── */
 function Staff({ sid, data, reload }) {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('teacher');
@@ -390,7 +358,7 @@ function Staff({ sid, data, reload }) {
   );
 }
 
-/* ── helpers for reports ──────────────────────────────────────────────────── */
+/* ── helpers for reports ──────────────────────────────────────────────────────────────── */
 const shortDay = (d) => { const x = new Date(d + 'T00:00:00'); return `${x.getDate()}/${x.getMonth() + 1}`; };
 const riskPill = (r) => <span className={`spt-risk ${r}`}>{r === 'high' ? 'Needs help' : r === 'watch' ? 'Watch' : 'On track'}</span>;
 const subjName = (s) => String(s || '').replace(/[-_]/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
@@ -404,7 +372,7 @@ function useReport(sid, days, classId) {
   return d;
 }
 
-/* ── student report card ──────────────────────────────────────────────────── */
+/* ── student report card ──────────────────────────────────────────────────────────────── */
 function StudentReport({ sid, email, school, logo, onClose }) {
   const [d, setD] = useState(null);
   useEffect(() => { api('student-report', { school_id: sid, email, days: 90 }).then(setD); }, [sid, email]);
@@ -439,7 +407,7 @@ function StudentReport({ sid, email, school, logo, onClose }) {
   );
 }
 
-/* ── reports ──────────────────────────────────────────────────────────────── */
+/* ── reports ─────────────────────────────────────────────────────────────────────── */
 function Reports({ sid, school, logo, classes }) {
   const [days, setDays] = useState(30);
   const [classId, setClassId] = useState('');
@@ -468,7 +436,7 @@ function Reports({ sid, school, logo, classes }) {
       </div>
       <div className="spt-card"><h3>Quizzes and active students per day</h3>
         <LineChart data={d.series.map((x) => ({ label: shortDay(x.day), value: x.quizzes }))} data2={d.series.map((x) => ({ label: shortDay(x.day), value: x.active }))} />
-        <div className="spt-legend"><span><i style={{ background: '#7C3AED' }} />Quizzes</span><span><i style={{ background: '#10B981' }} />Students active</span></div></div>
+        <div className="spt-legend"><span><i style={{ background: '#7C3AED' }} />Quizzes</span><span><i style={{ background: '#F59E0B' }} />Students active</span></div></div>
       <div className="spt-two">
         <div className="spt-card"><h3>Participation</h3><div className="spt-center"><Donut value={s.active} total={s.students} label="took a quiz" color="#10B981" /></div></div>
         <div className="spt-card"><h3>Scores spread</h3><BarChart data={d.distribution.map((b) => ({ label: b.label, value: b.count, color: b.label === '0-39' ? '#EF4444' : b.label === '40-49' || b.label === '50-59' ? '#F59E0B' : '#10B981' }))} unit="" height={140} /><small>Number of students by average score.</small></div>
@@ -476,10 +444,10 @@ function Reports({ sid, school, logo, classes }) {
       <div className="spt-card"><h3>Classes compared</h3>
         {d.classes.length ? (
           <>
-            <HBars data={d.classes.map((c) => ({ label: c.name, value: c.avg, note: `${c.students} students · ${c.quizzes} quizzes · ${c.participation}% took part${c.homework !== null ? ` · homework ${c.homework}%` : ''}` }))} />
+            <HBars rainbow data={d.classes.map((c) => ({ label: c.name, value: c.avg, note: `${c.students} students · ${c.quizzes} quizzes · ${c.participation}% took part${c.homework !== null ? ` · homework ${c.homework}%` : ''}` }))} />
           </>
         ) : <Empty>No classes yet.</Empty>}</div>
-      <div className="spt-card"><h3>Subjects</h3>{d.subjects.length ? <HBars data={d.subjects.map((x) => ({ label: subjName(x.subject), value: x.avg, note: `${x.attempts} quizzes · ${x.students} students` }))} /> : <Empty>No quizzes in this period.</Empty>}</div>
+      <div className="spt-card"><h3>Subjects</h3>{d.subjects.length ? <HBars rainbow data={d.subjects.map((x) => ({ label: subjName(x.subject), value: x.avg, note: `${x.attempts} quizzes · ${x.students} students` }))} /> : <Empty>No quizzes in this period.</Empty>}</div>
       <div className="spt-two">
         <div className="spt-card"><h3>Top students</h3>{d.top.length ? d.top.map((t, i) => <div className="spt-item" key={t.key}><button className="spt-link" onClick={() => setView(t.key)}>{i + 1}. {t.name}</button><b style={{ color: colorFor(t.avg) }}>{t.avg}%</b></div>) : <Empty>No quizzes yet.</Empty>}</div>
         <div className="spt-card"><h3>Most improved</h3>{d.improvers.length ? d.improvers.map((t) => <div className="spt-item" key={t.key}><button className="spt-link" onClick={() => setView(t.key)}>{t.name}</button><b style={{ color: '#059669' }}>+{t.trend}%</b></div>) : <Empty>Needs quizzes in both periods.</Empty>}</div>
@@ -495,29 +463,107 @@ function Reports({ sid, school, logo, classes }) {
   );
 }
 
-/* ── overview with charts ─────────────────────────────────────────────────── */
+/* ── overview with charts ───────────────────────────────────────────────────────────────── */
 function OverviewCharts({ sid, setTab }) {
   const d = useReport(sid, 30, '');
+  const [asg, setAsg] = useState(null);
+  useEffect(() => { api('assignments', { school_id: sid }).then((r) => setAsg(r.success ? r.assignments : [])); }, [sid]);
   if (!d || !d.success) return null;
   const s = d.summary;
+  const hwVals = d.classes.filter((c) => c.homework !== null).map((c) => c.homework);
+  const hw = hwVals.length ? Math.round(hwVals.reduce((x, y) => x + y, 0) / hwVals.length) : null;
+  const quizzes = d.series.map((x) => x.quizzes), active = d.series.map((x) => x.active);
+  const ok = Math.max(0, s.students - s.atRisk - s.watch);
+  const best = d.subjects.length ? [...d.subjects].sort((x, y) => y.avg - x.avg) : [];
   return (
     <>
-      <div className="spt-card"><h3>Last 30 days</h3>
-        <div className="spt-stats">
-          <div className="spt-stat"><b>{s.avg}%</b><span>Average score</span><Delta now={s.avg} before={s.prevAvg} unit="%" /></div>
-          <div className="spt-stat"><b>{s.quizzes}</b><span>Quizzes</span><Delta now={s.quizzes} before={s.prevQuizzes} /></div>
-          <div className="spt-stat"><b>{s.participation}%</b><span>Took a quiz</span></div>
-          <div className="spt-stat"><b style={{ color: s.atRisk ? '#DC2626' : undefined }}>{s.atRisk}</b><span>Need help</span></div>
-        </div>
-        <LineChart data={d.series.map((x) => ({ label: shortDay(x.day), value: x.quizzes }))} />
-        <button className="spt-link" onClick={() => setTab('reports')}>See the full report</button>
+      <div className="spt-stats big">
+        <div className="spt-stat"><b>{s.avg}%</b><span>Average score</span><Delta now={s.avg} before={s.prevAvg} unit="%" /><Spark values={quizzes} color="#fff" /></div>
+        <div className="spt-stat"><b>{s.quizzes}</b><span>Quizzes (30 days)</span><Delta now={s.quizzes} before={s.prevQuizzes} /><Spark values={quizzes} color="#fff" /></div>
+        <div className="spt-stat"><b>{s.participation}%</b><span>{s.active} of {s.students} took a quiz</span><Spark values={active} color="#fff" /></div>
+        <div className="spt-stat"><b>{hw === null ? '-' : hw + '%'}</b><span>Homework done</span></div>
+        <div className="spt-stat"><b>{s.atRisk}</b><span>Need help{s.watch ? ` · ${s.watch} to watch` : ''}</span></div>
+        <div className="spt-stat"><b>{d.top.length ? d.top[0].avg + '%' : '-'}</b><span>Best student{d.top.length ? ` · ${d.top[0].name.split(' ')[0]}` : ''}</span></div>
       </div>
-      {d.classes.length > 0 && <div className="spt-card"><h3>Class averages</h3><HBars data={d.classes.map((c) => ({ label: c.name, value: c.avg, note: `${c.participation}% took part` }))} /></div>}
+      <div className="spt-dash">
+        <div className="spt-card tint-a wide"><div className="spt-between"><h3>Quizzes and active students, last 30 days</h3><button className="spt-link" onClick={() => setTab('reports')}>Full report</button></div>
+          <LineChart height={190} data={d.series.map((x) => ({ label: shortDay(x.day), value: x.quizzes }))} data2={d.series.map((x) => ({ label: shortDay(x.day), value: x.active }))} />
+          <div className="spt-legend"><span><i style={{ background: '#7C3AED' }} />Quizzes</span><span><i style={{ background: '#F59E0B' }} />Students active</span></div></div>
+        <div className="spt-card tint-b"><h3>Subject performance</h3>{d.subjects.length ? <HBars rainbow data={d.subjects.slice(0, 8).map((x) => ({ label: subjName(x.subject), value: x.avg, note: `${x.attempts} quizzes · ${x.students} students` }))} /> : <Empty>No quizzes yet.</Empty>}</div>
+        <div className="spt-card tint-d"><h3>Class averages</h3>{d.classes.length ? <HBars rainbow data={d.classes.map((c) => ({ label: c.name, value: c.avg, note: `${c.students} students · ${c.participation}% took part${c.homework !== null ? ` · homework ${c.homework}%` : ''}` }))} /> : <Empty>No classes yet.</Empty>}</div>
+        <div className="spt-card tint-c"><h3>Score spread</h3><BarChart height={170} data={d.distribution.map((x, i) => ({ label: x.label, value: x.count, color: ['#EF4444', '#F97316', '#F59E0B', '#84CC16', '#10B981', '#06B6D4'][i] }))} /><small>Number of students by average score.</small></div>
+        <div className="spt-card tint-e"><h3>Student health</h3><DonutMulti centre={s.students} data={[{ label: 'On track', value: ok, color: '#10B981' }, { label: 'To watch', value: s.watch, color: '#F59E0B' }, { label: 'Need help', value: s.atRisk, color: '#EF4444' }]} /><small>Based on scores and how long since they last practised.</small></div>
+        <div className="spt-card tint-f"><h3>Top students</h3>{d.top.length ? <div className="spt-rank">{d.top.slice(0, 6).map((t, i) => <div key={t.key}><span className="n" style={{ background: pick(i) }}>{i + 1}</span><span className="nm">{t.name}<small>{t.classes.join(', ')}</small></span><b style={{ color: colorFor(t.avg) }}>{t.avg}%</b></div>)}</div> : <Empty>No quizzes yet.</Empty>}</div>
+        <div className="spt-card tint-e"><h3>Most improved</h3>{d.improvers.length ? <div className="spt-rank">{d.improvers.map((t, i) => <div key={t.key}><span className="n" style={{ background: pick(i + 4) }}>▲</span><span className="nm">{t.name}<small>{t.classes.join(', ')}</small></span><b style={{ color: '#059669' }}>+{t.trend}%</b></div>)}</div> : <Empty>Needs quizzes in both periods.</Empty>}</div>
+        <div className="spt-card tint-d"><h3>Needs attention</h3>{d.needsHelp.length ? <div className="spt-rank">{d.needsHelp.slice(0, 6).map((t) => <div key={t.key}><span className="n" style={{ background: t.risk === 'high' ? '#EF4444' : '#F59E0B' }}>!</span><span className="nm">{t.name}<small>{t.classes.join(', ')} · {t.idle_days === null ? 'never active' : `${t.idle_days}d since last quiz`}</small></span><span className={`spt-risk ${t.risk}`}>{t.risk === 'high' ? 'Needs help' : 'Watch'}</span></div>)}</div> : <Empty>Everyone is on track.</Empty>}</div>
+        <div className="spt-card tint-a"><div className="spt-between"><h3>Latest homework</h3><button className="spt-link" onClick={() => setTab('assignments')}>All homework</button></div>
+          {asg && asg.length ? asg.slice(0, 4).map((a, i) => { const pc = a.total ? Math.round((a.done_count * 100) / a.total) : 0; return <div key={a.id}><div className="spt-between"><span><b>{a.title}</b><small>{a.class_name}</small></span><b style={{ color: pick(i) }}>{a.done_count}/{a.total}</b></div><div className="spt-prog"><i style={{ width: pc + '%', background: `linear-gradient(90deg, ${pick(i)}, ${pick(i + 1)})` }} /></div></div>; }) : <Empty>No homework posted yet.</Empty>}</div>
+        {best.length > 1 && <div className="spt-card tint-b"><h3>Strongest and weakest subject</h3><div className="spt-rank"><div><span className="n" style={{ background: '#10B981' }}>↑</span><span className="nm">{subjName(best[0].subject)}</span><b>{best[0].avg}%</b></div><div><span className="n" style={{ background: '#EF4444' }}>↓</span><span className="nm">{subjName(best[best.length - 1].subject)}</span><b>{best[best.length - 1].avg}%</b></div></div><small>Plan revision time around the weaker subject.</small></div>}
+      </div>
     </>
   );
 }
 
-/* ── plan + online payment ────────────────────────────────────────────────── */
+/* ── assignments (homework across every class) ────────────────────────────────────────── */
+function Assignments({ sid, data, isAdmin, reload }) {
+  const [list, setList] = useState(null);
+  const [f, setF] = useState({ class_id: '', title: '', body: '', due_at: '' });
+  const [msg, setMsg] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [filter, setFilter] = useState('');
+  const sample = !!data.sample;
+  const load = useCallback(async () => { const r = await api('assignments', { school_id: sid }); setList(r.success ? r.assignments : []); }, [sid]);
+  useEffect(() => { load(); }, [load]);
+  const post = async () => {
+    if (!f.class_id) return setMsg({ text: 'Choose a class first.' });
+    setBusy(true); setMsg(null);
+    const r = await schoolApi('assign-create', { class_id: f.class_id, title: f.title, body: f.body, due_at: f.due_at || undefined });
+    setBusy(false);
+    if (!r.success) return setMsg({ text: r.error || 'Could not post.' });
+    setF({ ...f, title: '', body: '', due_at: '' }); setMsg({ ok: true, text: `Posted. ${r.notified || 0} students notified.` }); load();
+  };
+  const del = async (id) => { if (!window.confirm('Delete this homework?')) return; await schoolApi('assign-delete', { id }); load(); };
+  const shown = (list || []).filter((a) => !filter || a.class_id === filter);
+  const total = shown.reduce((n, a) => n + a.total, 0), done = shown.reduce((n, a) => n + a.done_count, 0);
+  return (
+    <div className="spt-stack">
+      <div className="spt-stats big">
+        <div className="spt-stat"><b>{shown.length}</b><span>Assignments</span></div>
+        <div className="spt-stat"><b>{total ? Math.round((done * 100) / total) : 0}%</b><span>Handed in</span></div>
+        <div className="spt-stat"><b>{done}</b><span>Submissions marked done</span></div>
+      </div>
+      <div className="spt-card tint-a">
+        <h3>Post new homework</h3>
+        {sample ? <p className="spt-note">This is a sample school, so posting is switched off. Create your own school to post real homework.</p> : !data.classes.length ? <Empty>Create a class first, then post homework to it.</Empty> : (
+          <>
+            <select value={f.class_id} onChange={(e) => setF({ ...f, class_id: e.target.value })}><option value="">Choose a class…</option>{data.classes.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
+            <input placeholder="Homework title" value={f.title} maxLength={120} onChange={(e) => setF({ ...f, title: e.target.value })} />
+            <textarea placeholder="What should students do? (questions, pages, topics)" rows={3} value={f.body} onChange={(e) => setF({ ...f, body: e.target.value })} />
+            <label className="spt-lbl">Due date (optional)<input type="date" value={f.due_at} onChange={(e) => setF({ ...f, due_at: e.target.value })} /></label>
+            <button className="spt-btn" disabled={busy} onClick={post}>{busy ? 'Posting…' : 'Post homework'}</button>
+            <Msg m={msg} />
+          </>
+        )}
+      </div>
+      <div className="spt-row spt-noprint"><select value={filter} onChange={(e) => setFilter(e.target.value)}><option value="">All classes</option>{data.classes.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
+      {list === null && <Empty>Loading…</Empty>}
+      {list && !shown.length && <Empty>No homework yet.</Empty>}
+      <div className="spt-dash">
+        {shown.map((a, i) => { const pc = a.total ? Math.round((a.done_count * 100) / a.total) : 0; const late = a.due_at && new Date(a.due_at) < new Date(); return (
+          <div className="spt-asg" key={a.id} style={{ borderLeftColor: pick(i) }}>
+            <div className="spt-between"><div><b>{a.title}</b><small>{a.class_name} · posted {ngDate(a.created_at)}{a.due_at ? ` · ${late ? 'was due' : 'due'} ${ngDate(a.due_at)}` : ''}</small></div><b style={{ color: pick(i), fontSize: 18 }}>{pc}%</b></div>
+            {a.preview && <small>{a.preview}</small>}
+            <div className="spt-prog"><i style={{ width: pc + '%', background: `linear-gradient(90deg, ${pick(i)}, ${pick(i + 1)})` }} /></div>
+            <div className="spt-between"><small>{a.done_count} of {a.total} students done</small>{!sample && <button className="spt-ghost danger" onClick={() => del(a.id)}>Delete</button>}</div>
+          </div>
+        ); })}
+      </div>
+      <p className="spt-note">Students see homework in the EliteScholars app and tick it off when done.</p>
+    </div>
+  );
+}
+
+/* ── plan + online payment ────────────────────────────────────────────────────────────── */
 function Plan({ sid, paid }) {
   const [periods, setPeriods] = useState(1);
   const [d, setD] = useState(null);
@@ -556,12 +602,22 @@ function Plan({ sid, paid }) {
         {err && <div className="spt-err">{err}</div>}
         {d.online ? <button className="spt-btn" disabled={busy} onClick={pay}>{busy ? 'Opening payment…' : `Pay ${ng(q.amount)}`}</button> : <div className="spt-banner trial">Online payment is not switched on yet. Contact EliteScholars to pay.</div>}
       </div>
+      {q.tiers && q.tiers.length > 0 && (
+        <div className="spt-card"><h3>All plans</h3>
+          <p className="spt-note">The price depends on how many students you have. You are on the highlighted plan. Paying for the full year is cheaper than adding up each {q.period}.</p>
+          <div className="spt-scroll"><table className="spt-plans"><thead><tr><th>Plan</th><th>Students</th><th>Per {q.period}</th><th>Full year</th></tr></thead>
+            <tbody>{q.tiers.map((t, i) => { const next = q.tiers[i + 1]; const yr = t.yearPrice > 0 ? t.yearPrice : t.price * q.yearPeriods; return (
+              <tr key={t.label} className={t.label === q.tier ? 'cur' : ''}><td>{t.label}{t.label === q.tier ? ' (yours)' : ''}</td><td>{next ? `${t.min} to ${next.min - 1}` : `${t.min}+`}</td><td><b>{ng(t.price)}</b></td><td><b>{ng(yr)}</b>{yr < t.price * q.yearPeriods && <small>Save {ng(t.price * q.yearPeriods - yr)}</small>}</td></tr>
+            ); })}</tbody></table></div>
+          <p className="spt-note">Every plan has a {plan.trialDays || 14}-day free trial. Pay by card, bank transfer or USSD.</p>
+        </div>
+      )}
       <div className="spt-card"><h3>Payments</h3>{d.payments.length ? d.payments.map((p) => <div className="spt-item" key={p.tx_ref}><span>{new Date(p.created_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })}<small>{p.tx_ref}</small></span><b>{ng(p.amount)}</b></div>) : <Empty>No payments yet.</Empty>}</div>
     </div>
   );
 }
 
-/* ── the portal ───────────────────────────────────────────────────────────── */
+/* ── the portal ───────────────────────────────────────────────────────────────────────── */
 export default function SchoolPortal() {
   const [authed, setAuthed] = useState(() => hasToken(getUser()));
   const [schools, setSchools] = useState(null);
@@ -601,7 +657,7 @@ export default function SchoolPortal() {
   const logout = () => { try { localStorage.removeItem('ep_user'); } catch { /* ignore */ } setAuthed(false); setSchools(null); setSid(''); setData(null); };
   const isAdmin = data && data.role === 'admin';
   const isCentre = !!(data && data.school && data.school.kind === 'centre');
-  const tabs = useMemo(() => [['overview', 'Overview'], ['classes', isCentre ? 'Batches' : 'Classes'], ['students', 'Students'], ...(isAdmin ? [['staff', 'Teachers']] : []), ['notices', 'Notices'], ['mocks', 'Mock exams'], ['reports', 'Reports'], ...(isAdmin ? [['plan', 'Plan']] : [])], [isAdmin, isCentre]);
+  const tabs = useMemo(() => [['overview', 'Overview'], ['classes', isCentre ? 'Batches' : 'Classes'], ['assignments', 'Assignments'], ['students', 'Students'], ...(isAdmin ? [['staff', 'Teachers']] : []), ['notices', 'Notices'], ['mocks', 'Mock exams'], ['reports', 'Reports'], ...(isAdmin ? [['plan', 'Plan']] : [])], [isAdmin, isCentre]);
 
   return (
     <div className="spt-page">
@@ -630,6 +686,7 @@ export default function SchoolPortal() {
             {data && (
               <>
                 <h1 className="spt-title">{data.school.logo && <img className="spt-head-logo" src={data.school.logo} alt="" />}{data.school.name}<small>{isAdmin ? (isCentre ? 'Centre admin' : 'School admin') : 'Teacher'}</small></h1>
+                {data.sample && <div className="spt-sample spt-noprint">You are looking at a sample school with made-up classes, students and results, so you can see how a busy portal looks. It is read-only.</div>}
                 <nav className="spt-tabs spt-noprint">{tabs.map(([id, l]) => <button key={id} className={tab === id ? 'on' : ''} onClick={() => setTab(id)}>{l}</button>)}</nav>
                 {tab === 'overview' && (
                   <div>
@@ -643,10 +700,11 @@ export default function SchoolPortal() {
                       {isAdmin && <li>Add your teachers in <button className="spt-link" onClick={() => setTab('staff')}>Teachers</button>.</li>}
                       <li>Create classes in <button className="spt-link" onClick={() => setTab('classes')}>Classes</button>.</li>
                       <li>Add students in <button className="spt-link" onClick={() => setTab('students')}>Students</button>: by username, or create accounts and print the logins.</li>
-                      <li>Set homework and watch results in <button className="spt-link" onClick={() => setTab('reports')}>Reports</button>.</li></ol></div>
+                      <li>Post homework in <button className="spt-link" onClick={() => setTab('assignments')}>Assignments</button> and watch results in <button className="spt-link" onClick={() => setTab('reports')}>Reports</button>.</li></ol></div>
                   </div>
                 )}
-                {tab === 'classes' && <Classes sid={sid} data={data} reload={reload} isAdmin={isAdmin} />}
+                {tab === 'classes' && <Classes sid={sid} data={data} reload={reload} isAdmin={isAdmin} setTab={setTab} />}
+                {tab === 'assignments' && <Assignments sid={sid} data={data} isAdmin={isAdmin} reload={reload} />}
                 {tab === 'students' && <Students sid={sid} data={data} isAdmin={isAdmin} />}
                 {tab === 'staff' && isAdmin && <Staff sid={sid} data={data} reload={reload} />}
                 {tab === 'notices' && <Notices sid={sid} data={data} isAdmin={isAdmin} isCentre={isCentre} />}
