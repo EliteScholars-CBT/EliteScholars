@@ -35,37 +35,67 @@ async function dashboard(p) {
   const sb = getSupabase();
   const settings = await getSettings();
   const now = Date.now();
-  const since = now - 29 * D - ((now + H) % D); // Lagos midnight 29 days ago
+  const N = 180; // days of history for the charts (so 90 days can be compared with the 90 before)
+  const since = now - (N - 1) * D - ((now + H) % D); // Lagos midnight N-1 days ago
 
   const [students, comms, payouts, clicks, srcEv] = await Promise.all([
     sb.from("profiles").select("email,first_name,created_at,is_premium").eq("referrer_partner_id", p.id).order("created_at", { ascending: false }).limit(1000),
     sb.from("partner_commissions").select("*").eq("partner_id", p.id).order("created_at", { ascending: false }).limit(1000),
     sb.from("partner_payouts").select("id,amount,status,reference,note,requested_at,processed_at").eq("partner_id", p.id).order("requested_at", { ascending: false }).limit(100),
     sb.from("events").select("created_at").eq("type", "referral_link_opened").eq("payload->>referral_code", p.referral_code).limit(5000),
-    sb.from("events").select("type,payload").in("type", ["visit_source", "signup_source"]).eq("payload->>ref", p.referral_code).gte("created_at", new Date(since).toISOString()).limit(5000),
+    sb.from("events").select("type,payload,created_at").in("type", ["visit_source", "signup_source"]).eq("payload->>ref", p.referral_code).gte("created_at", new Date(since).toISOString()).limit(5000),
   ]);
-  const bySrc = {};
-  for (const e of srcEv.data || []) {
-    const k = String((e.payload && e.payload.source) || "direct").slice(0, 40);
-    const o = (bySrc[k] = bySrc[k] || { visits: 0, signups: 0 });
-    if (e.type === "visit_source") o.visits++; else o.signups++;
-  }
-  const sources = Object.entries(bySrc).map(([name, v]) => ({ name, ...v })).sort((a, b) => b.visits + b.signups - (a.visits + a.signups));
+  // traffic sources and tagged links, for the last 7 / 30 / 90 days
+  const srcFor = (n) => {
+    const from = now - n * D, bySrc = {}, byTag = {};
+    for (const e of srcEv.data || []) {
+      if (new Date(e.created_at).getTime() < from) continue;
+      const pl = e.payload || {};
+      const k = String(pl.source || "direct").slice(0, 40);
+      const o = (bySrc[k] = bySrc[k] || { visits: 0, signups: 0 });
+      if (e.type === "visit_source") o.visits++; else o.signups++;
+      if (pl.campaign) { const t = String(pl.campaign).slice(0, 40); const c = (byTag[t] = byTag[t] || { visits: 0, signups: 0 }); if (e.type === "visit_source") c.visits++; else c.signups++; }
+    }
+    const list = (m) => Object.entries(m).map(([name, v]) => ({ name, ...v })).sort((a, b) => b.visits + b.signups - (a.visits + a.signups));
+    return { sources: list(bySrc), tags: list(byTag).slice(0, 15) };
+  };
+  const sourcesBy = { 7: srcFor(7), 30: srcFor(30), 90: srcFor(90) };
+  const sources = sourcesBy[30].sources;
   const st = students.data || [], cm = comms.data || [], po = payouts.data || [], ck = clicks.data || [];
 
   const paidBy = {};
   for (const c of cm) if (c.status !== "cancelled") paidBy[c.referred_email] = (paidBy[c.referred_email] || 0) + Number(c.amount);
   const payers = new Set(cm.filter((c) => c.status !== "cancelled").map((c) => c.referred_email));
 
-  // 30-day series
+  // daily series
   const days = [];
-  for (let i = 29; i >= 0; i--) days.push(lagosDay(now - i * D));
+  for (let i = N - 1; i >= 0; i--) days.push(lagosDay(now - i * D));
   const idx = Object.fromEntries(days.map((d, i) => [d, i]));
-  const mk = () => new Array(30).fill(0);
-  const series = { clicks: mk(), signups: mk(), earnings: mk() };
+  const mk = () => new Array(N).fill(0);
+  const series = { clicks: mk(), signups: mk(), earnings: mk(), paying: mk() };
   for (const c of ck) { const i = idx[lagosDay(new Date(c.created_at).getTime())]; if (i !== undefined) series.clicks[i]++; }
   for (const s of st) { const i = idx[lagosDay(new Date(s.created_at).getTime())]; if (i !== undefined) series.signups[i]++; }
   for (const c of cm) { if (c.status === "cancelled") continue; const i = idx[lagosDay(new Date(c.created_at).getTime())]; if (i !== undefined) series.earnings[i] += Number(c.amount); }
+
+  // first payment of each referred student (counts as "new paying student" on that day)
+  const firstPaid = {};
+  for (const c of cm) { if (c.status === "cancelled") continue; const t = new Date(c.created_at).getTime(); if (!firstPaid[c.referred_email] || t < firstPaid[c.referred_email]) firstPaid[c.referred_email] = t; }
+  for (const t of Object.values(firstPaid)) { const i = idx[lagosDay(t)]; if (i !== undefined) series.paying[i]++; }
+  const joined = Object.fromEntries(st.map((x) => [x.email, new Date(x.created_at).getTime()]));
+  const gaps = Object.entries(firstPaid).filter(([e]) => joined[e]).map(([e, t]) => Math.max(0, (t - joined[e]) / D));
+  const avgDaysToPay = gaps.length ? Math.round((gaps.reduce((a, b) => a + b, 0) / gaps.length) * 10) / 10 : null;
+
+  // when the link gets clicked (last 90 days, Nigerian time)
+  const hours = new Array(24).fill(0), weekdays = new Array(7).fill(0);
+  for (const c of ck) { const t = new Date(c.created_at).getTime(); if (t < now - 90 * D) continue; const l = new Date(t + H); hours[l.getUTCHours()]++; weekdays[(l.getUTCDay() + 6) % 7]++; }
+
+  // earnings by month, last 6 months
+  const monthKey = (ms) => new Date(ms + H).toISOString().slice(0, 7);
+  const months = [];
+  for (let i = 5; i >= 0; i--) { const d = new Date(now + H); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - i); months.push(d.toISOString().slice(0, 7)); }
+  const monthly = { labels: months.map((m) => m.slice(2).replace("-", "/")), keys: months, values: months.map(() => 0) };
+  for (const c of cm) { if (c.status === "cancelled") continue; const i = months.indexOf(monthKey(new Date(c.created_at).getTime())); if (i >= 0) monthly.values[i] += Number(c.amount); }
+  monthly.values = monthly.values.map(round2);
 
   const totals = sumCommissions(cm);
   const open = po.find((x) => x.status === "requested");
@@ -78,7 +108,7 @@ async function dashboard(p) {
       ...totals,
     },
     openPayout: open || null,
-    sources,
+    sources, sourcesBy, avgDaysToPay, hours, weekdays, monthly,
     series: { labels: days.map((d) => d.slice(5)), ...series },
     referrals: st.slice(0, 300).map((s) => ({
       name: s.first_name || "Student", email: maskEmail(s.email), joined: s.created_at,
