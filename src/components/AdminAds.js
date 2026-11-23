@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { makeApi } from './adminApi';
 import { fmtN, TrendChart } from './AdminCharts';
+import '../styles/admin-nav.css';
 
 const Check = ({ label, hint, checked, onChange, disabled }) => (
   <label className="adm-check adm-check-row">
@@ -20,6 +21,7 @@ export default function AdminAds({ token, onAuthFail, only }) {
   const [view, setView] = useState(only === 'earnings' ? 'adsterra' : 'own');
   const [ast, setAst] = useState(null);
   const [agb, setAgb] = useState('date');
+  const [arange, setArange] = useState('month');
 
   const load = useCallback(async () => {
     try { const d = await api('ads'); setAds(d.ads); setErr(''); } catch (e) { if (e.message !== 'auth') setErr(e.message); }
@@ -34,9 +36,9 @@ export default function AdminAds({ token, onAuthFail, only }) {
   useEffect(() => {
     if (view !== 'adsterra') return undefined;
     let on = true; setAst(null);
-    api('ads-adsterra', { query: { days, group_by: agb } }).then((d) => on && setAst(d.adsterra)).catch((e) => e.message !== 'auth' && on && setAst({ error: e.message }));
+    api('ads-adsterra', { query: { range: arange, group_by: agb } }).then((d) => on && setAst(d.adsterra)).catch((e) => e.message !== 'auth' && on && setAst({ error: e.message }));
     return () => { on = false; };
-  }, [api, days, agb, view]);
+  }, [api, arange, agb, view]);
 
   const set = (path, val) => setAds((a) => {
     const n = JSON.parse(JSON.stringify(a)); let o = n; const k = path.split('.');
@@ -142,8 +144,10 @@ export default function AdminAds({ token, onAuthFail, only }) {
 
       </>)}
       <section className="adm-controls">
-        {!only && <div className="adm-pills">{[['own', 'Our views'], ['adsterra', 'Adsterra earnings']].map(([k, l]) => <button key={k} className={view === k ? 'on' : ''} onClick={() => { setView(k); if (k === 'own' && days === 0) setDays(30); }}>{l}</button>)}</div>}
-        <div className="adm-pills">{[1, 7, 30, 90].map((d) => <button key={d} className={days === d ? 'on' : ''} onClick={() => setDays(d)}>{d} days</button>)}{view === 'adsterra' && <button className={days === 0 ? 'on' : ''} onClick={() => setDays(0)}>All time</button>}</div>
+        {!only && <div className="adm-pills">{[['own', 'Our views'], ['adsterra', 'Adsterra earnings']].map(([k, l]) => <button key={k} className={view === k ? 'on' : ''} onClick={() => setView(k)}>{l}</button>)}</div>}
+        {view === 'adsterra'
+          ? <div className="adm-pills">{[['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lastmonth', 'Last month'], ['all', 'All time']].map(([k, l]) => <button key={k} className={arange === k ? 'on' : ''} onClick={() => setArange(k)}>{l}</button>)}</div>
+          : <div className="adm-pills">{[7, 30, 90].map((d) => <button key={d} className={days === d ? 'on' : ''} onClick={() => setDays(d)}>{d} days</button>)}</div>}
       </section>
       {view === 'adsterra' && (
         <>
@@ -153,6 +157,7 @@ export default function AdminAds({ token, onAuthFail, only }) {
           {ast && ast.error && <div className="adm-error">{ast.error}</div>}
           {ast && ast.totals && (
             <>
+              <p className="adm-note" style={{ margin: '0 0 8px' }}>{ast.rangeLabel}: {ast.from} to {ast.to}</p>
               <section className="adm-grid adm-stats">
                 <div className="adm-stat"><div className="adm-stat-val">${ast.totals.revenue.toFixed(2)}</div><div className="adm-stat-label">Earned</div></div>
                 <div className="adm-stat"><div className="adm-stat-val">{fmtN(ast.totals.impressions)}</div><div className="adm-stat-label">Impressions</div></div>

@@ -176,7 +176,7 @@ const ROUTES = {
   "admin/ads": withOp(adminOps, "ads"),
   "admin/ads-save": withOp(adminOps, "ads-save"),
   "admin/ads-stats": withOp(adminOps, "ads-stats"),
-  "admin/ads-adsterra": adminAdsterra, // adds the All time range, delegates the rest
+  "admin/ads-adsterra": adminAdsterra, // its own file: Today / This week / This month / Last month / All time
   "admin/shop-list": withOp(adminOps, "shop-list"),
   "admin/shop-save": withOp(adminOps, "shop-save"),
   "admin/shop-delete": withOp(adminOps, "shop-delete"),
