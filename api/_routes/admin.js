@@ -294,7 +294,7 @@ async function buildStats(q) {
     truncated: [xp, events].some((a) => a.length >= 60000),
     totals: {
       students: profiles.length,
-      premiumActive: profiles.filter((p) => p.is_premium && p.expires_at && new Date(p.expires_at) > new Date()).length,
+      premiumActive: profiles.filter((p) => p.is_premium && p.expires_at && new Date(p.expires_at) > new Date() && !REVENUE_EXCLUDED.has(String(p.email || "").toLowerCase())).length, // test accounts keep Pro but are not counted here
       revenueAllTime: payments.filter((p) => p.status === "successful").reduce((a, p) => a + Number(p.amount || 0), 0),
     },
     kpis,

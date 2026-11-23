@@ -7,6 +7,8 @@ import { adminFromToken } from "./admin.js";
 const H = 3600000, D = 86400000;
 const ALL_FROM = "2025-01-01"; // before any traffic could have reached the account
 const GROUPS = ["date", "country", "placement", "domain", "device_type"];
+// Adsterra is strict about group_by names (a wrong one answers 422), so the Device pill tries the likely names in turn.
+const ALIASES = { device_type: ["device", "device_format", "device_type"] };
 const RANGES = ["today", "week", "month", "lastmonth", "all"];
 const lag = (ms) => new Date(ms + H).toISOString().slice(0, 10);
 const addDays = (s, n) => lag(Date.parse(`${s}T00:00:00Z`) + n * D - H);
@@ -20,15 +22,24 @@ function resolve(range) {
   return { from: `${today.slice(0, 7)}-01`, to: today, label: "This month" };
 }
 
-async function pull(key, from, to, gb) {
+class Bad extends Error {}
+async function pullOne(key, from, to, gb) {
   const url = `https://api3.adsterratools.com/publisher/stats.json?start_date=${from}&finish_date=${to}&group_by=${gb}`;
   const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 20000);
   try {
     const r = await fetch(url, { headers: { "X-API-Key": key, Accept: "application/json" }, signal: ctl.signal });
     const txt = await r.text(); let j = {}; try { j = JSON.parse(txt); } catch { /* not json */ }
+    if (r.status === 422) throw new Bad("bad group_by");
     if (!r.ok) { const e = new Error(r.status === 401 || r.status === 403 ? "Adsterra rejected the API key (check the ADSTERRA_API value)." : `Adsterra answered ${r.status}: ${String(j.message || txt).slice(0, 160)}`); e.shown = true; throw e; }
-    return (Array.isArray(j.items) ? j.items : []).map((x) => ({ label: String(x.date || x.country || x.placement || x.domain || x.device_type || x.name || "—"), impressions: Number(x.impression ?? x.impressions ?? 0), clicks: Number(x.clicks || 0), revenue: Number(x.revenue || 0) }));
+    return (Array.isArray(j.items) ? j.items : []).map((x) => ({ label: String(x.date || x.country || x.placement || x.domain || x.device || x.device_format || x.device_type || x.os || x.name || "—"), impressions: Number(x.impression ?? x.impressions ?? 0), clicks: Number(x.clicks || 0), revenue: Number(x.revenue || 0) }));
   } finally { clearTimeout(tm); }
+}
+async function pull(key, from, to, gb) {
+  const names = ALIASES[gb] || [gb];
+  for (let i = 0; i < names.length; i++) {
+    try { return await pullOne(key, from, to, names[i]); } catch (e) { if (!(e instanceof Bad) || i === names.length - 1) { if (e instanceof Bad) { const x = new Error("Adsterra does not offer this breakdown for your account."); x.shown = true; throw x; } throw e; } }
+  }
+  return [];
 }
 
 export default async function handler(req, res) {
