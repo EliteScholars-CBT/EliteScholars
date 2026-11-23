@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import '../styles/admin-tables.css';
 
 const FILTERS = {
   students: [['all', 'All students'], ['premium', 'Pro only'], ['free', 'Free only'], ['selected', 'Choose specific students']],
@@ -135,13 +136,18 @@ export default function AdminMail({ token, onAuthFail }) {
 
       <section className="adm-card">
         <h2>3. Send</h2>
-        <div className="adm-mail-opts">
-          <label><input type="radio" name="ch" checked={channel === 'direct'} onChange={() => setChannel('direct')} /> Direct email (up to 1,000 at once){info && !directOk ? ' — not set up' : ''}</label>
-          <label><input type="radio" name="ch" checked={channel === 'campmailer'} onChange={() => setChannel('campmailer')} /> CampMailer (tracking, coupons, big lists){info && !cmOk ? ' — not connected yet' : ''}</label>
+        <div className="adm-mail-opts adm-mail-opts-wide" role="radiogroup" aria-label="How to send">
+          {[['direct', 'Direct email', `Up to 1,000 at once${info && !directOk ? ' (not set up)' : ''}`], ['campmailer', 'CampMailer', `Tracking, coupons, big lists${info && !cmOk ? ' (not connected yet)' : ''}`]].map(([id, title, sub]) => (
+            <label key={id} className={`adm-mail-opt${channel === id ? ' on' : ''}`}>
+              <input type="radio" name="ch" checked={channel === id} onChange={() => setChannel(id)} />
+              <span className="adm-mail-dot" aria-hidden="true" />
+              <span className="adm-mail-lbl"><b>{title}</b><small>{sub}</small></span>
+            </label>
+          ))}
         </div>
         {err && <div className="adm-error">{err}</div>}
         {msg && <div className="adm-ok">{msg}</div>}
-        <button className="adm-btn" onClick={send} disabled={busy || !subject.trim() || message.trim().length < 5 || count < 1}>{busy ? 'Sending…' : `Send to ${count}`}</button>
+        <button className="adm-btn adm-send-btn" onClick={send} disabled={busy || !subject.trim() || message.trim().length < 5 || count < 1}>{busy ? 'Sending…' : `Send to ${count}`}</button>
       </section>
 
       <section className="adm-card">

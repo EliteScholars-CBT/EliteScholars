@@ -1,0 +1,17 @@
+/* Admin: roomier tables, stat tiles and option cards (readable on phone and desktop) */
+.adm-tscroll { overflow-x: auto; margin-top: 14px; border: 1px solid var(--line); border-radius: 12px; -webkit-overflow-scrolling: touch; }
+.adm-dtable { width: 100%; border-collapse: collapse; font-size: .86rem; min-width: 520px; }
+.adm-dtable th { text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--mut); font-weight: 700; padding: 11px 14px; background: rgba(139, 92, 246, .1); white-space: nowrap; }
+.adm-dtable td { padding: 12px 14px; border-top: 1px solid var(--line); vertical-align: top; }
+.adm-dtable th + th, .adm-dtable td + td { text-align: right; font-variant-numeric: tabular-nums; }
+.adm-dtable td:first-child { font-weight: 600; min-width: 190px; }
+.adm-dtable tbody tr:hover td { background: rgba(139, 92, 246, .06); }
+.adm-pills-gap { margin-bottom: 16px; }
+.adm-card .adm-stats { gap: 12px; margin-bottom: 4px; }
+.adm-card .adm-note { line-height: 1.5; margin: 14px 0 0; }
+.adm-card .adm-actrow, .adm-card .adm-inline.pad { padding-top: 10px; padding-bottom: 10px; }
+.adm-mail-opts.adm-mail-opts-wide { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 14px 0 18px; }
+.adm-mail-opts-wide .adm-mail-lbl { display: grid; gap: 3px; }
+.adm-mail-opts-wide .adm-mail-lbl small { color: var(--mut); font-size: .78rem; font-weight: 400; }
+.adm-send-btn { margin-top: 6px; min-width: 150px; }
+@media (max-width: 520px) { .adm-send-btn { width: 100%; } .adm-dtable { font-size: .82rem; } }
