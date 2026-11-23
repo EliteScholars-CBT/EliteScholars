@@ -142,8 +142,8 @@ export default function AdminAds({ token, onAuthFail, only }) {
 
       </>)}
       <section className="adm-controls">
-        {!only && <div className="adm-pills">{[['own', 'Our views'], ['adsterra', 'Adsterra earnings']].map(([k, l]) => <button key={k} className={view === k ? 'on' : ''} onClick={() => setView(k)}>{l}</button>)}</div>}
-        <div className="adm-pills">{[1, 7, 30, 90].map((d) => <button key={d} className={days === d ? 'on' : ''} onClick={() => setDays(d)}>{d} days</button>)}</div>
+        {!only && <div className="adm-pills">{[['own', 'Our views'], ['adsterra', 'Adsterra earnings']].map(([k, l]) => <button key={k} className={view === k ? 'on' : ''} onClick={() => { setView(k); if (k === 'own' && days === 0) setDays(30); }}>{l}</button>)}</div>}
+        <div className="adm-pills">{[1, 7, 30, 90].map((d) => <button key={d} className={days === d ? 'on' : ''} onClick={() => setDays(d)}>{d} days</button>)}{view === 'adsterra' && <button className={days === 0 ? 'on' : ''} onClick={() => setDays(0)}>All time</button>}</div>
       </section>
       {view === 'adsterra' && (
         <>
