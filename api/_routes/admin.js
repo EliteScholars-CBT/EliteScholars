@@ -129,6 +129,8 @@ function makeBuckets(from, to, bucket) {
 const bucketKey = (ms, bucket) => lagosISO(ms).slice(0, bucket === "hour" ? 13 : bucket === "day" ? 10 : 7);
 const labelFor = (k, bucket) => bucket === "hour" ? `${k.slice(11)}:00` : bucket === "day" ? k.slice(5) : k;
 
+// Accounts whose payments were tests: they keep their Pro, but their money is left out of revenue figures.
+const REVENUE_EXCLUDED = new Set(["makzoapps@gmail.com"]);
 const SKIP_EVENTS = "(xp_earned,quiz_complete_xp,leaderboard_view,leaderboard_filter)";
 
 function aggregate(rows, from, to, bucket) {
@@ -226,7 +228,7 @@ async function buildStats(q) {
   const until = new Date(rg.to).toISOString();
   const win = (qb) => qb.gte("created_at", since).lte("created_at", until);
 
-  const [xp, events, challenges, payments, referrals] = await Promise.all([
+  const [xp, events, challenges, paymentsRaw, referrals] = await Promise.all([
     fetchAll(sb, "xp_events", "email,created_at,amount", win, 60),
     fetchAll(sb, "events", "type,email,payload,created_at", (qb) => win(qb).not("type", "in", SKIP_EVENTS), 60),
     fetchAll(sb, "challenges", "status,created_at", win),
@@ -234,6 +236,7 @@ async function buildStats(q) {
     fetchAll(sb, "referrals", "code,created_at", win),
   ]);
 
+  const payments = paymentsRaw.filter((p) => !REVENUE_EXCLUDED.has(String(p.email || "").toLowerCase())); // test payments: never counted as revenue
   const rows = { profiles, xp, events, challenges, payments };
   const cur = aggregate(rows, rg.from, rg.to, rg.bucket);
   const prev = aggregate(rows, rg.prevFrom, rg.prevTo, rg.bucket);
