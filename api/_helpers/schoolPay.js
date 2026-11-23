@@ -30,7 +30,7 @@ export async function schoolQuote(sb, schoolId, periods) {
   for (const t of plan.tiers) if (students >= t.min) tier = t;
   const n = normPeriods(kind, periods);
   const options = PERIOD_OPTIONS[kind].map((k) => ({ periods: k, amount: amountFor(kind, tier, k), year: k === YEAR_PERIODS[kind] }));
-  return { kind, students, tier, periods: n, period: plan.period, days: daysFor(kind, n), amount: amountFor(kind, tier, n), options, yearPeriods: YEAR_PERIODS[kind] };
+  return { kind, students, tier, periods: n, period: plan.period, days: daysFor(kind, n), amount: amountFor(kind, tier, n), options, yearPeriods: YEAR_PERIODS[kind], tiers: plan.tiers };
 }
 
 export async function activateSchoolAndLog({ email, txRef, amount, schoolId, periods }) {
