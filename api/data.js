@@ -39,6 +39,7 @@ import schoolPortal from "./_routes/school-portal.js";
 import report from "./_routes/report.js";
 import contact from "./_routes/contact.js";
 import adminOps from "./_routes/admin-ops.js";
+import adminAdsterra from "./_routes/admin-adsterra.js";
 import adminActivityPlus from "./_routes/admin-activity-plus.js";
 import squadChat from "./_routes/squad-chat.js";
 import hiring from "./_routes/hiring.js";
@@ -175,7 +176,7 @@ const ROUTES = {
   "admin/ads": withOp(adminOps, "ads"),
   "admin/ads-save": withOp(adminOps, "ads-save"),
   "admin/ads-stats": withOp(adminOps, "ads-stats"),
-  "admin/ads-adsterra": withOp(adminOps, "ads-adsterra"),
+  "admin/ads-adsterra": adminAdsterra, // adds the All time range, delegates the rest
   "admin/shop-list": withOp(adminOps, "shop-list"),
   "admin/shop-save": withOp(adminOps, "shop-save"),
   "admin/shop-delete": withOp(adminOps, "shop-delete"),
