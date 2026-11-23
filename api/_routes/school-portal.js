@@ -14,6 +14,7 @@ import { roleIn, uuidish } from "../_helpers/schoolPortal.js";
 import { pushToEmails } from "../_helpers/push.js";
 import { parseSchoolProfile, cleanTagline } from "../_helpers/schoolProfile.js";
 import { notifyAdmin } from "../_helpers/mail.js";
+import { isDemoSchool, demoClasses, demoStaff, demoTotals, demoStudents, demoReports, demoStudentReport, demoAssignments } from "../_helpers/demoSchool.js";
 
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const code6 = () => Array.from({ length: 6 }, () => ALPHABET[crypto.randomInt(ALPHABET.length)]).join("");
@@ -49,7 +50,7 @@ export default async function handler(req, res) {
   const sb = getSupabase();
 
   try {
-    // ── which schools am I part of? ─────────────────────────────────────────
+    // ── which schools am I part of? ────────────────────────────────────────────────────────────
     if (op === "me") {
       const { data: owned } = await sb.from("schools").select("id,name").eq("owner_email", email);
       const { data: staff } = await sb.from("school_staff").select("school_id,role").eq("email", email);
@@ -89,6 +90,8 @@ export default async function handler(req, res) {
     const isAdmin = role === "admin";
     const { data: school } = await sb.from("schools").select("id,name,owner_email,kind,logo,contact_name,contact_role,phone,state,city,size_band,showcase_status,showcase_tagline").eq("id", schoolId).maybeSingle();
     if (!school) return sendErr(res, "School not found.", 404);
+    const demo = isDemoSchool(schoolId); // sample school: shows made-up classes, students and results (read-only)
+    if (demo && ["staff-add", "staff-remove", "class-save", "class-delete", "student-add", "student-bulk", "student-reset", "student-move", "student-remove"].includes(op)) return sendErr(res, "This school shows sample data so you can see how the portal looks. Create your own school to add real classes and students.");
     const planOk = async () => canUseSchool(sb, school.owner_email);
     const PLAN_MSG = "The school plan has ended. Contact EliteScholars to activate it.";
 
@@ -103,7 +106,7 @@ export default async function handler(req, res) {
       return out;
     };
 
-    // ── overview ────────────────────────────────────────────────────────────
+    // ── overview ────────────────────────────────────────────────────────────────
     if (op === "overview") {
       const classes = await classesOf();
       const mem = await membersOf(classes.map((c) => c.id));
@@ -125,14 +128,15 @@ export default async function handler(req, res) {
       if (!isAdmin) teacherNames = new Map([[email, "You"]]);
       const plan = isAdmin ? await planSummary(sb, school.owner_email, total, school.kind) : null;
       return sendOk(res, {
+        sample: demo,
         school: { id: school.id, name: school.name, kind: school.kind || "school", logo: school.logo || null, ...(isAdmin ? { contact_name: school.contact_name || "", contact_role: school.contact_role || "", phone: school.phone || "", state: school.state || "", city: school.city || "", size_band: school.size_band || "", showcase_status: school.showcase_status || "none", showcase_tagline: school.showcase_tagline || "" } : {}) }, role, plan,
-        totals: { classes: classes.length, students: isAdmin ? total : new Set(mem.map((m) => m.email)).size, staff: staff.length, unassigned },
-        classes: classes.map((c) => ({ id: c.id, name: c.name, code: c.code, teacher: c.teacher_email, teacher_name: teacherNames.get(c.teacher_email) || c.teacher_email.split("@")[0], students: counts[c.id] || 0 })),
-        staff,
+        totals: demo ? demoTotals() : { classes: classes.length, students: isAdmin ? total : new Set(mem.map((m) => m.email)).size, staff: staff.length, unassigned },
+        classes: demo ? demoClasses() : classes.map((c) => ({ id: c.id, name: c.name, code: c.code, teacher: c.teacher_email, teacher_name: teacherNames.get(c.teacher_email) || c.teacher_email.split("@")[0], students: counts[c.id] || 0 })),
+        staff: demo ? demoStaff(school.owner_email) : staff,
       });
     }
 
-    // ── staff (admin) ───────────────────────────────────────────────────────
+    // ── staff (admin) ──────────────────────────────────────────────────────────────
     if (op === "staff-add") {
       if (!isAdmin) return sendErr(res, "Only school admins can do that.", 403);
       const em = clean(b.email, 254).toLowerCase();
@@ -154,7 +158,7 @@ export default async function handler(req, res) {
       return sendOk(res, { removed: em });
     }
 
-    // ── classes ─────────────────────────────────────────────────────────────
+    // ── classes ────────────────────────────────────────────────────────────────
     if (op === "class-save") {
       if (!(await planOk())) return sendErr(res, PLAN_MSG, 402);
       const name = clean(b.name, 60);
@@ -189,10 +193,11 @@ export default async function handler(req, res) {
       return sendOk(res, { deleted: true });
     }
 
-    // ── students ────────────────────────────────────────────────────────────
+    // ── students ────────────────────────────────────────────────────────────────
     const myClassIds = async () => (await classesOf()).map((c) => c.id);
     const classAllowed = async (id) => { if (!uuidish(id)) return null; const { data: c } = await sb.from("classes").select("id,name,teacher_email,school_id").eq("id", id).maybeSingle(); if (!c || c.school_id !== schoolId) return null; if (!isAdmin && c.teacher_email !== email) return null; return c; };
 
+    if (op === "students" && demo) return sendOk(res, { students: demoStudents(b.class_id) });
     if (op === "students") {
       const classes = await classesOf();
       const byId = new Map(classes.map((c) => [c.id, c]));
@@ -302,7 +307,7 @@ export default async function handler(req, res) {
       return sendOk(res, { removed: true });
     }
 
-    // ── reports ─────────────────────────────────────────────────────────────
+    // ── reports ────────────────────────────────────────────────────────────────
     const scoreOf = (p) => { const x = p || {}; if (Number.isFinite(Number(x.score)) && x.score !== null && x.score !== "") return Math.max(0, Math.min(100, Math.round(Number(x.score)))); const q = Number(x.totalQ); return q > 0 ? Math.round((Number(x.correct) * 100) / q) : null; };
     const dayKey = (t) => new Date(new Date(t).getTime() + 3600000).toISOString().slice(0, 10); // Lagos day
     const quizEvents = async (emails, sinceIso) => {
@@ -327,6 +332,27 @@ export default async function handler(req, res) {
       for (const part of chunk(asg.map((a) => a.id), 100)) { const { data } = await sb.from("assignment_done").select("assignment_id,email").in("assignment_id", part); done.push(...(data || [])); }
       return { asg, doneSet: new Set(done.map((d) => d.assignment_id + "|" + d.email)) };
     };
+
+    if (op === "reports" && demo) return sendOk(res, demoReports([7, 30, 90].includes(Number(b.days)) ? Number(b.days) : 30, b.class_id || ""));
+    if (op === "student-report" && demo) {
+      const r = demoStudentReport(clean(b.email, 254).toLowerCase(), [30, 90].includes(Number(b.days)) ? Number(b.days) : 90);
+      return r ? sendOk(res, r) : sendErr(res, "That student is not in your classes.", 404);
+    }
+
+    // ── homework across all classes ─────────────────────────────────────────────────
+    if (op === "assignments") {
+      if (demo) return sendOk(res, { assignments: demoAssignments(), sample: true });
+      const classes = await classesOf();
+      if (!classes.length) return sendOk(res, { assignments: [] });
+      const names = new Map(classes.map((c) => [c.id, c.name]));
+      const { data: rows } = await sb.from("assignments").select("id,class_id,title,body,due_at,created_at").in("class_id", classes.map((c) => c.id)).order("created_at", { ascending: false }).limit(200);
+      const list = rows || [];
+      const done = [];
+      for (const part of chunk(list.map((a) => a.id), 100)) { const { data } = await sb.from("assignment_done").select("assignment_id,email").in("assignment_id", part); done.push(...(data || [])); }
+      const mem = await membersOf(classes.map((c) => c.id));
+      const size = {}; mem.forEach((m) => { size[m.class_id] = (size[m.class_id] || 0) + 1; });
+      return sendOk(res, { assignments: list.map((a) => ({ id: a.id, class_id: a.class_id, class_name: names.get(a.class_id) || "", title: a.title, preview: String(a.body || "").slice(0, 140), due_at: a.due_at, created_at: a.created_at, done_count: done.filter((d) => d.assignment_id === a.id).length, total: size[a.class_id] || 0 })) });
+    }
 
     if (op === "reports") {
       const days = [7, 30, 90].includes(Number(b.days)) ? Number(b.days) : 30;
@@ -402,7 +428,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── contact details + "show us on the site" (admin) ─────────────────────
+    // ── contact details + "show us on the site" (admin) ───────────────────────
     if (op === "school-profile-save") {
       if (!isAdmin) return sendErr(res, "Only school admins can do that.", 403);
       const prof = parseSchoolProfile({ ...school, ...b }, school.kind || "school");
@@ -428,7 +454,7 @@ export default async function handler(req, res) {
       return sendOk(res, { logo: img });
     }
 
-    // ── notices (shown as official statuses to students) ────────────────────
+    // ── notices (shown as official statuses to students) ────────────────────────
     const BGS = ["violet", "gold", "teal", "rose", "blue", "dark"];
     const postNotice = async (text, classId, hours, bg) => {
       const expires = new Date(Date.now() + hours * 3600000).toISOString();
@@ -469,7 +495,7 @@ export default async function handler(req, res) {
       return sendOk(res, {});
     }
 
-    // ── mock exam nights ────────────────────────────────────────────────────
+    // ── mock exam nights ───────────────────────────────────────────────────────────
     if (op === "mock-save") {
       if (!(await planOk())) return sendErr(res, PLAN_MSG, 402);
       const title = clean(b.title, 80), subject = clean(b.subject, 60).toLowerCase();
@@ -529,14 +555,14 @@ export default async function handler(req, res) {
       return sendOk(res, {});
     }
 
-    // ── plan + online payment ───────────────────────────────────────────────
+    // ── plan + online payment ────────────────────────────────────────────────────────
     if (op === "quote") {
       if (!isAdmin) return sendErr(res, "Only school admins can do that.", 403);
       const { schoolQuote } = await import("../_helpers/schoolPay.js");
       const q = await schoolQuote(sb, schoolId, b.periods);
       const plan = await planSummary(sb, school.owner_email, q.students, school.kind);
       const { data: pays } = await sb.from("payments").select("tx_ref,amount,created_at").eq("plan", `school:${schoolId}`).order("created_at", { ascending: false }).limit(20);
-      return sendOk(res, { quote: { students: q.students, tier: q.tier && q.tier.label, perPeriod: q.tier ? q.tier.price : 0, kind: q.kind, options: q.options, yearPeriods: q.yearPeriods, periods: q.periods, period: q.period, amount: q.amount, days: q.days }, plan, payments: pays || [], online: !!process.env.FLW_SECRET_KEY });
+      return sendOk(res, { quote: { students: q.students, tier: q.tier && q.tier.label, perPeriod: q.tier ? q.tier.price : 0, kind: q.kind, options: q.options, yearPeriods: q.yearPeriods, periods: q.periods, period: q.period, amount: q.amount, days: q.days, tiers: (q.tiers || []).map((t) => ({ label: t.label, min: t.min, price: t.price, yearPrice: t.yearPrice || 0 })) }, plan, payments: pays || [], online: !!process.env.FLW_SECRET_KEY });
     }
     if (op === "pay") {
       if (!isAdmin) return sendErr(res, "Only school admins can pay for the plan.", 403);
