@@ -36,16 +36,15 @@ async function dashboard(p) {
   const settings = await getSettings();
   const now = Date.now();
   const N = 180; // days of history for the charts (so 90 days can be compared with the 90 before)
-  const since = now - (N - 1) * D - ((now + H) % D); // Lagos midnight N-1 days ago
 
   const [students, comms, payouts, clicks, srcEv] = await Promise.all([
     sb.from("profiles").select("email,first_name,created_at,is_premium").eq("referrer_partner_id", p.id).order("created_at", { ascending: false }).limit(1000),
     sb.from("partner_commissions").select("*").eq("partner_id", p.id).order("created_at", { ascending: false }).limit(1000),
     sb.from("partner_payouts").select("id,amount,status,reference,note,requested_at,processed_at").eq("partner_id", p.id).order("requested_at", { ascending: false }).limit(100),
     sb.from("events").select("created_at").eq("type", "referral_link_opened").eq("payload->>referral_code", p.referral_code).limit(5000),
-    sb.from("events").select("type,payload,created_at").in("type", ["visit_source", "signup_source"]).eq("payload->>ref", p.referral_code).gte("created_at", new Date(since).toISOString()).limit(5000),
+    sb.from("events").select("type,payload,created_at").in("type", ["visit_source", "signup_source"]).eq("payload->>ref", p.referral_code).limit(5000),
   ]);
-  // traffic sources and tagged links, for the last 7 / 30 / 90 days
+  // traffic sources and tagged links, for the last 7 / 30 / 90 days and for all time (0)
   const srcFor = (n) => {
     const from = now - n * D, bySrc = {}, byTag = {};
     for (const e of srcEv.data || []) {
@@ -59,7 +58,7 @@ async function dashboard(p) {
     const list = (m) => Object.entries(m).map(([name, v]) => ({ name, ...v })).sort((a, b) => b.visits + b.signups - (a.visits + a.signups));
     return { sources: list(bySrc), tags: list(byTag).slice(0, 15) };
   };
-  const sourcesBy = { 7: srcFor(7), 30: srcFor(30), 90: srcFor(90) };
+  const sourcesBy = { 0: srcFor(36500), 7: srcFor(7), 30: srcFor(30), 90: srcFor(90) };
   const sources = sourcesBy[30].sources;
   const st = students.data || [], cm = comms.data || [], po = payouts.data || [], ck = clicks.data || [];
 
@@ -85,6 +84,21 @@ async function dashboard(p) {
   const gaps = Object.entries(firstPaid).filter(([e]) => joined[e]).map(([e, t]) => Math.max(0, (t - joined[e]) / D));
   const avgDaysToPay = gaps.length ? Math.round((gaps.reduce((a, b) => a + b, 0) / gaps.length) * 10) / 10 : null;
 
+  // everything since the beginning, week by week (for the "All time" view)
+  const wk = (ms) => { const day0 = Math.floor((ms + H) / D) * D - H; const dow = (new Date(day0 + H).getUTCDay() + 6) % 7; return day0 - dow * D; };
+  const stamps = [...ck, ...st, ...cm].map((x) => new Date(x.created_at).getTime()).filter((t) => t > 0);
+  const firstWeek = wk(stamps.length ? Math.min(...stamps) : now), lastWeek = wk(now);
+  const weeks = [];
+  for (let t = Math.max(firstWeek, lastWeek - 155 * 7 * D); t <= lastWeek; t += 7 * D) weeks.push(t);
+  const widx = Object.fromEntries(weeks.map((t, i) => [t, i]));
+  const wz = () => new Array(weeks.length).fill(0);
+  const allTime = { labels: weeks.map((t) => lagosDay(t).slice(2)), clicks: wz(), signups: wz(), earnings: wz(), paying: wz() };
+  for (const c of ck) { const i = widx[wk(new Date(c.created_at).getTime())]; if (i !== undefined) allTime.clicks[i]++; }
+  for (const x of st) { const i = widx[wk(new Date(x.created_at).getTime())]; if (i !== undefined) allTime.signups[i]++; }
+  for (const c of cm) { if (c.status === "cancelled") continue; const i = widx[wk(new Date(c.created_at).getTime())]; if (i !== undefined) allTime.earnings[i] += Number(c.amount); }
+  for (const t of Object.values(firstPaid)) { const i = widx[wk(t)]; if (i !== undefined) allTime.paying[i]++; }
+  allTime.earnings = allTime.earnings.map(round2);
+
   // when the link gets clicked (last 90 days, Nigerian time)
   const hours = new Array(24).fill(0), weekdays = new Array(7).fill(0);
   for (const c of ck) { const t = new Date(c.created_at).getTime(); if (t < now - 90 * D) continue; const l = new Date(t + H); hours[l.getUTCHours()]++; weekdays[(l.getUTCDay() + 6) % 7]++; }
@@ -108,7 +122,7 @@ async function dashboard(p) {
       ...totals,
     },
     openPayout: open || null,
-    sources, sourcesBy, avgDaysToPay, hours, weekdays, monthly,
+    sources, sourcesBy, avgDaysToPay, hours, weekdays, monthly, allTime,
     series: { labels: days.map((d) => d.slice(5)), ...series },
     referrals: st.slice(0, 300).map((s) => ({
       name: s.first_name || "Student", email: maskEmail(s.email), joined: s.created_at,

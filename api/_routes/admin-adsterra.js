@@ -1,5 +1,5 @@
 // Adsterra earnings for the admin "Adsterra earnings" tab. GET /api/admin/ads-adsterra?range=today|week|month|lastmonth|all&group_by=...
-// Dates follow Nigerian time. "All time" is fetched in 90-day pieces and joined, because one huge request is unreliable.
+// Dates follow Nigerian time. "All time" is added up month by month, because one huge request is unreliable.
 import { sendOk, sendErr, setCors } from "../_helpers/response.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { adminFromToken } from "./admin.js";
@@ -68,18 +68,22 @@ export default async function handler(req, res) {
   if (hit && Date.now() - hit.t < 5 * 60000) return sendOk(res, { adsterra: hit.v });
 
   try {
-    // split into pieces of at most 90 days
+    // All time is added up month by month (each piece is a short range, like "This month", which is known to be right).
     const pieces = [];
-    for (let s = from; s <= to; ) { const e = addDays(s, 89) < to ? addDays(s, 89) : to; pieces.push([s, e]); s = addDays(e, 1); }
+    if (range === "all") {
+      for (let s0 = from; s0 <= to; ) { const m1 = `${s0.slice(0, 7)}-01`; const nextFirst = addDays(addDays(m1, 31).slice(0, 7) + "-01", 0); const e0 = addDays(nextFirst, -1); const e = e0 < to ? e0 : to; pieces.push([s0, e]); s0 = addDays(e, 1); }
+    } else {
+      for (let s0 = from; s0 <= to; ) { const e = addDays(s0, 89) < to ? addDays(s0, 89) : to; pieces.push([s0, e]); s0 = addDays(e, 1); }
+    }
     const got = [];
-    for (let i = 0; i < pieces.length; i += 3) got.push(...(await Promise.all(pieces.slice(i, i + 3).map(([a, b]) => pull(key, a, b, gb)))));
+    for (let i = 0; i < pieces.length; i += 6) got.push(...(await Promise.all(pieces.slice(i, i + 6).map(([a0, b0]) => pull(key, a0, b0, gb)))));
     const rows = got.flat();
     const map = new Map();
     for (const x of rows) { const o = map.get(x.label) || { label: x.label, impressions: 0, clicks: 0, revenue: 0 }; o.impressions += x.impressions; o.clicks += x.clicks; o.revenue += x.revenue; map.set(x.label, o); }
     let items = [...map.values()].map((o) => ({ ...o, ctr: o.impressions ? (o.clicks / o.impressions) * 100 : 0, cpm: o.impressions ? (o.revenue / o.impressions) * 1000 : 0 }));
     items = gb === "date" ? items.sort((a, b) => (a.label < b.label ? -1 : 1)) : items.sort((a, b) => b.revenue - a.revenue);
     const t = items.reduce((a, x) => ({ impressions: a.impressions + x.impressions, clicks: a.clicks + x.clicks, revenue: a.revenue + x.revenue }), { impressions: 0, clicks: 0, revenue: 0 });
-    const v = { configured: true, range, rangeLabel: label, from, to, groupBy: gb, items, totals: { ...t, ctr: t.impressions ? (t.clicks / t.impressions) * 100 : 0, cpm: t.impressions ? (t.revenue / t.impressions) * 1000 : 0 } };
+    const v = { configured: true, pieces: pieces.length, range, rangeLabel: label, from, to, groupBy: gb, items, totals: { ...t, ctr: t.impressions ? (t.clicks / t.impressions) * 100 : 0, cpm: t.impressions ? (t.revenue / t.impressions) * 1000 : 0 } };
     globalThis.__adsterraCache2.set(ck, { t: Date.now(), v });
     return sendOk(res, { adsterra: v });
   } catch (e) {
