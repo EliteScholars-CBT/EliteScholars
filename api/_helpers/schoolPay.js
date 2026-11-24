@@ -19,18 +19,25 @@ export function amountFor(kind, tier, n) {
   return n === YEAR_PERIODS[kind] && tier.yearPrice > 0 ? tier.yearPrice : tier.price * n;
 }
 
+// `periods` may be a number, or "<number>|<plan label>" when the school picked a specific plan.
 export async function schoolQuote(sb, schoolId, periods) {
+  let tierLabel = '';
+  if (typeof periods === 'string' && periods.includes('|')) { const i = periods.indexOf('|'); tierLabel = periods.slice(i + 1).trim().slice(0, 60); periods = periods.slice(0, i); }
   const pr = await getPricing();
   const { data: sc } = await sb.from("schools").select("kind").eq("id", schoolId).maybeSingle();
   const kind = sc && sc.kind === "centre" ? "centre" : "school";
   const plan = planFor(pr, kind);
   const { count } = await sb.from("school_students").select("email", { count: "exact", head: true }).eq("school_id", schoolId);
   const students = count || 0;
-  let tier = plan.tiers[0];
-  for (const t of plan.tiers) if (students >= t.min) tier = t;
+  let base = plan.tiers[0];
+  for (const t of plan.tiers) if (students >= t.min) base = t;
+  // A school may pay for a bigger plan than its current size needs, never a smaller one.
+  let tier = base;
+  const pick = tierLabel ? plan.tiers.find((t) => t.label === String(tierLabel)) : null;
+  if (pick && pick.min >= base.min) tier = pick;
   const n = normPeriods(kind, periods);
   const options = PERIOD_OPTIONS[kind].map((k) => ({ periods: k, amount: amountFor(kind, tier, k), year: k === YEAR_PERIODS[kind] }));
-  return { kind, students, tier, periods: n, period: plan.period, days: daysFor(kind, n), amount: amountFor(kind, tier, n), options, yearPeriods: YEAR_PERIODS[kind], tiers: plan.tiers };
+  return { kind, students, tier, baseTier: base, periods: n, period: plan.period, days: daysFor(kind, n), amount: amountFor(kind, tier, n), options, yearPeriods: YEAR_PERIODS[kind], tiers: plan.tiers };
 }
 
 export async function activateSchoolAndLog({ email, txRef, amount, schoolId, periods }) {
