@@ -566,17 +566,19 @@ function Assignments({ sid, data, isAdmin, reload }) {
 /* ── plan + online payment ────────────────────────────────────────────────────────────── */
 function Plan({ sid, paid }) {
   const [periods, setPeriods] = useState(1);
+  const [tierPick, setTierPick] = useState('');
   const [d, setD] = useState(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
-  useEffect(() => { api('quote', { school_id: sid, periods }).then(setD); }, [sid, periods, paid]);
+  useEffect(() => { api('quote', { school_id: sid, periods: tierPick ? `${periods}|${tierPick}` : periods }).then(setD); }, [sid, periods, tierPick, paid]);
   if (!d) return <Empty>Loading…</Empty>;
   if (!d.success) return <div className="spt-err">{d.error}</div>;
   const { plan, quote: q } = d;
   const label = { trial: 'Free trial', active: 'Active', expired: 'Ended' }[plan.status];
+  const baseTier = [...(q.tiers || [])].reverse().find((x) => q.students >= x.min) || (q.tiers || [])[0] || { label: q.tier, min: 0 };
   const pay = async () => {
     setBusy(true); setErr('');
-    const r = await api('pay', { school_id: sid, periods });
+    const r = await api('pay', { school_id: sid, periods: tierPick ? `${periods}|${tierPick}` : periods });
     if (r.success && r.paymentLink) { window.location.href = r.paymentLink; return; }
     setBusy(false); setErr(r.error || 'Could not start the payment.');
   };
@@ -592,13 +594,20 @@ function Plan({ sid, paid }) {
       </div>
       <div className="spt-card">
         <h3>Pay online</h3>
-        <p>{q.students} student{q.students === 1 ? '' : 's'} in your school · <b>{q.tier || 'Starter'}</b></p>
+        <p>{q.students} student{q.students === 1 ? '' : 's'} in your {q.kind === 'centre' ? 'centre' : 'school'}. Choose the plan you want to pay for.</p>
+        {q.tiers && q.tiers.length > 1 && (
+          <div className="spt-periods">{q.tiers.map((t) => {
+            const ok = t.min >= baseTier.min;
+            return <button key={t.label} disabled={!ok} className={q.tier === t.label ? 'on' : ''} style={ok ? undefined : { opacity: 0.45, cursor: 'not-allowed' }} onClick={() => setTierPick(t.label)}>{t.label}<small>{ng(t.price)} per {q.period}</small>{t.label === baseTier.label && <em>Fits you now</em>}</button>;
+          })}</div>
+        )}
+        {q.tier !== baseTier.label && <p className="spt-note">You are paying for the <b>{q.tier}</b> plan, which covers more students than you have now. Plans smaller than your current student count cannot be chosen.</p>}
         <div className="spt-periods">{q.options.map((o) => {
           const sum = q.perPeriod * o.periods; const save = o.year && sum > o.amount ? sum - o.amount : 0;
           return <button key={o.periods} className={periods === o.periods ? 'on' : ''} onClick={() => setPeriods(o.periods)}>{o.year ? 'Full year' : `${o.periods} ${q.period}${o.periods > 1 ? 's' : ''}`}<small>{ng(o.amount)}</small>{o.year && <em>{save ? `Save ${ng(save)}` : q.kind === 'centre' ? '12 months' : '3 terms'}</em>}</button>;
         })}</div>
         <div className="spt-total"><span>Total</span><b>{ng(q.amount)}</b></div>
-        <p className="spt-note">Your plan is extended from the day it ends, so you never lose paid time. The price follows your student count at the moment you pay. Pay securely by card, bank transfer or USSD.</p>
+        <p className="spt-note">Your plan is extended from the day it ends, so you never lose paid time. The price follows the plan you choose. Pay securely by card, bank transfer or USSD.</p>
         {err && <div className="spt-err">{err}</div>}
         {d.online ? <button className="spt-btn" disabled={busy} onClick={pay}>{busy ? 'Opening payment…' : `Pay ${ng(q.amount)}`}</button> : <div className="spt-banner trial">Online payment is not switched on yet. Contact EliteScholars to pay.</div>}
       </div>
