@@ -97,5 +97,5 @@
 .spt-prog { height: 9px; background: #EDE9FE; border-radius: 99px; overflow: hidden; } .spt-prog > i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #10B981, #06B6D4); }
 .spt-asg { border: 1.5px solid var(--spt-line); border-radius: 14px; padding: 12px; display: grid; gap: 8px; background: #fff; border-left: 5px solid #7C3AED; }
 
-/* desktop: line charts 20% smaller */
-@media (min-width: 900px) { .ptc[aria-label="Line chart"] { width: 80%; margin-left: auto; margin-right: auto; } }
+/* desktop: line and bar charts capped so height and text stay small */
+@media (min-width: 900px) { .ptc[aria-label="Line chart"], .ptc[aria-label="Bar chart"] { width: 100%; max-width: 400px; margin-left: auto; margin-right: auto; } }
