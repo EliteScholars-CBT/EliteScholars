@@ -657,7 +657,7 @@ export default function SchoolPortal() {
   const logout = () => { try { localStorage.removeItem('ep_user'); } catch { /* ignore */ } setAuthed(false); setSchools(null); setSid(''); setData(null); };
   const isAdmin = data && data.role === 'admin';
   const isCentre = !!(data && data.school && data.school.kind === 'centre');
-  const tabs = useMemo(() => [['overview', 'Overview'], ['classes', isCentre ? 'Batches' : 'Classes'], ['assignments', 'Assignments'], ['students', 'Students'], ...(isAdmin ? [['staff', 'Teachers']] : []), ['notices', 'Notices'], ['mocks', 'Mock exams'], ['reports', 'Reports'], ...(isAdmin ? [['plan', 'Plan']] : [])], [isAdmin, isCentre]);
+  const tabs = useMemo(() => [['overview', 'Overview'], ['classes', isCentre ? 'Batches' : 'Classes'], ['assignments', 'Assignments'], ['students', 'Students'], ...(isAdmin ? [['staff', 'Teachers']] : []), ['notices', 'Notices'], ['mocks', 'Mock exams'], ['reports', 'Reports'], ...(isAdmin ? [['plan', 'Plan'], ['settings', 'Settings']] : [])], [isAdmin, isCentre]);
 
   return (
     <div className="spt-page">
@@ -693,8 +693,6 @@ export default function SchoolPortal() {
                     <div className="spt-stats"><Stat v={data.totals.classes} l="Classes" /><Stat v={data.totals.students} l="Students" />{isAdmin && <Stat v={data.totals.staff} l="Staff" />}{isAdmin && <Stat v={data.totals.unassigned} l="Not in a class" />}</div>
                     {isAdmin && data.plan && data.plan.status !== 'active' && <div className={`spt-banner ${data.plan.status}`}>{data.plan.status === 'trial' ? `Free trial: ${data.plan.daysLeft} day${data.plan.daysLeft === 1 ? '' : 's'} left.` : 'Your plan has ended. Renew to keep adding classes and students.'} <button className="spt-link" onClick={() => setTab('plan')}>See plan</button></div>}
                     <OverviewCharts sid={sid} setTab={setTab} />
-                    {isAdmin && <LogoCard sid={sid} data={data} reload={reload} />}
-                    {isAdmin && <ProfileCard key={sid + (data.school.showcase_status || '')} sid={sid} data={data} reload={reload} />}
                     {isAdmin && isCentre && <CentreEarn />}
                     <div className="spt-card"><h3>Get started</h3><ol className="spt-steps">
                       {isAdmin && <li>Add your teachers in <button className="spt-link" onClick={() => setTab('staff')}>Teachers</button>.</li>}
@@ -711,6 +709,16 @@ export default function SchoolPortal() {
                 {tab === 'mocks' && <Mocks sid={sid} data={data} isAdmin={isAdmin} isCentre={isCentre} />}
                 {tab === 'reports' && <Reports sid={sid} school={data.school.name} logo={data.school.logo} classes={data.classes} />}
                 {tab === 'plan' && isAdmin && <Plan sid={sid} paid={paid} />}
+                {tab === 'settings' && isAdmin && (
+                  <div className="spt-stack">
+                    <div className="spt-card spt-noprint"><h3>Settings</h3>
+                      <p className="spt-note">{isCentre ? 'Tutorial centre' : 'School'}: <b>{data.school.name}</b>. Change your logo and public details here.</p>
+                      <div className="spt-row"><button className="spt-ghost" onClick={() => setTab('plan')}>Plan and billing</button><button className="spt-ghost" onClick={logout}>Sign out</button></div>
+                    </div>
+                    <LogoCard sid={sid} data={data} reload={reload} />
+                    <ProfileCard key={sid + (data.school.showcase_status || '')} sid={sid} data={data} reload={reload} />
+                  </div>
+                )}
               </>
             )}
             {!data && !err && <Empty>Loading…</Empty>}
