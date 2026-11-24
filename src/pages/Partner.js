@@ -242,12 +242,13 @@ export default function Partner() {
   const sr = data.series;
   const cut = (arr, a, b) => (arr || []).slice(a, b);
   const sum = (a) => a.reduce((x, y) => x + y, 0);
-  const cur = (key) => cut(sr[key], -range);
-  const prv = (key) => cut(sr[key], -2 * range, -range);
-  const per = (key) => ({ v: sum(cur(key)), prev: sum(prv(key)) });
+  const ALL = range === 0; // 0 = since the beginning (weekly points)
+  const cur = (key) => (ALL ? ((data.allTime || {})[key] || []) : cut(sr[key], -range));
+  const prv = (key) => (ALL ? undefined : cut(sr[key], -2 * range, -range));
+  const per = (key) => ({ v: sum(cur(key)), prev: ALL ? 0 : sum(prv(key)) });
   const P = { clicks: per('clicks'), signups: per('signups'), paying: per('paying'), earnings: per('earnings') };
   const delta = (o) => (o.prev > 0 ? Math.round(((o.v - o.prev) / o.prev) * 100) : o.v > 0 ? null : 0);
-  const rangeLabel = range === 7 ? 'last 7 days' : range === 30 ? 'last 30 days' : 'last 90 days';
+  const rangeLabel = ALL ? 'whole time you have been a partner' : range === 7 ? 'last 7 days' : range === 30 ? 'last 30 days' : 'last 90 days';
   const srcNow = (data.sourcesBy && data.sourcesBy[range]) || { sources: data.sources || [], tags: [] };
   const pctOf = (a, b) => (b > 0 ? Math.round((a / b) * 1000) / 10 : 0);
   const waiting = Math.max(0, k.signups - k.paying);
@@ -262,7 +263,7 @@ export default function Partner() {
   if (k.available >= goal) tips.push(['good', `You have ${fmtNaira(k.available)} ready to withdraw${p.bank.saved ? '. Open Earnings to request it.' : '. Add your bank details in Account first.'}`]);
   else if (k.earnedTotal > 0 || k.signups > 0) tips.push(['info', `${fmtNaira(goal - k.available)} more and you reach the ${fmtNaira(goal)} payout minimum. About ${Math.max(1, Math.ceil((goal - k.available) / Math.max(1, perSale)))} more Pro sale${Math.ceil((goal - k.available) / Math.max(1, perSale)) === 1 ? '' : 's'}.`]);
   const dS = delta(P.signups);
-  if (P.signups.v + P.signups.prev >= 3 && dS !== null && Math.abs(dS) >= 10) tips.push([dS > 0 ? 'good' : 'warn', `Signups are ${dS > 0 ? 'up' : 'down'} ${Math.abs(dS)}% on the previous ${range} days (${P.signups.prev} to ${P.signups.v}).`]);
+  if (!ALL && P.signups.v + P.signups.prev >= 3 && dS !== null && Math.abs(dS) >= 10) tips.push([dS > 0 ? 'good' : 'warn', `Signups are ${dS > 0 ? 'up' : 'down'} ${Math.abs(dS)}% on the previous ${range} days (${P.signups.prev} to ${P.signups.v}).`]);
   if (clicks90 >= 15) { const bd = wds.indexOf(Math.max(...wds)), bh = hrs.indexOf(Math.max(...hrs)); tips.push(['info', `Your link is clicked most on ${DAYN[bd]}s, around ${hh(bh)}. Post just before then.`]); }
   if (P.clicks.v >= 20) { const cv = pctOf(P.signups.v, P.clicks.v); tips.push([cv < 5 ? 'warn' : 'good', `${cv}% of clicks became signups in the ${rangeLabel}.${cv < 5 ? ' A short message that says what students get (free past questions) usually lifts this.' : ''}`]); }
   if (srcNow.sources[0]) tips.push(['info', `Best source: ${SOURCE_LABELS[srcNow.sources[0].name] || srcNow.sources[0].name} (${fmtN(srcNow.sources[0].visits)} visits).`]);
@@ -280,13 +281,13 @@ export default function Partner() {
     return <svg viewBox={`0 0 ${w} ${h}`} className="pd-spark" aria-hidden="true"><polyline points={pts} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
   };
   const Tile = ({ id, label, value, color, icon, sub }) => {
-    const d = delta(P[id]);
+    const d = ALL ? 0 : delta(P[id]);
     return (
       <div className="pd-tile" style={{ '--c': color }}>
         <div className="pd-tile-top"><span className="pd-tile-ico">{icon}</span><span>{label}</span></div>
         <strong>{value}</strong>
         <div className="pd-tile-foot">
-          <span className={`pd-delta ${d === null || d > 0 ? 'up' : d < 0 ? 'down' : ''}`}>{d === null ? 'new' : d === 0 ? '—' : `${d > 0 ? '▲' : '▼'} ${Math.abs(d)}%`}</span>
+          <span className={`pd-delta ${d === null || d > 0 ? 'up' : d < 0 ? 'down' : ''}`}>{ALL ? 'all time' : d === null ? 'new' : d === 0 ? '—' : `${d > 0 ? '▲' : '▼'} ${Math.abs(d)}%`}</span>
           <Spark vals={cur(id)} color={color} />
         </div>
         {sub && <small>{sub}</small>}
@@ -339,10 +340,10 @@ export default function Partner() {
         <>
           <div className="pd-bar">
             <h2>Performance</h2>
-            <Seg value={range} onChange={setRange} items={[[7, '7 days'], [30, '30 days'], [90, '90 days']]} />
+            <Seg value={range} onChange={setRange} items={[[7, '7 days'], [30, '30 days'], [90, '90 days'], [0, 'All time']]} />
           </div>
           <section className="pd-tiles">
-            <Tile id="clicks" label="Link clicks" icon="👆" color="#8b5cf6" value={fmtN(P.clicks.v)} sub={`${fmtN(k.clicks)} all time`} />
+            <Tile id="clicks" label="Link clicks" icon="👆" color="#8b5cf6" value={fmtN(P.clicks.v)} sub={ALL ? ' ' : `${fmtN(k.clicks)} all time`} />
             <Tile id="signups" label="Signups" icon="🙋" color="#22d3ee" value={fmtN(P.signups.v)} sub={`${pctOf(P.signups.v, P.clicks.v)}% of clicks`} />
             <Tile id="paying" label="New paying" icon="⭐" color="#34d399" value={fmtN(P.paying.v)} sub={`${k.conversion}% of all signups pay`} />
             <Tile id="earnings" label="Earned" icon="💰" color="#f5b400" value={fmtNaira(P.earnings.v)} sub={P.clicks.v ? `${fmtNaira(Math.round(P.earnings.v / P.clicks.v))} per click` : ' '} />
@@ -353,8 +354,8 @@ export default function Partner() {
               <h2>Trend</h2>
               <Seg value={metric} onChange={setMetric} items={Object.entries(metricInfo).map(([v, m]) => [v, m[0]])} />
             </div>
-            <TrendChart labels={cut(sr.labels, -range)} values={cur(metric)} prev={prv(metric)} fmt={mi[1]} color={mi[2]} />
-            <p className="adm-note">{mi[0]}: <b>{mi[1](P[metric].v)}</b> in the {rangeLabel}. The dashed line is the {range} days before.</p>
+            <TrendChart labels={ALL ? ((data.allTime || {}).labels || []) : cut(sr.labels, -range)} values={cur(metric)} prev={prv(metric)} fmt={mi[1]} color={mi[2]} />
+            <p className="adm-note">{mi[0]}: <b>{mi[1](P[metric].v)}</b> in the {rangeLabel}. {ALL ? 'Each point is one week.' : `The dashed line is the ${range} days before.`}</p>
           </section>
 
           <section className="adm-card pd-card">
