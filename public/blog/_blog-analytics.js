@@ -15,10 +15,26 @@
     return window.__BLOG_POST || null;
   }
 
+  // A signed-in student is identified by the same session token the app uses, so the admin
+  // Activity feed can show who read what. Visitors who are not signed in stay anonymous.
+  function token() {
+    try {
+      var u = JSON.parse(localStorage.getItem('ep_user') || 'null');
+      return u && typeof u.passwordHash === 'string' && u.passwordHash.indexOf('u1.') === 0 ? u.passwordHash : '';
+    } catch (_) { return ''; }
+  }
+
+  function refHost() {
+    try { return document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : 'direct'; } catch (_) { return 'direct'; }
+  }
+
   function send(payload) {
     try {
+      var tk = token();
       (payload.events || []).forEach(function (ev) {
-        var body = JSON.stringify(Object.assign({}, ev, { type: 'blog_' + ev.type }));
+        var extra = { type: 'blog_' + ev.type };
+        if (tk) extra.token = tk;
+        var body = JSON.stringify(Object.assign({}, ev, extra));
         if (navigator.sendBeacon) navigator.sendBeacon(TRACK_URL, new Blob([body], { type: 'application/json' }));
         else fetch(TRACK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true });
       });
@@ -59,6 +75,11 @@
         postId:          p ? p.id          : '',
         postTitle:       p ? p.title       : document.title,
         category:        p ? p.category    : '',
+        // shown in the admin Activity feed as "Blog page view: <category> · <details> · <title>"
+        subject:         p ? p.category    : '',
+        topic:           type === 'page_view'
+                           ? device() + ' · from ' + refHost()
+                           : durSec + 's · ' + readPct + '% read' + (finished ? ' · finished' : ''),
         author:          p ? p.author      : '',
         readTimeMins:    p ? p.readTime    : '',
         sessionId:       sessionId,

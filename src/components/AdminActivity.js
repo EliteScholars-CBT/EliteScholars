@@ -7,6 +7,7 @@ const CATS = [
   ['game', 'Games', /^(game|challenge)/],
   ['social', 'Status & squads', /^(status_view|status_comment|status_reply|status_post|squad|status_react)/],
   ['limit', 'Limits & shares', /^limit_/],
+  ['blog', 'Blog reads', /^blog_/],
   ['money', 'Pro & payments', /^(premium|payment|prices|plan)/],
   ['join', 'Sign-ups & logins', /^(signup|register|login|referral|pwa|visit)/],
   ['warn', 'Blocked / security', /(blocked|bypass|anomaly|suspicious|multi_account)/],
@@ -55,7 +56,7 @@ export default function AdminActivity({ token, onAuthFail }) {
           <label>Period<select value={f.days} onChange={(e) => setF({ ...f, days: e.target.value })}><option value="1">Last 24 hours</option><option value="2">Last 2 days</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select></label>
         </div>
       </section>
-      <style>{`.adm-timeline li.cat-limit{border-left-color:#fb923c}.adm-timeline li.cat-limit span b{color:#fdba74}.adm-legend .cat-limit i{background:#fb923c}`}</style>
+      <style>{`.adm-timeline li.cat-limit{border-left-color:#fb923c}.adm-timeline li.cat-limit span b{color:#fdba74}.adm-legend .cat-limit i{background:#fb923c}.adm-timeline li.cat-blog{border-left-color:#2dd4bf}.adm-timeline li.cat-blog span b{color:#5eead4}.adm-legend .cat-blog i{background:#2dd4bf}`}</style>
       {wa && (
         <section className="adm-card">
           <div className="adm-card-head"><h2>WhatsApp Channel taps</h2></div>

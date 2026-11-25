@@ -4,6 +4,7 @@
 // ============================================================================
 
 import { XP_REWARDS } from './constants';
+import { takeLastTopic, topicReason } from './lastTopic';
 
 const XP_ADD_URL = '/api/xp/add';
 import { bumpSquadXP } from './squadApi';
@@ -12,7 +13,7 @@ import { enqueueSync } from './syncQueue';
 const XP_KEY = (email) => `ep_xp_${email}`;
 const DAILY_XP_KEY = (email) => `ep_daily_xp_${email}_${new Date().toDateString()}`;
 
-// ── Load / save ───────────────────────────────────────────────────────────────
+// ── Load / save ──────────────────────────────────────────────────────────────────────────────────────────
 export function loadXP(email) {
   if (!email) return 0;
   try {
@@ -25,7 +26,7 @@ export function saveXPValue(email, xp) {
   try { localStorage.setItem(XP_KEY(email), String(xp)); } catch {}
 }
 
-// ── Add XP ────────────────────────────────────────────────────────────────────
+// ── Add XP ──────────────────────────────────────────────────────────────────────────────────────────────
 export async function addXP(email, name, amount, reason = '') {
   if (!email || !amount) return;
   const current = loadXP(email);
@@ -56,7 +57,7 @@ export async function addXP(email, name, amount, reason = '') {
   return newTotal;
 }
 
-// ── XP level system ───────────────────────────────────────────────────────────
+// ── XP level system ───────────────────────────────────────────────────────────────────────────────────
 export function getLevel(xp) {
   // XP thresholds per level: 100, 300, 600, 1000, 1500, 2100...
   let level = 1;
@@ -78,7 +79,7 @@ export function getLevelTitle(level) {
   return titles[Math.min(level, titles.length - 1)] || 'Elite';
 }
 
-// ── Calculate quiz XP ─────────────────────────────────────────────────────────
+// ── Calculate quiz XP ─────────────────────────────────────────────────────────────────────────────────
 export function calculateQuizXP(correct, totalQ, timeRemaining = 0, streak = 1, usedFifty = false, usedHint = false) {
   let xp = 0;
 
@@ -112,7 +113,7 @@ export function calculateQuizXP(correct, totalQ, timeRemaining = 0, streak = 1, 
   return Math.max(0, xp);
 }
 
-// ── Daily login XP ────────────────────────────────────────────────────────────
+// ── Daily login XP ──────────────────────────────────────────────────────────────────────────────────
 const DAILY_LOGIN_KEY = (email) => `ep_dailylogin_${email}_${new Date().toDateString()}`;
 
 export function awardDailyLoginXP(email, name) {
@@ -125,14 +126,14 @@ export function awardDailyLoginXP(email, name) {
   } catch { return 0; }
 }
 
-// ── Topic completion XP ───────────────────────────────────────────────────────
+// ── Topic completion XP ─────────────────────────────────────────────────────────────────────────────────────────
 export function awardTopicXP(email, name) {
   if (!email) return 0;
-  addXP(email, name, XP_REWARDS.topicCompleted, 'topic_completed');
+  addXP(email, name, XP_REWARDS.topicCompleted, topicReason(takeLastTopic()));
   return XP_REWARDS.topicCompleted;
 }
 
-// ── Share XP ──────────────────────────────────────────────────────────────────
+// ── Share XP ───────────────────────────────────────────────────────────────────────────────────────────
 export function awardShareXP(email, name) {
   if (!email) return 0;
   addXP(email, name, XP_REWARDS.shareApp, 'share_app');

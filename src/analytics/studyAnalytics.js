@@ -2,7 +2,7 @@
 // studyAnalytics.js — Study session tracking
 // Tracks who studies, what subject/exam/topic, for how long, and when
 // ============================================================================
-
+import { setLastTopic } from '../utils/lastTopic';
 
 const KEY_SESSION  = (email) => `es_study_session_${email}`;
 const KEY_QUEUE    = 'es_study_queue';
@@ -51,7 +51,7 @@ function enqueue(event, flushImmediately = false) {
   }
 }
 
-// ── Session management ────────────────────────────────────────────────────────
+// ── Session management ────────────────────────────────────────────────────────────────────────────────
 
 export function startStudySession({ email, name, examType, subjectId, subjectLabel, topicName }) {
   if (!email) return;
@@ -118,6 +118,7 @@ export function trackLearnQuizComplete({ email, name, examType, subjectId, topic
 
 // Topic complete — flush immediately so it reaches Google Sheets right away
 export function trackTopicComplete({ email, name, examType, subjectId, topicName, topicIndex }) {
+  setLastTopic({ subjectId, topicName });
   enqueue(
     {
       type: 'topic_completed',
