@@ -84,7 +84,7 @@ export default function AdminAccess({ token, onAuthFail }) {
   const dur = (d, f) => (f ? { forever: true } : { days: Number(d) });
 
   return (
-    <div>
+    <div className="adm-cardgrid three">
       {msg && <div className="adm-ok">{msg}</div>}
       {err && <div className="adm-error">{err}</div>}
 

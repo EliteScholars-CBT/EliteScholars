@@ -42,7 +42,7 @@ export default function AdminActivity({ token, onAuthFail }) {
   useEffect(() => { if (!auto) return undefined; const t = setInterval(() => load(), 30000); return () => clearInterval(t); }, [auto, load]);
 
   return (
-    <div>
+    <div className="adm-cardgrid">
       <section className="adm-card">
         <div className="adm-card-head"><h2>Student activity</h2>
           <label className="adm-check"><input type="checkbox" checked={auto} onChange={(e) => setAuto(e.target.checked)} /> Auto-refresh</label></div>
@@ -76,7 +76,7 @@ export default function AdminActivity({ token, onAuthFail }) {
       {err && <div className="adm-error">{err}</div>}
       <section className="adm-card">
         {items.length ? (
-          <ul className="adm-timeline wide">
+          <ul className="adm-timeline wide adm-cols2">
             {items.map((a, i) => <li key={i} className={`${a.kind} cat-${catOf(a.type)}`}><time>{fmtDT(a.at)}<em>{ago(a.at)}</em></time><span><b>{a.who}</b> · {a.text}</span></li>)}
           </ul>
         ) : <p className="adm-empty">{busy ? 'Loading…' : 'No activity in this period.'}</p>}

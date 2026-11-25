@@ -57,3 +57,19 @@ html:has(.adm-wrap),body:has(.adm-wrap),#root:has(.adm-wrap){background:#0f0b1f!
 .adm-delta{display:inline-block;padding:1px 7px;border-radius:999px;background:rgba(148,163,184,.12)}
 .adm-delta.up{background:rgba(52,211,153,.14)}.adm-delta.down{background:rgba(251,113,133,.14)}
 @media (prefers-reduced-motion:reduce){.adm-line-draw,.adm-area-in,.adm-col-bar,.adm-bar-fill,.adm-funnel-bar,.adm-pulse{animation:none!important;stroke-dashoffset:0}}
+
+/* Desktop: lay admin cards and long lists out in columns so there is less scrolling */
+@media (min-width: 900px) {
+  .adm-wrap .adm-cardgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
+  .adm-wrap .adm-cardgrid > .adm-card { margin-bottom: 0; }
+  .adm-wrap .adm-cardgrid > :not(.adm-card) { grid-column: 1 / -1; }
+  .adm-wrap .adm-cardgrid > .adm-card:first-of-type, .adm-wrap .adm-cardgrid > .adm-card:last-child { grid-column: 1 / -1; }
+  .adm-wrap .adm-cardgrid.three > .adm-card:first-of-type, .adm-wrap .adm-cardgrid.three > .adm-card:last-child { grid-column: auto; }
+  .adm-wrap .adm-list.adm-cols2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; align-items: start; }
+  .adm-wrap .adm-list.adm-cols2 > .adm-item.open { grid-column: 1 / -1; }
+  .adm-wrap .adm-list.adm-cols2 > .adm-empty { grid-column: 1 / -1; }
+  .adm-wrap .adm-timeline.adm-cols2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; }
+}
+@media (min-width: 1500px) {
+  .adm-wrap .adm-cardgrid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

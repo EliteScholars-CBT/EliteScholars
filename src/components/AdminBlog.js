@@ -34,7 +34,7 @@ function CoverManager({ api }) {
       <p className="adm-note" style={{ marginTop: 0 }}>Every post already has a designed cover. Upload your own picture (about 1200 × 630, landscape) to replace it. It shows within a minute, no redeploy needed.</p>
       {err && <div className="adm-error">{err}</div>}
       <input className="adm-search" placeholder="Search posts…" value={q} onChange={(e) => setQ(e.target.value)} style={{ marginBottom: 10, width: '100%', boxSizing: 'border-box' }} />
-      <div className="adm-list tight">
+      <div className="adm-list tight adm-cols2">
         {shown.map((p) => (
           <div className="adm-item" key={p.id}>
             <div className="adm-item-head static">
@@ -90,7 +90,7 @@ export default function AdminBlog({ token, onAuthFail }) {
           {b.categories.length > 0 && <section className="adm-card"><h2>Categories</h2><Bars data={b.categories} /></section>}
           <section className="adm-card">
             <h2>Posts — tap one for details</h2>
-            <div className="adm-list tight">
+            <div className="adm-list tight adm-cols2">
               {b.posts.map((p) => (
                 <div key={p.id} className={`adm-item ${open === p.id ? 'open' : ''}`}>
                   <button className="adm-item-head" onClick={() => setOpen(open === p.id ? '' : p.id)} aria-expanded={open === p.id}>
