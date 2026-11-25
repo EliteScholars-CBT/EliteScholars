@@ -636,6 +636,8 @@ export default function SchoolPortal() {
   const [err, setErr] = useState('');
   const [det, setDet] = useState(() => ({ ...EMPTY_DETAILS, contact_name: ((getUser() || {}).name || '').replace(/ -$/, '') }));
   const [busy, setBusy] = useState(false);
+  const [dark, setDark] = useState(() => { try { return localStorage.getItem('es_portal_theme') === 'dark'; } catch { return false; } });
+  const toggleTheme = () => setDark((d) => { const n = !d; try { localStorage.setItem('es_portal_theme', n ? 'dark' : 'light'); } catch { /* ignore */ } return n; });
   const [newKind, setNewKind] = useState(() => { try { return new URLSearchParams(window.location.search).get('kind') === 'centre' ? 'centre' : 'school'; } catch { return 'school'; } });
   const me = useMemo(() => (getUser() || {}).email || '', [authed]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -669,10 +671,13 @@ export default function SchoolPortal() {
   const tabs = useMemo(() => [['overview', 'Overview'], ['classes', isCentre ? 'Batches' : 'Classes'], ['assignments', 'Assignments'], ['students', 'Students'], ...(isAdmin ? [['staff', 'Teachers']] : []), ['notices', 'Notices'], ['mocks', 'Mock exams'], ['reports', 'Reports'], ...(isAdmin ? [['plan', 'Plan'], ['settings', 'Settings']] : [])], [isAdmin, isCentre]);
 
   return (
-    <div className="spt-page">
+    <div className={`spt-page${dark ? ' spt-dark' : ''}`}>
       <header className="spt-head">
         <a href="/school" className="spt-brand"><img src={logo} alt="" width="30" height="30" /><span>EliteScholars <b>Schools</b></span></a>
-        {authed && <button className="spt-ghost" onClick={logout}>Sign out</button>}
+        <div className="spt-row spt-noprint">
+          <button className="spt-ghost spt-theme" onClick={toggleTheme} aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'} title={dark ? 'Light theme' : 'Dark theme'}>{dark ? '☀️ Light' : '🌙 Dark'}</button>
+          {authed && <button className="spt-ghost" onClick={logout}>Sign out</button>}
+        </div>
       </header>
       <main className="spt-main">
         {!authed && <Gate initialKind={newKind} onDone={(note, keep) => { if (keep) { setDet({ ...EMPTY_DETAILS, ...keep.f }); setNewKind(keep.kind); } if (note) setErr(note); setAuthed(true); }} />}
