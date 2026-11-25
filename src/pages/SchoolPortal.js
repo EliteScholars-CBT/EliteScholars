@@ -30,7 +30,7 @@ async function schoolApi(op, body) { // the existing class/assignment routes
 const getUser = () => { try { return JSON.parse(localStorage.getItem('ep_user') || 'null'); } catch { return null; } };
 const hasToken = (u) => !!(u && typeof u.passwordHash === 'string' && u.passwordHash.startsWith('u1.'));
 
-/* ── sign in / create account ──────────────────────────────────────────────────────────────── */
+/* ── sign in / create account ── */
 const EMAIL_RE = /^[^\s@,()"']+@[^\s@,()"']+\.[^\s@,()"']+$/;
 const qsGet = (k) => { try { return new URLSearchParams(window.location.search).get(k); } catch { return null; } };
 
@@ -138,12 +138,24 @@ function Gate({ onDone, initialKind }) {
   );
 }
 
-/* ── small pieces ──────────────────────────────────────────────────────────────────── */
+/* ── small pieces ── */
 const Stat = ({ v, l }) => <div className="spt-stat"><b>{v}</b><span>{l}</span></div>;
 const Empty = ({ children }) => <p className="spt-empty">{children}</p>;
 function Msg({ m }) { return m ? <div className={m.ok ? 'spt-ok' : 'spt-err'}>{m.text}</div> : null; }
+const IconSun = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5" /><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" /></svg>;
+const IconMoon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z" /></svg>;
+function CopyCode({ code }) { // click to copy; shows "Copied" for 3 seconds
+  const [done, setDone] = useState(false);
+  useEffect(() => { if (!done) return undefined; const t = setTimeout(() => setDone(false), 3000); return () => clearTimeout(t); }, [done]);
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(code); }
+    catch { try { const ta = document.createElement('textarea'); ta.value = code; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); } catch { return; } }
+    setDone(true);
+  };
+  return <span className="spt-copywrap"><button type="button" className="spt-code" onClick={copy} title="Click to copy">{code}</button>{done && <small className="spt-copied" role="status">Copied</small>}</span>;
+}
 
-/* ── contact details + "show us on the website" ──────────────────────────────────────────────── */
+/* ── contact details + "show us on the website" ── */
 const SHOW_BADGE = { none: ['Not listed', 'no'], pending: ['Waiting for approval', 'warn'], approved: ['Showing on our site', 'ok'], rejected: ['Not approved', 'no'] };
 function ProfileCard({ sid, data, reload }) {
   const sc = data.school, kind = sc.kind || 'school', word = kind === 'centre' ? 'centre' : 'school';
@@ -180,7 +192,7 @@ function ProfileCard({ sid, data, reload }) {
   );
 }
 
-/* ── classes ────────────────────────────────────────────────────────────────────── */
+/* ── classes ── */
 function Classes({ sid, data, reload, isAdmin, setTab }) {
   const [form, setForm] = useState(null);
   const [msg, setMsg] = useState(null);
@@ -211,7 +223,7 @@ function Classes({ sid, data, reload, isAdmin, setTab }) {
       {!data.classes.length && <Empty>No classes yet. Create one, then add students.</Empty>}
       {data.classes.map((c) => (
         <div className="spt-card" key={c.id}>
-          <div className="spt-between"><div><b>{c.name}</b><small>Teacher: {c.teacher_name} · {c.students} student{c.students === 1 ? '' : 's'}</small></div><span className="spt-code" title="Students can join with this code in the app">{c.code}</span></div>
+          <div className="spt-between"><div><b>{c.name}</b><small>Teacher: {c.teacher_name} · {c.students} student{c.students === 1 ? '' : 's'}</small></div><CopyCode code={c.code} /></div>
           <div className="spt-row">
             <button className="spt-ghost" onClick={() => setTab('assignments')}>Homework</button>
             {(isAdmin || c.teacher === data.me) && <button className="spt-ghost" onClick={() => setForm({ id: c.id, name: c.name, teacher_email: c.teacher })}>Edit</button>}
@@ -224,7 +236,7 @@ function Classes({ sid, data, reload, isAdmin, setTab }) {
   );
 }
 
-/* ── students ───────────────────────────────────────────────────────────────────── */
+/* ── students ── */
 function csv(accounts) {
   const rows = [['Name', 'Login email', 'Password'], ...accounts.filter((a) => a.password).map((a) => [a.name, a.email, a.password])];
   return rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
@@ -329,7 +341,7 @@ function Students({ sid, data, isAdmin }) {
   );
 }
 
-/* ── staff ──────────────────────────────────────────────────────────────────────── */
+/* ── staff ── */
 function Staff({ sid, data, reload }) {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('teacher');
@@ -358,7 +370,7 @@ function Staff({ sid, data, reload }) {
   );
 }
 
-/* ── helpers for reports ──────────────────────────────────────────────────────────────── */
+/* ── helpers for reports ── */
 const shortDay = (d) => { const x = new Date(d + 'T00:00:00'); return `${x.getDate()}/${x.getMonth() + 1}`; };
 const riskPill = (r) => <span className={`spt-risk ${r}`}>{r === 'high' ? 'Needs help' : r === 'watch' ? 'Watch' : 'On track'}</span>;
 const subjName = (s) => String(s || '').replace(/[-_]/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
@@ -372,7 +384,7 @@ function useReport(sid, days, classId) {
   return d;
 }
 
-/* ── student report card ──────────────────────────────────────────────────────────────── */
+/* ── student report card ── */
 function StudentReport({ sid, email, school, logo, onClose }) {
   const [d, setD] = useState(null);
   useEffect(() => { api('student-report', { school_id: sid, email, days: 90 }).then(setD); }, [sid, email]);
@@ -407,7 +419,7 @@ function StudentReport({ sid, email, school, logo, onClose }) {
   );
 }
 
-/* ── reports ─────────────────────────────────────────────────────────────────────── */
+/* ── reports ── */
 function Reports({ sid, school, logo, classes }) {
   const [days, setDays] = useState(30);
   const [classId, setClassId] = useState('');
@@ -463,7 +475,7 @@ function Reports({ sid, school, logo, classes }) {
   );
 }
 
-/* ── overview with charts ───────────────────────────────────────────────────────────────── */
+/* ── overview with charts ── */
 function OverviewCharts({ sid, setTab }) {
   const d = useReport(sid, 30, '');
   const [asg, setAsg] = useState(null);
@@ -504,7 +516,7 @@ function OverviewCharts({ sid, setTab }) {
   );
 }
 
-/* ── assignments (homework across every class) ────────────────────────────────────────── */
+/* ── assignments (homework across every class) ── */
 function Assignments({ sid, data, isAdmin, reload }) {
   const [list, setList] = useState(null);
   const [f, setF] = useState({ class_id: '', title: '', body: '', due_at: '' });
@@ -563,7 +575,7 @@ function Assignments({ sid, data, isAdmin, reload }) {
   );
 }
 
-/* ── plan + online payment ────────────────────────────────────────────────────────────── */
+/* ── plan + online payment ── */
 function Plan({ sid, paid }) {
   const [periods, setPeriods] = useState(1);
   const [tierPick, setTierPick] = useState('');
@@ -626,7 +638,7 @@ function Plan({ sid, paid }) {
   );
 }
 
-/* ── the portal ───────────────────────────────────────────────────────────────────────── */
+/* ── the portal ── */
 export default function SchoolPortal() {
   const [authed, setAuthed] = useState(() => hasToken(getUser()));
   const [schools, setSchools] = useState(null);
@@ -675,7 +687,7 @@ export default function SchoolPortal() {
       <header className="spt-head">
         <a href="/school" className="spt-brand"><img src={logo} alt="" width="30" height="30" /><span>EliteScholars <b>Schools</b></span></a>
         <div className="spt-row spt-noprint">
-          <button className="spt-ghost spt-theme" onClick={toggleTheme} aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'} title={dark ? 'Light theme' : 'Dark theme'}>{dark ? '☀️ Light' : '🌙 Dark'}</button>
+          <button className="spt-ghost spt-theme" onClick={toggleTheme} aria-label="Switch theme" title="Switch theme">{dark ? <IconSun /> : <IconMoon />}</button>
           {authed && <button className="spt-ghost" onClick={logout}>Sign out</button>}
         </div>
       </header>

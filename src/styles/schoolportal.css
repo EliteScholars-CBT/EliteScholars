@@ -61,7 +61,7 @@
 .spt-opt { display: flex; align-items: center; gap: 8px; } .spt-opt > span { font-weight: 900; width: 16px; } .spt-opt input[type=text], .spt-opt input:not([type]) { flex: 1; min-width: 0; }
 .spt-details { border: 1.5px dashed var(--spt-line); border-radius: 12px; padding: 10px 12px; } .spt-details summary { cursor: pointer; font-weight: 800; }
 
-/* ── school / centre sign-up form (update 10) ────────────────────────────────────────────── */
+/* ── school / centre sign-up form (update 10) ── */
 .spt-gate.wide { max-width: 560px; }
 .spt-gate h4 { margin: 8px 0 0; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--spt-acc); }
 .spt-lbl { display: grid; gap: 5px; font-size: 13px; font-weight: 700; color: var(--spt-ink); } .spt-lbl em { font-style: normal; font-weight: 600; color: var(--spt-sub); }
@@ -75,7 +75,7 @@
 .spt-terms a { color: var(--spt-acc); font-weight: 700; }
 .spt-badge { display: inline-block; font-size: 11.5px; font-weight: 800; padding: 3px 9px; border-radius: 99px; background: #EDE9FE; color: #5B21B6; } .spt-badge.ok { background: #DCFCE7; color: #166534; } .spt-badge.warn { background: #FEF3C7; color: #92400E; } .spt-badge.no { background: #F1F5F9; color: #475569; }
 
-/* ── dashboard (update 11) ──────────────────────────────────────────────────── */
+/* ── dashboard (update 11) ── */
 .spt-stats.big { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
 .spt-stats.big .spt-stat { position: relative; overflow: hidden; border: 0; color: #fff; padding: 14px 14px 10px; min-height: 92px; align-content: start; gap: 2px; }
 .spt-stats.big .spt-stat b { color: #fff; font-size: 28px; line-height: 1.1; } .spt-stats.big .spt-stat span { color: rgba(255,255,255,.88); font-weight: 700; }
@@ -119,3 +119,12 @@
 .spt-dark .ptc circle[stroke="#E5E0F7"] { stroke: #2D2656; }
 .spt-dark .ptc line { stroke: #2D2656; }
 .spt-dark .spt-theme { white-space: nowrap; }
+
+/* click-to-copy class code, theme icon button, own-question option rows */
+button.spt-code { border: 0; cursor: pointer; font-family: inherit; }
+.spt-copywrap { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.spt-copied { color: #047857; font-weight: 800; font-size: 12px; }
+.spt-dark .spt-copied { color: #6EE7B7; }
+.spt-theme { display: inline-flex; align-items: center; justify-content: center; padding: 8px 10px; line-height: 0; }
+.spt-opt > span { flex: none; }
+.spt-page .spt-opt input[type=radio] { width: 20px; height: 20px; min-width: 20px; flex: none; padding: 0; margin: 0; accent-color: #6D28D9; box-shadow: none; }
