@@ -99,3 +99,23 @@
 
 /* desktop: line and bar charts capped so height and text stay small */
 @media (min-width: 900px) { .ptc[aria-label="Line chart"], .ptc[aria-label="Bar chart"] { width: 100%; max-width: 400px; margin-left: auto; margin-right: auto; } }
+
+/* dark theme (toggle in header, remembered per browser) */
+.spt-page.spt-dark { --spt-bg: #0F0B22; --spt-card: #1A1536; --spt-ink: #ECE8FF; --spt-sub: #A59EC9; --spt-line: #2D2656; --spt-acc: #A78BFA; color-scheme: dark; }
+.spt-dark .spt-head, .spt-dark .spt-ghost, .spt-dark .spt-tabs button, .spt-dark .spt-stat, .spt-dark .spt-asg, .spt-dark .spt-periods button, .spt-dark .spt-logo { background: var(--spt-card); }
+.spt-dark input, .spt-dark select, .spt-dark textarea { background: #120E2B !important; color: var(--spt-ink); }
+.spt-dark .spt-tabs button.on { background: var(--spt-acc); border-color: var(--spt-acc); color: #0F0B22; }
+.spt-dark .spt-qcard, .spt-dark .spt-showcase-opt { background: #120E2B; }
+.spt-dark .spt-code, .spt-dark .spt-badge, .spt-dark .spt-plans tr.cur td { background: #2B2260; color: #DDD6FE; }
+.spt-dark .spt-prog, .spt-dark .ptc-htrack { background: #2B2260; }
+.spt-dark .spt-sample { background: linear-gradient(90deg, #2B2260, #3B1D48); color: #DDD6FE; }
+.spt-dark .spt-err, .spt-dark .spt-banner.expired { background: #3B1418; color: #FCA5A5; }
+.spt-dark .spt-banner.trial, .spt-dark .spt-pill.trial { background: #3A2A0B; color: #FCD34D; }
+.spt-dark .spt-pill.active { background: #0B3A2A; color: #6EE7B7; }
+.spt-dark .spt-periods button em { color: #6EE7B7; }
+.spt-dark .spt-periods button.on, .spt-dark .spt-periods button.sel { background: #2B2260; }
+.spt-dark .ptc text { fill: #CFC8F5; }
+.spt-dark .ptc circle[fill="#fff"] { fill: var(--spt-card); }
+.spt-dark .ptc circle[stroke="#E5E0F7"] { stroke: #2D2656; }
+.spt-dark .ptc line { stroke: #2D2656; }
+.spt-dark .spt-theme { white-space: nowrap; }
