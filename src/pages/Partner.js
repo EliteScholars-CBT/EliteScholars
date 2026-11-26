@@ -9,6 +9,31 @@ import '../styles/partner.css';
 import '../styles/partner-dash.css';
 import logo from '../assets/elite-scholars-logo.png';
 
+const ICO = {
+  phone: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+  chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  link: '<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>',
+  wallet: '<path d="M3 7a2 2 0 0 1 2-2h13v4"/><path d="M3 7v11a2 2 0 0 0 2 2h15V9H5a2 2 0 0 1-2-2z"/><circle cx="16.5" cy="14.5" r="1"/>',
+  school: '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/><path d="M22 9v6"/>',
+  book: '<path d="M4 19.5V5a2 2 0 0 1 2-2h14v15H6a2 2 0 0 0-2 2 2 2 0 0 0 2 2h14"/>',
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/>',
+  coins: '<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5h4a1.7 1.7 0 0 1 0 3.5h-3a1.7 1.7 0 0 0 0 3.5h4.5"/>',
+  gift: '<rect x="3" y="8" width="18" height="5" rx="1"/><path d="M12 8v13M5 13v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/><path d="M12 8C10 8 8 7 8 5.5S9.5 3 11 4s1 4 1 4zM12 8c2 0 4-1 4-2.5S14.5 3 13 4s-1 4-1 4z"/>',
+  tag: '<path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  refresh: '<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>',
+  click: '<path d="M9 9l11 4-5 2-2 5z"/><path d="M5 5l2 2M3 10h3M10 3v3"/>',
+  userplus: '<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M19 8v6M16 11h6"/>',
+  star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  hourglass: '<path d="M6 3h12M6 21h12M7 3c0 5 5 6 5 9s-5 4-5 9M17 3c0 5-5 6-5 9s5 4 5 9"/>',
+  cash: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  check: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
+};
+const Ico = ({ n, size = 18, m = 0 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: 'none', verticalAlign: '-3px', marginRight: m }} dangerouslySetInnerHTML={{ __html: ICO[n] || '' }} />;
+
+
 const TOKEN_KEY = 'es_partner_token';
 const dt = (s) => (s ? new Date(s).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' }) : '—');
 const copy = (t) => { try { navigator.clipboard?.writeText(t); } catch { /* ignore */ } };
@@ -140,10 +165,10 @@ export default function Partner() {
         <section className="pt-sec">
           <h2>Why partners like it</h2>
           <div className="pt-grid">
-            <div><b>📲 An app students love</b><span>Practice, games and squads keep students coming back, which helps them stay and upgrade.</span></div>
-            <div><b>📊 A live dashboard</b><span>See clicks, sign-ups, who went Pro and what you earned, day by day.</span></div>
-            <div><b>🔗 Tracked links</b><span>Add a tag for each place you post to learn which one brings the most students.</span></div>
-            <div><b>💸 Real payouts</b><span>Request a payout to your Nigerian bank account once you pass the minimum.</span></div>
+            <div><b><Ico n="phone" m={6} />An app students love</b><span>Practice, games and squads keep students coming back, which helps them stay and upgrade.</span></div>
+            <div><b><Ico n="chart" m={6} />A live dashboard</b><span>See clicks, sign-ups, who went Pro and what you earned, day by day.</span></div>
+            <div><b><Ico n="link" m={6} />Tracked links</b><span>Add a tag for each place you post to learn which one brings the most students.</span></div>
+            <div><b><Ico n="wallet" m={6} />Real payouts</b><span>Request a payout to your Nigerian bank account once you pass the minimum.</span></div>
           </div>
         </section>
 
@@ -152,18 +177,18 @@ export default function Partner() {
           <p className="pt-muted">Your link works for institutions too. When a school or centre you introduced pays for its plan, you earn <b>{rate}%</b> of what they pay, on every payment.</p>
           <div className="pt-inst">
             <a className="pt-inst-card" href="/school">
-              <span className="pt-inst-ico" aria-hidden="true">🏫</span>
+              <span className="pt-inst-ico" aria-hidden="true"><Ico n="school" size={28} /></span>
               <b>Schools</b>
               <span>Teachers create classes, set assignments and notices, and see every student's results in one dashboard. Students keep using the full app for CBT, Learn mode, flashcards and games.</span>
               <small>{trial.school ? `${trial.school}-day free trial` : 'Free trial to start'} · priced by number of students</small>
-              <em className="pt-inst-go">Read full details <i aria-hidden="true">→</i></em>
+              <em className="pt-inst-go">Read full details <i aria-hidden="true"><Ico n="arrow" size={14} /></i></em>
             </a>
             <a className="pt-inst-card" href="/centre">
-              <span className="pt-inst-ico" aria-hidden="true">📚</span>
+              <span className="pt-inst-ico" aria-hidden="true"><Ico n="book" size={28} /></span>
               <b>Tutorial centres</b>
               <span>Set assignments and practice for your learners, track who is improving, and show parents real progress.</span>
               <small>{trial.centre ? `${trial.centre}-day free trial` : 'Free trial to start'} · simple plans sized for centres</small>
-              <em className="pt-inst-go">Read full details <i aria-hidden="true">→</i></em>
+              <em className="pt-inst-go">Read full details <i aria-hidden="true"><Ico n="arrow" size={14} /></i></em>
             </a>
           </div>
           <p className="pt-muted pt-inst-note">Once you are approved, your dashboard gives you a ready link for schools: <b>elitescholars.site/school?ref=YOURCODE</b></p>
@@ -271,7 +296,7 @@ export default function Partner() {
   if (data.avgDaysToPay !== null && data.avgDaysToPay !== undefined && k.paying >= 2) tips.push(['info', `Students who pay usually do so about ${data.avgDaysToPay} day${data.avgDaysToPay === 1 ? '' : 's'} after joining.`]);
   if (!tips.length) tips.push(['info', 'Share your link to start seeing insights here.']);
 
-  const NAV = [['overview', '📊', 'Overview'], ['referrals', '👥', 'Students'], ['earnings', '💰', 'Earnings'], ['resources', '🎁', 'Resources'], ['prices', '🏷️', 'Prices'], ['account', '⚙️', 'Account']];
+  const NAV = [['overview', 'chart', 'Overview'], ['referrals', 'users', 'Students'], ['earnings', 'coins', 'Earnings'], ['resources', 'gift', 'Resources'], ['prices', 'tag', 'Prices'], ['account', 'user', 'Account']];
   const metricInfo = { clicks: ['Clicks', fmtN, '#8b5cf6'], signups: ['Signups', fmtN, '#22d3ee'], paying: ['New paying', fmtN, '#34d399'], earnings: ['Earnings', fmtNaira, '#f5b400'] };
   const mi = metricInfo[metric] || metricInfo.signups;
 
@@ -284,7 +309,7 @@ export default function Partner() {
     const d = ALL ? 0 : delta(P[id]);
     return (
       <div className="pd-tile" style={{ '--c': color }}>
-        <div className="pd-tile-top"><span className="pd-tile-ico">{icon}</span><span>{label}</span></div>
+        <div className="pd-tile-top"><span className="pd-tile-ico"><Ico n={icon} /></span><span>{label}</span></div>
         <strong>{value}</strong>
         <div className="pd-tile-foot">
           <span className={`pd-delta ${d === null || d > 0 ? 'up' : d < 0 ? 'down' : ''}`}>{ALL ? 'all time' : d === null ? 'new' : d === 0 ? '—' : `${d > 0 ? '▲' : '▼'} ${Math.abs(d)}%`}</span>
@@ -303,9 +328,9 @@ export default function Partner() {
     <div className="adm-wrap pd-wrap">
       <header className="pd-hero">
         <div className="pd-hero-top">
-          <div><small>EliteScholars partner</small><h1>Hi {first} 👋</h1></div>
+          <div><small>EliteScholars partner</small><h1>Hi {first}</h1></div>
           <div className="pd-hero-actions">
-            <button type="button" onClick={() => load(token)} disabled={busy}>{busy ? 'Loading…' : '↻ Refresh'}</button>
+            <button type="button" onClick={() => load(token)} disabled={busy}>{busy ? 'Loading…' : <><Ico n="refresh" size={14} m={6} />Refresh</>}</button>
             <button type="button" className="ghost" onClick={() => signOut()}>Sign out</button>
           </div>
         </div>
@@ -330,7 +355,7 @@ export default function Partner() {
 
       <nav className="pd-nav" aria-label="Partner dashboard sections">
         {NAV.map(([key, ico, label]) => (
-          <button key={key} type="button" className={tab === key ? 'on' : ''} onClick={() => { setTab(key); setError(''); setInfo(''); if (key === 'prices') track('prices_view', 'Prices tab'); if (key === 'resources') track('resource_view', 'Resources tab'); }}><span aria-hidden="true">{ico}</span>{label}</button>
+          <button key={key} type="button" className={tab === key ? 'on' : ''} onClick={() => { setTab(key); setError(''); setInfo(''); if (key === 'prices') track('prices_view', 'Prices tab'); if (key === 'resources') track('resource_view', 'Resources tab'); }}><span aria-hidden="true" style={{ display: 'inline-flex' }}><Ico n={ico} /></span>{label}</button>
         ))}
       </nav>
       {error && <div className="adm-error">{error}</div>}
@@ -343,10 +368,10 @@ export default function Partner() {
             <Seg value={range} onChange={setRange} items={[[7, '7 days'], [30, '30 days'], [90, '90 days'], [0, 'All time']]} />
           </div>
           <section className="pd-tiles">
-            <Tile id="clicks" label="Link clicks" icon="👆" color="#8b5cf6" value={fmtN(P.clicks.v)} sub={ALL ? ' ' : `${fmtN(k.clicks)} all time`} />
-            <Tile id="signups" label="Signups" icon="🙋" color="#22d3ee" value={fmtN(P.signups.v)} sub={`${pctOf(P.signups.v, P.clicks.v)}% of clicks`} />
-            <Tile id="paying" label="New paying" icon="⭐" color="#34d399" value={fmtN(P.paying.v)} sub={`${k.conversion}% of all signups pay`} />
-            <Tile id="earnings" label="Earned" icon="💰" color="#f5b400" value={fmtNaira(P.earnings.v)} sub={P.clicks.v ? `${fmtNaira(Math.round(P.earnings.v / P.clicks.v))} per click` : ' '} />
+            <Tile id="clicks" label="Link clicks" icon="click" color="#8b5cf6" value={fmtN(P.clicks.v)} sub={ALL ? ' ' : `${fmtN(k.clicks)} all time`} />
+            <Tile id="signups" label="Signups" icon="userplus" color="#22d3ee" value={fmtN(P.signups.v)} sub={`${pctOf(P.signups.v, P.clicks.v)}% of clicks`} />
+            <Tile id="paying" label="New paying" icon="star" color="#34d399" value={fmtN(P.paying.v)} sub={`${k.conversion}% of all signups pay`} />
+            <Tile id="earnings" label="Earned" icon="coins" color="#f5b400" value={fmtNaira(P.earnings.v)} sub={P.clicks.v ? `${fmtNaira(Math.round(P.earnings.v / P.clicks.v))} per click` : ' '} />
           </section>
 
           <section className="adm-card pd-card">
@@ -416,9 +441,9 @@ export default function Partner() {
       {tab === 'referrals' && (
         <>
           <section className="pd-tiles three">
-            <div className="pd-tile" style={{ '--c': '#22d3ee' }}><div className="pd-tile-top"><span className="pd-tile-ico">🙋</span><span>Joined</span></div><strong>{fmtN(k.signups)}</strong></div>
-            <div className="pd-tile" style={{ '--c': '#34d399' }}><div className="pd-tile-top"><span className="pd-tile-ico">⭐</span><span>Went Pro</span></div><strong>{fmtN(k.paying)}</strong><small>{k.conversion}% conversion</small></div>
-            <div className="pd-tile" style={{ '--c': '#f5b400' }}><div className="pd-tile-top"><span className="pd-tile-ico">⏳</span><span>Waiting</span></div><strong>{fmtN(waiting)}</strong><small>joined, not Pro yet</small></div>
+            <div className="pd-tile" style={{ '--c': '#22d3ee' }}><div className="pd-tile-top"><span className="pd-tile-ico"><Ico n="userplus" /></span><span>Joined</span></div><strong>{fmtN(k.signups)}</strong></div>
+            <div className="pd-tile" style={{ '--c': '#34d399' }}><div className="pd-tile-top"><span className="pd-tile-ico"><Ico n="star" /></span><span>Went Pro</span></div><strong>{fmtN(k.paying)}</strong><small>{k.conversion}% conversion</small></div>
+            <div className="pd-tile" style={{ '--c': '#f5b400' }}><div className="pd-tile-top"><span className="pd-tile-ico"><Ico n="hourglass" /></span><span>Waiting</span></div><strong>{fmtN(waiting)}</strong><small>joined, not Pro yet</small></div>
           </section>
           <section className="adm-card pd-card">
             <div className="adm-card-head"><h2>Students who joined with your link</h2>
@@ -438,9 +463,9 @@ export default function Partner() {
       {tab === 'earnings' && (
         <>
           <section className="pd-tiles three">
-            <div className="pd-tile" style={{ '--c': '#f5b400' }}><div className="pd-tile-top"><span className="pd-tile-ico">💵</span><span>Available</span></div><strong>{fmtNaira(k.available)}</strong><small>ready to withdraw</small></div>
-            <div className="pd-tile" style={{ '--c': '#8b5cf6' }}><div className="pd-tile-top"><span className="pd-tile-ico">⏱️</span><span>In payout</span></div><strong>{fmtNaira(k.inPayout)}</strong><small>being processed</small></div>
-            <div className="pd-tile" style={{ '--c': '#34d399' }}><div className="pd-tile-top"><span className="pd-tile-ico">✅</span><span>Paid to you</span></div><strong>{fmtNaira(k.paid)}</strong><small>{fmtNaira(k.earnedTotal)} earned in total</small></div>
+            <div className="pd-tile" style={{ '--c': '#f5b400' }}><div className="pd-tile-top"><span className="pd-tile-ico"><Ico n="cash" /></span><span>Available</span></div><strong>{fmtNaira(k.available)}</strong><small>ready to withdraw</small></div>
+            <div className="pd-tile" style={{ '--c': '#8b5cf6' }}><div className="pd-tile-top"><span className="pd-tile-ico"><Ico n="clock" /></span><span>In payout</span></div><strong>{fmtNaira(k.inPayout)}</strong><small>being processed</small></div>
+            <div className="pd-tile" style={{ '--c': '#34d399' }}><div className="pd-tile-top"><span className="pd-tile-ico"><Ico n="check" /></span><span>Paid to you</span></div><strong>{fmtNaira(k.paid)}</strong><small>{fmtNaira(k.earnedTotal)} earned in total</small></div>
           </section>
           {data.monthly && (
             <section className="adm-card pd-card">
