@@ -29,6 +29,8 @@ const ICO = {
   hourglass: '<path d="M6 3h12M6 21h12M7 3c0 5 5 6 5 9s-5 4-5 9M17 3c0 5-5 6-5 9s5 4 5 9"/>',
   cash: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  up: '<path d="M12 19V5M5 12l7-7 7 7"/>',
+  down: '<path d="M12 5v14M19 12l-7 7-7-7"/>',
   check: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
 };
 const Ico = ({ n, size = 18, m = 0 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: 'none', verticalAlign: '-3px', marginRight: m }} dangerouslySetInnerHTML={{ __html: ICO[n] || '' }} />;
@@ -312,7 +314,7 @@ export default function Partner() {
         <div className="pd-tile-top"><span className="pd-tile-ico"><Ico n={icon} /></span><span>{label}</span></div>
         <strong>{value}</strong>
         <div className="pd-tile-foot">
-          <span className={`pd-delta ${d === null || d > 0 ? 'up' : d < 0 ? 'down' : ''}`}>{ALL ? 'all time' : d === null ? 'new' : d === 0 ? '—' : `${d > 0 ? '▲' : '▼'} ${Math.abs(d)}%`}</span>
+          <span className={`pd-delta ${d === null || d > 0 ? 'up' : d < 0 ? 'down' : ''}`}>{ALL ? 'all time' : d === null ? 'new' : d === 0 ? '—' : <><Ico n={d > 0 ? 'up' : 'down'} size={12} m={3} />{Math.abs(d)}%</>}</span>
           <Spark vals={cur(id)} color={color} />
         </div>
         {sub && <small>{sub}</small>}
@@ -429,10 +431,10 @@ export default function Partner() {
             <h2>Links for schools and centres</h2>
             <h3 className="pd-h3">Schools</h3>
             <div className="adm-linkbox"><span>{`https://elitescholars.site/school?ref=${p.code}`}</span><button className="adm-small" onClick={() => { tcopy(`https://elitescholars.site/school?ref=${p.code}`, 'school link'); setInfo('School link copied.'); }}>Copy</button></div>
-            <p className="adm-note">Share with school owners, principals and teachers. When a school pays for its plan you earn <b>{p.rate}%</b> of what they pay, on every payment. <a href="/school" target="_blank" rel="noreferrer">Read about schools →</a></p>
+            <p className="adm-note">Share with school owners, principals and teachers. When a school pays for its plan you earn <b>{p.rate}%</b> of what they pay, on every payment. <a href="/school" target="_blank" rel="noreferrer">Read about schools <Ico n="arrow" size={14} /></a></p>
             <h3 className="pd-h3">Tutorial centres</h3>
             <div className="adm-linkbox"><span>{`https://elitescholars.site/centre?ref=${p.code}`}</span><button className="adm-small" onClick={() => { tcopy(`https://elitescholars.site/centre?ref=${p.code}`, 'centre link'); setInfo('Centre link copied.'); }}>Copy</button></div>
-            <p className="adm-note">Share with centre owners and lesson teachers. You earn <b>{p.rate}%</b> of every payment they make. <a href="/centre" target="_blank" rel="noreferrer">Read about centres →</a></p>
+            <p className="adm-note">Share with centre owners and lesson teachers. You earn <b>{p.rate}%</b> of every payment they make. <a href="/centre" target="_blank" rel="noreferrer">Read about centres <Ico n="arrow" size={14} /></a></p>
             <p className="adm-note">You earn <b>{p.rate}%</b> of every Pro payment from students who join through your link, about <b>{fmtNaira(perSale)}</b> on a {fmtNaira(PREMIUM_PRICE)} plan. The link remembers a visitor for 60 days.</p>
           </section>
         </>
