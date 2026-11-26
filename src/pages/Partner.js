@@ -269,13 +269,17 @@ export default function Partner() {
   const sr = data.series;
   const cut = (arr, a, b) => (arr || []).slice(a, b);
   const sum = (a) => a.reduce((x, y) => x + y, 0);
-  const ALL = range === 0; // 0 = since the beginning (weekly points)
-  const cur = (key) => (ALL ? ((data.allTime || {})[key] || []) : cut(sr[key], -range));
-  const prv = (key) => (ALL ? undefined : cut(sr[key], -2 * range, -range));
+  const ALL = range === 0; // 0 = since the beginning (weekly points); 1 = today; 7 = this week (Mon to today, Nigerian time)
+  const dowMon = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(new Date().toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Africa/Lagos' }));
+  const NN = range === 1 ? 1 : range === 7 ? Math.max(1, dowMon + 1) : range; // days in the chosen period
+  const SHORT = range === 1 || range === 7; // too few points for a trend line, so charts show the last 7 days
+  const cur = (key) => (ALL ? ((data.allTime || {})[key] || []) : cut(sr[key], -NN));
+  const prv = (key) => (ALL ? undefined : range === 7 ? cut(sr[key], -(NN + 7), -7) : cut(sr[key], -2 * NN, -NN));
   const per = (key) => ({ v: sum(cur(key)), prev: ALL ? 0 : sum(prv(key)) });
   const P = { clicks: per('clicks'), signups: per('signups'), paying: per('paying'), earnings: per('earnings') };
   const delta = (o) => (o.prev > 0 ? Math.round(((o.v - o.prev) / o.prev) * 100) : o.v > 0 ? null : 0);
-  const rangeLabel = ALL ? 'whole time you have been a partner' : range === 7 ? 'last 7 days' : range === 30 ? 'last 30 days' : 'last 90 days';
+  const rangeLabel = ALL ? 'the whole time you have been a partner' : range === 1 ? 'today' : range === 7 ? 'this week' : range === 30 ? 'the last 30 days' : 'the last 90 days';
+  const prevWord = range === 1 ? 'yesterday' : range === 7 ? 'the same days last week' : `the previous ${range} days`;
   const srcNow = (data.sourcesBy && data.sourcesBy[range]) || { sources: data.sources || [], tags: [] };
   const pctOf = (a, b) => (b > 0 ? Math.round((a / b) * 1000) / 10 : 0);
   const waiting = Math.max(0, k.signups - k.paying);
@@ -290,9 +294,9 @@ export default function Partner() {
   if (k.available >= goal) tips.push(['good', `You have ${fmtNaira(k.available)} ready to withdraw${p.bank.saved ? '. Open Earnings to request it.' : '. Add your bank details in Account first.'}`]);
   else if (k.earnedTotal > 0 || k.signups > 0) tips.push(['info', `${fmtNaira(goal - k.available)} more and you reach the ${fmtNaira(goal)} payout minimum. About ${Math.max(1, Math.ceil((goal - k.available) / Math.max(1, perSale)))} more Pro sale${Math.ceil((goal - k.available) / Math.max(1, perSale)) === 1 ? '' : 's'}.`]);
   const dS = delta(P.signups);
-  if (!ALL && P.signups.v + P.signups.prev >= 3 && dS !== null && Math.abs(dS) >= 10) tips.push([dS > 0 ? 'good' : 'warn', `Signups are ${dS > 0 ? 'up' : 'down'} ${Math.abs(dS)}% on the previous ${range} days (${P.signups.prev} to ${P.signups.v}).`]);
+  if (!ALL && P.signups.v + P.signups.prev >= 3 && dS !== null && Math.abs(dS) >= 10) tips.push([dS > 0 ? 'good' : 'warn', `Signups are ${dS > 0 ? 'up' : 'down'} ${Math.abs(dS)}% on ${prevWord} (${P.signups.prev} to ${P.signups.v}).`]);
   if (clicks90 >= 15) { const bd = wds.indexOf(Math.max(...wds)), bh = hrs.indexOf(Math.max(...hrs)); tips.push(['info', `Your link is clicked most on ${DAYN[bd]}s, around ${hh(bh)}. Post just before then.`]); }
-  if (P.clicks.v >= 20) { const cv = pctOf(P.signups.v, P.clicks.v); tips.push([cv < 5 ? 'warn' : 'good', `${cv}% of clicks became signups in the ${rangeLabel}.${cv < 5 ? ' A short message that says what students get (free past questions) usually lifts this.' : ''}`]); }
+  if (P.clicks.v >= 20) { const cv = pctOf(P.signups.v, P.clicks.v); tips.push([cv < 5 ? 'warn' : 'good', `${cv}% of clicks became signups in ${rangeLabel}.${cv < 5 ? ' A short message that says what students get (free past questions) usually lifts this.' : ''}`]); }
   if (srcNow.sources[0]) tips.push(['info', `Best source: ${SOURCE_LABELS[srcNow.sources[0].name] || srcNow.sources[0].name} (${fmtN(srcNow.sources[0].visits)} visits).`]);
   if (waiting >= 3) tips.push(['info', `${waiting} students joined but have not gone Pro yet. A friendly reminder in your group about the Pro features can convert some of them.`]);
   if (data.avgDaysToPay !== null && data.avgDaysToPay !== undefined && k.paying >= 2) tips.push(['info', `Students who pay usually do so about ${data.avgDaysToPay} day${data.avgDaysToPay === 1 ? '' : 's'} after joining.`]);
@@ -315,7 +319,7 @@ export default function Partner() {
         <strong>{value}</strong>
         <div className="pd-tile-foot">
           <span className={`pd-delta ${d === null || d > 0 ? 'up' : d < 0 ? 'down' : ''}`}>{ALL ? 'all time' : d === null ? 'new' : d === 0 ? '—' : <><Ico n={d > 0 ? 'up' : 'down'} size={12} m={3} />{Math.abs(d)}%</>}</span>
-          <Spark vals={cur(id)} color={color} />
+          <Spark vals={SHORT ? cut(sr[id], -7) : cur(id)} color={color} />
         </div>
         {sub && <small>{sub}</small>}
       </div>
@@ -367,7 +371,7 @@ export default function Partner() {
         <>
           <div className="pd-bar">
             <h2>Performance</h2>
-            <Seg value={range} onChange={setRange} items={[[7, '7 days'], [30, '30 days'], [90, '90 days'], [0, 'All time']]} />
+            <Seg value={range} onChange={setRange} items={[[1, 'Today'], [7, 'This week'], [30, '30 days'], [90, '90 days'], [0, 'All time']]} />
           </div>
           <section className="pd-tiles">
             <Tile id="clicks" label="Link clicks" icon="click" color="#8b5cf6" value={fmtN(P.clicks.v)} sub={ALL ? ' ' : `${fmtN(k.clicks)} all time`} />
@@ -381,8 +385,8 @@ export default function Partner() {
               <h2>Trend</h2>
               <Seg value={metric} onChange={setMetric} items={Object.entries(metricInfo).map(([v, m]) => [v, m[0]])} />
             </div>
-            <TrendChart labels={ALL ? ((data.allTime || {}).labels || []) : cut(sr.labels, -range)} values={cur(metric)} prev={prv(metric)} fmt={mi[1]} color={mi[2]} />
-            <p className="adm-note">{mi[0]}: <b>{mi[1](P[metric].v)}</b> in the {rangeLabel}. {ALL ? 'Each point is one week.' : `The dashed line is the ${range} days before.`}</p>
+            <TrendChart labels={ALL ? ((data.allTime || {}).labels || []) : cut(sr.labels, -(SHORT ? 7 : range))} values={SHORT ? cut(sr[metric], -7) : cur(metric)} prev={SHORT ? undefined : prv(metric)} fmt={mi[1]} color={mi[2]} />
+            <p className="adm-note">{mi[0]}: <b>{mi[1](P[metric].v)}</b> in {rangeLabel}. {ALL ? 'Each point is one week.' : SHORT ? 'The chart shows the last 7 days so you can see the shape.' : `The dashed line is the ${range} days before.`}</p>
           </section>
 
           <section className="adm-card pd-card">
@@ -414,7 +418,7 @@ export default function Partner() {
                 <div className="pd-tr head"><span>Source</span><span>Clicks</span><span>Signups</span><span>Convert</span></div>
                 {srcNow.sources.map((x) => <div className="pd-tr" key={x.name}><span><b>{SOURCE_LABELS[x.name] || x.name}</b></span><span>{fmtN(x.visits)}</span><span>{fmtN(x.signups)}</span><span>{x.visits ? `${Math.round((x.signups / x.visits) * 100)}%` : '—'}</span></div>)}
               </div>
-            ) : <p className="adm-empty">Nothing recorded in the {rangeLabel}.</p>}
+            ) : <p className="adm-empty">Nothing recorded {range === 1 || range === 7 ? '' : 'in '}{rangeLabel}.</p>}
             {srcNow.tags.length > 0 && (
               <>
                 <h3 className="pd-h3">Your tags</h3>
