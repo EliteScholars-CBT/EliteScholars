@@ -34,10 +34,14 @@ async function pullOne(key, from, to, gb) {
     return (Array.isArray(j.items) ? j.items : []).map((x) => ({ label: String(x.date || x.country || x.placement || x.domain || x.device || x.device_format || x.device_type || x.os || x.name || "—"), impressions: Number(x.impression ?? x.impressions ?? 0), clicks: Number(x.clicks || 0), revenue: Number(x.revenue || 0) }));
   } finally { clearTimeout(tm); }
 }
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+async function pullOne2(key, from, to, gb) { // one quiet retry, so a single slow or rate-limited month does not sink All time
+  try { return await pullOne(key, from, to, gb); } catch (e) { if (e instanceof Bad) throw e; await wait(500); return pullOne(key, from, to, gb); }
+}
 async function pull(key, from, to, gb) {
   const names = ALIASES[gb] || [gb];
   for (let i = 0; i < names.length; i++) {
-    try { return await pullOne(key, from, to, names[i]); } catch (e) { if (!(e instanceof Bad) || i === names.length - 1) { if (e instanceof Bad) { const x = new Error("Adsterra does not offer this breakdown for your account."); x.shown = true; throw x; } throw e; } }
+    try { return await pullOne2(key, from, to, names[i]); } catch (e) { if (!(e instanceof Bad) || i === names.length - 1) { if (e instanceof Bad) { const x = new Error("Adsterra does not offer this breakdown for your account."); x.shown = true; throw x; } throw e; } }
   }
   return [];
 }
@@ -76,14 +80,15 @@ export default async function handler(req, res) {
       for (let s0 = from; s0 <= to; ) { const e = addDays(s0, 89) < to ? addDays(s0, 89) : to; pieces.push([s0, e]); s0 = addDays(e, 1); }
     }
     const got = [];
-    for (let i = 0; i < pieces.length; i += 6) got.push(...(await Promise.all(pieces.slice(i, i + 6).map(([a0, b0]) => pull(key, a0, b0, gb)))));
+    for (let i = 0; i < pieces.length; i += 4) got.push(...(await Promise.all(pieces.slice(i, i + 4).map(([a0, b0]) => pull(key, a0, b0, gb)))));
     const rows = got.flat();
     const map = new Map();
-    for (const x of rows) { const o = map.get(x.label) || { label: x.label, impressions: 0, clicks: 0, revenue: 0 }; o.impressions += x.impressions; o.clicks += x.clicks; o.revenue += x.revenue; map.set(x.label, o); }
+    const monthly = range === "all" && gb === "date"; // hundreds of days are unreadable: All time by day is shown month by month
+    for (const x of rows) { if (monthly) x.label = x.label.slice(0, 7); const o = map.get(x.label) || { label: x.label, impressions: 0, clicks: 0, revenue: 0 }; o.impressions += x.impressions; o.clicks += x.clicks; o.revenue += x.revenue; map.set(x.label, o); }
     let items = [...map.values()].map((o) => ({ ...o, ctr: o.impressions ? (o.clicks / o.impressions) * 100 : 0, cpm: o.impressions ? (o.revenue / o.impressions) * 1000 : 0 }));
     items = gb === "date" ? items.sort((a, b) => (a.label < b.label ? -1 : 1)) : items.sort((a, b) => b.revenue - a.revenue);
     const t = items.reduce((a, x) => ({ impressions: a.impressions + x.impressions, clicks: a.clicks + x.clicks, revenue: a.revenue + x.revenue }), { impressions: 0, clicks: 0, revenue: 0 });
-    const v = { configured: true, pieces: pieces.length, range, rangeLabel: label, from, to, groupBy: gb, items, totals: { ...t, ctr: t.impressions ? (t.clicks / t.impressions) * 100 : 0, cpm: t.impressions ? (t.revenue / t.impressions) * 1000 : 0 } };
+    const v = { configured: true, monthly, pieces: pieces.length, range, rangeLabel: label, from, to, groupBy: gb, items, totals: { ...t, ctr: t.impressions ? (t.clicks / t.impressions) * 100 : 0, cpm: t.impressions ? (t.revenue / t.impressions) * 1000 : 0 } };
     globalThis.__adsterraCache2.set(ck, { t: Date.now(), v });
     return sendOk(res, { adsterra: v });
   } catch (e) {

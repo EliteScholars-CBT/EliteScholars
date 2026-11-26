@@ -10,6 +10,8 @@ const Check = ({ label, hint, checked, onChange, disabled }) => (
   </label>
 );
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monthName = (ym, long) => { const [y, m] = String(ym).split('-'); const n = MONTHS[Number(m) - 1] || ym; return long ? `${n} ${y}` : `${n} ${String(y).slice(2)}`; };
 export default function AdminAds({ token, onAuthFail, only }) {
   const api = useMemo(() => makeApi(token, onAuthFail), [token, onAuthFail]);
   const [ads, setAds] = useState(null);
@@ -164,13 +166,13 @@ export default function AdminAds({ token, onAuthFail, only }) {
                 <div className="adm-stat"><div className="adm-stat-val">{fmtN(ast.totals.clicks)}</div><div className="adm-stat-label">Clicks · {ast.totals.ctr.toFixed(2)}% CTR</div></div>
                 <div className="adm-stat"><div className="adm-stat-val">${ast.totals.cpm.toFixed(2)}</div><div className="adm-stat-label">Average CPM</div></div>
               </section>
-              {ast.groupBy === 'date' && ast.items.length > 1 && <section className="adm-card"><h2>Earnings per day ($)</h2><TrendChart labels={ast.items.map((x) => x.label.slice(5))} values={ast.items.map((x) => x.revenue)} fmt={(v) => `$${Number(v).toFixed(2)}`} /></section>}
+              {ast.groupBy === 'date' && ast.items.length > 1 && <section className="adm-card"><h2>{ast.monthly ? 'Earnings per month ($)' : 'Earnings per day ($)'}</h2><TrendChart labels={ast.items.map((x) => (ast.monthly ? monthName(x.label) : x.label.slice(5)))} values={ast.items.map((x) => x.revenue)} fmt={(v) => `$${Number(v).toFixed(2)}`} /></section>}
               <section className="adm-card">
                 <h2>Breakdown</h2>
                 <div className="adm-list tight">
-                  {[...ast.items].sort((a, b) => (ast.groupBy === 'date' ? 0 : b.revenue - a.revenue)).slice(0, 60).map((x) => (
+                  {[...ast.items].sort((a, b) => (ast.groupBy === 'date' ? (ast.monthly ? (a.label < b.label ? 1 : -1) : 0) : b.revenue - a.revenue)).slice(0, 60).map((x) => (
                     <div className="adm-item" key={x.label}><div className="adm-item-head static">
-                      <span className="adm-item-main"><b>{x.label}</b><small>{fmtN(x.impressions)} impressions · {fmtN(x.clicks)} clicks</small></span>
+                      <span className="adm-item-main"><b>{ast.monthly ? monthName(x.label, true) : x.label}</b><small>{fmtN(x.impressions)} impressions · {fmtN(x.clicks)} clicks</small></span>
                       <span className="adm-item-side"><b>${x.revenue.toFixed(2)}</b><small>CPM ${x.cpm.toFixed(2)}</small></span>
                     </div></div>
                   ))}
