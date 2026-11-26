@@ -44,9 +44,9 @@ async function dashboard(p) {
     sb.from("events").select("created_at").eq("type", "referral_link_opened").eq("payload->>referral_code", p.referral_code).limit(5000),
     sb.from("events").select("type,payload,created_at").in("type", ["visit_source", "signup_source"]).eq("payload->>ref", p.referral_code).limit(5000),
   ]);
-  // traffic sources and tagged links, for the last 7 / 30 / 90 days and for all time (0)
-  const srcFor = (n) => {
-    const from = now - n * D, bySrc = {}, byTag = {};
+  // traffic sources and tagged links, for today (1), this week (7), the last 30 / 90 days and all time (0)
+  const srcFor = (n, fromMs) => {
+    const from = fromMs ?? now - n * D, bySrc = {}, byTag = {};
     for (const e of srcEv.data || []) {
       if (new Date(e.created_at).getTime() < from) continue;
       const pl = e.payload || {};
@@ -58,7 +58,9 @@ async function dashboard(p) {
     const list = (m) => Object.entries(m).map(([name, v]) => ({ name, ...v })).sort((a, b) => b.visits + b.signups - (a.visits + a.signups));
     return { sources: list(bySrc), tags: list(byTag).slice(0, 15) };
   };
-  const sourcesBy = { 0: srcFor(36500), 7: srcFor(7), 30: srcFor(30), 90: srcFor(90) };
+  const t0 = Date.parse(`${lagosDay(now)}T00:00:00Z`) - H; // start of today, Nigerian time
+  const dow = (new Date(`${lagosDay(now)}T00:00:00Z`).getUTCDay() + 6) % 7; // Monday = 0
+  const sourcesBy = { 0: srcFor(36500), 1: srcFor(1, t0), 7: srcFor(7, t0 - dow * D), 30: srcFor(30), 90: srcFor(90) }; // 1 = today, 7 = this week
   const sources = sourcesBy[30].sources;
   const st = students.data || [], cm = comms.data || [], po = payouts.data || [], ck = clicks.data || [];
 
