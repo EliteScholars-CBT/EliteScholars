@@ -19,7 +19,8 @@ import AdminGroups from '../components/AdminGroups';
 import AdminGames from '../components/AdminGames';
 import AdminShop from '../components/AdminShop';
 import AdminSources from '../components/AdminSources';
-import { AdminPrices, AdminSchools } from '../components/AdminPrices';
+import { AdminPrices } from '../components/AdminPrices';
+import { AdminSchools } from '../components/AdminSchools';
 import AdminHiring from '../components/AdminHiring';
 import { makeApi, ago } from '../components/adminApi';
 import ForgotPassword from '../components/ForgotPassword';
@@ -58,7 +59,7 @@ const TABS = [
   { id: 'shop', label: 'Shop', perms: ['shop'] },
   { id: 'partners', label: 'Partners', perms: ['partners', 'payouts'], badge: ['partners', 'payouts'] },
   { id: 'hiring', label: 'Hiring', perms: ['partners'], badge: ['hiring'] },
-  { id: 'schools', label: 'Schools', perms: ['schools'], badge: ['schools'] },
+  { id: 'schools', label: 'Schools & centres', perms: ['schools'], badge: ['schools'] },
   { id: 'prices', label: 'Prices', perms: ['prices'] },
   { id: 'access', label: 'Access & trials', perms: ['access'] },
   { id: 'mail', label: 'Email', perms: ['mail'] },
