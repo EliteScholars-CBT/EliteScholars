@@ -40,6 +40,8 @@ import report from "./_routes/report.js";
 import contact from "./_routes/contact.js";
 import adminOps from "./_routes/admin-ops.js";
 import adminAdsterra from "./_routes/admin-adsterra.js";
+import adminBlog from "./_routes/admin-blog.js";
+import adminSchools from "./_routes/admin-schools.js";
 import adminActivityPlus from "./_routes/admin-activity-plus.js";
 import squadChat from "./_routes/squad-chat.js";
 import hiring from "./_routes/hiring.js";
@@ -168,7 +170,7 @@ const ROUTES = {
   "admin/students": withOp(adminOps, "students"),
   "admin/student": withOp(adminOps, "student"),
   "admin/activity": withOp(adminActivityPlus, "activity"),
-  "admin/blog": withOp(adminOps, "blog"),
+  "admin/blog": adminBlog, // its own file: reads, when people read, latest reads
   "admin/blog-covers": withOp(adminOps, "blog-covers"),
   "admin/blog-cover-save": withOp(adminOps, "blog-cover-save"),
   "admin/blog-cover-clear": withOp(adminOps, "blog-cover-clear"),
@@ -202,7 +204,7 @@ const ROUTES = {
   "admin/audit": withOp(adminOps, "audit"),
   "admin/prices": withOp(adminOps, "prices"),
   "admin/prices-save": withOp(adminOps, "prices-save"),
-  "admin/school-plans": withOp(adminOps, "school-plans"),
+  "admin/school-plans": adminSchools, // its own file: schools and centres together, plus trial emails
   "admin/school-settings": withOp(adminOps, "school-settings"),
   "admin/school-account": withOp(adminOps, "school-account"),
   "admin/showcase-list": withOp(adminOps, "showcase-list"),
