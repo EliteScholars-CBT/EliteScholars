@@ -1,13 +1,14 @@
 // Come-back email tracking and admin numbers.
 //   GET /api/data?route=mail/nudge&op=go&e=&s=&t=     tracked button in the email: logs the click, then opens the app
 //   GET /api/data?route=mail/nudge&op=preview&code=   ONE-TIME: sends all five emails to the owner so they can be checked
-//   GET /api/data?route=admin/nudges&days=            admin numbers for Admin → Reminders
+//   GET /api/data?route=admin/nudges&range=           admin numbers for Admin → Reminders (today, week, month, lastmonth, year, all)
 import crypto from "crypto";
 import { sendOk, sendErr, setCors } from "../_helpers/response.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { tokenOk } from "./admin.js";
 import { sendHtml } from "../_helpers/mail.js";
 import { buildNudge, clickToken, STEPS } from "../_helpers/emailNudges.js";
+import { resolvePeriod } from "../_helpers/periods.js";
 
 const SITE = (process.env.SITE_URL || process.env.APP_ORIGIN || "https://elitescholars.site").replace(/\/$/, "");
 const OWNER = "michaelokpegboro@gmail.com";
@@ -54,11 +55,10 @@ export default async function handler(req, res) {
     if (!tokenOk(token, "analytics")) return res.status(401).json({ success: false, error: "Session expired. Please sign in again." });
     if (!supabaseEnabled()) return sendErr(res, "Database not configured.", 503);
     const sb = getSupabase();
-    const days = [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 30;
-    const since = new Date(Date.now() - days * 86400000).toISOString();
+    const per = resolvePeriod(q.range || "week"), since = per.since;
     const rows = [];
     for (let from = 0; from < 20000; from += 1000) {
-      const { data } = await sb.from("events").select("type,email,payload,created_at").in("type", ["nudge_sent", "nudge_click", "nudge_return"]).gte("created_at", since).order("created_at", { ascending: false }).range(from, from + 999);
+      const { data } = await sb.from("events").select("type,email,payload,created_at").in("type", ["nudge_sent", "nudge_click", "nudge_return"]).gte("created_at", since).lte("created_at", per.until).order("created_at", { ascending: false }).range(from, from + 999);
       if (!data || !data.length) break;
       rows.push(...data);
       if (data.length < 1000) break;
@@ -73,7 +73,7 @@ export default async function handler(req, res) {
       else if (r.type === "nudge_return") { s.returned.add(r.email); recovered.add(r.email); }
     }
     let optedOut = 0;
-    try { const { data } = await sb.from("email_optouts").select("email").gte("created_at", since); optedOut = (data || []).filter((o) => sentTo.has(String(o.email).toLowerCase())).length; } catch { /* optional */ }
+    try { const { data } = await sb.from("email_optouts").select("email").gte("created_at", since).lte("created_at", per.until); optedOut = (data || []).filter((o) => sentTo.has(String(o.email).toLowerCase())).length; } catch { /* optional */ }
     const { count: inSequence } = await sb.from("email_nudges").select("email", { count: "exact", head: true }).gt("step", 0).lt("step", STEPS);
     const { count: finished } = await sb.from("email_nudges").select("email", { count: "exact", head: true }).gte("step", STEPS);
     const recent = rows.filter((r) => r.type === "nudge_sent").slice(0, 25);
@@ -83,7 +83,7 @@ export default async function handler(req, res) {
     const em = [...new Set(recent.map((r) => r.email))];
     if (em.length) { const { data } = await sb.from("profiles").select("email,first_name,last_name,username").in("email", em); (data || []).forEach((p) => { names[p.email] = `${p.first_name || ""} ${p.last_name || ""}`.trim() || p.username || p.email; }); }
     return sendOk(res, {
-      days,
+      range: per.key, label: per.label,
       totals: { sent: steps.reduce((a, s) => a + s.sent, 0), people: sentTo.size, clicked: clickedAny.size, recovered: recovered.size, optedOut, inSequence: inSequence || 0, finished: finished || 0 },
       steps: steps.map((s) => ({ step: s.step, sent: s.sent, clicked: s.clicked.size, returned: s.returned.size })),
       recent: recent.map((r) => { const k = `${r.email}:${r.payload && r.payload.step}`; return { at: r.created_at, name: names[r.email] || r.email, step: Number(r.payload && r.payload.step), clicked: clickedKey.has(k), returned: retKey.has(k) }; }),

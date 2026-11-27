@@ -1,4 +1,4 @@
-// Adsterra earnings for the admin "Adsterra earnings" tab. GET /api/admin/ads-adsterra?range=today|week|month|lastmonth|all&group_by=...
+// Adsterra earnings for the admin "Adsterra earnings" tab. GET /api/admin/ads-adsterra?range=today|week|month|lastmonth|year|all&group_by=...
 // Dates follow Nigerian time. "All time" is added up month by month, because one huge request is unreliable.
 import { sendOk, sendErr, setCors } from "../_helpers/response.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
@@ -9,7 +9,7 @@ const ALL_FROM = "2025-01-01"; // before any traffic could have reached the acco
 const GROUPS = ["date", "country", "placement", "domain", "device_type"];
 // Adsterra is strict about group_by names (a wrong one answers 422), so the Device pill tries the likely names in turn.
 const ALIASES = { device_type: ["device", "device_format", "device_type"] };
-const RANGES = ["today", "week", "month", "lastmonth", "all"];
+const RANGES = ["today", "week", "month", "lastmonth", "year", "all"];
 const lag = (ms) => new Date(ms + H).toISOString().slice(0, 10);
 const addDays = (s, n) => lag(Date.parse(`${s}T00:00:00Z`) + n * D - H);
 
@@ -18,6 +18,7 @@ function resolve(range) {
   if (range === "today") return { from: today, to: today, label: "Today" };
   if (range === "week") { const dow = (new Date(`${today}T00:00:00Z`).getUTCDay() + 6) % 7; return { from: addDays(today, -dow), to: today, label: "This week (Mon to today)" }; }
   if (range === "lastmonth") { const first = `${today.slice(0, 7)}-01`; const to = addDays(first, -1); return { from: `${to.slice(0, 7)}-01`, to, label: "Last month" }; }
+  if (range === "year") return { from: `${today.slice(0, 4)}-01-01`, to: today, label: "This year" };
   if (range === "all") return { from: ALL_FROM, to: today, label: "All time" };
   return { from: `${today.slice(0, 7)}-01`, to: today, label: "This month" };
 }
@@ -74,7 +75,7 @@ export default async function handler(req, res) {
   try {
     // All time is added up month by month (each piece is a short range, like "This month", which is known to be right).
     const pieces = [];
-    if (range === "all") {
+    if (range === "all" || range === "year") {
       for (let s0 = from; s0 <= to; ) { const m1 = `${s0.slice(0, 7)}-01`; const nextFirst = addDays(addDays(m1, 31).slice(0, 7) + "-01", 0); const e0 = addDays(nextFirst, -1); const e = e0 < to ? e0 : to; pieces.push([s0, e]); s0 = addDays(e, 1); }
     } else {
       for (let s0 = from; s0 <= to; ) { const e = addDays(s0, 89) < to ? addDays(s0, 89) : to; pieces.push([s0, e]); s0 = addDays(e, 1); }
@@ -83,7 +84,7 @@ export default async function handler(req, res) {
     for (let i = 0; i < pieces.length; i += 4) got.push(...(await Promise.all(pieces.slice(i, i + 4).map(([a0, b0]) => pull(key, a0, b0, gb)))));
     const rows = got.flat();
     const map = new Map();
-    const monthly = range === "all" && gb === "date"; // hundreds of days are unreadable: All time by day is shown month by month
+    const monthly = (range === "all" || range === "year") && gb === "date"; // hundreds of days are unreadable: All time and This year by day are shown month by month
     for (const x of rows) { if (monthly) x.label = x.label.slice(0, 7); const o = map.get(x.label) || { label: x.label, impressions: 0, clicks: 0, revenue: 0 }; o.impressions += x.impressions; o.clicks += x.clicks; o.revenue += x.revenue; map.set(x.label, o); }
     let items = [...map.values()].map((o) => ({ ...o, ctr: o.impressions ? (o.clicks / o.impressions) * 100 : 0, cpm: o.impressions ? (o.revenue / o.impressions) * 1000 : 0 }));
     items = gb === "date" ? items.sort((a, b) => (a.label < b.label ? -1 : 1)) : items.sort((a, b) => b.revenue - a.revenue);

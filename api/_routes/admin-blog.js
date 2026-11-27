@@ -1,9 +1,10 @@
-// Admin Blog analytics: GET /api/admin/blog?days=7|30|90   (perm: blog)
+// Admin Blog analytics: GET /api/admin/blog?range=today|week|month|lastmonth|year|all   (perm: blog)
 // Reads, change since the period before, when people read (hour and weekday, Nigerian time),
 // the latest reads, and per-post details. A "read" is one reader session on one post.
 import { sendOk, sendErr, setCors } from "../_helpers/response.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { adminFromToken } from "./admin.js";
+import { resolvePeriod } from "../_helpers/periods.js";
 
 const H = 3600000, D = 86400000;
 const lagosDay = (ms) => new Date(ms + H).toISOString().slice(0, 10);
@@ -23,9 +24,12 @@ async function fetchPages(sb, cols, apply, maxPages) {
   return out;
 }
 
-async function blogStats(sb, days) {
+async function blogStats(sb, per) {
   const now = Date.now();
-  const since = new Date(now - (2 * days + 1) * D).toISOString(); // this period, the one before it, and a day of slack
+  const span = per.to - per.from;
+  const hasPrev = per.key !== "all";
+  // this period, the same-length one before it (not for All time), and a day of slack so a session that started earlier still joins up
+  const since = new Date(Math.min(per.from - (hasPrev ? span : 0), now - 2 * D) - D).toISOString();
   const rows = await fetchPages(sb, "type,payload,created_at", (q) => q.in("type", ["blog_page_view", "blog_session_end"]).gte("created_at", since).order("created_at", { ascending: false }), 60);
 
   // one session = one read
@@ -41,11 +45,11 @@ async function blogStats(sb, days) {
     if (s.title === "Unknown" && p.postTitle) s.title = p.postTitle;
   }
 
-  const startThis = now - days * D, startPrev = now - 2 * days * D;
+  const startThis = per.from, endThis = per.to, startPrev = per.from - span;
   const todayKey = lagosDay(now), yestKey = lagosDay(now - D);
   const all = [...sessions.values()];
-  const cur = all.filter((s) => new Date(s.at).getTime() >= startThis);
-  const prevViews = all.filter((s) => { const t = new Date(s.at).getTime(); return t >= startPrev && t < startThis; }).length;
+  const cur = all.filter((s) => { const t = new Date(s.at).getTime(); return t >= startThis && t <= endThis; });
+  const prevViews = hasPrev ? all.filter((s) => { const t = new Date(s.at).getTime(); return t >= startPrev && t < startThis; }).length : null;
   let today = 0, yesterday = 0;
   for (const s of all) { const k = lagosDay(new Date(s.at).getTime()); if (k === todayKey) today++; else if (k === yestKey) yesterday++; }
 
@@ -74,12 +78,11 @@ async function blogStats(sb, days) {
   })).sort((a, b) => b.views - a.views);
 
   const ended = cur.filter((s) => s.ended);
-  const labels = [];
-  for (let i = days - 1; i >= 0; i--) labels.push(lagosDay(now - i * D));
+  const labels = per.keys;
   const recent = [...cur].sort((a, b) => (a.at < b.at ? 1 : -1)).slice(0, 30)
     .map((s) => ({ at: s.at, id: s.post, title: s.title, device: s.device, source: s.ref, seconds: s.ended ? s.dur : null, scroll: s.ended ? s.scroll : null }));
   return {
-    days, totalViews: cur.length, prevViews, today, yesterday,
+    range: per.key, label: per.label, totalViews: cur.length, prevViews, today, yesterday,
     avgSeconds: ended.length ? Math.round(ended.reduce((a, s) => a + s.dur, 0) / ended.length) : 0,
     finishRate: ended.length ? Math.round((ended.filter((s) => s.scroll >= 80).length / ended.length) * 100) : 0,
     series: { labels: labels.map((l) => l.slice(5)), values: labels.map((l) => dayViews[l] || 0) },
@@ -98,8 +101,7 @@ export default async function handler(req, res) {
   if (!supabaseEnabled()) return sendErr(res, "Supabase is not configured.", 503);
   if (!who.owner && !(who.perms || []).includes("blog")) return sendErr(res, "You don't have access to that.", 403);
   try {
-    const days = [7, 30, 90].includes(Number(req.query.days)) ? Number(req.query.days) : 30;
-    return sendOk(res, { blog: await blogStats(getSupabase(), days) });
+    return sendOk(res, { blog: await blogStats(getSupabase(), resolvePeriod(req.query.range)) });
   } catch (e) {
     console.error("[admin-blog]", e && e.message);
     return sendErr(res, "Could not load blog stats.", 500);
