@@ -35,7 +35,7 @@ async function dashboard(p) {
   const sb = getSupabase();
   const settings = await getSettings();
   const now = Date.now();
-  const N = 180; // days of history for the charts (so 90 days can be compared with the 90 before)
+  const N = 400; // days of history for the charts (enough for This year, and for last month against the month before)
 
   const [students, comms, payouts, clicks, srcEv] = await Promise.all([
     sb.from("profiles").select("email,first_name,created_at,is_premium").eq("referrer_partner_id", p.id).order("created_at", { ascending: false }).limit(1000),
@@ -44,11 +44,12 @@ async function dashboard(p) {
     sb.from("events").select("created_at").eq("type", "referral_link_opened").eq("payload->>referral_code", p.referral_code).limit(5000),
     sb.from("events").select("type,payload,created_at").in("type", ["visit_source", "signup_source"]).eq("payload->>ref", p.referral_code).limit(5000),
   ]);
-  // traffic sources and tagged links, for today (1), this week (7), the last 30 / 90 days and all time (0)
-  const srcFor = (n, fromMs) => {
-    const from = fromMs ?? now - n * D, bySrc = {}, byTag = {};
+  // traffic sources and tagged links for each range: today, this week, this month, last month, this year, all time
+  const srcFor = (from, to = now + D) => {
+    const bySrc = {}, byTag = {};
     for (const e of srcEv.data || []) {
-      if (new Date(e.created_at).getTime() < from) continue;
+      const et = new Date(e.created_at).getTime();
+      if (et < from || et > to) continue;
       const pl = e.payload || {};
       const k = String(pl.source || "direct").slice(0, 40);
       const o = (bySrc[k] = bySrc[k] || { visits: 0, signups: 0 });
@@ -60,8 +61,13 @@ async function dashboard(p) {
   };
   const t0 = Date.parse(`${lagosDay(now)}T00:00:00Z`) - H; // start of today, Nigerian time
   const dow = (new Date(`${lagosDay(now)}T00:00:00Z`).getUTCDay() + 6) % 7; // Monday = 0
-  const sourcesBy = { 0: srcFor(36500), 1: srcFor(1, t0), 7: srcFor(7, t0 - dow * D), 30: srcFor(30), 90: srcFor(90) }; // 1 = today, 7 = this week
-  const sources = sourcesBy[30].sources;
+  const ly = lagosDay(now);
+  const monthStart = Date.parse(`${ly.slice(0, 7)}-01T00:00:00Z`) - H;
+  const prevM = new Date(Date.UTC(Number(ly.slice(0, 4)), Number(ly.slice(5, 7)) - 2, 1));
+  const lastMonthStart = Date.UTC(prevM.getUTCFullYear(), prevM.getUTCMonth(), 1) - H;
+  const yearStart = Date.parse(`${ly.slice(0, 4)}-01-01T00:00:00Z`) - H;
+  const sourcesBy = { today: srcFor(t0), week: srcFor(t0 - dow * D), month: srcFor(monthStart), lastmonth: srcFor(lastMonthStart, monthStart - 1), year: srcFor(yearStart), all: srcFor(0) };
+  const sources = sourcesBy.month.sources;
   const st = students.data || [], cm = comms.data || [], po = payouts.data || [], ck = clicks.data || [];
 
   const paidBy = {};

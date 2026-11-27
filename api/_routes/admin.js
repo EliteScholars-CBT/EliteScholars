@@ -92,6 +92,11 @@ function resolveRange(q, earliestMs) {
   else if (r === "30d") { from = today0 - 29 * D; label = "Last 30 days"; }
   else if (r === "90d") { from = today0 - 89 * D; label = "Last 90 days"; }
   else if (r === "365d") { from = today0 - 364 * D; label = "Last 12 months"; }
+  else if (r === "week") { const dow = (new Date(today0 + H).getUTCDay() + 6) % 7; from = today0 - dow * D; label = "This week (Mon to today)"; }
+  else if (r === "lastmonth") {
+    const t = lagosISO(now), pm = new Date(Date.UTC(Number(t.slice(0, 4)), Number(t.slice(5, 7)) - 2, 1));
+    from = Date.UTC(pm.getUTCFullYear(), pm.getUTCMonth(), 1) - H; to = parseDay(`${t.slice(0, 7)}-01`) - 1; label = "Last month";
+  }
   else if (r === "thismonth") { const t = lagosISO(now); from = parseDay(`${t.slice(0, 7)}-01`); label = "This month"; }
   else if (/^month:\d{4}-\d{2}$/.test(r)) {
     const [y, m] = r.slice(6).split("-").map(Number);
