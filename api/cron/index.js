@@ -9,6 +9,7 @@ import { getSupabase, supabaseEnabled } from '../_helpers/supabase.js';
 import { runStudyReminders } from '../_helpers/studyReminders.js';
 import { runPartnerInactivity } from '../_helpers/partnerActivity.js';
 import { processDue as processHiring } from '../_helpers/hiring.js';
+import { runTrialEmails } from '../_helpers/schoolTrialEmails.js';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM   = process.env.FROM_EMAIL;
@@ -620,11 +621,17 @@ export default async function handler(req, res) {
       try { partnerInactivity = await runPartnerInactivity(); } catch (e) { console.error('Partner inactivity failed:', e?.message); }
     }
 
+    // Daily: free-trial emails to schools and centres (3 days left, trial ended, a week after).
+    let schoolTrials = null;
+    if (hour === 7 || job === 'school-trials') {
+      try { const sbs = getSupabase(); if (sbs) schoolTrials = await runTrialEmails(sbs); } catch (e) { console.error('School trial emails failed:', e?.message); }
+    }
+
     // Hiring: send research briefs / approvals whose deadline has passed.
     let hiring = null;
     try { const sbh = getSupabase(); if (sbh) hiring = await processHiring(sbh); } catch (e) { console.error('Hiring step failed:', e?.message); }
 
-    return res.status(200).json({ success: true, ...result, blogRebuild, partnerInactivity, hiring });
+    return res.status(200).json({ success: true, ...result, blogRebuild, partnerInactivity, schoolTrials, hiring });
 
   } catch (err) {
     console.error('Cron handler crash:', err.message);
