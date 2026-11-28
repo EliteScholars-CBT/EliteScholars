@@ -17,16 +17,17 @@ export const waLink = (text) => `https://wa.me/?text=${encodeURIComponent(text)}
 export const waStudentText = (school, d) => {
   const s = d.student;
   const weak = (d.weak || []).slice(0, 2).map((x) => `${String(x.subject).replace(/[-_]/g, ' ')} (${x.avg}%)`).join(', ');
-  return [`📊 *${s.name}* · ${school}`, `Average score: *${d.avg}%* over ${d.quizzes} practice quiz${d.quizzes === 1 ? '' : 'zes'} (last 90 days)`, s.streak ? `🔥 ${s.streak}-day study streak` : '', weak ? `Needs more work on: ${weak}` : 'Doing well across subjects 👏', '', 'Practice powered by EliteScholars'].filter((x) => x !== '').join('\n');
+  return [`📊 *${s.name}* · ${school}`, `Average score: *${d.avg}%* over ${d.quizzes} practice quiz${d.quizzes === 1 ? '' : 'zes'} (${String(d.label || 'this period').toLowerCase()})`, s.streak ? `🔥 ${s.streak}-day study streak` : '', weak ? `Needs more work on: ${weak}` : 'Doing well across subjects 👏', '', 'Practice powered by EliteScholars'].filter((x) => x !== '').join('\n');
 };
-export const waClassText = (school, days, d) => {
+export const waClassText = (school, a, b) => {
+  const d = b || a; // (school, report) or the older (school, days, report)
   const s = d.summary;
   const top = (d.top || []).slice(0, 3).map((t, i) => `${['🥇', '🥈', '🥉'][i]} ${t.name} ${t.avg}%`).join('\n');
   const help = (d.needsHelp || []).slice(0, 5).map((t) => t.name).join(', ');
-  return [`📊 *${school}: last ${days} days*`, `Average score: *${s.avg}%* · ${s.quizzes} quizzes · ${s.active} of ${s.students} students practised`, top ? `\n*Top students*\n${top}` : '', help ? `\n⚠️ Please encourage: ${help}` : '', '\nPowered by EliteScholars'].filter((x) => x !== '').join('\n');
+  return [`📊 *${school}: ${String(d.label || 'this period').toLowerCase()}*`, `Average score: *${s.avg}%* · ${s.quizzes} quizzes · ${s.active} of ${s.students} students practised`, top ? `\n*Top students*\n${top}` : '', help ? `\n⚠️ Please encourage: ${help}` : '', '\nPowered by EliteScholars'].filter((x) => x !== '').join('\n');
 };
 
-/* ── print header with the school's logo (hidden on screen) ───────────────── */
+/* ── print header with the school's logo (hidden on screen) ───────────────────────────────── */
 export function PrintBrand({ school, logo }) {
   return (
     <div className="spt-printbrand">
@@ -36,7 +37,7 @@ export function PrintBrand({ school, logo }) {
   );
 }
 
-/* ── logo ─────────────────────────────────────────────────────────────────── */
+/* ── logo ────────────────────────────────────────────────────────────────────────────── */
 function shrinkLogo(file) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file); const img = new Image();
@@ -80,7 +81,7 @@ export function LogoCard({ sid, data, reload }) {
   );
 }
 
-/* ── notices to students ──────────────────────────────────────────────────── */
+/* ── notices to students ────────────────────────────────────────────────────────────────────── */
 export function Notices({ sid, data, isAdmin, isCentre }) {
   const [text, setText] = useState(''); const [cls, setCls] = useState(isAdmin ? '' : (data.classes[0] ? data.classes[0].id : ''));
   const [hours, setHours] = useState(24); const [bg, setBg] = useState('violet');
@@ -119,7 +120,7 @@ export function Notices({ sid, data, isAdmin, isCentre }) {
   );
 }
 
-/* ── mock exams, tests and quizzes ────────────────────────────────────────── */
+/* ── mock exams, tests and quizzes ────────────────────────────────────────────────────────── */
 const SUBJECT_IDS = Object.keys(SUBJ);
 const KINDS = { mock: 'Mock exam', test: 'Test', quiz: 'Quiz' };
 const blankQ = () => ({ q: '', o: ['', '', '', ''], a: 0, e: '' });
@@ -250,7 +251,7 @@ export function Mocks({ sid, data, isAdmin, isCentre }) {
   );
 }
 
-/* ── centres: earn when students go Pro ───────────────────────────────────── */
+/* ── centres: earn when students go Pro ───────────────────────────────────────────────────────────── */
 export function CentreEarn() {
   return (
     <div className="spt-card spt-noprint">
