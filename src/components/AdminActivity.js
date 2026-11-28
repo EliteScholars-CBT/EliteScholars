@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { makeApi, fmtDT, ago } from './adminApi';
+import { PERIODS } from './AdminRange';
 
 // Colour groups so the feed can be scanned at a glance.
 const CATS = [
@@ -21,7 +22,7 @@ export default function AdminActivity({ token, onAuthFail }) {
   const [items, setItems] = useState([]);
   const [types, setTypes] = useState([]);
   const [next, setNext] = useState(null);
-  const [f, setF] = useState({ q: '', type: '', days: '1' });
+  const [f, setF] = useState({ q: '', type: '', range: 'today' });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [sq, setSq] = useState(null);
@@ -31,7 +32,7 @@ export default function AdminActivity({ token, onAuthFail }) {
   const load = useCallback(async (before) => {
     setBusy(true); setErr('');
     try {
-      const d = await api('activity', { query: { q: f.q, type: f.type, days: f.days, before } });
+      const d = await api('activity', { query: { q: f.q, type: f.type, range: f.range, before } });
       setItems((cur) => (before ? [...cur, ...d.items] : d.items));
       setNext(d.next); if (!before) setTypes(d.types || []);
     } catch (e) { if (e.message !== 'auth') setErr(e.message); }
@@ -53,7 +54,7 @@ export default function AdminActivity({ token, onAuthFail }) {
             <option value="">Everything</option><option value="xp">XP earned</option>
             {types.map((t) => <option key={t.name} value={t.name}>{t.name.replace(/_/g, ' ')} ({t.count})</option>)}
           </select></label>
-          <label>Period<select value={f.days} onChange={(e) => setF({ ...f, days: e.target.value })}><option value="1">Last 24 hours</option><option value="2">Last 2 days</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select></label>
+          <label>Period<select value={f.range} onChange={(e) => setF({ ...f, range: e.target.value })}>{PERIODS.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select></label>
         </div>
       </section>
       <style>{`.adm-timeline li.cat-limit{border-left-color:#fb923c}.adm-timeline li.cat-limit span b{color:#fdba74}.adm-legend .cat-limit i{background:#fb923c}.adm-timeline li.cat-blog{border-left-color:#2dd4bf}.adm-timeline li.cat-blog span b{color:#5eead4}.adm-legend .cat-blog i{background:#2dd4bf}`}</style>
