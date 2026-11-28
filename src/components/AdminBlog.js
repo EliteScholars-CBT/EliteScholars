@@ -3,6 +3,7 @@ import { makeApi, fmtDT } from './adminApi';
 import { fmtN, TrendChart, Donut, Bars, ColumnChart } from './AdminCharts';
 import { compressPhoto } from '../utils/media';
 import Fold from './AdminFold';
+import RangePills from './AdminRange';
 
 const mins = (s) => (s >= 60 ? `${Math.floor(s / 60)}m ${s % 60}s` : `${s}s`);
 const hh = (h) => `${h % 12 || 12}${h < 12 ? 'am' : 'pm'}`;
@@ -87,7 +88,7 @@ function PostDetail({ p }) {
 
 export default function AdminBlog({ token, onAuthFail }) {
   const api = useMemo(() => makeApi(token, onAuthFail), [token, onAuthFail]);
-  const [days, setDays] = useState(30);
+  const [range, setRange] = useState('month');
   const [b, setB] = useState(null);
   const [index, setIndex] = useState([]);
   const [err, setErr] = useState('');
@@ -100,9 +101,9 @@ export default function AdminBlog({ token, onAuthFail }) {
   useEffect(() => { fetch('/blog/posts-index.json').then((r) => r.json()).then((j) => setIndex(Array.isArray(j) ? j : [])).catch(() => {}); }, []);
   useEffect(() => {
     let on = true; setBusy(true);
-    api('blog', { query: { days } }).then((d) => { if (on) { setB(d.blog); setErr(''); } }).catch((e) => e.message !== 'auth' && on && setErr(e.message)).finally(() => on && setBusy(false));
+    api('blog', { query: { range } }).then((d) => { if (on) { setB(d.blog); setErr(''); } }).catch((e) => e.message !== 'auth' && on && setErr(e.message)).finally(() => on && setBusy(false));
     return () => { on = false; };
-  }, [api, days, tick]);
+  }, [api, range, tick]);
 
   const posts = useMemo(() => index.map((p) => ({ ...p, at: pubMs(p.publishAt), live: pubMs(p.publishAt) <= Date.now() })), [index]);
   const live = useMemo(() => posts.filter((p) => p.live), [posts]);
@@ -120,10 +121,9 @@ export default function AdminBlog({ token, onAuthFail }) {
   return (
     <div>
       <section className="adm-controls">
-        <div className="adm-pills">
-          {[7, 30, 90].map((d) => <button key={d} className={days === d ? 'on' : ''} onClick={() => setDays(d)}>{d} days</button>)}
+        <RangePills value={range} onChange={setRange}>
           <button onClick={() => setTick(tick + 1)} disabled={busy}>{busy ? 'Loading…' : 'Refresh'}</button>
-        </div>
+        </RangePills>
       </section>
       {err && <div className="adm-error">{err}</div>}
       {!b && busy && <div className="adm-card">Loading blog stats…</div>}
@@ -131,7 +131,7 @@ export default function AdminBlog({ token, onAuthFail }) {
         <div className={busy ? 'adm-dim' : ''}>
           {b.truncated && <div className="adm-error">Very high traffic: figures may be slightly understated. Try a shorter range.</div>}
           <section className="adm-grid adm-stats">
-            <div className="adm-stat"><div className="adm-stat-val">{fmtN(b.totalViews)}</div><div className="adm-stat-label">Blog reads</div><div className="adm-stat-sub">last {b.days} days · <Change cur={b.totalViews} prev={b.prevViews} unit="before" /></div></div>
+            <div className="adm-stat"><div className="adm-stat-val">{fmtN(b.totalViews)}</div><div className="adm-stat-label">Blog reads</div><div className="adm-stat-sub">{b.label} · {b.prevViews === null ? 'since the start' : <Change cur={b.totalViews} prev={b.prevViews} unit="before" />}</div></div>
             <div className="adm-stat"><div className="adm-stat-val">{fmtN(b.today)}</div><div className="adm-stat-label">Reads today</div><div className="adm-stat-sub">yesterday: {fmtN(b.yesterday)}</div></div>
             <div className="adm-stat"><div className="adm-stat-val">{mins(b.avgSeconds)}</div><div className="adm-stat-label">Average time on a post</div></div>
             <div className="adm-stat"><div className="adm-stat-val">{b.finishRate}%</div><div className="adm-stat-label">Read to the end</div><div className="adm-stat-sub">scrolled past 80%</div></div>
@@ -141,7 +141,7 @@ export default function AdminBlog({ token, onAuthFail }) {
           <section className="adm-card"><h2>Reads per day</h2><TrendChart labels={b.series.labels} values={b.series.values} fmt={fmtN} /></section>
 
           <Fold title="When people read" hint={haveTimes ? `Busiest: ${hh(bestH)} · ${DAYS[bestD]}s` : 'Not enough reads yet'}>
-            <p className="adm-note">Reads by hour of the day (Nigerian time) and by day of the week, over the last {b.days} days. Post just before the busy times.</p>
+            <p className="adm-note">Reads by hour of the day (Nigerian time) and by day of the week, for {b.label.toLowerCase()}. Post just before the busy times.</p>
             <div className="adm-grid adm-two">
               <div><h3 className="adm-h3">By hour</h3><ColumnChart values={b.hours} labels={Array.from({ length: 24 }, (_, h) => `${h % 12 || 12}${h < 12 ? 'a' : 'p'}`)} /></div>
               <div><h3 className="adm-h3">By day</h3><ColumnChart values={b.weekdays} labels={['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']} /></div>
@@ -179,7 +179,7 @@ export default function AdminBlog({ token, onAuthFail }) {
                   <div key={p.id} className={`adm-item ${open === p.id ? 'open' : ''}`}>
                     <button className="adm-item-head" onClick={() => setOpen(open === p.id ? '' : p.id)} aria-expanded={open === p.id}>
                       <span className="adm-item-main"><b>{p.title}</b><small>{p.category} · published {fmtPub(p.at)}</small></span>
-                      <span className="adm-item-side"><b>{fmtN(s ? s.views : 0)} reads</b><small>{s ? `${mins(s.avgSeconds)} avg · ${s.finishRate}% finished` : `none in ${b.days} days`}</small></span>
+                      <span className="adm-item-side"><b>{fmtN(s ? s.views : 0)} reads</b><small>{s ? `${mins(s.avgSeconds)} avg · ${s.finishRate}% finished` : 'none in this period'}</small></span>
                     </button>
                     {open === p.id && <PostDetail p={s} />}
                   </div>
