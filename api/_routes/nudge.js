@@ -1,13 +1,14 @@
 // Come-back email tracking and admin numbers.
 //   GET /api/data?route=mail/nudge&op=go&e=&s=&t=     tracked button in the email: logs the click, then opens the app
-//   GET /api/data?route=mail/nudge&op=preview&code=   ONE-TIME: sends all five emails to the owner so they can be checked
+//   GET /api/data?route=mail/nudge&op=preview&code=   ONE-TIME: sends all three emails to the owner so they can be checked
 //   GET /api/data?route=admin/nudges&range=           admin numbers for Admin → Reminders (today, week, month, lastmonth, year, all)
+//   POST /api/data?route=admin/nudges {action: preview|send}   who is due now / send the due emails now (same rules and 24-hour limit)
 import crypto from "crypto";
-import { sendOk, sendErr, setCors } from "../_helpers/response.js";
+import { sendOk, sendErr, setCors, readBody } from "../_helpers/response.js";
 import { getSupabase, supabaseEnabled } from "../_helpers/supabase.js";
 import { tokenOk } from "./admin.js";
 import { sendHtml } from "../_helpers/mail.js";
-import { buildNudge, clickToken, STEPS } from "../_helpers/emailNudges.js";
+import { buildNudge, clickToken, STEPS, runEmailNudges } from "../_helpers/emailNudges.js";
 import { resolvePeriod } from "../_helpers/periods.js";
 
 const SITE = (process.env.SITE_URL || process.env.APP_ORIGIN || "https://elitescholars.site").replace(/\/$/, "");
@@ -55,6 +56,18 @@ export default async function handler(req, res) {
     if (!tokenOk(token, "analytics")) return res.status(401).json({ success: false, error: "Session expired. Please sign in again." });
     if (!supabaseEnabled()) return sendErr(res, "Database not configured.", 503);
     const sb = getSupabase();
+    // POST { action: "preview" | "send" }: see who is due, or send the due emails now (same rules and daily limit as the automatic run)
+    if (req.method === "POST") {
+      const act = String(readBody(req).action || "");
+      if (act === "preview") return sendOk(res, { result: await runEmailNudges({ dryRun: true }) });
+      if (act === "send") {
+        const { data: lock } = await sb.from("settings").select("updated_at").eq("key", "nudge_run_lock").maybeSingle();
+        if (lock && Date.now() - new Date(lock.updated_at).getTime() < 90000) return sendErr(res, "A send just started. Wait a minute and check the numbers.");
+        await sb.from("settings").upsert({ key: "nudge_run_lock", value: {}, updated_at: new Date().toISOString() }, { onConflict: "key" });
+        return sendOk(res, { result: await runEmailNudges() });
+      }
+      return sendErr(res, "Unknown action.");
+    }
     const per = resolvePeriod(q.range || "week"), since = per.since;
     const rows = [];
     for (let from = 0; from < 20000; from += 1000) {

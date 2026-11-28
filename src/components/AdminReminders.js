@@ -5,7 +5,7 @@ import '../styles/admin-tables.css';
 import RangePills from './AdminRange';
 
 const KIND = { study_morning: 'Morning study reminder (8am)', study_evening: 'Evening study reminder (5pm)', streak: 'Streak at risk', comeback: 'Come-back nudge', reminder: 'Study reminder set on the phone', streak_push: 'Streak reminder', 'squad-chat': 'Squad chat', challenge: 'Challenge', assignment: 'Class assignment', status: 'Status', general: 'Other' };
-const EMAIL_STEP = ['1 · Gentle nudge (3 days away)', '2 · Did you forget us? (8 days)', '3 · Exam check-in (15 days)', '4 · Reminders not working (23 days)', '5 · Last email (32 days)'];
+const EMAIL_STEP = ['1 · Gentle nudge (after 3 days away)', '2 · Did you forget us? (7 days later)', '3 · Last email (10 days after that)'];
 const kindName = (k) => KIND[k] || k;
 const pct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : '–');
 
@@ -16,6 +16,26 @@ export default function AdminReminders({ token, onAuthFail }) {
   const [range, setRange] = useState('week');
   const [err, setErr] = useState('');
   const [em, setEm] = useState(null);
+  const [due, setDue] = useState(null);
+  const [sending, setSending] = useState(false);
+  const [msg, setMsg] = useState('');
+  const post = (action) => fetch('/api/data?route=admin/nudges', { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ action }) }).then((r) => r.json());
+  const checkDue = () => post('preview').then((x) => x.success && setDue(x.result)).catch(() => {});
+  useEffect(() => { checkDue(); }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
+  const sendNow = async () => {
+    setSending(true); setMsg('');
+    try {
+      const x = await post('send');
+      if (!x.success) setMsg(x.error || 'Could not send.');
+      else {
+        const r = x.result || {};
+        setMsg(r.skipped ? `Not sent: ${r.skipped}.` : r.failed ? 'The email service refused the batch. Check the Resend key and sender address in Vercel.' : `Sent ${r.sent} email${r.sent === 1 ? '' : 's'}.${r.waiting ? ` ${r.waiting} more will go out over the next day (daily limit keeps your email quota safe).` : ''}`);
+      }
+      checkDue();
+      fetch(`/api/data?route=admin/nudges&range=${range}`, { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.json()).then((y) => y.success && setEm(y)).catch(() => {});
+    } catch { setMsg('Could not reach the server.'); }
+    setSending(false);
+  };
   useEffect(() => {
     let on = true; setD(null);
     api('reminders', { query: { range } }).then((x) => on && setD(x)).catch((e) => e.message !== 'auth' && on && setErr(e.message));
@@ -48,6 +68,12 @@ export default function AdminReminders({ token, onAuthFail }) {
       {em && (
         <section className="adm-card">
           <h2>Come-back emails</h2>
+          <p className="adm-note" style={{ marginTop: 0 }}>Every student who is not a partner gets at most three emails, ever: after 3 days away, 7 days later, and a last goodbye 10 days after that. Nobody is emailed again once they come back or unsubscribe. No more than 40 go out in any 24 hours.</p>
+          <div className="adm-inline pad" style={{ gap: 12, flexWrap: 'wrap' }}>
+            <button className="adm-btn" disabled={sending || !due || !(due.eligible > 0)} onClick={sendNow}>{sending ? 'Sending…' : 'Send due emails now'}</button>
+            <span>{due ? (due.skipped ? `Not set up: ${due.skipped}` : due.eligible ? `${due.eligible} due now${Object.keys(due.byStepDue || {}).length ? ' (' + Object.entries(due.byStepDue).map(([k, v]) => `${v} for email ${k}`).join(', ') + ')' : ''}` : 'Nobody is due right now') : 'Checking who is due…'}</span>
+          </div>
+          {msg && <p className="adm-note">{msg}</p>}
           <div className="adm-grid adm-stats">
             <div className="adm-stat"><div className="adm-stat-val">{fmtN(em.totals.sent)}</div><div className="adm-stat-label">Emails sent to {fmtN(em.totals.people)} students</div></div>
             <div className="adm-stat"><div className="adm-stat-val">{fmtN(em.totals.clicked)}</div><div className="adm-stat-label">Clicked ({pct(em.totals.clicked, em.totals.people)})</div></div>
