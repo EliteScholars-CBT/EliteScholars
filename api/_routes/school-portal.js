@@ -14,6 +14,7 @@ import { roleIn, uuidish } from "../_helpers/schoolPortal.js";
 import { pushToEmails } from "../_helpers/push.js";
 import { parseSchoolProfile, cleanTagline } from "../_helpers/schoolProfile.js";
 import { notifyAdmin } from "../_helpers/mail.js";
+import { resolvePeriod } from "../_helpers/periods.js";
 import { isDemoSchool, demoClasses, demoStaff, demoTotals, demoStudents, demoReports, demoStudentReport, demoAssignments } from "../_helpers/demoSchool.js";
 
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -50,7 +51,7 @@ export default async function handler(req, res) {
   const sb = getSupabase();
 
   try {
-    // ── which schools am I part of? ────────────────────────────────────────────────────────────
+    // ── which schools am I part of? ──────────────────────────────────────────────────────────────────────────────────────────────
     if (op === "me") {
       const { data: owned } = await sb.from("schools").select("id,name").eq("owner_email", email);
       const { data: staff } = await sb.from("school_staff").select("school_id,role").eq("email", email);
@@ -106,7 +107,7 @@ export default async function handler(req, res) {
       return out;
     };
 
-    // ── overview ────────────────────────────────────────────────────────────────
+    // ── overview ──────────────────────────────────────────────────────────────────────────────────────
     if (op === "overview") {
       const classes = await classesOf();
       const mem = await membersOf(classes.map((c) => c.id));
@@ -136,7 +137,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── staff (admin) ──────────────────────────────────────────────────────────────
+    // ── staff (admin) ──────────────────────────────────────────────────────────────────────────────────────
     if (op === "staff-add") {
       if (!isAdmin) return sendErr(res, "Only school admins can do that.", 403);
       const em = clean(b.email, 254).toLowerCase();
@@ -158,7 +159,7 @@ export default async function handler(req, res) {
       return sendOk(res, { removed: em });
     }
 
-    // ── classes ────────────────────────────────────────────────────────────────
+    // ── classes ──────────────────────────────────────────────────────────────────────────────────────
     if (op === "class-save") {
       if (!(await planOk())) return sendErr(res, PLAN_MSG, 402);
       const name = clean(b.name, 60);
@@ -193,7 +194,7 @@ export default async function handler(req, res) {
       return sendOk(res, { deleted: true });
     }
 
-    // ── students ────────────────────────────────────────────────────────────────
+    // ── students ──────────────────────────────────────────────────────────────────────────────────────
     const myClassIds = async () => (await classesOf()).map((c) => c.id);
     const classAllowed = async (id) => { if (!uuidish(id)) return null; const { data: c } = await sb.from("classes").select("id,name,teacher_email,school_id").eq("id", id).maybeSingle(); if (!c || c.school_id !== schoolId) return null; if (!isAdmin && c.teacher_email !== email) return null; return c; };
 
@@ -307,7 +308,7 @@ export default async function handler(req, res) {
       return sendOk(res, { removed: true });
     }
 
-    // ── reports ────────────────────────────────────────────────────────────────
+    // ── reports ──────────────────────────────────────────────────────────────────────────────────────
     const scoreOf = (p) => { const x = p || {}; if (Number.isFinite(Number(x.score)) && x.score !== null && x.score !== "") return Math.max(0, Math.min(100, Math.round(Number(x.score)))); const q = Number(x.totalQ); return q > 0 ? Math.round((Number(x.correct) * 100) / q) : null; };
     const dayKey = (t) => new Date(new Date(t).getTime() + 3600000).toISOString().slice(0, 10); // Lagos day
     const quizEvents = async (emails, sinceIso) => {
@@ -319,9 +320,8 @@ export default async function handler(req, res) {
       return rows.filter((r) => r.score !== null);
     };
     const mean = (a) => (a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : 0);
-    const series = (days, rows) => {
-      const out = [];
-      for (let i = days - 1; i >= 0; i--) out.push({ day: dayKey(Date.now() - i * DAY), quizzes: 0, active: new Set() });
+    const series = (keys, rows) => {
+      const out = keys.map((day) => ({ day, quizzes: 0, active: new Set() }));
       const idx = new Map(out.map((d, i) => [d.day, i]));
       rows.forEach((r) => { const i = idx.get(dayKey(r.at)); if (i !== undefined) { out[i].quizzes++; out[i].active.add(r.email); } });
       return out.map((d) => ({ day: d.day, quizzes: d.quizzes, active: d.active.size }));
@@ -333,13 +333,15 @@ export default async function handler(req, res) {
       return { asg, doneSet: new Set(done.map((d) => d.assignment_id + "|" + d.email)) };
     };
 
-    if (op === "reports" && demo) return sendOk(res, demoReports([7, 30, 90].includes(Number(b.days)) ? Number(b.days) : 30, b.class_id || ""));
+    const DEMO_DAYS = { today: 7, week: 7, month: 30, lastmonth: 30, year: 90, all: 90 };
+    if (op === "reports" && demo) { const pr = resolvePeriod(b.range || "month"); return sendOk(res, { ...demoReports(DEMO_DAYS[pr.key], b.class_id || ""), range: pr.key, label: pr.label }); }
     if (op === "student-report" && demo) {
-      const r = demoStudentReport(clean(b.email, 254).toLowerCase(), [30, 90].includes(Number(b.days)) ? Number(b.days) : 90);
+      const pr = resolvePeriod(b.range || "month");
+      const r = { ...demoStudentReport(clean(b.email, 254).toLowerCase(), DEMO_DAYS[pr.key] > 30 ? 90 : 30), range: pr.key, label: pr.label };
       return r ? sendOk(res, r) : sendErr(res, "That student is not in your classes.", 404);
     }
 
-    // ── homework across all classes ─────────────────────────────────────────────────
+    // ── homework across all classes ─────────────────────────────────────────────────────────────────────────────────
     if (op === "assignments") {
       if (demo) return sendOk(res, { assignments: demoAssignments(), sample: true });
       const classes = await classesOf();
@@ -355,16 +357,15 @@ export default async function handler(req, res) {
     }
 
     if (op === "reports") {
-      const days = [7, 30, 90].includes(Number(b.days)) ? Number(b.days) : 30;
+      const per = resolvePeriod(b.range || "month");
       let classes = await classesOf();
       if (b.class_id) classes = classes.filter((c) => c.id === b.class_id);
       const mem = await membersOf(classes.map((c) => c.id));
       const emails = [...new Set(mem.map((m) => m.email))];
       const pf = await profilesFor(sb, emails);
-      const since = new Date(Date.now() - days * DAY).toISOString();
-      const prevSince = new Date(Date.now() - 2 * days * DAY).toISOString();
-      const all = await quizEvents(emails, prevSince);
-      const cur = all.filter((r) => r.at >= since), prev = all.filter((r) => r.at < since);
+      const since = per.since;
+      const all = await quizEvents(emails, per.prev ? per.prev.since : since);
+      const cur = all.filter((r) => r.at >= since && r.at <= per.until), prev = per.prev ? all.filter((r) => r.at >= per.prev.since && r.at <= per.prev.until) : [];
       const { asg, doneSet } = await asgStats(classes.map((c) => c.id), mem);
       const clsOfEmail = new Map(); mem.forEach((m) => { const c = classes.find((x) => x.id === m.class_id); if (c) { if (!clsOfEmail.has(m.email)) clsOfEmail.set(m.email, []); clsOfEmail.get(m.email).push(c.name); } });
       const now = Date.now();
@@ -395,9 +396,9 @@ export default async function handler(req, res) {
       const withQ = students.filter((s) => s.quizzes > 0);
       const activeN = students.filter((s) => s.quizzes > 0).length;
       return sendOk(res, {
-        days, since, generated: new Date().toISOString(),
+        range: per.key, label: per.label, since, generated: new Date().toISOString(),
         summary: { students: students.length, active: activeN, participation: students.length ? Math.round((activeN * 100) / students.length) : 0, quizzes: cur.length, avg: mean(cur.map((r) => r.score)), prevAvg: prev.length ? mean(prev.map((r) => r.score)) : null, prevQuizzes: prev.length, atRisk: students.filter((s) => s.risk === "high").length, watch: students.filter((s) => s.risk === "watch").length },
-        series: series(days, cur), classes: perClass, subjects, distribution: buckets, students,
+        series: series(per.keys, cur), classes: perClass, subjects, distribution: buckets, students,
         top: [...withQ].sort((a, c2) => c2.avg - a.avg || c2.quizzes - a.quizzes).slice(0, 10),
         improvers: withQ.filter((s) => s.trend !== null && s.trend > 0).sort((a, c2) => c2.trend - a.trend).slice(0, 5),
         needsHelp: students.filter((s) => s.risk !== "ok").sort((a, c2) => (a.risk === c2.risk ? (c2.idle_days || 0) - (a.idle_days || 0) : a.risk === "high" ? -1 : 1)).slice(0, 30),
@@ -409,26 +410,27 @@ export default async function handler(req, res) {
       const classes = await classesOf();
       const mem = (await membersOf(classes.map((c) => c.id))).filter((m) => m.email === em);
       if (!mem.length) return sendErr(res, "That student is not in your classes.", 404);
-      const days = [30, 90].includes(Number(b.days)) ? Number(b.days) : 90;
+      const per = resolvePeriod(b.range || "month");
       const pf = await profilesFor(sb, [em]); const p = pf.get(em);
-      const since = new Date(Date.now() - days * DAY).toISOString();
-      const rows = await quizEvents([em], since);
+      const since = per.since;
+      const rows = (await quizEvents([em], since)).filter((r) => r.at <= per.until);
       const myClasses = mem.map((m) => classes.find((c) => c.id === m.class_id)).filter(Boolean);
       const { asg, doneSet } = await asgStats(myClasses.map((c) => c.id), mem);
       const bySubject = {};
       rows.forEach((r) => { (bySubject[r.subject] = bySubject[r.subject] || []).push(r); });
       const subjects = Object.entries(bySubject).map(([s, a]) => ({ subject: s, avg: mean(a.map((r) => r.score)), attempts: a.length, best: Math.max(...a.map((r) => r.score)), last: a[0].score })).sort((x, y) => y.avg - x.avg);
       const weekly = []; for (let i = 11; i >= 0; i--) { const lo = Date.now() - (i + 1) * 7 * DAY, hi = Date.now() - i * 7 * DAY; const w = rows.filter((r) => { const t = new Date(r.at).getTime(); return t >= lo && t < hi; }); weekly.push({ label: `W${12 - i}`, avg: w.length ? mean(w.map((r) => r.score)) : null, quizzes: w.length }); }
-      const half = rows.filter((r) => new Date(r.at).getTime() >= Date.now() - (days / 2) * DAY), older = rows.filter((r) => new Date(r.at).getTime() < Date.now() - (days / 2) * DAY);
+      const mid = per.from + (per.to - per.from) / 2;
+      const half = rows.filter((r) => new Date(r.at).getTime() >= mid), older = rows.filter((r) => new Date(r.at).getTime() < mid);
       return sendOk(res, {
         student: { name: nameOf(p, em.split("@")[0]), username: (p && p.username) || "", classes: myClasses.map((c) => c.name), level: (p && p.level) || 1, xp: (p && p.total_xp) || 0, streak: (p && p.current_streak) || 0, last_active: (p && p.last_active) || null, overall: avgOf(p), quizzes_all: (p && p.quizzes_taken) || 0 },
-        days, quizzes: rows.length, avg: mean(rows.map((r) => r.score)), trend: half.length && older.length ? mean(half.map((r) => r.score)) - mean(older.map((r) => r.score)) : null,
-        series: series(Math.min(days, 30), rows), weekly, subjects, strengths: subjects.filter((s) => s.attempts >= 2).slice(0, 3), weak: [...subjects].filter((s) => s.attempts >= 2).sort((x, y) => x.avg - y.avg).slice(0, 3),
+        range: per.key, label: per.label, quizzes: rows.length, avg: mean(rows.map((r) => r.score)), trend: half.length && older.length ? mean(half.map((r) => r.score)) - mean(older.map((r) => r.score)) : null,
+        series: series(per.keys.slice(-60), rows), weekly, subjects, strengths: subjects.filter((s) => s.attempts >= 2).slice(0, 3), weak: [...subjects].filter((s) => s.attempts >= 2).sort((x, y) => x.avg - y.avg).slice(0, 3),
         recent: rows.slice(0, 15), homework: asg.slice(0, 30).map((a) => ({ title: a.title, due_at: a.due_at, done: doneSet.has(a.id + "|" + em) })),
       });
     }
 
-    // ── contact details + "show us on the site" (admin) ───────────────────────
+    // ── contact details + "show us on the site" (admin) ────────────────────────────────────────────
     if (op === "school-profile-save") {
       if (!isAdmin) return sendErr(res, "Only school admins can do that.", 403);
       const prof = parseSchoolProfile({ ...school, ...b }, school.kind || "school");
@@ -444,7 +446,7 @@ export default async function handler(req, res) {
       return sendOk(res, { showcase_status: status });
     }
 
-    // ── logo ────────────────────────────────────────────────────────────────
+    // ── logo ──────────────────────────────────────────────────────────────────────────────────────
     if (op === "school-logo") {
       if (!isAdmin) return sendErr(res, "Only admins can change the logo.", 403);
       const img = String(b.image || "");
@@ -454,7 +456,7 @@ export default async function handler(req, res) {
       return sendOk(res, { logo: img });
     }
 
-    // ── notices (shown as official statuses to students) ────────────────────────
+    // ── notices (shown as official statuses to students) ────────────────────────────────────────────────────────
     const BGS = ["violet", "gold", "teal", "rose", "blue", "dark"];
     const postNotice = async (text, classId, hours, bg) => {
       const expires = new Date(Date.now() + hours * 3600000).toISOString();
@@ -495,7 +497,7 @@ export default async function handler(req, res) {
       return sendOk(res, {});
     }
 
-    // ── mock exam nights ───────────────────────────────────────────────────────────
+    // ── mock exam nights ───────────────────────────────────────────────────────────────────────────────────
     if (op === "mock-save") {
       if (!(await planOk())) return sendErr(res, PLAN_MSG, 402);
       const title = clean(b.title, 80), subject = clean(b.subject, 60).toLowerCase();
@@ -555,7 +557,7 @@ export default async function handler(req, res) {
       return sendOk(res, {});
     }
 
-    // ── plan + online payment ────────────────────────────────────────────────────────
+    // ── plan + online payment ──────────────────────────────────────────────────────────────────────────────────
     if (op === "quote") {
       if (!isAdmin) return sendErr(res, "Only school admins can do that.", 403);
       const { schoolQuote } = await import("../_helpers/schoolPay.js");
