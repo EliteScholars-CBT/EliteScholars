@@ -2,6 +2,7 @@ import { readStudentNames } from '../utils/readSheet';
 import { OrgFields, KindToggle, PasswordInput, EMPTY_DETAILS, validateDetails, detailsPayload } from '../components/SchoolSignupFields';
 import { LogoCard, Notices, Mocks, CentreEarn, PrintBrand, waLink, waStudentText, waClassText } from '../components/PortalExtras';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { PERIODS } from '../components/AdminRange';
 import { saveUser } from '../utils/storage';
 import { LineChart, BarChart, HBars, Donut, DonutMulti, Spark, Delta, colorFor, pick } from '../components/PortalCharts';
 import { captureReferralFromURL, getReferralAttribution, getReferralClickedAt, sendReferralSignup } from '../utils/referral';
@@ -378,29 +379,30 @@ function downloadCsv(name, rows) {
   const body = rows.map((r) => r.map((c) => `"${String(c ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([body], { type: 'text/csv' })); a.download = name; a.click();
 }
-function useReport(sid, days, classId) {
+function useReport(sid, range, classId) {
   const [d, setD] = useState(null);
-  useEffect(() => { let on = true; setD(null); api('reports', { school_id: sid, days, class_id: classId || undefined }).then((x) => on && setD(x)); return () => { on = false; }; }, [sid, days, classId]);
+  useEffect(() => { let on = true; setD(null); api('reports', { school_id: sid, range, class_id: classId || undefined }).then((x) => on && setD(x)); return () => { on = false; }; }, [sid, range, classId]);
   return d;
 }
 
 /* ── student report card ── */
 function StudentReport({ sid, email, school, logo, onClose }) {
   const [d, setD] = useState(null);
-  useEffect(() => { api('student-report', { school_id: sid, email, days: 90 }).then(setD); }, [sid, email]);
+  const [range, setRange] = useState('month');
+  useEffect(() => { setD(null); api('student-report', { school_id: sid, email, range }).then(setD); }, [sid, email, range]);
   return (
     <div className="spt-modal" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="spt-sheet spt-printable">
         <PrintBrand school={school} logo={logo} />
-        <div className="spt-between spt-noprint"><b>Student report</b><div className="spt-row">{d && d.success && <a className="spt-ghost" href={waLink(waStudentText(school, d))} target="_blank" rel="noreferrer">WhatsApp</a>}<button className="spt-ghost" onClick={() => window.print()}>Print</button><button className="spt-ghost" onClick={onClose}>Close</button></div></div>
+        <div className="spt-between spt-noprint"><b>Student report</b><div className="spt-row"><select value={range} onChange={(e) => setRange(e.target.value)}>{PERIODS.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select>{d && d.success && <a className="spt-ghost" href={waLink(waStudentText(school, d))} target="_blank" rel="noreferrer">WhatsApp</a>}<button className="spt-ghost" onClick={() => window.print()}>Print</button><button className="spt-ghost" onClick={onClose}>Close</button></div></div>
         {!d && <Empty>Loading…</Empty>}
         {d && !d.success && <div className="spt-err">{d.error}</div>}
         {d && d.success && (() => {
           const s = d.student;
           return (
             <div className="spt-stack">
-              <div className="spt-report-head"><div><h2>{s.name}</h2><small>{school} · {s.classes.join(', ')}{s.username ? ` · @${s.username}` : ''}</small></div><div className="spt-avg"><b>{d.avg}%</b><small>average, last 90 days</small></div></div>
-              <div className="spt-stats"><Stat v={d.quizzes} l="Quizzes (90 days)" /><Stat v={s.streak} l="Day streak" /><Stat v={s.xp} l="XP" /><Stat v={'Lv ' + s.level} l="Level" /></div>
+              <div className="spt-report-head"><div><h2>{s.name}</h2><small>{school} · {s.classes.join(', ')}{s.username ? ` · @${s.username}` : ''}</small></div><div className="spt-avg"><b>{d.avg}%</b><small>average, {d.label.toLowerCase()}</small></div></div>
+              <div className="spt-stats"><Stat v={d.quizzes} l={`Quizzes (${d.label.toLowerCase()})`} /><Stat v={s.streak} l="Day streak" /><Stat v={s.xp} l="XP" /><Stat v={'Lv ' + s.level} l="Level" /></div>
               <div className="spt-card"><h3>Score trend by week {d.trend !== null && <Delta now={d.avg} before={d.avg - d.trend} unit="%" />}</h3>
                 <LineChart data={d.weekly.map((w) => ({ label: w.label, value: w.avg }))} max={100} unit="%" height={140} /></div>
               <div className="spt-card"><h3>Subjects</h3>{d.subjects.length ? <HBars data={d.subjects.map((x) => ({ label: subjName(x.subject), value: x.avg, note: `${x.attempts} quiz${x.attempts === 1 ? '' : 'zes'} · best ${x.best}% · last ${x.last}%` }))} /> : <Empty>No quizzes taken in this period.</Empty>}</div>
@@ -421,11 +423,11 @@ function StudentReport({ sid, email, school, logo, onClose }) {
 
 /* ── reports ── */
 function Reports({ sid, school, logo, classes }) {
-  const [days, setDays] = useState(30);
+  const [range, setRange] = useState('month');
   const [classId, setClassId] = useState('');
   const [sort, setSort] = useState({ k: 'name', dir: 1 });
   const [view, setView] = useState('');
-  const d = useReport(sid, days, classId);
+  const d = useReport(sid, range, classId);
   if (!d) return <Empty>Loading report…</Empty>;
   if (!d.success) return <div className="spt-err">{d.error}</div>;
   const s = d.summary;
@@ -436,8 +438,8 @@ function Reports({ sid, school, logo, classes }) {
     <div className="spt-stack spt-printable">
       <PrintBrand school={school} logo={logo} />
       <div className="spt-row spt-noprint">
-        <a className="spt-ghost" href={waLink(waClassText(school, days, d))} target="_blank" rel="noreferrer">Share summary on WhatsApp</a>
-        <select value={days} onChange={(e) => setDays(Number(e.target.value))}><option value={7}>Last 7 days</option><option value={30}>Last 30 days</option><option value={90}>Last 90 days</option></select>
+        <a className="spt-ghost" href={waLink(waClassText(school, d))} target="_blank" rel="noreferrer">Share summary on WhatsApp</a>
+        <select value={range} onChange={(e) => setRange(e.target.value)}>{PERIODS.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select>
         <select value={classId} onChange={(e) => setClassId(e.target.value)}><option value="">All classes</option>{classes.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
       </div>
       <div className="spt-stats">
@@ -469,7 +471,7 @@ function Reports({ sid, school, logo, classes }) {
         <div className="spt-scroll"><table><thead><tr>{th('name', 'Student')}{th('quizzes', 'Quizzes')}{th('avg', 'Avg')}{th('trend', 'Change')}{th('streak', 'Streak')}{th('idle_days', 'Last seen')}{th('hw_pct', 'Homework')}<th>Status</th></tr></thead>
           <tbody>{rows.map((x) => <tr key={x.key}><td><button className="spt-link" onClick={() => setView(x.key)}>{x.name}</button><small>{x.classes.join(', ')}</small></td><td>{x.quizzes}</td><td style={{ color: x.quizzes ? colorFor(x.avg) : undefined, fontWeight: 800 }}>{x.quizzes ? x.avg + '%' : '-'}</td><td>{x.trend === null ? '-' : (x.trend > 0 ? '+' : '') + x.trend + '%'}</td><td>{x.streak}</td><td>{x.idle_days === null ? 'never' : x.idle_days === 0 ? 'today' : x.idle_days + 'd'}</td><td>{x.homework}</td><td>{riskPill(x.risk)}</td></tr>)}</tbody></table></div>
       </div>
-      <small className="spt-foot">{school} · last {days} days · generated {new Date(d.generated).toLocaleString('en-NG')}</small>
+      <small className="spt-foot">{school} · {d.label.toLowerCase()} · generated {new Date(d.generated).toLocaleString('en-NG')}</small>
       {view && <StudentReport sid={sid} email={view} school={school} logo={logo} onClose={() => setView('')} />}
     </div>
   );
@@ -477,10 +479,13 @@ function Reports({ sid, school, logo, classes }) {
 
 /* ── overview with charts ── */
 function OverviewCharts({ sid, setTab }) {
-  const d = useReport(sid, 30, '');
+  const [range, setRange] = useState('month');
+  const d = useReport(sid, range, '');
   const [asg, setAsg] = useState(null);
   useEffect(() => { api('assignments', { school_id: sid }).then((r) => setAsg(r.success ? r.assignments : [])); }, [sid]);
-  if (!d || !d.success) return null;
+  const picker = <div className="spt-row spt-noprint" style={{ marginBottom: 10 }}><select value={range} onChange={(e) => setRange(e.target.value)}>{PERIODS.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select></div>;
+  if (!d) return picker;
+  if (!d.success) return null;
   const s = d.summary;
   const hwVals = d.classes.filter((c) => c.homework !== null).map((c) => c.homework);
   const hw = hwVals.length ? Math.round(hwVals.reduce((x, y) => x + y, 0) / hwVals.length) : null;
@@ -489,16 +494,17 @@ function OverviewCharts({ sid, setTab }) {
   const best = d.subjects.length ? [...d.subjects].sort((x, y) => y.avg - x.avg) : [];
   return (
     <>
+      {picker}
       <div className="spt-stats big">
         <div className="spt-stat"><b>{s.avg}%</b><span>Average score</span><Delta now={s.avg} before={s.prevAvg} unit="%" /><Spark values={quizzes} color="#fff" /></div>
-        <div className="spt-stat"><b>{s.quizzes}</b><span>Quizzes (30 days)</span><Delta now={s.quizzes} before={s.prevQuizzes} /><Spark values={quizzes} color="#fff" /></div>
+        <div className="spt-stat"><b>{s.quizzes}</b><span>Quizzes ({d.label.toLowerCase()})</span><Delta now={s.quizzes} before={s.prevQuizzes} /><Spark values={quizzes} color="#fff" /></div>
         <div className="spt-stat"><b>{s.participation}%</b><span>{s.active} of {s.students} took a quiz</span><Spark values={active} color="#fff" /></div>
         <div className="spt-stat"><b>{hw === null ? '-' : hw + '%'}</b><span>Homework done</span></div>
         <div className="spt-stat"><b>{s.atRisk}</b><span>Need help{s.watch ? ` · ${s.watch} to watch` : ''}</span></div>
         <div className="spt-stat"><b>{d.top.length ? d.top[0].avg + '%' : '-'}</b><span>Best student{d.top.length ? ` · ${d.top[0].name.split(' ')[0]}` : ''}</span></div>
       </div>
       <div className="spt-dash">
-        <div className="spt-card tint-a wide"><div className="spt-between"><h3>Quizzes and active students, last 30 days</h3><button className="spt-link" onClick={() => setTab('reports')}>Full report</button></div>
+        <div className="spt-card tint-a wide"><div className="spt-between"><h3>Quizzes and active students, {d.label.toLowerCase()}</h3><button className="spt-link" onClick={() => setTab('reports')}>Full report</button></div>
           <LineChart height={190} data={d.series.map((x) => ({ label: shortDay(x.day), value: x.quizzes }))} data2={d.series.map((x) => ({ label: shortDay(x.day), value: x.active }))} />
           <div className="spt-legend"><span><i style={{ background: '#7C3AED' }} />Quizzes</span><span><i style={{ background: '#F59E0B' }} />Students active</span></div></div>
         <div className="spt-card tint-b"><h3>Subject performance</h3>{d.subjects.length ? <HBars rainbow data={d.subjects.slice(0, 8).map((x) => ({ label: subjName(x.subject), value: x.avg, note: `${x.attempts} quizzes · ${x.students} students` }))} /> : <Empty>No quizzes yet.</Empty>}</div>
