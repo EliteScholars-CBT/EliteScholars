@@ -20,10 +20,10 @@ function message(slot, { name, streak, idle }, seed) {
   return { title: `Evening, ${name} 📚`, body: pick(["Finish today strong with one quick quiz.", "Revise one topic before bed. It sticks better.", "Five minutes tonight keeps you ahead."], seed) };
 }
 
-// Morning slot: first the come-back emails (students without push), then the push reminders.
+// Both slots: first the come-back emails (a second daily chance if the morning run was missed; safe to repeat), then the push reminders.
 export async function runStudyReminders(slot) {
   let emailNudges = null;
-  if (slot === "morning") { try { emailNudges = await runEmailNudges(); } catch (e) { emailNudges = { error: String(e?.message || e) }; } }
+  { try { emailNudges = await runEmailNudges(); } catch (e) { emailNudges = { error: String(e?.message || e) }; } }
   const r = await runPush(slot);
   return emailNudges ? { ...r, emailNudges } : r;
 }
