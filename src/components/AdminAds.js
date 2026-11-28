@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { makeApi } from './adminApi';
 import { fmtN, TrendChart } from './AdminCharts';
 import '../styles/admin-nav.css';
+import RangePills from './AdminRange';
 
 const Check = ({ label, hint, checked, onChange, disabled }) => (
   <label className="adm-check adm-check-row">
@@ -16,7 +17,7 @@ export default function AdminAds({ token, onAuthFail, only }) {
   const api = useMemo(() => makeApi(token, onAuthFail), [token, onAuthFail]);
   const [ads, setAds] = useState(null);
   const [stats, setStats] = useState(null);
-  const [days, setDays] = useState(30);
+  const [range, setRange] = useState('month');
   const [msg, setMsg] = useState('');
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
@@ -31,9 +32,9 @@ export default function AdminAds({ token, onAuthFail, only }) {
   useEffect(() => { load(); }, [load]);
   useEffect(() => {
     let on = true;
-    api('ads-stats', { query: { days } }).then((d) => on && setStats(d.stats)).catch((e) => e.message !== 'auth' && on && setErr(e.message));
+    api('ads-stats', { query: { range } }).then((d) => on && setStats(d.stats)).catch((e) => e.message !== 'auth' && on && setErr(e.message));
     return () => { on = false; };
-  }, [api, days]);
+  }, [api, range]);
 
   useEffect(() => {
     if (view !== 'adsterra') return undefined;
@@ -99,7 +100,7 @@ export default function AdminAds({ token, onAuthFail, only }) {
 
       <section className="adm-card">
         <h2>Our own ads</h2>
-        <p className="adm-note" style={{ marginTop: 0 }}>Promos we run ourselves (affiliate marketing, Resumify and so on). Switch one on and it joins the rotation in the app. Views and clicks come from the last {days} days.</p>
+        <p className="adm-note" style={{ marginTop: 0 }}>Promos we run ourselves (affiliate marketing, Resumify and so on). Switch one on and it joins the rotation in the app. Views and clicks follow the period picked below.</p>
         {(ads.ownAds || []).map((o, i) => {
           const st = (stats ? stats.placements : []).filter((x) => String(x.name).endsWith(`own-${o.id}`));
           const views = st.reduce((a, x) => a + x.views, 0), clicks = st.reduce((a, x) => a + x.clicks, 0);
@@ -147,9 +148,7 @@ export default function AdminAds({ token, onAuthFail, only }) {
       </>)}
       <section className="adm-controls">
         {!only && <div className="adm-pills">{[['own', 'Our views'], ['adsterra', 'Adsterra earnings']].map(([k, l]) => <button key={k} className={view === k ? 'on' : ''} onClick={() => setView(k)}>{l}</button>)}</div>}
-        {view === 'adsterra'
-          ? <div className="adm-pills">{[['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lastmonth', 'Last month'], ['all', 'All time']].map(([k, l]) => <button key={k} className={arange === k ? 'on' : ''} onClick={() => setArange(k)}>{l}</button>)}</div>
-          : <div className="adm-pills">{[7, 30, 90].map((d) => <button key={d} className={days === d ? 'on' : ''} onClick={() => setDays(d)}>{d} days</button>)}</div>}
+        {view === 'adsterra' ? <RangePills value={arange} onChange={setArange} /> : <RangePills value={range} onChange={setRange} />}
       </section>
       {view === 'adsterra' && (
         <>
