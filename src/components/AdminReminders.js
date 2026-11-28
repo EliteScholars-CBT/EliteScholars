@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { makeApi, ago } from './adminApi';
 import { fmtN } from './AdminCharts';
 import '../styles/admin-tables.css';
+import RangePills from './AdminRange';
 
 const KIND = { study_morning: 'Morning study reminder (8am)', study_evening: 'Evening study reminder (5pm)', streak: 'Streak at risk', comeback: 'Come-back nudge', reminder: 'Study reminder set on the phone', streak_push: 'Streak reminder', 'squad-chat': 'Squad chat', challenge: 'Challenge', assignment: 'Class assignment', status: 'Status', general: 'Other' };
 const EMAIL_STEP = ['1 · Gentle nudge (3 days away)', '2 · Did you forget us? (8 days)', '3 · Exam check-in (15 days)', '4 · Reminders not working (23 days)', '5 · Last email (32 days)'];
@@ -12,25 +13,25 @@ const pct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : '–');
 export default function AdminReminders({ token, onAuthFail }) {
   const api = useMemo(() => makeApi(token, onAuthFail), [token, onAuthFail]);
   const [d, setD] = useState(null);
-  const [days, setDays] = useState(7);
+  const [range, setRange] = useState('week');
   const [err, setErr] = useState('');
   const [em, setEm] = useState(null);
   useEffect(() => {
     let on = true; setD(null);
-    api('reminders', { query: { days } }).then((x) => on && setD(x)).catch((e) => e.message !== 'auth' && on && setErr(e.message));
+    api('reminders', { query: { range } }).then((x) => on && setD(x)).catch((e) => e.message !== 'auth' && on && setErr(e.message));
     return () => { on = false; };
-  }, [api, days]);
+  }, [api, range]);
   useEffect(() => {
     let on = true; setEm(null);
-    fetch(`/api/data?route=admin/nudges&days=${days}`, { headers: { Authorization: `Bearer ${token}` } })
+    fetch(`/api/data?route=admin/nudges&range=${range}`, { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json()).then((x) => on && x.success && setEm(x)).catch(() => {});
     return () => { on = false; };
-  }, [token, days]);
+  }, [token, range]);
   if (!d) return <div className="adm-card">{err || 'Loading…'}</div>;
   const p = d.prompt;
   return (
     <div>
-      <div className="adm-pills adm-pills-gap">{[7, 30, 90].map((n) => <button key={n} className={days === n ? 'on' : ''} onClick={() => setDays(n)}>{n} days</button>)}</div>
+      <RangePills className="adm-pills adm-pills-gap" value={range} onChange={setRange} />
       <section className="adm-card">
         <h2>Notifications we sent</h2>
         <div className="adm-grid adm-stats">

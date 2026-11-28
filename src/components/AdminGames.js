@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { makeApi, ago } from './adminApi';
 import { fmtN } from './AdminCharts';
+import RangePills from './AdminRange';
 
 const CH = { whatsapp: 'WhatsApp', copy: 'Copied link', native: 'Phone share', other: 'Other' };
 const pct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : '–');
@@ -9,19 +10,19 @@ const pct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : '–');
 export default function AdminGames({ token, onAuthFail }) {
   const api = useMemo(() => makeApi(token, onAuthFail), [token, onAuthFail]);
   const [d, setD] = useState(null);
-  const [days, setDays] = useState(7);
+  const [range, setRange] = useState('week');
   const [err, setErr] = useState('');
   useEffect(() => {
     let on = true; setD(null);
-    api('games', { query: { days } }).then((x) => on && setD(x)).catch((e) => e.message !== 'auth' && on && setErr(e.message));
+    api('games', { query: { range } }).then((x) => on && setD(x)).catch((e) => e.message !== 'auth' && on && setErr(e.message));
     return () => { on = false; };
-  }, [api, days]);
+  }, [api, range]);
   if (!d) return <div className="adm-card">{err || 'Loading…'}</div>;
   const stat = (v, l) => <div className="adm-stat"><div className="adm-stat-val">{fmtN(v)}</div><div className="adm-stat-label">{l}</div></div>;
   const shareTotal = Object.values(d.shares).reduce((a, b) => a + b, 0);
   return (
     <div>
-      <div className="adm-pills">{[7, 30, 90].map((n) => <button key={n} className={days === n ? 'on' : ''} onClick={() => setDays(n)}>{n} days</button>)}</div>
+      <RangePills value={range} onChange={setRange} />
       <section className="adm-card">
         <h2>Public game page</h2>
         <div className="adm-grid adm-stats">

@@ -2,12 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { makeApi } from './adminApi';
 import { fmtN, TrendChart, Bars } from './AdminCharts';
 import { SOURCE_LABELS } from '../utils/trafficSource';
+import RangePills from './AdminRange';
 
 export const labelOf = (k) => SOURCE_LABELS[k] || (k ? k.charAt(0).toUpperCase() + k.slice(1) : 'Direct');
 
 export default function AdminSources({ token, onAuthFail }) {
   const api = useMemo(() => makeApi(token, onAuthFail), [token, onAuthFail]);
-  const [days, setDays] = useState(30);
+  const [range, setRange] = useState('month');
   const [ref, setRef] = useState('');
   const [draft, setDraft] = useState('');
   const [s, setS] = useState(null);
@@ -22,14 +23,14 @@ export default function AdminSources({ token, onAuthFail }) {
 
   useEffect(() => {
     let on = true; setBusy(true);
-    api('sources', { query: { days, ref } }).then((d) => { if (on) { setS(d.sources); setErr(''); } }).catch((e) => e.message !== 'auth' && on && setErr(e.message)).finally(() => on && setBusy(false));
+    api('sources', { query: { range, ref } }).then((d) => { if (on) { setS(d.sources); setErr(''); } }).catch((e) => e.message !== 'auth' && on && setErr(e.message)).finally(() => on && setBusy(false));
     return () => { on = false; };
-  }, [api, days, ref]);
+  }, [api, range, ref]);
 
   return (
     <div>
       <section className="adm-controls">
-        <div className="adm-pills">{[7, 30, 90].map((d) => <button key={d} className={days === d ? 'on' : ''} onClick={() => setDays(d)}>{d} days</button>)}</div>
+        <RangePills value={range} onChange={setRange} />
         <form className="adm-inline" onSubmit={(e) => { e.preventDefault(); setRef(draft.trim().toUpperCase()); }}>
           <input placeholder="Partner code (optional)" value={draft} onChange={(e) => setDraft(e.target.value)} />
           <button className="adm-small">{ref ? 'Change' : 'Filter'}</button>
@@ -50,7 +51,7 @@ export default function AdminSources({ token, onAuthFail }) {
       {s && (
         <div className={busy ? 'adm-dim' : ''}>
           <section className="adm-grid adm-stats">
-            <div className="adm-stat"><div className="adm-stat-val">{fmtN(s.visits)}</div><div className="adm-stat-label">Visits{ref ? ` via ${ref}` : ''}</div><div className="adm-stat-sub">last {s.days} days</div></div>
+            <div className="adm-stat"><div className="adm-stat-val">{fmtN(s.visits)}</div><div className="adm-stat-label">Visits{ref ? ` via ${ref}` : ''}</div><div className="adm-stat-sub">{s.label}</div></div>
             <div className="adm-stat"><div className="adm-stat-val">{fmtN(s.signups)}</div><div className="adm-stat-label">Sign-ups</div></div>
             <div className="adm-stat"><div className="adm-stat-val">{s.visits ? Math.round((s.signups / s.visits) * 1000) / 10 : 0}%</div><div className="adm-stat-label">Visit to sign-up</div></div>
           </section>
