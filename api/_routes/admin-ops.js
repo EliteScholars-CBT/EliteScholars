@@ -22,6 +22,7 @@ import { getPricing, bustPricingCache, DEFAULT_SCHOOL, tierFor } from "../_helpe
 import { SHOP_ITEMS } from "../_helpers/constants/shop.js";
 import { accountStatus } from "../_helpers/schoolPlan.js";
 import { poolDiagnostics, loadKeys, callKey } from "../_helpers/aiPool.js";
+import { resolvePeriod } from "../_helpers/periods.js";
 
 const MIN = 60000, H = 3600000, D = 86400000;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -129,16 +130,15 @@ const top = (obj, n = 8) => Object.entries(obj).sort((a, b) => b[1] - a[1]).slic
 const hostOf = (r) => { if (!r || r === "direct") return "Direct"; try { return new URL(r).hostname.replace(/^www\./, ""); } catch { return String(r).slice(0, 40); } };
 
 // Traffic sources: visits (visit_source) and sign-ups (signup_source) by channel, optionally for one partner code.
-async function sourceStats(sb, days, ref) {
-  const since = new Date(Date.now() - days * D).toISOString();
+async function sourceStats(sb, p, ref) {
   const rows = await fetchPages(sb, "events", "type,payload,created_at", (q) => {
-    let x = q.in("type", ["visit_source", "signup_source"]).gte("created_at", since);
+    let x = q.in("type", ["visit_source", "signup_source"]).gte("created_at", p.since).lte("created_at", p.until);
     if (ref) x = x.eq("payload->>ref", ref);
     return x;
   }, 40);
   const by = {}, byPage = {}, byRef = {}, perDay = {}, byCamp = {};
   const bump = (o, k, f) => { (o[k] = o[k] || { visits: 0, signups: 0 })[f]++; };
-  const dayKey = (iso) => new Date(new Date(iso).getTime() + 3600000).toISOString().slice(0, 10);
+  const dayKey = p.lagosDay;
   let visits = 0, signups = 0;
   for (const r of rows) {
     const p = r.payload || {};
@@ -153,15 +153,14 @@ async function sourceStats(sb, days, ref) {
   }
   const list = (o) => Object.entries(o).map(([name, v]) => ({ name, visits: v.visits, signups: v.signups, rate: v.visits ? Math.round((v.signups / v.visits) * 1000) / 10 : 0 })).sort((a, b) => b.visits + b.signups - (a.visits + a.signups));
   const labels = [], values = [];
-  for (let i = days - 1; i >= 0; i--) { const d = dayKey(new Date(Date.now() - i * D).toISOString()); labels.push(d.slice(5)); values.push(perDay[d] || 0); }
-  return { days, ref: ref || "", visits, signups, sources: list(by), partners: list(byRef).slice(0, 25), campaigns: list(byCamp).slice(0, 40), pages: Object.entries(byPage).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count), series: { labels, values }, truncated: rows.length >= 40000 };
+  for (const d of p.keys) { labels.push(d.slice(5)); values.push(perDay[d] || 0); }
+  return { range: p.key, label: p.label, ref: ref || "", visits, signups, sources: list(by), partners: list(byRef).slice(0, 25), campaigns: list(byCamp).slice(0, 40), pages: Object.entries(byPage).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count), series: { labels, values }, truncated: rows.length >= 40000 };
 }
 
 // Ad analytics from our own events. (Adsterra's earnings are only in their dashboard.)
-async function adStats(sb, days) {
-  const since = new Date(Date.now() - days * D).toISOString();
-  const rows = await fetchPages(sb, "events", "type,payload,created_at", (q) => q.in("type", ["ad_impression", "ad_click", "ad_ad_impression", "ad_ad_click", "blog_ad_view", "blog_ad_click"]).gte("created_at", since), 40);
-  const dayKey = (iso) => new Date(new Date(iso).getTime() + 3600000).toISOString().slice(0, 10);
+async function adStats(sb, p) {
+  const rows = await fetchPages(sb, "events", "type,payload,created_at", (q) => q.in("type", ["ad_impression", "ad_click", "ad_ad_impression", "ad_ad_click", "blog_ad_view", "blog_ad_click"]).gte("created_at", p.since).lte("created_at", p.until), 40);
+  const dayKey = p.lagosDay;
   const place = {}, perDay = {};
   const bump = (name, surface, kind, f) => { const o = (place[`${surface}|${name}|${kind}`] = place[`${surface}|${name}|${kind}`] || { surface, name, kind, views: 0, clicks: 0 }); o[f]++; };
   let appViews = 0, blogViews = 0, clicks = 0;
@@ -175,53 +174,8 @@ async function adStats(sb, days) {
     else { clicks++; bump(String(p.adId || p.slot || p.ad || "ad"), r.type === "ad_click" ? "App" : "Blog", String(p.adType || p.kind || "ad"), "clicks"); }
   }
   const labels = [], app = [], blog = [];
-  for (let i = days - 1; i >= 0; i--) { const d = dayKey(new Date(Date.now() - i * D).toISOString()); labels.push(d.slice(5)); app.push((perDay[d] || {}).app || 0); blog.push((perDay[d] || {}).blog || 0); }
-  return { days, appViews, blogViews, clicks, placements: Object.values(place).sort((a, b) => b.views - a.views), series: { labels, app, blog }, truncated: rows.length >= 40000 };
-}
-
-async function blogStats(sb, days) {
-  const since = new Date(Date.now() - days * D).toISOString();
-  const rows = await fetchPages(sb, "events", "type,payload,created_at", (q) => q.in("type", ["blog_page_view", "blog_session_end"]).gte("created_at", since), 40);
-  const sessions = new Map();
-  for (const r of rows) {
-    const p = r.payload || {};
-    const sid = p.sessionId || `${r.created_at}`;
-    let s = sessions.get(sid);
-    if (!s) { s = { post: p.postId || p.postTitle || "", title: p.postTitle || p.postId || "Unknown", category: p.category || "", device: p.device || "unknown", ref: hostOf(p.referrer), at: r.created_at, dur: 0, scroll: 0, ended: false }; sessions.set(sid, s); }
-    if (r.type === "blog_session_end") { s.ended = true; s.dur = Math.max(s.dur, Number(p.durationSec) || 0); s.scroll = Math.max(s.scroll, Number(p.maxScrollPct) || 0); }
-    if (r.created_at < s.at) s.at = r.created_at;
-  }
-  const posts = new Map();
-  const dayViews = {}, devices = {}, refs = {}, cats = {};
-  for (const s of sessions.values()) {
-    const key = s.post || s.title;
-    let po = posts.get(key);
-    if (!po) { po = { id: key, title: s.title, category: s.category, views: 0, ended: 0, dur: 0, scroll: 0, finished: 0, devices: {}, refs: {}, days: {} }; posts.set(key, po); }
-    po.views++; po.devices[s.device] = (po.devices[s.device] || 0) + 1; po.refs[s.ref] = (po.refs[s.ref] || 0) + 1;
-    const d = new Date(new Date(s.at).getTime() + H).toISOString().slice(0, 10);
-    po.days[d] = (po.days[d] || 0) + 1; dayViews[d] = (dayViews[d] || 0) + 1;
-    if (s.ended) { po.ended++; po.dur += s.dur; po.scroll += s.scroll; if (s.scroll >= 80) po.finished++; }
-    devices[s.device] = (devices[s.device] || 0) + 1; refs[s.ref] = (refs[s.ref] || 0) + 1;
-    if (s.category) cats[s.category] = (cats[s.category] || 0) + 1;
-  }
-  const list = [...posts.values()].map((p) => ({
-    id: p.id, title: p.title, category: p.category, views: p.views,
-    avgSeconds: p.ended ? Math.round(p.dur / p.ended) : 0, avgScroll: p.ended ? Math.round(p.scroll / p.ended) : 0,
-    finishRate: p.ended ? Math.round((p.finished / p.ended) * 100) : 0,
-    devices: top(p.devices, 4), referrers: top(p.refs, 5), days: Object.entries(p.days).sort(([a], [b]) => (a < b ? -1 : 1)).slice(-14).map(([day, views]) => ({ day, views })),
-  })).sort((a, b) => b.views - a.views);
-  const all = [...sessions.values()];
-  const ended = all.filter((s) => s.ended);
-  const labels = [];
-  for (let i = days - 1; i >= 0 && labels.length < 90; i--) labels.push(new Date(Date.now() + H - i * D).toISOString().slice(0, 10));
-  return {
-    days, totalViews: all.length,
-    avgSeconds: ended.length ? Math.round(ended.reduce((a, s) => a + s.dur, 0) / ended.length) : 0,
-    finishRate: ended.length ? Math.round((ended.filter((s) => s.scroll >= 80).length / ended.length) * 100) : 0,
-    series: { labels: labels.map((l) => l.slice(5)), values: labels.map((l) => dayViews[l] || 0) },
-    devices: top(devices, 4), referrers: top(refs, 8), categories: top(cats, 8), posts: list.slice(0, 60),
-    truncated: rows.length >= 40000,
-  };
+  for (const d of p.keys) { labels.push(d.slice(5)); app.push((perDay[d] || {}).app || 0); blog.push((perDay[d] || {}).blog || 0); }
+  return { range: p.key, label: p.label, appViews, blogViews, clicks, placements: Object.values(place).sort((a, b) => b.views - a.views), series: { labels, app, blog }, truncated: rows.length >= 40000 };
 }
 
 export default async function handler(req, res) {
@@ -368,9 +322,8 @@ export default async function handler(req, res) {
 
     if (op === "activity") {
       if (!need("students")) return deny();
-      const days = Math.min(30, Math.max(1, Number(q.days) || 2));
-      const since = new Date(Date.now() - days * D).toISOString();
-      const before = iso(q.before);
+      const per = resolvePeriod(q.range || "today"), since = per.since;
+      const before = iso(q.before) || per.until;
       let email = "";
       const needle = safeRegex(q.q);
       if (needle) {
@@ -431,12 +384,6 @@ export default async function handler(req, res) {
       const tc = {}; for (const t of types || []) tc[t.type] = (tc[t.type] || 0) + 1;
       const typeList = [...top(tc, 20), ...["status_view", "status_comment", "squad_created", "squad_chat"].map((name) => ({ name, count: extra.filter((x) => x.type === name).length }))];
       return sendOk(res, { items: merged, next: merged.length >= 120 ? merged[merged.length - 1].at : null, types: typeList });
-    }
-
-    // ── blog ──
-    if (op === "blog") {
-      if (!need("blog")) return deny();
-      return sendOk(res, { blog: await blogStats(sb, [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 30) });
     }
 
     // ── WhatsApp group chats ──
@@ -633,15 +580,14 @@ export default async function handler(req, res) {
     }
     if (op === "games") {
       if (!need("analytics")) return deny();
-      const days = [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 7;
-      const since = new Date(Date.now() - days * D).toISOString();
+      const per = resolvePeriod(q.range || "week"), since = per.since;
       let rows = [];
-      try { rows = await fetchPages(sb, "events", "type,email,payload,created_at", (x) => x.in("type", ["game_view", "game_started", "game_finished", "game_wall", "game_share", "game_signup_tap", "signup_source"]).gte("created_at", since), 30); } catch { return sendErr(res, "Could not load game numbers.", 500); }
+      try { rows = await fetchPages(sb, "events", "type,email,payload,created_at", (x) => x.in("type", ["game_view", "game_started", "game_finished", "game_wall", "game_share", "game_signup_tap", "signup_source"]).gte("created_at", since).lte("created_at", per.until), 30); } catch { return sendErr(res, "Could not load game numbers.", 500); }
       const guests = new Set(), played = new Set(), wallSeen = new Set(), shares = {}, days_ = {};
       let views = 0, started = 0, finished = 0, wall = 0, taps = 0, signups = 0, memberStarts = 0;
       for (const r of rows) {
         const p = r.payload || {};
-        const day = String(r.created_at).slice(0, 10);
+        const day = per.lagosDay(r.created_at);
         const d = (days_[day] = days_[day] || { day, plays: 0, signups: 0 });
         if (r.type === "game_view") { views++; if (p.anon) guests.add(p.anon); }
         else if (r.type === "game_started") { if (r.email) memberStarts++; else started++; if (p.anon) played.add(p.anon); d.plays++; }
@@ -653,24 +599,23 @@ export default async function handler(req, res) {
       }
       let top = [], playersTotal = 0, guestBest = 0;
       try {
-        const { data } = await sb.from("game_scores").select("player_key,name,is_guest,game,score,created_at").gte("created_at", since).order("score", { ascending: false }).limit(2000);
+        const { data } = await sb.from("game_scores").select("player_key,name,is_guest,game,score,created_at").gte("created_at", since).lte("created_at", per.until).order("score", { ascending: false }).limit(2000);
         const best = new Map();
         for (const r of data || []) if (!best.has(r.player_key)) best.set(r.player_key, r);
         playersTotal = best.size; guestBest = [...best.values()].filter((r) => r.is_guest).length;
         top = [...best.values()].slice(0, 15).map((r) => ({ name: r.name, guest: !!r.is_guest, score: r.score, game: r.game, at: r.created_at }));
       } catch { /* table may not exist yet */ }
       return sendOk(res, {
-        days, views, guests: guests.size, guestStarts: started, memberStarts, finished, played: played.size, wall, wallPeople: wallSeen.size, taps, signups,
+        range: per.key, label: per.label, views, guests: guests.size, guestStarts: started, memberStarts, finished, played: played.size, wall, wallPeople: wallSeen.size, taps, signups,
         shares, players: playersTotal, guestPlayers: guestBest, top, series: Object.values(days_).sort((a, b) => (a.day < b.day ? -1 : 1)),
       });
     }
     if (op === "reminders") {
       if (!need("analytics")) return deny();
-      const days = [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 7;
-      const since = new Date(Date.now() - days * D).toISOString();
+      const per = resolvePeriod(q.range || "week");
       const TYPES = ["push_sent", "push_shown", "push_click", "push_open", "notif_prompt_shown", "notif_prompt_allow_tapped", "notif_enabled", "notif_blocked", "notif_failed", "notif_prompt_declined"];
       let rows = [];
-      try { rows = await fetchPages(sb, "events", "type,email,payload,created_at", (x) => x.in("type", TYPES).gte("created_at", since), 30); } catch { return sendErr(res, "Could not load reminder numbers.", 500); }
+      try { rows = await fetchPages(sb, "events", "type,email,payload,created_at", (x) => x.in("type", TYPES).gte("created_at", per.since).lte("created_at", per.until), 30); } catch { return sendErr(res, "Could not load reminder numbers.", 500); }
       const tot = {}, kinds = {}, people = {}, opens = [];
       for (const r of rows) {
         tot[r.type] = (tot[r.type] || 0) + 1;
@@ -686,7 +631,7 @@ export default async function handler(req, res) {
       let subscribers = 0;
       try { const r = await sb.from("push_subscriptions").select("endpoint", { count: "exact", head: true }); subscribers = r.count || 0; } catch { /* ignore */ }
       return sendOk(res, {
-        days, subscribers,
+        range: per.key, label: per.label, subscribers,
         sent: tot.push_sent || 0, shown: tot.push_shown || 0, clicks: tot.push_click || 0, opens: tot.push_open || 0, openers: Object.keys(people).length,
         prompt: { shown: tot.notif_prompt_shown || 0, tapped: tot.notif_prompt_allow_tapped || 0, accepted: tot.notif_enabled || 0, blocked: tot.notif_blocked || 0, failed: tot.notif_failed || 0, declined: tot.notif_prompt_declined || 0 },
         kinds: Object.values(kinds).sort((a, b) => b.sent - a.sent),
@@ -748,38 +693,13 @@ export default async function handler(req, res) {
     }
     if (op === "ads-stats") {
       if (!need("ads")) return deny();
-      return sendOk(res, { stats: await adStats(sb, [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 30) });
-    }
-
-    if (op === "ads-adsterra") {
-      if (!need("ads")) return deny();
-      const key = (process.env.ADSTERRA_API || process.env.ADSTERRA_API_KEY || "").trim();
-      if (!key) return sendOk(res, { adsterra: { configured: false, message: "ADSTERRA_API is not set in Vercel (Settings → Environment Variables). Add it, then redeploy." } });
-      const days = [1, 7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 30;
-      const gb = ["date", "country", "placement", "domain", "device_type"].includes(String(q.group_by)) ? String(q.group_by) : "date";
-      const ck = `${days}:${gb}`;
-      globalThis.__adsterraCache = globalThis.__adsterraCache || new Map();
-      const hit = globalThis.__adsterraCache.get(ck);
-      if (hit && Date.now() - hit.t < 5 * 60000) return sendOk(res, { adsterra: hit.v });
-      const day = (t) => new Date(t).toISOString().slice(0, 10);
-      const url = `https://api3.adsterratools.com/publisher/stats.json?start_date=${day(Date.now() - (days - 1) * 86400000)}&finish_date=${day(Date.now())}&group_by=${gb}`;
-      try {
-        const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 15000);
-        const r = await fetch(url, { headers: { "X-API-Key": key, Accept: "application/json" }, signal: ctl.signal }); clearTimeout(tm);
-        const txt = await r.text(); let j = {}; try { j = JSON.parse(txt); } catch { /* not json */ }
-        if (!r.ok) return sendOk(res, { adsterra: { configured: true, error: r.status === 401 || r.status === 403 ? "Adsterra rejected the API key (check the ADSTERRA_API value)." : `Adsterra answered ${r.status}: ${String(j.message || txt).slice(0, 160)}` } });
-        const items = (Array.isArray(j.items) ? j.items : []).map((x) => ({ label: String(x.date || x.country || x.placement || x.domain || x.device_type || x.name || "—"), impressions: Number(x.impression ?? x.impressions ?? 0), clicks: Number(x.clicks || 0), ctr: Number(x.ctr || 0), cpm: Number(x.cpm || 0), revenue: Number(x.revenue || 0) }));
-        const t = items.reduce((a, x) => ({ impressions: a.impressions + x.impressions, clicks: a.clicks + x.clicks, revenue: a.revenue + x.revenue }), { impressions: 0, clicks: 0, revenue: 0 });
-        const v = { configured: true, days, groupBy: gb, items, totals: { ...t, ctr: t.impressions ? (t.clicks / t.impressions) * 100 : 0, cpm: t.impressions ? (t.revenue / t.impressions) * 1000 : 0 } };
-        globalThis.__adsterraCache.set(ck, { t: Date.now(), v });
-        return sendOk(res, { adsterra: v });
-      } catch (e) { return sendOk(res, { adsterra: { configured: true, error: "Could not reach Adsterra right now. Try again in a minute." } }); }
+      return sendOk(res, { stats: await adStats(sb, resolvePeriod(q.range)) });
     }
 
     if (op === "sources") {
       if (!need("analytics")) return deny();
       const ref = String(q.ref || "").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 32);
-      return sendOk(res, { sources: await sourceStats(sb, [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 30, ref) });
+      return sendOk(res, { sources: await sourceStats(sb, resolvePeriod(q.range), ref) });
     }
 
     // ── team (owner only) ──
