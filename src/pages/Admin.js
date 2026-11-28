@@ -30,8 +30,8 @@ const TOKEN_KEY = 'es_admin_token';
 // The month the database started recording (first events and students: October 2026). No month pills before it.
 const DATA_START = '2026-10';
 const RANGES = [
-  ['today', 'Today'], ['7d', '7 days'], ['30d', '30 days'], ['90d', '90 days'],
-  ['thismonth', 'This month'], ['thisyear', 'This year'], ['all', 'All time'],
+  ['today', 'Today'], ['week', 'This week'], ['thismonth', 'This month'], ['lastmonth', 'Last month'],
+  ['thisyear', 'This year'], ['all', 'All time'],
 ];
 
 const METRICS = {
@@ -292,9 +292,6 @@ export default function Admin() {
       <section className="adm-controls">
         <div className="adm-pills">
           {RANGES.map(([k, l]) => <button key={k} className={range === k ? 'on' : ''} onClick={() => { setMonth(''); setRange(k); }}>{l}</button>)}
-        </div>
-        <div className="adm-pills adm-months" aria-label="Previous months">
-          {[1, 2].map((i) => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); const v = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; return [v, i === 1 ? 'Last month' : `${i} months ago`]; }).filter(([v]) => v >= DATA_START).map(([v, l]) => <button key={v} className={range === `month:${v}` ? 'on' : ''} onClick={() => pickMonth(v)}>{l}</button>)}
         </div>
         <div className="adm-pickers">
           <label>Month <input type="month" value={month} min={DATA_START} max={new Date().toISOString().slice(0, 7)} onChange={(e) => pickMonth(e.target.value)} /></label>
